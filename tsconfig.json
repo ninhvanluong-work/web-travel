@@ -16,6 +16,8 @@
     "plugins": [
       {
         "name": "next"
+      },{
+        "name": "tailwind-scrollbar-hide"
       }
     ],
     "paths": {
