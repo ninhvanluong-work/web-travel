@@ -33,25 +33,29 @@ export const inputVariants = cva(
 );
 
 export interface InputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>,
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'>,
     VariantProps<typeof inputVariants> {
   errorClassName?: string;
-  suffix?: any;
+  suffix?: React.ReactNode;
+  prefix?: React.ReactNode;
   fullWidth?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, variant = 'default', fullWidth, size, type, suffix, id, ...props }, ref) => {
+  ({ className, variant = 'default', fullWidth, size, type, suffix, prefix, id, ...props }, ref) => {
     const [show, setShow] = React.useState(false);
     return (
       <div className={cn('relative', fullWidth && 'w-full')}>
         <input
           id={id}
           type={type === 'password' ? (show ? 'text' : 'password') : type}
-          className={cn(inputVariants({ variant, size, className }))}
+          className={cn(prefix && 'pl-10', suffix && 'pr-10', inputVariants({ variant, size, className }))}
           ref={ref}
           {...props}
         />
+        <Show when={!!prefix}>
+          <div className="absolute left-[10px] top-1/2 -translate-y-1/2 pointer-events-none">{prefix}</div>
+        </Show>
         <Show when={type !== 'password'}>
           {suffix && <div className="absolute right-[10px] top-1/2 -translate-y-1/2">{suffix}</div>}
         </Show>

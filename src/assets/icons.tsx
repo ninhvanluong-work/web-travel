@@ -76,7 +76,6 @@ import upload from '@/assets/svg/upload.svg';
 import wallet from '@/assets/svg/wallet.svg';
 import warning from '@/assets/svg/warning.svg';
 import X from '@/assets/svg/X.svg';
-import x from '@/assets/svg/x.svg';
 import xBold from '@/assets/svg/x_bold.svg';
 import youtube from '@/assets/svg/youtube.svg';
 
@@ -158,7 +157,7 @@ const IconList = {
   sound,
   up,
   wallet,
-  x,
+  x: X,
   xBold,
 };
 
