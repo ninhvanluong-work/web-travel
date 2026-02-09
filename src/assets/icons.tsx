@@ -62,7 +62,6 @@ import playSolid from '@/assets/svg/play-solid.svg';
 import plus from '@/assets/svg/plus.svg';
 import plusCircle from '@/assets/svg/plus-circle.svg';
 import reload from '@/assets/svg/reload.svg';
-import right from '@/assets/svg/right.svg';
 import search from '@/assets/svg/search.svg';
 import security from '@/assets/svg/security.svg';
 import sound from '@/assets/svg/sound.svg';

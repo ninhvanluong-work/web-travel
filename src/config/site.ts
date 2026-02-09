@@ -1,8 +1,8 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: 'NextJs-shadcn-boilderplate',
-  description: 'NextJs-shadcn-boilderplate',
+  name: 'Web travel',
+  description: 'come to travel with me',
   url: 'http://localhost:3000',
   ogImage: 'http://localhost:3000/opengraph-image.jpg',
 };

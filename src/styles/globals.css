@@ -198,3 +198,14 @@
 ::-webkit-scrollbar-thumb {
   background-color: #b6b6b6;
 }
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none; /* IE và Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
