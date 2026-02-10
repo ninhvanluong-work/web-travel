@@ -43,7 +43,7 @@ const HomePage: NextPageWithLayout = () => {
       <video
         ref={videoRef}
         id="myVideo"
-        className="absolute top-0 left-0 h-full w-full object-cover"
+        className="absolute top-1/2 left-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
         src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/dulich-mienbac.mp4"
         autoPlay
         loop
@@ -52,8 +52,8 @@ const HomePage: NextPageWithLayout = () => {
       />
 
       <div className="absolute inset-0 bg-black/30" />
-      <main className="relative z-10 flex h-full w-full flex-col items-center justify-center px-4 pt-20 md:justify-start md:pt-[60vh]">
-        <div className="w-full max-w-3xl">
+      <main className="relative z-10 h-full w-full pointer-events-none">
+        <div className="absolute top-[85%] left-1/2 w-full max-w-3xl -translate-x-1/2 px-4 pointer-events-auto">
           <SearchBox />
         </div>
       </main>
