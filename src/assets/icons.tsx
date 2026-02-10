@@ -9,6 +9,8 @@ import {
   HelpCircle,
   LogOut,
   User,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 
 import angleDown from '@/assets/svg/angle-down-solid.svg';
@@ -157,6 +159,8 @@ const IconList = {
   wallet,
   x: X,
   xBold,
+  volume2: Volume2,
+  volumeX: VolumeX,
 };
 
 export const Icons = IconList as Record<keyof typeof IconList, Icon>;

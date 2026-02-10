@@ -8,12 +8,17 @@ import { cn } from '@/lib/utils';
 interface SearchBoxProps {
   autoFocus?: boolean;
   variant?: 'transparent' | 'outline';
+  onSearchClick?: () => void;
 }
 
-const SearchBox = ({ autoFocus, variant = 'transparent' }: SearchBoxProps) => {
+const SearchBox = ({ autoFocus, variant = 'transparent', onSearchClick }: SearchBoxProps) => {
   const router = useRouter();
 
   const handleSearchClick = () => {
+    if (onSearchClick) {
+      onSearchClick();
+      return;
+    }
     if (router.pathname !== '/search') {
       router.push('/search');
     }
