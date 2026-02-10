@@ -79,6 +79,9 @@ importers:
       '@tanstack/react-query-devtools':
         specifier: ^4.29.25
         version: 4.43.0(@tanstack/react-query@4.43.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      animate.css:
+        specifier: ^4.1.1
+        version: 4.1.1
       auto-zustand-selectors-hook:
         specifier: ^2.0.0
         version: 2.0.5(zustand@4.5.7(@types/react@18.3.28)(react@18.3.1))
@@ -2096,6 +2099,10 @@ packages:
   ajv@8.17.1:
     resolution:
       { integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g== }
+
+  animate.css@4.1.1:
+    resolution:
+      { integrity: sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ== }
 
   ansi-escapes@4.3.2:
     resolution:
@@ -5835,8 +5842,8 @@ snapshots:
       '@commitlint/types': 17.8.1
       '@types/node': 20.5.1
       chalk: 4.1.2
-      cosmiconfig: 8.3.6(typescript@5.9.3)
-      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.1.6))(ts-node@10.9.2(@types/node@20.19.33)(typescript@5.1.6))(typescript@5.9.3)
+      cosmiconfig: 8.3.6(typescript@5.1.6)
+      cosmiconfig-typescript-loader: 4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.9.3))(typescript@5.9.3)
       lodash.isplainobject: 4.0.6
       lodash.merge: 4.6.2
       lodash.uniq: 4.5.0
@@ -7390,6 +7397,8 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
+  animate.css@4.1.1: {}
+
   ansi-escapes@4.3.2:
     dependencies:
       type-fest: 0.21.3
@@ -7803,21 +7812,21 @@ snapshots:
     dependencies:
       is-what: 4.1.16
 
-  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.1.6))(ts-node@10.9.2(@types/node@20.19.33)(typescript@5.1.6))(typescript@5.9.3):
+  cosmiconfig-typescript-loader@4.4.0(@types/node@20.5.1)(cosmiconfig@8.3.6(typescript@5.9.3))(ts-node@10.9.2(@types/node@20.5.1)(typescript@5.9.3))(typescript@5.9.3):
     dependencies:
       '@types/node': 20.5.1
-      cosmiconfig: 8.3.6(typescript@5.9.3)
-      ts-node: 10.9.2(@types/node@20.19.33)(typescript@5.1.6)
+      cosmiconfig: 8.3.6(typescript@5.1.6)
+      ts-node: 10.9.2(@types/node@20.5.1)(typescript@5.9.3)
       typescript: 5.9.3
 
-  cosmiconfig@8.3.6(typescript@5.9.3):
+  cosmiconfig@8.3.6(typescript@5.1.6):
     dependencies:
       import-fresh: 3.3.1
       js-yaml: 4.1.1
       parse-json: 5.2.0
       path-type: 4.0.0
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 5.1.6
 
   create-require@1.1.1: {}
 
@@ -8152,7 +8161,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@5.59.8(eslint@8.42.0)(typescript@5.1.6))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.42.0):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@5.59.8(eslint@8.42.0)(typescript@5.1.6))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@8.42.0))(eslint@8.42.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
@@ -8172,7 +8181,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.42.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@5.59.8(eslint@8.42.0)(typescript@5.1.6))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.42.0)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@5.59.8(eslint@8.42.0)(typescript@5.1.6))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@8.42.0))(eslint@8.42.0)
       has: 1.0.4
       is-core-module: 2.16.1
       is-glob: 4.0.3
@@ -8199,7 +8208,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.42.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@5.59.8(eslint@8.42.0)(typescript@5.1.6))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1)(eslint@8.42.0)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@5.59.8(eslint@8.42.0)(typescript@5.1.6))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0)(eslint@8.42.0))(eslint@8.42.0)
       hasown: 2.0.2
       is-core-module: 2.16.1
       is-glob: 4.0.3
