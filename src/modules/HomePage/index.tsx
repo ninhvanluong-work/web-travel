@@ -15,15 +15,11 @@ const HomePage: NextPageWithLayout = () => {
         muted
         playsInline
       />
-
-      {/* Workaround for autoplay sound: Hidden iframe */}
-      <iframe
+      <audio
         src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/dulich-mienbac.mp4"
-        allow="autoplay"
-        className="invisible absolute pointer-events-none"
-        width="0"
-        height="0"
-        title="background-audio"
+        autoPlay
+        loop
+        className="hidden"
       />
 
       <div className="absolute inset-0 bg-black/30" />

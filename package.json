@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "yarn clean && next dev",
+    "dev": "rimraf .next out && next dev",
     "build": "next build",
     "start": "next start -p 8080",
     "start-prod": "next start -p 8080",
@@ -18,7 +18,7 @@
     "clean": "rimraf .next out",
     "prepare": "husky install"
   },
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@9.1.0",
   "dependencies": {
     "@floating-ui/react-dom": "^2.0.7",
     "@hookform/resolvers": "^3.3.1",
