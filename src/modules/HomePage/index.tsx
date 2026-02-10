@@ -1,4 +1,3 @@
-import { Volume2, VolumeX } from 'lucide-react';
 import React from 'react';
 
 import type { NextPageWithLayout } from '@/types';
@@ -7,6 +6,25 @@ import SearchBox from './components/SearchBox';
 
 const HomePage: NextPageWithLayout = () => {
   const [isMuted, setIsMuted] = React.useState(true);
+
+  React.useEffect(() => {
+    const handleInteraction = () => {
+      setIsMuted(false);
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('keydown', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+
+    document.addEventListener('click', handleInteraction);
+    document.addEventListener('keydown', handleInteraction);
+    document.addEventListener('touchstart', handleInteraction);
+
+    return () => {
+      document.removeEventListener('click', handleInteraction);
+      document.removeEventListener('keydown', handleInteraction);
+      document.removeEventListener('touchstart', handleInteraction);
+    };
+  }, []);
 
   return (
     <div className="relative h-full w-full overflow-hidden">
@@ -25,13 +43,13 @@ const HomePage: NextPageWithLayout = () => {
         </div>
       </main>
 
-      <button
+      {/* <button
         onClick={() => setIsMuted(!isMuted)}
         className="absolute bottom-8 right-8 z-20 rounded-full bg-black/50 p-3 text-white backdrop-blur-sm transition-all hover:bg-black/70"
         aria-label={isMuted ? 'Unmute video' : 'Mute video'}
       >
         {isMuted ? <VolumeX className="h-6 w-6" /> : <Volume2 className="h-6 w-6" />}
-      </button>
+      </button> */}
     </div>
   );
 };
