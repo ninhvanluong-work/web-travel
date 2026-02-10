@@ -2,5 +2,5 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx pretty-quick --staged
-yarn lint
-yarn check-types
+pnpm lint
+pnpm check-types
