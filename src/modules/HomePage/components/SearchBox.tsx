@@ -3,8 +3,14 @@ import { useRouter } from 'next/router';
 import React from 'react';
 
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
-const SearchBox = () => {
+interface SearchBoxProps {
+  autoFocus?: boolean;
+  variant?: 'transparent' | 'outline';
+}
+
+const SearchBox = ({ autoFocus, variant = 'transparent' }: SearchBoxProps) => {
   const router = useRouter();
 
   const handleSearchClick = () => {
@@ -20,11 +26,22 @@ const SearchBox = () => {
         type="search"
         placeholder="Search..."
         fullWidth
-        prefix={<Search className="w-6 h-6 text-white" strokeWidth={3} />}
+        prefix={
+          <Search
+            className={cn('w-6 h-6', variant === 'transparent' ? 'text-white' : 'text-gray-500')}
+            strokeWidth={3}
+          />
+        }
         inputMode="search"
         enterKeyHint="search"
         autoComplete="off"
-        className="rounded-full bg-white/10 backdrop-blur-sm border-transparent pl-14 pr-12 h-14 text-base text-white placeholder:text-gray-200 shadow-sm hover:bg-white/20 transition-colors focus-visible:ring-1 focus-visible:ring-white/50"
+        autoFocus={autoFocus}
+        className={cn(
+          'rounded-full pl-14 pr-12 h-14 text-base shadow-sm transition-colors',
+          variant === 'transparent'
+            ? 'bg-white/10 backdrop-blur-sm border-transparent text-white placeholder:text-gray-200 hover:bg-white/20 focus-visible:ring-1 focus-visible:ring-white/50'
+            : 'bg-white border-gray-300 text-black placeholder:text-gray-500 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-black/20'
+        )}
         onClick={handleSearchClick}
       />
     </div>
