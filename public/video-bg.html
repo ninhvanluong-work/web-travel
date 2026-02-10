@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Background</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: black;
+        cursor: pointer; /* Indicate clickable for unmute */
+      }
+      video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translate(-50%, -50%);
+        object-fit: cover;
+        /* Hide controls */
+        pointer-events: none;
+      }
+      /* Extra safety to hide controls on some browsers */
+      video::-webkit-media-controls {
+        display: none !important;
+      }
+      video::-webkit-media-controls-enclosure {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <video
+      src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/dulich-mienbac.mp4"
+      autoplay
+      loop
+      muted
+      playsinline
+      id="bg-video"
+    ></video>
+
+    <script>
+      const video = document.getElementById('bg-video');
+
+      // Attempt to play immediately
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch((error) => {
+          console.log('Autoplay prevented:', error);
+        });
+      }
+
+      // Unmute on click anywhere on the page (since video has pointer-events: none)
+      document.body.addEventListener('click', () => {
+        video.muted = !video.muted;
+      });
+
+      // Also listen for detailed messages if needed
+      window.addEventListener('message', (event) => {
+        if (event.data === 'toggleMute') {
+          video.muted = !video.muted;
+        }
+      });
+    </script>
+  </body>
+</html>
