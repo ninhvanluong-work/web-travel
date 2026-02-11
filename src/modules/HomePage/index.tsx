@@ -81,7 +81,7 @@ const HomePage: NextPageWithLayout = () => {
       <main className="relative z-30 h-full w-full pointer-events-none">
         <div
           className={cn(
-            'absolute left-1/2 w-full max-w-3xl -translate-x-1/2 px-4 pointer-events-auto transition-all duration-500 ease-in-out -translate-y-1/2',
+            'absolute left-1/2 w-full max-w-3xl -translate-x-1/2 px-[30px] pointer-events-auto transition-all duration-500 ease-in-out -translate-y-1/2',
             isFocused ? 'top-28' : 'top-[80%]'
           )}
         >
