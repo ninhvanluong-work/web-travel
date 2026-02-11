@@ -7,6 +7,21 @@ interface VirtualKeyboardProps {
   onKeyPress: (key: string) => void;
 }
 
+const getKeyLabel = (key: string) => {
+  switch (key) {
+    case 'shift':
+      return '⇧';
+    case 'backspace':
+      return '⌫';
+    case 'return':
+      return 'Go';
+    case 'space':
+      return '';
+    default:
+      return key;
+  }
+};
+
 const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ isVisible, onKeyPress }) => {
   if (!isVisible) return null;
 
@@ -46,15 +61,7 @@ const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({ isVisible, onKeyPress
                   onKeyPress(key);
                 }}
               >
-                {key === 'shift'
-                  ? '⇧'
-                  : key === 'backspace'
-                  ? '⌫'
-                  : key === 'return'
-                  ? 'Go'
-                  : key === 'space'
-                  ? ''
-                  : key}
+                {getKeyLabel(key)}
               </button>
             );
           })}
