@@ -82,7 +82,7 @@ const HomePage: NextPageWithLayout = () => {
         <div
           className={cn(
             'absolute left-1/2 w-full max-w-3xl -translate-x-1/2 px-4 pointer-events-auto transition-all duration-500 ease-in-out -translate-y-1/2',
-            isFocused ? 'top-[15%]' : 'top-[80%]'
+            isFocused ? 'top-28' : 'top-[80%]'
           )}
         >
           <div className="w-full flex flex-col items-center animate__animated animate__slideInUp">
