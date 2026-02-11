@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
-import { searchSuggestions } from '@/data/searchSuggestions';
+import { SEARCH_SUGGESTIONS } from '@/data/search';
 import { cn } from '@/lib/utils';
 import type { NextPageWithLayout } from '@/types';
 
@@ -147,7 +147,7 @@ const HomePage: NextPageWithLayout = () => {
             {isFocused && (
               <div className="mt-8 w-full max-w-[500px] animate__animated animate__fadeIn">
                 <ul className="flex flex-wrap gap-3 justify-start">
-                  {searchSuggestions.map((suggestion, index) => (
+                  {SEARCH_SUGGESTIONS.map((suggestion, index) => (
                     <li
                       key={index}
                       className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-sm cursor-pointer transition-colors flex items-center gap-2"

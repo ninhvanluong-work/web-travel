@@ -15,13 +15,28 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
   ({ autoFocus, variant = 'transparent', onSearchClick }, ref) => {
     const router = useRouter();
 
+    const [searchValue, setSearchValue] = React.useState('');
+
+    const handleSearch = () => {
+      const query = searchValue.trim();
+      if (query) {
+        router.push(`/search?q=${encodeURIComponent(query)}`);
+      } else if (router.pathname !== '/search') {
+        router.push('/search');
+      }
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    };
+
     const handleSearchClick = () => {
       if (onSearchClick) {
         onSearchClick();
-        return;
-      }
-      if (router.pathname !== '/search') {
-        router.push('/search');
+      } else {
+        handleSearch();
       }
     };
 
@@ -49,6 +64,9 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
               ? 'bg-white/10 backdrop-blur-sm border-transparent text-white placeholder:text-gray-200 hover:bg-white/20 focus-visible:ring-1 focus-visible:ring-white/50'
               : 'bg-white border-gray-300 text-black placeholder:text-gray-500 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-black/20'
           )}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          onKeyDown={handleKeyDown}
           onClick={handleSearchClick}
         />
       </div>
