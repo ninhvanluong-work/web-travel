@@ -8,18 +8,18 @@ module.exports = {
   theme: {
     container: {
       center: true,
+    },
+    extend: {
       screens: {
         xss: '320px',
         xs: '375px',
         sm: '414px',
-        md: '768px',
-        lg: '1024px',
-        xl: '1280px',
-        '2xl': '1440px',
-        '3xl': '1920px',
+        md: '10000px',
+        lg: '10000px',
+        xl: '10000px',
+        '2xl': '10000px',
+        '3xl': '10000px',
       },
-    },
-    extend: {
       fontFamily: {
         dinpro: ['DINPro', 'sans-serif'],
         dinprocond: ['DIN Pro Cond', 'sans-serif'],
