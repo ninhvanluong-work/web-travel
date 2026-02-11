@@ -8,13 +8,23 @@ interface Props {
 }
 const MainLayout: FCC<Props> = ({ children }) => {
   React.useEffect(() => {
+    let lastWidth = window.innerWidth;
+
     const setAppHeight = () => {
       const doc = document.documentElement;
       doc.style.setProperty('--app-height', `${window.innerHeight}px`);
     };
-    window.addEventListener('resize', setAppHeight);
-    setAppHeight();
-    return () => window.removeEventListener('resize', setAppHeight);
+
+    const handleResize = () => {
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth;
+        setAppHeight();
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    setAppHeight(); // Initial set
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   return (

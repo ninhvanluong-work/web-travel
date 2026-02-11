@@ -44,7 +44,10 @@ const MyApp = (props: AppPropsWithLayout) => {
         <meta name="twitter:title" content={siteConfig.name} />
         <meta name="twitter:description" content={siteConfig.description} />
         <meta name="twitter:image" content={`${siteConfig.ogImage}`} />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=overlays-content, viewport-fit=cover"
+        />
       </Head>
       <style jsx global>{`
         html {
