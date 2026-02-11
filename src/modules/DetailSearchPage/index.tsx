@@ -11,8 +11,8 @@ const DetailSearchPage: NextPageWithLayout = () => {
   }, []);
 
   return (
-    <>
-      <div className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-start bg-white sm:items-start">
+    <div className="h-full w-full overflow-y-auto scrollbar-hide">
+      <div className="flex min-h-full w-full max-w-3xl flex-col items-center justify-start bg-white sm:items-start">
         <div className="sticky top-0 z-50 w-full bg-white px-16 pt-8 pb-4 shadow-sm">
           <SearchBox autoFocus variant="outline" />
           <div className="mt-4 flex flex-col gap-3 p-1">
@@ -27,7 +27,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
