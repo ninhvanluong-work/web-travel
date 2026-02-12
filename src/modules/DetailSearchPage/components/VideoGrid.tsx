@@ -29,6 +29,8 @@ const VideoGrid = ({ videos, isLoading }: Props) => {
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
               muted
               playsInline
+              poster={video.thumbnail}
+              preload="none"
             />
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
               <div className="rounded-full bg-white/20 p-3 backdrop-blur-sm">

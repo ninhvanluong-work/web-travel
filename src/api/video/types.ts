@@ -3,4 +3,5 @@ export interface IVideo {
   link: string;
   title: string;
   description: string;
+  thumbnail: string;
 }
