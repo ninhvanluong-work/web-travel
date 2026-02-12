@@ -39,7 +39,7 @@ const SearchInput = ({ onSearch, defaultValue }: Props) => {
         <Input
           ref={ref}
           className={
-            'rounded-full pl-14 h-14 text-base shadow-sm transition-colors bg-white border-gray-300 text-black placeholder:text-gray-500 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-black/20'
+            'rounded-full pl-14 h-[2.65rem] text-base shadow-sm transition-colors bg-white border-gray-300 text-black placeholder:text-gray-500 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-black/20'
           }
           placeholder="Search videos..."
           variant="filled"
