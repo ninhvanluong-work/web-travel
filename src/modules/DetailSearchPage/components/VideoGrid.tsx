@@ -17,7 +17,7 @@ const VideoGrid = ({ videos, isLoading }: Props) => {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4 w-full p-1">
+    <div className="grid grid-cols-1 xs:grid-cols-2 gap-1 md:grid-cols-3 lg:grid-cols-4 w-full p-1">
       {videos.map((video) => (
         <div
           key={video.id}
