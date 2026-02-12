@@ -76,13 +76,11 @@ const HomePage: NextPageWithLayout = () => {
       selectionStart++;
       selectionEnd = selectionStart;
     } else if (key === 'return') {
-      // Trigger search
       if (newVal.trim()) {
         router.push(`/search?q=${encodeURIComponent(newVal.trim())}`);
       }
       return;
     } else if (key === 'shift' || key === '123') {
-      // Ignore for now, or implement logic
       return;
     } else {
       newVal = currentVal.slice(0, selectionStart) + key + currentVal.slice(selectionEnd);
@@ -90,14 +88,12 @@ const HomePage: NextPageWithLayout = () => {
       selectionEnd = selectionStart;
     }
 
-    // Set value and trigger React change event
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
     nativeInputValueSetter?.call(input, newVal);
 
     const event = new Event('input', { bubbles: true });
     input.dispatchEvent(event);
 
-    // Restore cursor position
     input.setSelectionRange(selectionStart, selectionEnd);
     input.focus();
     input.scrollTop = scrollPos;
@@ -171,6 +167,7 @@ const HomePage: NextPageWithLayout = () => {
               setIsMuted(videoRef.current.muted);
             }
           }}
+          onTouchStart={(e) => e.stopPropagation()}
         >
           {isMuted ? <Icons.volumeX size={24} /> : <Icons.volume2 size={24} />}
         </button>
