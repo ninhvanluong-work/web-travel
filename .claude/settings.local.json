@@ -1,0 +1,110 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(docker build:*)",
+      "Bash(docker run:*)",
+      "Bash(curl:*)",
+      "Bash(git checkout:*)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(npx:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm upgrade:*)",
+      "Bash(pnpm run:*)",
+      "mcp__serena__list_dir",
+      "mcp__serena__find_file",
+      "mcp__serena__search_for_pattern",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck:*)",
+      "mcp__shadcn__getComponent",
+      "Bash(pnpm dlx:*)",
+      "mcp__serena__check_onboarding_performed",
+      "mcp__serena__get_symbols_overview",
+      "mcp__serena__find_symbol",
+      "mcp__serena__replace_symbol_body",
+      "Bash(mkdir:*)",
+      "Bash(npm run lint:*)",
+      "Bash(node:*)",
+      "Read(//c/Users/TruongTran/WebstormProjects/shadcn-admin/src/components/layout/**)",
+      "Read(//c/Users/TruongTran/WebstormProjects/shadcn-admin/**)",
+      "WebSearch",
+      "mcp__shadcn__get_project_registries",
+      "mcp__shadcn__list_items_in_registries",
+      "mcp__shadcn__search_items_in_registries",
+      "mcp__shadcn__get_add_command_for_items",
+      "Bash(touch:*)",
+      "Bash(cat:*)",
+      "Bash(timeout 30 npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(cp:*)",
+      "Bash(prettier --write:*)",
+      "Bash(pnpm format:*)",
+      "Bash(pnpm dev)",
+      "Bash(pnpm add:*)",
+      "Bash(sed:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pkill:*)",
+      "Bash(git diff:*)",
+      "Bash(find:*)",
+      "Bash(tree:*)",
+      "Skill(planning)",
+      "Bash(../gradlew compileJava:*)",
+      "Bash(../gradlew clean:*)",
+      "WebFetch(domain:www.royalcyber.com)",
+      "WebFetch(domain:sultanov.dev)",
+      "WebFetch(domain:josealopez.dev)",
+      "WebFetch(domain:www.stackhawk.com)",
+      "WebFetch(domain:www.baeldung.com)",
+      "Bash(../gradlew :knowledge-service:compileJava:*)",
+      "Bash(./gradlew :knowledge-service:compileJava:*)",
+      "Bash(./gradlew :knowledge-service:compileTestJava:*)",
+      "Bash(./gradlew :knowledge-service:build:*)",
+      "Bash(git push:*)",
+      "Skill(docs-seeker)",
+      "WebFetch(domain:spring.io)",
+      "WebFetch(domain:camel.apache.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.enterpriseintegrationpatterns.com)",
+      "Bash(wc:*)",
+      "Bash(./gradlew :shared-queue:compileJava:*)",
+      "Bash(./gradlew:*)",
+      "Bash(npm run lint:fix:*)",
+      "Skill(fix)",
+      "Skill(sequential-thinking)",
+      "Skill(microservices-patterns)",
+      "Bash(bash:*)",
+      "mcp__postgres__query"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["shadcn", "context7"],
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/telegram_notify.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/telegram_notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
