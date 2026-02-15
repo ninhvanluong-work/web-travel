@@ -1,0 +1,145 @@
+openapi: 3.0.3
+info:
+  title: {Use Case Name} API
+  version: 1.0.0
+  description: API endpoint for {use case description}
+
+paths:
+  /{endpoint-path}:
+    {http-method}:
+      tags:
+        - {tag-name}
+      summary: {Brief summary in Vietnamese}
+      description: {Detailed description}
+      operationId: {operationId}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/{RequestSchema}'
+            examples:
+              example1:
+                summary: {Example description}
+                value:
+                  field1: "value1"
+                  field2: "value2"
+      responses:
+        '200':
+          description: {Success description}
+          headers:
+            X-Trace-Id:
+              description: Correlation ID for tracing
+              schema:
+                type: string
+                format: uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/{ResponseSchema}'
+              example:
+                id: "uuid-here"
+                field1: "value1"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    {RequestSchema}:
+      type: object
+      required:
+        - {required-field}
+      properties:
+        {field-name}:
+          type: {type}
+          minLength: {min}
+          maxLength: {max}
+          pattern: '{regex-if-applicable}'
+          description: {Description}
+          example: "{example-value}"
+
+    {ResponseSchema}:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: {Entity ID}
+        {field-name}:
+          type: {type}
+          example: "{example}"
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+        - timestamp
+        - traceId
+      properties:
+        code:
+          type: string
+          description: Business error code
+          example: "ERR_{CATEGORY}_{NUM}"
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: array
+          description: Validation error details
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+        timestamp:
+          type: string
+          format: date-time
+        traceId:
+          type: string
+          format: uuid
+
+  responses:
+    BadRequest:
+      description: Invalid request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Unauthorized:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

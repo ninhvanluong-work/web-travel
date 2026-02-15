@@ -110,7 +110,7 @@ const HomePage: NextPageWithLayout = () => {
         ref={videoRef}
         id="myVideo"
         className="absolute top-1/2 left-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
-        src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/dulich-mienbac.mp4"
+        src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/Village%20Tour.mov"
         autoPlay
         loop
         muted={isMuted}
