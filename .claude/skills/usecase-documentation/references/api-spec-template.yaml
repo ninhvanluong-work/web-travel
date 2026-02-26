@@ -1,17 +1,17 @@
 openapi: 3.0.3
 info:
-  title: {Use Case Name} API
+  title: '{Use Case Name} API'
   version: 1.0.0
-  description: API endpoint for {use case description}
+  description: 'API endpoint for {use case description}'
 
 paths:
   /{endpoint-path}:
-    {http-method}:
+    { http-method }:
       tags:
-        - {tag-name}
-      summary: {Brief summary in Vietnamese}
-      description: {Detailed description}
-      operationId: {operationId}
+        - { tag-name }
+      summary: { Brief summary in Vietnamese }
+      description: { Detailed description }
+      operationId: { operationId }
       requestBody:
         required: true
         content:
@@ -20,13 +20,13 @@ paths:
               $ref: '#/components/schemas/{RequestSchema}'
             examples:
               example1:
-                summary: {Example description}
+                summary: { Example description }
                 value:
-                  field1: "value1"
-                  field2: "value2"
+                  field1: 'value1'
+                  field2: 'value2'
       responses:
         '200':
-          description: {Success description}
+          description: { Success description }
           headers:
             X-Trace-Id:
               description: Correlation ID for tracing
@@ -38,8 +38,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/{ResponseSchema}'
               example:
-                id: "uuid-here"
-                field1: "value1"
+                id: 'uuid-here'
+                field1: 'value1'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -59,29 +59,29 @@ components:
       bearerFormat: JWT
 
   schemas:
-    {RequestSchema}:
+    { RequestSchema }:
       type: object
       required:
-        - {required-field}
+        - { required-field }
       properties:
-        {field-name}:
-          type: {type}
-          minLength: {min}
-          maxLength: {max}
+        { field-name }:
+          type: { type }
+          minLength: { min }
+          maxLength: { max }
           pattern: '{regex-if-applicable}'
-          description: {Description}
-          example: "{example-value}"
+          description: { Description }
+          example: '{example-value}'
 
-    {ResponseSchema}:
+    { ResponseSchema }:
       type: object
       properties:
         id:
           type: string
           format: uuid
-          description: {Entity ID}
-        {field-name}:
-          type: {type}
-          example: "{example}"
+          description: { Entity ID }
+        { field-name }:
+          type: { type }
+          example: '{example}'
 
     ErrorResponse:
       type: object
@@ -94,7 +94,7 @@ components:
         code:
           type: string
           description: Business error code
-          example: "ERR_{CATEGORY}_{NUM}"
+          example: 'ERR_{CATEGORY}_{NUM}'
         message:
           type: string
           description: Human-readable error message

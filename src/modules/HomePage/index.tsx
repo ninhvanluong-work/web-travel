@@ -9,13 +9,11 @@ import { cn } from '@/lib/utils';
 import type { NextPageWithLayout } from '@/types';
 
 import SearchBox from './components/SearchBox';
-import VirtualKeyboard from './components/VirtualKeyboard';
 
 const HomePage: NextPageWithLayout = () => {
   const router = useRouter();
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
@@ -53,59 +51,12 @@ const HomePage: NextPageWithLayout = () => {
     router.push(`/search?q=${encodeURIComponent(suggestion)}`);
   };
 
-  const handleVirtualKeyPress = (key: string) => {
-    if (!searchInputRef.current) return;
-
-    const input = searchInputRef.current;
-    const scrollPos = input.scrollTop;
-    const currentVal = input.value;
-    let newVal = currentVal;
-    let selectionStart = input.selectionStart || currentVal.length;
-    let selectionEnd = input.selectionEnd || currentVal.length;
-
-    if (key === 'backspace') {
-      if (selectionStart === selectionEnd && selectionStart > 0) {
-        newVal = currentVal.slice(0, selectionStart - 1) + currentVal.slice(selectionStart);
-        selectionStart--;
-      } else if (selectionStart !== selectionEnd) {
-        newVal = currentVal.slice(0, selectionStart) + currentVal.slice(selectionEnd);
-      }
-      selectionEnd = selectionStart;
-    } else if (key === 'space') {
-      newVal = `${currentVal.slice(0, selectionStart)} ${currentVal.slice(selectionEnd)}`;
-      selectionStart++;
-      selectionEnd = selectionStart;
-    } else if (key === 'return') {
-      if (newVal.trim()) {
-        router.push(`/search?q=${encodeURIComponent(newVal.trim())}`);
-      }
-      return;
-    } else if (key === 'shift' || key === '123') {
-      return;
-    } else {
-      newVal = currentVal.slice(0, selectionStart) + key + currentVal.slice(selectionEnd);
-      selectionStart++;
-      selectionEnd = selectionStart;
-    }
-
-    const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
-    nativeInputValueSetter?.call(input, newVal);
-
-    const event = new Event('input', { bubbles: true });
-    input.dispatchEvent(event);
-
-    input.setSelectionRange(selectionStart, selectionEnd);
-    input.focus();
-    input.scrollTop = scrollPos;
-  };
-
   return (
     <div
       className="relative h-full w-full overflow-hidden"
       onClick={unmuteOnInteraction}
       onTouchStart={unmuteOnInteraction}
     >
-      <VirtualKeyboard isVisible={isFocused} onKeyPress={handleVirtualKeyPress} />
       <video
         ref={videoRef}
         id="myVideo"
@@ -137,7 +88,7 @@ const HomePage: NextPageWithLayout = () => {
         >
           <div className="w-full flex flex-col items-center animate__animated animate__slideInUp">
             <div className="w-full max-w-[500px]">
-              <SearchBox ref={searchInputRef} onSearchClick={handleSearchFocus} />
+              <SearchBox onSearchClick={handleSearchFocus} />
             </div>
 
             {isFocused && (
