@@ -78,7 +78,7 @@ const HomePage: NextPageWithLayout = () => {
 
       {isFocused && (
         <div
-          className="absolute inset-0 bg-black/60 z-20 animate__animated animate__fadeIn"
+          className="fixed inset-0 max-w-[430px] left-1/2 -translate-x-1/2 bg-black/60 z-20 animate__animated animate__fadeIn"
           onClick={(e) => {
             e.stopPropagation();
             setIsFocused(false);

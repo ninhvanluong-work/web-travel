@@ -168,6 +168,10 @@
   html,
   body {
     @apply bg-background text-foreground scroll-smooth font-sans font-normal;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
   }
 }
 
