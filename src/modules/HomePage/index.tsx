@@ -86,7 +86,6 @@ const HomePage: NextPageWithLayout = () => {
         />
       )}
 
-      <div className="fixed inset-0 max-w-[430px] left-1/2 -translate-x-1/2 bg-black/30" />
       <main className="relative z-30 h-full w-full pointer-events-none">
         <div
           className={cn(
