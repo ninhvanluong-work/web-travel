@@ -40,8 +40,16 @@ const HomePage: NextPageWithLayout = () => {
     // Chỉ unmute nếu là lần đầu (browser block autoplay), KHÔNG phải user tắt thủ công
     if (videoRef.current && isMuted && !userMutedManually) {
       videoRef.current.muted = false;
-      videoRef.current.play();
-      setIsMuted(false);
+      videoRef.current
+        .play()
+        .then(() => {
+          setIsMuted(false);
+        })
+        .catch((error) => {
+          console.log('Play failed:', error);
+          // Nếu vẫn không play được, giữ nguyên muted state
+          videoRef.current!.muted = true;
+        });
     }
   };
 
@@ -118,8 +126,16 @@ const HomePage: NextPageWithLayout = () => {
             if (videoRef.current) {
               const newMutedState = !videoRef.current.muted;
               videoRef.current.muted = newMutedState;
-              setIsMuted(newMutedState);
               setUserMutedManually(newMutedState);
+
+              // Nếu đang unmute và video bị pause, thử play lại
+              if (!newMutedState && videoRef.current.paused) {
+                videoRef.current.play().catch((error) => {
+                  console.log('Play failed:', error);
+                });
+              }
+
+              setIsMuted(newMutedState);
             }
           }}
           onTouchEnd={(e) => {
@@ -128,8 +144,16 @@ const HomePage: NextPageWithLayout = () => {
             if (videoRef.current) {
               const newMutedState = !videoRef.current.muted;
               videoRef.current.muted = newMutedState;
-              setIsMuted(newMutedState);
               setUserMutedManually(newMutedState);
+
+              // Nếu đang unmute và video bị pause, thử play lại
+              if (!newMutedState && videoRef.current.paused) {
+                videoRef.current.play().catch((error) => {
+                  console.log('Play failed:', error);
+                });
+              }
+
+              setIsMuted(newMutedState);
             }
           }}
           aria-label={isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'}
