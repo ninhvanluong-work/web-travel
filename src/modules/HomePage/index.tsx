@@ -37,7 +37,6 @@ const HomePage: NextPageWithLayout = () => {
   }, []);
 
   const unmuteOnInteraction = () => {
-    // Chỉ unmute nếu là lần đầu (browser block autoplay), KHÔNG phải user tắt thủ công
     if (videoRef.current && isMuted && !userMutedManually) {
       videoRef.current.muted = false;
       videoRef.current
@@ -47,7 +46,6 @@ const HomePage: NextPageWithLayout = () => {
         })
         .catch((error) => {
           console.log('Play failed:', error);
-          // Nếu vẫn không play được, giữ nguyên muted state
           videoRef.current!.muted = true;
         });
     }
@@ -70,7 +68,7 @@ const HomePage: NextPageWithLayout = () => {
       <video
         ref={videoRef}
         id="myVideo"
-        className="absolute top-1/2 left-1/2 min-h-full min-w-full -translate-x-1/2 -translate-y-1/2 object-cover"
+        className="fixed top-1/2 left-1/2 min-h-full min-w-full max-w-[430px] -translate-x-1/2 -translate-y-1/2 object-cover"
         src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/Village%20Tour.mov"
         autoPlay
         loop
@@ -88,7 +86,7 @@ const HomePage: NextPageWithLayout = () => {
         />
       )}
 
-      <div className="absolute inset-0 bg-black/30" />
+      <div className="fixed inset-0 max-w-[430px] left-1/2 -translate-x-1/2 bg-black/30" />
       <main className="relative z-30 h-full w-full pointer-events-none">
         <div
           className={cn(
@@ -128,7 +126,6 @@ const HomePage: NextPageWithLayout = () => {
               videoRef.current.muted = newMutedState;
               setUserMutedManually(newMutedState);
 
-              // Nếu đang unmute và video bị pause, thử play lại
               if (!newMutedState && videoRef.current.paused) {
                 videoRef.current.play().catch((error) => {
                   console.log('Play failed:', error);
@@ -146,7 +143,6 @@ const HomePage: NextPageWithLayout = () => {
               videoRef.current.muted = newMutedState;
               setUserMutedManually(newMutedState);
 
-              // Nếu đang unmute và video bị pause, thử play lại
               if (!newMutedState && videoRef.current.paused) {
                 videoRef.current.play().catch((error) => {
                   console.log('Play failed:', error);
