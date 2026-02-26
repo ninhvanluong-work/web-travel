@@ -16,6 +16,7 @@ const HomePage: NextPageWithLayout = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [userMutedManually, setUserMutedManually] = useState(false);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -36,7 +37,8 @@ const HomePage: NextPageWithLayout = () => {
   }, []);
 
   const unmuteOnInteraction = () => {
-    if (videoRef.current && isMuted) {
+    // Chỉ unmute nếu là lần đầu (browser block autoplay), KHÔNG phải user tắt thủ công
+    if (videoRef.current && isMuted && !userMutedManually) {
       videoRef.current.muted = false;
       videoRef.current.play();
       setIsMuted(false);
@@ -110,15 +112,27 @@ const HomePage: NextPageWithLayout = () => {
         </div>
 
         <button
-          className="absolute top-4 right-4 p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors pointer-events-auto z-50"
+          className="absolute top-4 right-4 p-3 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors pointer-events-auto z-50 active:scale-95"
           onClick={(e) => {
             e.stopPropagation();
             if (videoRef.current) {
-              videoRef.current.muted = !videoRef.current.muted;
-              setIsMuted(videoRef.current.muted);
+              const newMutedState = !videoRef.current.muted;
+              videoRef.current.muted = newMutedState;
+              setIsMuted(newMutedState);
+              setUserMutedManually(newMutedState);
             }
           }}
-          onTouchStart={(e) => e.stopPropagation()}
+          onTouchEnd={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (videoRef.current) {
+              const newMutedState = !videoRef.current.muted;
+              videoRef.current.muted = newMutedState;
+              setIsMuted(newMutedState);
+              setUserMutedManually(newMutedState);
+            }
+          }}
+          aria-label={isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'}
         >
           {isMuted ? <Icons.volumeX size={24} /> : <Icons.volume2 size={24} />}
         </button>
