@@ -68,7 +68,7 @@ const HomePage: NextPageWithLayout = () => {
       <video
         ref={videoRef}
         id="myVideo"
-        className="fixed top-1/2 left-1/2 min-h-full min-w-full max-w-[430px] -translate-x-1/2 -translate-y-1/2 object-cover"
+        className="fixed top-1/2 left-1/2 h-[100dvh] max-h-[932px] w-full max-w-[430px] -translate-x-1/2 -translate-y-1/2 object-cover"
         src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/Village%20Tour.mov"
         autoPlay
         loop
@@ -78,7 +78,7 @@ const HomePage: NextPageWithLayout = () => {
 
       {isFocused && (
         <div
-          className="fixed inset-0 max-w-[430px] left-1/2 -translate-x-1/2 bg-black/60 z-20 animate__animated animate__fadeIn"
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[430px] h-[100dvh] max-h-[932px] bg-black/60 z-20 animate__animated animate__fadeIn"
           onClick={(e) => {
             e.stopPropagation();
             setIsFocused(false);
