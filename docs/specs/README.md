@@ -12,6 +12,7 @@ Ví dụ: `video-feed-tiktok-detail.md`, `search-filter-advanced.md`
 
 ## Danh sách specs
 
-| File                                                         | Tính năng                             | Trạng thái  | Ngày tạo   |
-| ------------------------------------------------------------ | ------------------------------------- | ----------- | ---------- |
-| [video-feed-tiktok-detail.md](./video-feed-tiktok-detail.md) | Video Feed & TikTok-style Detail Page | ✅ Approved | 2026-02-28 |
+| File                                                                       | Tính năng                              | Trạng thái  | Ngày tạo   |
+| -------------------------------------------------------------------------- | -------------------------------------- | ----------- | ---------- |
+| [video-feed-tiktok-detail.md](./video-feed-tiktok-detail.md)               | Video Feed & TikTok-style Detail Page  | ✅ Approved | 2026-02-28 |
+| [homepage-searchbox-keyboard-fix.md](./homepage-searchbox-keyboard-fix.md) | SearchBox Keyboard Push Fix (HomePage) | 📝 Draft    | 2026-02-28 |

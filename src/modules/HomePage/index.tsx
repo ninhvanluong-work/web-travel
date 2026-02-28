@@ -55,6 +55,16 @@ const HomePage: NextPageWithLayout = () => {
     setIsFocused(true);
   };
 
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!isFocused || !vv) return undefined;
+
+    const handleResize = () => window.scrollTo({ top: 0, behavior: 'instant' });
+
+    vv.addEventListener('resize', handleResize);
+    return () => vv.removeEventListener('resize', handleResize);
+  }, [isFocused]);
+
   const handleSuggestionClick = (suggestion: string) => {
     router.push(`/search?q=${encodeURIComponent(suggestion)}`);
   };

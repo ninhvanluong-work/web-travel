@@ -68,6 +68,11 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onClick={handleSearchClick}
+          onFocus={() => {
+            requestAnimationFrame(() => {
+              window.scrollTo({ top: 0, behavior: 'instant' });
+            });
+          }}
         />
       </div>
     );
