@@ -17,6 +17,16 @@ const buttonVariants = cva(
         secondary: 'text-neutral-900 bg-neutral-grad-3 border border-neutral-300',
         disable: 'text-neutral-500 bg-neutral-grad-3 border border-neutral-300',
         ghost: 'text-neutral-900 hover:bg-neutral-200',
+        /** Icon-only button on light bg — hover neutral fill */
+        icon: 'text-neutral-600 hover:bg-neutral-100',
+        /** Glass button on dark video overlay — back button style */
+        glass: 'bg-black/30 border border-white/[0.15] text-white backdrop-blur-md hover:bg-black/50',
+        /** Lighter glass button on dark overlay — mute button in TikTok slide */
+        glassLight: 'bg-white/[0.12] border border-white/20 text-white backdrop-blur-sm',
+        /** Semi-opaque overlay button on video — grid card mute */
+        overlay: 'bg-black/55 text-white/80',
+        /** Fully transparent — like button in TikTok slide */
+        transparent: 'bg-transparent text-white',
       },
       rounded: {
         default: 'rounded-sm',
@@ -33,6 +43,8 @@ const buttonVariants = cva(
         md: 'h-[1.5rem]',
         xs: 'h-[2rem]',
         lg: 'h-[2.5rem]',
+        /** No fixed height — button sizes from padding + icon content */
+        icon: '',
       },
     },
     defaultVariants: {

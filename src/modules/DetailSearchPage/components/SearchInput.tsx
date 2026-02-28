@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 import React, { useRef } from 'react';
 
 import { Icons } from '@/assets/icons';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface Props {
@@ -20,15 +21,19 @@ const SearchInput = ({ onSearch, defaultValue }: Props) => {
   }, [defaultValue]);
 
   return (
-    <div className="flex w-full items-center gap-2">
-      <button
-        type="button"
+    <div className="flex w-full items-center gap-[6px]">
+      <Button
+        variant="icon"
+        size="icon"
+        rounded="full"
+        blur={false}
+        className="flex-shrink-0 p-[7px]"
         onClick={() => router.back()}
-        className="rounded-full p-2 transition-colors hover:bg-gray-100"
-        aria-label="Go back"
+        aria-label="Quay lại"
       >
-        <Icons.chevronLeft className="h-6 w-6 text-gray-500" />
-      </button>
+        <Icons.chevronLeft className="h-[22px] w-[22px]" />
+      </Button>
+
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -38,17 +43,26 @@ const SearchInput = ({ onSearch, defaultValue }: Props) => {
       >
         <Input
           ref={ref}
-          className={
-            'rounded-full pl-14 h-[2.65rem] text-base shadow-sm transition-colors bg-white border-gray-300 text-black placeholder:text-gray-500 hover:bg-gray-50 focus-visible:ring-1 focus-visible:ring-black/20'
-          }
-          placeholder="Search videos..."
+          className="rounded-full pl-14 h-[2.5rem] text-[13px] font-dinpro tracking-[0.01em] bg-neutral-100 border-transparent text-neutral-900 placeholder:text-neutral-400 focus-visible:bg-white focus-visible:border-neutral-200 focus-visible:ring-2 focus-visible:ring-main/20 transition-all duration-200 shadow-none"
+          placeholder="Tìm kiếm video..."
           variant="filled"
-          prefix={<Icons.search className="w-6 h-6 text-gray-500 ml-1" strokeWidth={3} />}
+          prefix={<Icons.search className="w-[18px] h-[18px] text-neutral-400 ml-1" strokeWidth={2.5} />}
+          onChange={(e) => {
+            onSearch(e.target.value);
+          }}
         />
       </form>
-      <button type="button" className="rounded-full p-2 transition-colors hover:bg-gray-100" aria-label="More options">
-        <Icons.dots className="h-6 w-6 text-gray-500" />
-      </button>
+
+      <Button
+        variant="icon"
+        size="icon"
+        rounded="full"
+        blur={false}
+        className="flex-shrink-0 p-[7px]"
+        aria-label="Tuỳ chọn"
+      >
+        <Icons.dots className="h-[22px] w-[22px]" />
+      </Button>
     </div>
   );
 };

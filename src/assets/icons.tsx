@@ -8,6 +8,7 @@ import {
   Copy,
   HelpCircle,
   LogOut,
+  ThumbsUp,
   User,
   Volume2,
   VolumeX,
@@ -44,6 +45,8 @@ import eyeHidden from '@/assets/svg/eye-hidden.svg';
 import facebook from '@/assets/svg/facebook.svg';
 import facebookCircle from '@/assets/svg/facebook_circle.svg';
 import google from '@/assets/svg/google.svg';
+import heart from '@/assets/svg/heart.svg';
+import heartSolid from '@/assets/svg/heart-solid.svg';
 import image from '@/assets/svg/image.svg';
 import image1 from '@/assets/svg/image_1.svg';
 import information from '@/assets/svg/information.svg';
@@ -74,6 +77,9 @@ import twitterFill from '@/assets/svg/twitter-fill.svg';
 import unlink from '@/assets/svg/unlink.svg';
 import up from '@/assets/svg/up.svg';
 import upload from '@/assets/svg/upload.svg';
+import videoOff from '@/assets/svg/video-off.svg';
+import volume2Fill from '@/assets/svg/volume-2-fill.svg';
+import volumeXFill from '@/assets/svg/volume-x-fill.svg';
 import wallet from '@/assets/svg/wallet.svg';
 import warning from '@/assets/svg/warning.svg';
 import X from '@/assets/svg/X.svg';
@@ -159,8 +165,14 @@ const IconList = {
   wallet,
   x: X,
   xBold,
+  thumbsUp: ThumbsUp,
   volume2: Volume2,
   volumeX: VolumeX,
+  heart,
+  heartSolid,
+  volumeXFill,
+  volume2Fill,
+  videoOff,
 };
 
 export const Icons = IconList as Record<keyof typeof IconList, Icon>;
