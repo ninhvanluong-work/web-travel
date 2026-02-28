@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -11,8 +11,8 @@ interface Props {
   allIds?: string[];
 }
 
-const VideoCard = ({ video, allIds }: Props) => {
-  const router = useRouter();
+const VideoCard = ({ video }: Props) => {
+  // const router = useRouter();
   const [muted, setMuted] = useState(true);
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
@@ -27,13 +27,13 @@ const VideoCard = ({ video, allIds }: Props) => {
     }
   }, [isInView, videoEl]);
 
-  const handleClick = () => {
-    const idsParam = allIds && allIds.length > 0 ? `?ids=${allIds.join(',')}` : '';
-    router.push(`/video/${video.id}${idsParam}`);
-  };
+  // const handleClick = () => {
+  //   const idsParam = allIds && allIds.length > 0 ? `?ids=${allIds.join(',')}` : '';
+  //   router.push(`/video/${video.id}${idsParam}`);
+  // };
 
   return (
-    <div className="group relative cursor-pointer overflow-hidden bg-black" onClick={handleClick}>
+    <div className="group relative overflow-hidden bg-black">
       <div className="aspect-[3/4] w-full relative">
         {/* Video */}
         <video

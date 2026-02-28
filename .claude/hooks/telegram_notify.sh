@@ -30,11 +30,14 @@ load_env
 # Read JSON input from stdin
 INPUT=$(cat)
 
+# jq replacement using node (cross-platform)
+jq_r() { echo "$1" | node -e "try{const d=JSON.parse(require('fs').readFileSync(0,'utf8'));const r=$2;process.stdout.write(String(r??''))}catch(e){process.stdout.write('')}"; }
+
 # Extract relevant information from the hook input
-HOOK_TYPE=$(echo "$INPUT" | jq -r '.hookType // "unknown"')
-PROJECT_DIR=$(echo "$INPUT" | jq -r '.projectDir // ""')
+HOOK_TYPE=$(jq_r "$INPUT" "d.hookType||'unknown'")
+PROJECT_DIR=$(jq_r "$INPUT" "d.projectDir||''")
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-SESSION_ID=$(echo "$INPUT" | jq -r '.sessionId // ""')
+SESSION_ID=$(jq_r "$INPUT" "d.sessionId||''")
 PROJECT_NAME=$(basename "$PROJECT_DIR")
 
 # Configuration - these will be set via environment variables
@@ -58,7 +61,7 @@ send_telegram_message() {
     local url="https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"
     
     # Escape special characters for JSON
-    local escaped_message=$(echo "$message" | jq -Rs .)
+    local escaped_message=$(echo "$message" | node -e "const d=require('fs').readFileSync(0,'utf8');process.stdout.write(JSON.stringify(d))")
     
     local payload=$(cat <<EOF
 {
@@ -80,11 +83,19 @@ EOF
 case "$HOOK_TYPE" in
     "Stop")
         # Extract tool usage summary
-        TOOLS_USED=$(echo "$INPUT" | jq -r '.toolsUsed[]?.tool // empty' | sort | uniq -c | sort -nr)
-        FILES_MODIFIED=$(echo "$INPUT" | jq -r '.toolsUsed[]? | select(.tool == "Edit" or .tool == "Write" or .tool == "MultiEdit") | .parameters.file_path // empty' | sort | uniq)
-        
+        TOOLS_USED=$(echo "$INPUT" | node -e "
+const d=JSON.parse(require('fs').readFileSync(0,'utf8'));
+const tools=(d.toolsUsed||[]).map(t=>t.tool).filter(Boolean);
+process.stdout.write(tools.join('\n'));
+" | sort | uniq -c | sort -nr)
+        FILES_MODIFIED=$(echo "$INPUT" | node -e "
+const d=JSON.parse(require('fs').readFileSync(0,'utf8'));
+const files=(d.toolsUsed||[]).filter(t=>['Edit','Write','MultiEdit'].includes(t.tool)).map(t=>t.parameters&&t.parameters.file_path).filter(Boolean);
+process.stdout.write([...new Set(files)].join('\n'));
+")
+
         # Count operations
-        TOTAL_TOOLS=$(echo "$INPUT" | jq '.toolsUsed | length')
+        TOTAL_TOOLS=$(echo "$INPUT" | node -e "const d=JSON.parse(require('fs').readFileSync(0,'utf8'));process.stdout.write(String((d.toolsUsed||[]).length))")
         
         # Build summary message
         MESSAGE="🚀 *DevPocket Task Completed*
@@ -126,7 +137,7 @@ None"
         ;;
         
     "SubagentStop")
-        SUBAGENT_TYPE=$(echo "$INPUT" | jq -r '.subagentType // "unknown"')
+        SUBAGENT_TYPE=$(jq_r "$INPUT" "d.subagentType||'unknown'")
         MESSAGE="🤖 *DevPocket Subagent Completed*
 
 📅 *Time:* ${TIMESTAMP}
