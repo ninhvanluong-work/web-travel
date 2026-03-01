@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
@@ -11,6 +11,16 @@ interface Props {
 }
 
 const VideoGrid = ({ videos, isLoading }: Props) => {
+  const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
+
+  const handleRequestAudio = useCallback((id: string) => {
+    setActiveAudioId((prev) => (prev === id ? null : id));
+  }, []);
+
+  const handleAudioDeactivate = useCallback((id: string) => {
+    setActiveAudioId((prev) => (prev === id ? null : prev));
+  }, []);
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 gap-[2px] w-full">
@@ -30,12 +40,16 @@ const VideoGrid = ({ videos, isLoading }: Props) => {
     );
   }
 
-  const allIds = videos.map((v) => v.id);
-
   return (
     <div className="grid grid-cols-2 gap-[2px] w-full">
       {videos.map((video) => (
-        <VideoCard key={video.id} video={video} allIds={allIds} />
+        <VideoCard
+          key={video.id}
+          video={video}
+          isAudioActive={activeAudioId === video.id}
+          onRequestAudio={handleRequestAudio}
+          onAudioDeactivate={handleAudioDeactivate}
+        />
       ))}
     </div>
   );

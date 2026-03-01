@@ -1,5 +1,4 @@
-// import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
@@ -8,29 +7,34 @@ import { useInView } from '@/hooks/useInview';
 
 interface Props {
   video: IVideo;
-  allIds?: string[];
+  isAudioActive: boolean;
+  onRequestAudio: (id: string) => void;
+  onAudioDeactivate: (id: string) => void;
 }
 
-const VideoCard = ({ video }: Props) => {
-  // const router = useRouter();
-  const [muted, setMuted] = useState(true);
+const VideoCard = ({ video, isAudioActive, onRequestAudio, onAudioDeactivate }: Props) => {
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const isInView = useInView(videoEl, { threshold: 0.5 });
+  const onAudioDeactivateRef = useRef(onAudioDeactivate);
+  onAudioDeactivateRef.current = onAudioDeactivate;
 
+  // Effect 1: play/pause theo visibility
   useEffect(() => {
-    if (isInView) {
-      videoEl?.play().catch(() => {});
-    } else {
+    if (!isInView) {
       videoEl?.pause();
       setReady(false);
+    } else {
+      videoEl?.play().catch(() => {});
     }
   }, [isInView, videoEl]);
 
-  // const handleClick = () => {
-  //   const idsParam = allIds && allIds.length > 0 ? `?ids=${allIds.join(',')}` : '';
-  //   router.push(`/video/${video.id}${idsParam}`);
-  // };
+  // Effect 2: notify parent khi scroll out khi đang active
+  useEffect(() => {
+    if (!isInView && isAudioActive) {
+      onAudioDeactivateRef.current(video.id);
+    }
+  }, [isInView, isAudioActive, video.id]);
 
   return (
     <div className="group relative overflow-hidden bg-black">
@@ -40,7 +44,7 @@ const VideoCard = ({ video }: Props) => {
           ref={setVideoEl}
           src={video.link}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          muted={muted}
+          muted={!isAudioActive}
           playsInline
           loop
           poster={video.thumbnail}
@@ -72,14 +76,14 @@ const VideoCard = ({ video }: Props) => {
           className="absolute bottom-[42px] right-2 p-[6px] z-10"
           onClick={(e) => {
             e.stopPropagation();
-            setMuted((prev) => !prev);
+            onRequestAudio(video.id);
           }}
-          aria-label={muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
+          aria-label={isAudioActive ? 'Tắt âm thanh' : 'Bật âm thanh'}
         >
-          {muted ? (
-            <Icons.volumeXFill className="w-3.5 h-3.5 text-white/80" />
-          ) : (
+          {isAudioActive ? (
             <Icons.volume2Fill className="w-3.5 h-3.5 text-white" />
+          ) : (
+            <Icons.volumeXFill className="w-3.5 h-3.5 text-white/80" />
           )}
         </Button>
 
@@ -94,4 +98,4 @@ const VideoCard = ({ video }: Props) => {
   );
 };
 
-export default VideoCard;
+export default React.memo(VideoCard);
