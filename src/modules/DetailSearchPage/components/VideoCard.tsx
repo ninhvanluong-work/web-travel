@@ -8,12 +8,13 @@ import { useInView } from '@/hooks/useInview';
 interface Props {
   video: IVideo;
   isAudioActive: boolean;
+  isDimmed: boolean;
   onRequestAudio: (id: string) => void;
   onAudioDeactivate: (id: string) => void;
   onVideoClick: (id: string) => void;
 }
 
-const VideoCard = ({ video, isAudioActive, onRequestAudio, onAudioDeactivate, onVideoClick }: Props) => {
+const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeactivate, onVideoClick }: Props) => {
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const isInView = useInView(videoEl, { threshold: 0.5 });
@@ -38,7 +39,12 @@ const VideoCard = ({ video, isAudioActive, onRequestAudio, onAudioDeactivate, on
   }, [isInView, isAudioActive, video.id]);
 
   return (
-    <div className="group relative overflow-hidden bg-black cursor-pointer" onClick={() => onVideoClick(video.id)}>
+    <div
+      className={`group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out ${
+        isDimmed ? 'opacity-45' : 'opacity-100'
+      }`}
+      onClick={() => onVideoClick(video.id)}
+    >
       <div className="aspect-[3/4] w-full relative">
         {/* Video */}
         <video

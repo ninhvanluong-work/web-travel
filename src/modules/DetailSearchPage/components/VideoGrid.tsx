@@ -57,6 +57,7 @@ const VideoGrid = ({ videos, isLoading }: Props) => {
           key={video.id}
           video={video}
           isAudioActive={activeAudioId === video.id}
+          isDimmed={activeAudioId !== null && activeAudioId !== video.id}
           onRequestAudio={handleRequestAudio}
           onAudioDeactivate={handleAudioDeactivate}
           onVideoClick={handleVideoClick}

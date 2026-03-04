@@ -7,6 +7,10 @@ import { ROUTE } from '@/types';
 
 import { refreshTokenRequest } from './auth';
 
+if (!process.env.NEXT_PUBLIC_API_URL) {
+  console.error('[axios] NEXT_PUBLIC_API_URL is not set — API calls will fail');
+}
+
 export const request = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
