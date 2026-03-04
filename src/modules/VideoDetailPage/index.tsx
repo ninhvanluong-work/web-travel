@@ -54,22 +54,28 @@ const VideoDetailPage = () => {
   }
 
   return (
-    <div className="relative h-dvh overflow-hidden bg-black">
+    <div className="relative h-full overflow-hidden bg-black">
       <Button
         variant="glass"
         size="icon"
         rounded="full"
         blur={false}
-        className="absolute top-[14px] left-[14px] z-50 p-[9px]"
+        className="absolute left-[14px] z-50 p-[9px]"
+        style={{ top: 'calc(14px + env(safe-area-inset-top, 0px))' }}
         onClick={() => router.back()}
         aria-label="Quay lại"
       >
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
-      <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide">
+      <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none">
         {videos.map((video) => (
-          <VideoSlide key={video.id} video={video} onVisible={() => handleVideoVisible(video.id)} />
+          <VideoSlide
+            key={video.id}
+            video={video}
+            onVisible={() => handleVideoVisible(video.id)}
+            initialMuted={video.id !== id}
+          />
         ))}
       </div>
     </div>

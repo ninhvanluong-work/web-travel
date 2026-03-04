@@ -13,11 +13,12 @@ function formatCount(n: number): string {
 interface Props {
   video: IVideo;
   onVisible: () => void;
+  initialMuted?: boolean;
 }
 
-const VideoSlide = ({ video, onVisible }: Props) => {
+const VideoSlide = ({ video, onVisible, initialMuted = true }: Props) => {
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(initialMuted);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(video.likeCount);
   const [likeAnimKey, setLikeAnimKey] = useState(0);
@@ -47,7 +48,7 @@ const VideoSlide = ({ video, onVisible }: Props) => {
   return (
     <div
       id={`video-slide-${video.id}`}
-      className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
+      className="relative h-full w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
       {/* Video */}
       <video
@@ -68,7 +69,10 @@ const VideoSlide = ({ video, onVisible }: Props) => {
       </div>
 
       {/* Info overlay — bottom left */}
-      <div className="absolute bottom-0 left-0 right-[72px] px-[18px] pb-[28px] animate-fade-up">
+      <div
+        className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up"
+        style={{ paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))' }}
+      >
         <h2 className="text-white font-dinpro font-bold text-[18px] leading-[1.3] drop-shadow-md">{video.title}</h2>
         <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-[1.5] line-clamp-3 drop-shadow-sm">
           {video.description}
@@ -76,13 +80,16 @@ const VideoSlide = ({ video, onVisible }: Props) => {
       </div>
 
       {/* Action bar — bottom right */}
-      <div className="absolute bottom-[24px] right-[14px] flex flex-col items-center gap-[22px]">
+      <div
+        className="absolute right-[14px] flex flex-col items-center gap-[22px]"
+        style={{ bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))' }}
+      >
         {/* Like */}
         <Button
           variant="transparent"
           size="icon"
           blur={false}
-          className="flex-col gap-[5px] h-auto p-0"
+          className="flex-col gap-[5px] h-auto p-[7px]"
           onClick={toggleLike}
           aria-label={liked ? 'Bỏ thích' : 'Thích'}
         >

@@ -14,7 +14,6 @@ interface SearchBoxProps {
 const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
   ({ autoFocus, variant = 'transparent', onSearchClick }, ref) => {
     const router = useRouter();
-
     const [searchValue, setSearchValue] = React.useState('');
 
     const handleSearch = () => {
@@ -26,22 +25,14 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
       }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        handleSearch();
-      }
-    };
-
-    const handleSearchClick = () => {
-      if (onSearchClick) {
-        onSearchClick();
-      } else {
-        handleSearch();
-      }
-    };
-
     return (
-      <div className="w-full max-w-[500px] rounded-full">
+      <form
+        className="w-full max-w-[500px] rounded-full"
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSearch();
+        }}
+      >
         <Input
           ref={ref}
           id="searchBox"
@@ -66,13 +57,9 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
           )}
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onClick={handleSearchClick}
-          onFocus={() => {
-            if (onSearchClick) onSearchClick();
-          }}
+          onFocus={() => onSearchClick?.()}
         />
-      </div>
+      </form>
     );
   }
 );

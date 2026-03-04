@@ -10,9 +10,10 @@ interface Props {
   isAudioActive: boolean;
   onRequestAudio: (id: string) => void;
   onAudioDeactivate: (id: string) => void;
+  onVideoClick: (id: string) => void;
 }
 
-const VideoCard = ({ video, isAudioActive, onRequestAudio, onAudioDeactivate }: Props) => {
+const VideoCard = ({ video, isAudioActive, onRequestAudio, onAudioDeactivate, onVideoClick }: Props) => {
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const isInView = useInView(videoEl, { threshold: 0.5 });
@@ -37,7 +38,7 @@ const VideoCard = ({ video, isAudioActive, onRequestAudio, onAudioDeactivate }: 
   }, [isInView, isAudioActive, video.id]);
 
   return (
-    <div className="group relative overflow-hidden bg-black">
+    <div className="group relative overflow-hidden bg-black cursor-pointer" onClick={() => onVideoClick(video.id)}>
       <div className="aspect-[3/4] w-full relative">
         {/* Video */}
         <video

@@ -1,9 +1,9 @@
 import { createQuery } from 'react-query-kit';
 
 import { getListVideo } from './requests';
-import type { IVideo } from './types';
+import type { IVideo, IVideoVariables } from './types';
 
-export const useListVideo = createQuery<IVideo[]>({
-  primaryKey: '/videos',
-  queryFn: getListVideo,
+export const useListVideo = createQuery<IVideo[], IVideoVariables>({
+  primaryKey: '/video',
+  queryFn: ({ queryKey: [, variables] }) => getListVideo(variables),
 });

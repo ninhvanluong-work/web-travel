@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const VideoGrid = ({ videos, isLoading }: Props) => {
+  const router = useRouter();
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
 
   const handleRequestAudio = useCallback((id: string) => {
@@ -20,6 +22,14 @@ const VideoGrid = ({ videos, isLoading }: Props) => {
   const handleAudioDeactivate = useCallback((id: string) => {
     setActiveAudioId((prev) => (prev === id ? null : prev));
   }, []);
+
+  const handleVideoClick = useCallback(
+    (id: string) => {
+      const idsParam = videos.map((v) => v.id).join(',');
+      router.push(`/video/${id}?ids=${idsParam}`);
+    },
+    [router, videos]
+  );
 
   if (isLoading) {
     return (
@@ -49,6 +59,7 @@ const VideoGrid = ({ videos, isLoading }: Props) => {
           isAudioActive={activeAudioId === video.id}
           onRequestAudio={handleRequestAudio}
           onAudioDeactivate={handleAudioDeactivate}
+          onVideoClick={handleVideoClick}
         />
       ))}
     </div>

@@ -2,14 +2,13 @@ import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import Router from 'next/router';
 
-import { env } from '@/lib/const';
 import { useUserStore } from '@/stores';
 import { ROUTE } from '@/types';
 
 import { refreshTokenRequest } from './auth';
 
 export const request = axios.create({
-  baseURL: env.API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
 const onRefreshToken = async () => {

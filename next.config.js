@@ -3,7 +3,10 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 const path = require('path');
-const withReactSvg = require('next-react-svg')({ include: path.resolve(__dirname, 'src/assets/svg') });
+const withReactSvg = require('next-react-svg')({
+  include: path.resolve(__dirname, 'src/assets/svg'),
+  titleProp: false,
+});
 
 const nextConfig = {
   // reactStrictMode: true,

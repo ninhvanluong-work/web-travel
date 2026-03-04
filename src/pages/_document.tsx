@@ -7,6 +7,10 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <meta name="application-name" content={siteConfig.name} />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
+        />
 
         <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" />
