@@ -21,7 +21,7 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
   const onAudioDeactivateRef = useRef(onAudioDeactivate);
   onAudioDeactivateRef.current = onAudioDeactivate;
 
-  // Effect 1: play/pause theo visibility
+  // Effect 1: play/pause by visibility
   useEffect(() => {
     if (!isInView) {
       videoEl?.pause();
@@ -31,7 +31,7 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
     }
   }, [isInView, videoEl]);
 
-  // Effect 2: notify parent khi scroll out khi đang active
+  // Effect 2: notify parent when scrolled out while active
   useEffect(() => {
     if (!isInView && isAudioActive) {
       onAudioDeactivateRef.current(video.id);

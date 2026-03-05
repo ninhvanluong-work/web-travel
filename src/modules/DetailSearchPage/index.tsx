@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { useListVideo } from '@/api/video';
+import { useInfiniteListVideo } from '@/api/video';
 import type { NextPageWithLayout } from '@/types';
 
 import SearchInput from './components/SearchInput';
@@ -11,32 +11,46 @@ const DetailSearchPage: NextPageWithLayout = () => {
   const router = useRouter();
   const { q } = router.query;
 
-  // Lazy init: capture URL param ngay lần render đầu (client-side nav đã có router.query)
-  const [query, setQuery] = useState(() => (typeof q === 'string' ? q : ''));
+  const [inputValue, setInputValue] = useState(() => (typeof q === 'string' ? q : ''));
+  const [query, setQuery] = useState(inputValue);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Fallback cho direct URL access: router.query chưa có ở lần render đầu
   useEffect(() => {
     if (router.isReady && typeof q === 'string') {
+      setInputValue(q);
       setQuery(q);
     }
   }, [router.isReady, q]);
 
-  const { data: videos, isLoading } = useListVideo({
+  // Debounce 300ms
+  useEffect(() => {
+    const timer = setTimeout(() => setQuery(inputValue), 300);
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
+  const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteListVideo({
     variables: { query: query || undefined },
     enabled: router.isReady,
   });
 
+  const videos = data?.pages.flatMap((page) => page.items) ?? [];
+
   return (
     <div className="h-full w-full overflow-y-auto scrollbar-hide bg-white">
       <div className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md px-[10px] pt-[10px] pb-[10px] border-b border-neutral-100/80">
-        <SearchInput value={query} onSearch={setQuery} />
+        <SearchInput value={inputValue} onSearch={setInputValue} />
       </div>
 
-      <VideoGrid videos={videos ?? []} isLoading={isLoading} />
+      <VideoGrid
+        videos={videos}
+        isLoading={isLoading}
+        hasNextPage={hasNextPage ?? false}
+        isFetchingMore={isFetchingNextPage}
+        onFetchMore={fetchNextPage}
+      />
 
       <div className="h-6" />
     </div>
