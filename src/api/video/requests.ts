@@ -8,6 +8,7 @@ const toVideo = (item: ApiVideoItem): IVideo => ({
   id: item.id,
   title: item.name,
   link: item.url,
+  shortUrl: item.shortUrl,
   thumbnail: item.thumbnail,
   description: item.description,
   likeCount: item.like,

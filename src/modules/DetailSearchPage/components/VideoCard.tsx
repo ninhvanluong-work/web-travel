@@ -49,7 +49,7 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
         {/* Video */}
         <video
           ref={setVideoEl}
-          src={video.link}
+          src={video.shortUrl}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           muted={!isAudioActive}
           playsInline
