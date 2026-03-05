@@ -54,7 +54,7 @@ const VideoDetailPage = () => {
   }
 
   return (
-    <div className="relative h-full overflow-hidden bg-black">
+    <div className="relative h-dvh overflow-hidden bg-black">
       <Button
         variant="glass"
         size="icon"
@@ -68,7 +68,7 @@ const VideoDetailPage = () => {
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
-      <div className="h-full overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none">
+      <div className="h-dvh overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none">
         {videos.map((video) => (
           <VideoSlide
             key={video.id}

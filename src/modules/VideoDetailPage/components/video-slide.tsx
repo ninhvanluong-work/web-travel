@@ -30,6 +30,7 @@ const VideoSlide = ({ video, onVisible, initialMuted = true }: Props) => {
 
   useEffect(() => {
     if (isInView) {
+      setMuted(false);
       videoEl?.play().catch(() => {});
       onVisibleRef.current();
     } else {
@@ -48,7 +49,7 @@ const VideoSlide = ({ video, onVisible, initialMuted = true }: Props) => {
   return (
     <div
       id={`video-slide-${video.id}`}
-      className="relative h-full w-full snap-start overflow-hidden bg-black flex-shrink-0"
+      className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
       {/* Video */}
       <video
