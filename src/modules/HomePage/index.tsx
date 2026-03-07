@@ -17,7 +17,6 @@ const HomePage: NextPageWithLayout = () => {
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [userMutedManually, setUserMutedManually] = useState(false);
-  const [vpOffsetY, setVpOffsetY] = useState(0);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -56,23 +55,6 @@ const HomePage: NextPageWithLayout = () => {
     setIsFocused(true);
   };
 
-  useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return undefined;
-
-    const update = () => {
-      // Counteract iOS auto-scroll by tracking visualViewport offset
-      setVpOffsetY(vv.offsetTop);
-    };
-
-    vv.addEventListener('resize', update);
-    vv.addEventListener('scroll', update);
-    return () => {
-      vv.removeEventListener('resize', update);
-      vv.removeEventListener('scroll', update);
-    };
-  }, []);
-
   const handleSuggestionClick = (suggestion: string) => {
     router.push(`/search?q=${encodeURIComponent(suggestion)}`);
   };
@@ -104,13 +86,10 @@ const HomePage: NextPageWithLayout = () => {
         />
       )}
 
-      <main
-        className="relative z-30 h-full w-full pointer-events-none"
-        style={{ transform: vpOffsetY ? `translateY(${vpOffsetY}px)` : undefined }}
-      >
+      <main className="relative z-30 h-full w-full pointer-events-none">
         <div
           className={cn(
-            'absolute left-1/2 w-full max-w-3xl -translate-x-1/2 px-[30px] pointer-events-auto transition-all duration-500 ease-in-out -translate-y-1/2',
+            'fixed left-1/2 w-full max-w-3xl -translate-x-1/2 px-[30px] pointer-events-auto transition-[top] duration-500 ease-in-out -translate-y-1/2',
             isFocused ? 'top-28' : 'top-[80%]'
           )}
         >
