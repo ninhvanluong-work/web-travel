@@ -14,6 +14,8 @@ const HomePage: NextPageWithLayout = () => {
   const router = useRouter();
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [userMutedManually, setUserMutedManually] = useState(false);
@@ -34,6 +36,31 @@ const HomePage: NextPageWithLayout = () => {
           setIsMuted(true);
         });
     }
+  }, []);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+
+    const applyTransform = (offsetTop: number) => {
+      if (searchRef.current) {
+        searchRef.current.style.transform = `translateX(-50%) translateY(calc(-50% + ${offsetTop}px))`;
+      }
+    };
+
+    applyTransform(vv?.offsetTop ?? 0);
+
+    const update = () => {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => applyTransform(vv?.offsetTop ?? 0));
+    };
+
+    vv?.addEventListener('resize', update);
+    vv?.addEventListener('scroll', update);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      vv?.removeEventListener('resize', update);
+      vv?.removeEventListener('scroll', update);
+    };
   }, []);
 
   const unmuteOnInteraction = () => {
@@ -93,15 +120,10 @@ const HomePage: NextPageWithLayout = () => {
         />
       )}
 
-      {/*
-        position: fixed thay vì absolute:
-        - fixed elements không nằm trong scroll flow → iOS không auto-scroll page khi input focused
-        - transition-[top] animate trượt từ top-[80%] lên top-28 khi focus
-        - animate__slideInUp trên inner div (tách riêng) để không conflict với -translate-x-1/2
-      */}
       <div
+        ref={searchRef}
         className={cn(
-          'fixed left-1/2 -translate-x-1/2 w-full max-w-3xl px-[30px] z-30 pointer-events-auto transition-[top] duration-500 ease-in-out -translate-y-1/2',
+          'fixed left-1/2 w-full max-w-3xl px-[30px] z-30 pointer-events-auto transition-[top] duration-500 ease-in-out',
           isFocused ? 'top-28' : 'top-[80%]'
         )}
       >
