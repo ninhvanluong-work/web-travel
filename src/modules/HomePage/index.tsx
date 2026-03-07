@@ -1,7 +1,7 @@
 import 'animate.css';
 
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
@@ -14,6 +14,8 @@ const HomePage: NextPageWithLayout = () => {
   const router = useRouter();
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+  const rafRef = useRef<number>(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [userMutedManually, setUserMutedManually] = useState(false);
@@ -51,6 +53,31 @@ const HomePage: NextPageWithLayout = () => {
     }
   };
 
+  const syncViewport = useCallback(() => {
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const vv = window.visualViewport;
+      if (mainRef.current && vv) {
+        const offsetY = vv.offsetTop;
+        mainRef.current.style.transform = offsetY > 0 ? `translateY(${offsetY}px)` : '';
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (vv) {
+      vv.addEventListener('resize', syncViewport);
+      vv.addEventListener('scroll', syncViewport);
+      return () => {
+        cancelAnimationFrame(rafRef.current);
+        vv.removeEventListener('resize', syncViewport);
+        vv.removeEventListener('scroll', syncViewport);
+      };
+    }
+    return undefined;
+  }, [syncViewport]);
+
   const handleSearchFocus = () => {
     setIsFocused(true);
   };
@@ -86,10 +113,14 @@ const HomePage: NextPageWithLayout = () => {
         />
       )}
 
-      <main className="relative z-30 h-full w-full pointer-events-none">
+      <main
+        ref={mainRef}
+        className="relative z-30 h-full w-full pointer-events-none"
+        style={{ willChange: 'transform' }}
+      >
         <div
           className={cn(
-            'fixed left-1/2 w-full max-w-3xl -translate-x-1/2 px-[30px] pointer-events-auto transition-[top] duration-500 ease-in-out -translate-y-1/2',
+            'absolute left-1/2 w-full max-w-3xl -translate-x-1/2 px-[30px] pointer-events-auto transition-[top] duration-500 ease-in-out -translate-y-1/2',
             isFocused ? 'top-28' : 'top-[80%]'
           )}
         >
