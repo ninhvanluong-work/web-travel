@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
-import { cn } from '@/lib/utils';
 import type { NextPageWithLayout } from '@/types';
 
 import SearchBox from './components/SearchBox';
@@ -43,7 +42,7 @@ const HomePage: NextPageWithLayout = () => {
 
     const applyTransform = (offsetTop: number) => {
       if (searchRef.current) {
-        searchRef.current.style.transform = `translateX(-50%) translateY(calc(-50% + ${offsetTop}px))`;
+        searchRef.current.style.transform = `translateY(${offsetTop}px)`;
       }
     };
 
@@ -121,32 +120,36 @@ const HomePage: NextPageWithLayout = () => {
       )}
 
       <div
-        ref={searchRef}
-        className={cn(
-          'fixed left-1/2 w-full max-w-3xl px-[30px] z-30 pointer-events-auto transition-[top] duration-500 ease-in-out',
-          isFocused ? 'top-28' : 'top-[80%]'
-        )}
+        className="fixed left-1/2 top-1/2 w-full max-w-3xl px-[30px] z-30 pointer-events-auto"
+        style={{
+          transform: isFocused
+            ? 'translateX(-50%) translateY(calc(7rem - 50vh - 50%))'
+            : 'translateX(-50%) translateY(calc(30vh - 50%))',
+          transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
       >
-        <div className="w-full flex flex-col items-center animate__animated animate__slideInUp">
-          <div className="w-full max-w-[500px]">
-            <SearchBox onSearchClick={() => setIsFocused(true)} />
-          </div>
-
-          {isFocused && (
-            <div className="mt-8 w-full max-w-[500px] animate__animated animate__fadeIn">
-              <ul className="flex flex-wrap gap-3 justify-start">
-                {SEARCH_SUGGESTIONS.map((suggestion, index) => (
-                  <li
-                    key={index}
-                    className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-sm cursor-pointer transition-colors flex items-center gap-2"
-                    onClick={() => handleSuggestionClick(suggestion)}
-                  >
-                    {suggestion}
-                  </li>
-                ))}
-              </ul>
+        <div ref={searchRef}>
+          <div className="w-full flex flex-col items-center animate__animated animate__slideInUp">
+            <div className="w-full max-w-[500px]">
+              <SearchBox onSearchClick={() => setIsFocused(true)} />
             </div>
-          )}
+
+            {isFocused && (
+              <div className="mt-8 w-full max-w-[500px] animate__animated animate__fadeIn">
+                <ul className="flex flex-wrap gap-3 justify-start">
+                  {SEARCH_SUGGESTIONS.map((suggestion, index) => (
+                    <li
+                      key={index}
+                      className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-sm cursor-pointer transition-colors flex items-center gap-2"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
