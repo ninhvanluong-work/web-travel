@@ -14,11 +14,16 @@ const HomePage: NextPageWithLayout = () => {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
-  const searchAnimRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [userMutedManually, setUserMutedManually] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMounted(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -36,16 +41,6 @@ const HomePage: NextPageWithLayout = () => {
           setIsMuted(true);
         });
     }
-  }, []);
-
-  useEffect(() => {
-    const el = searchAnimRef.current;
-    if (!el) return undefined;
-    const handleAnimationEnd = () => {
-      el.classList.remove('animate__animated', 'animate__slideInUp');
-    };
-    el.addEventListener('animationend', handleAnimationEnd);
-    return () => el.removeEventListener('animationend', handleAnimationEnd);
   }, []);
 
   useEffect(() => {
@@ -140,7 +135,14 @@ const HomePage: NextPageWithLayout = () => {
         }}
       >
         <div ref={searchRef}>
-          <div ref={searchAnimRef} className="w-full flex flex-col items-center animate__animated animate__slideInUp">
+          <div
+            className="w-full flex flex-col items-center"
+            style={{
+              opacity: mounted ? 1 : 0,
+              transform: mounted ? 'translateY(0)' : 'translateY(24px)',
+              transition: 'opacity 0.6s ease, transform 0.6s ease',
+            }}
+          >
             <div className="w-full max-w-[500px]">
               <SearchBox onSearchClick={() => setIsFocused(true)} />
             </div>
