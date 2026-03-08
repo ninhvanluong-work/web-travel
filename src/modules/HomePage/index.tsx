@@ -14,6 +14,7 @@ const HomePage: NextPageWithLayout = () => {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
+  const searchAnimRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
   const [isMuted, setIsMuted] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -35,6 +36,16 @@ const HomePage: NextPageWithLayout = () => {
           setIsMuted(true);
         });
     }
+  }, []);
+
+  useEffect(() => {
+    const el = searchAnimRef.current;
+    if (!el) return undefined;
+    const handleAnimationEnd = () => {
+      el.classList.remove('animate__animated', 'animate__slideInUp');
+    };
+    el.addEventListener('animationend', handleAnimationEnd);
+    return () => el.removeEventListener('animationend', handleAnimationEnd);
   }, []);
 
   useEffect(() => {
@@ -123,13 +134,13 @@ const HomePage: NextPageWithLayout = () => {
         className="fixed left-1/2 top-1/2 w-full max-w-3xl px-[30px] z-30 pointer-events-auto"
         style={{
           transform: isFocused
-            ? 'translateX(-50%) translateY(calc(7rem - 50vh - 50%))'
+            ? 'translateX(-50%) translateY(calc(10rem - 50vh - 50%))'
             : 'translateX(-50%) translateY(calc(30vh - 50%))',
           transition: 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
         }}
       >
         <div ref={searchRef}>
-          <div className="w-full flex flex-col items-center animate__animated animate__slideInUp">
+          <div ref={searchAnimRef} className="w-full flex flex-col items-center animate__animated animate__slideInUp">
             <div className="w-full max-w-[500px]">
               <SearchBox onSearchClick={() => setIsFocused(true)} />
             </div>
