@@ -55,7 +55,7 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
           playsInline
           loop
           poster={video.thumbnail}
-          preload="metadata"
+          preload="auto"
           onCanPlay={() => setReady(true)}
         />
 
