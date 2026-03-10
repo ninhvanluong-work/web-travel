@@ -17,15 +17,24 @@ interface Props {
 const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeactivate, onVideoClick }: Props) => {
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
+  // Detect when card is ~500px away from viewport → start buffering
+  const isNear = useInView(videoEl, { rootMargin: '500px 0px', threshold: 0 });
   const isInView = useInView(videoEl, { threshold: 0.5 });
   const onAudioDeactivateRef = useRef(onAudioDeactivate);
   onAudioDeactivateRef.current = onAudioDeactivate;
+
+  // Effect 0: pre-buffer when near viewport
+  useEffect(() => {
+    if (isNear && videoEl && videoEl.readyState === 0) {
+      videoEl.load();
+    }
+  }, [isNear, videoEl]);
 
   // Effect 1: play/pause by visibility
   useEffect(() => {
     if (!isInView) {
       videoEl?.pause();
-      setReady(false);
+      // Do NOT reset ready — keep thumbnail hidden on scroll-back
     } else {
       videoEl?.play().catch(() => {});
     }
