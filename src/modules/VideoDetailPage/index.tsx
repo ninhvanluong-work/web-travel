@@ -1,26 +1,49 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
-import { useListVideo } from '@/api/video';
+import { useInfiniteListVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 
 import VideoSlide from './components/video-slide';
 
+const PREFETCH_OFFSET = 3;
+
 const VideoDetailPage = () => {
   const router = useRouter();
   const { id, ids } = router.query;
-  const { data: allVideos } = useListVideo();
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteListVideo({
+    variables: {},
+  });
+
+  const allVideos = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
 
   const videos = useMemo(() => {
-    if (!allVideos) return [];
+    if (allVideos.length === 0) return [];
     const videoIds = typeof ids === 'string' ? ids.split(',') : null;
     if (videoIds && videoIds.length > 0) {
       return videoIds.map((vid) => allVideos.find((v) => v.id === vid)).filter(Boolean) as IVideo[];
     }
     return allVideos;
   }, [allVideos, ids]);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Sync initial index khi videos load lần đầu
+  useEffect(() => {
+    if (!id || allVideos.length === 0) return;
+    const idx = allVideos.findIndex((v) => v.id === id);
+    if (idx >= 0) setCurrentIndex(idx);
+  }, [id, allVideos]);
+
+  // Fetch trang tiếp theo khi còn <= PREFETCH_OFFSET video phía sau
+  useEffect(() => {
+    if (!ids && hasNextPage && !isFetchingNextPage && currentIndex >= videos.length - PREFETCH_OFFSET) {
+      fetchNextPage();
+    }
+  }, [currentIndex, videos.length, hasNextPage, isFetchingNextPage, fetchNextPage, ids]);
 
   const initialScrolled = useRef(false);
   useEffect(() => {
@@ -36,13 +59,15 @@ const VideoDetailPage = () => {
     (videoId: string) => {
       const currentId = typeof id === 'string' ? id : '';
       if (videoId === currentId) return;
+      const newIndex = videos.findIndex((v) => v.id === videoId);
+      if (newIndex >= 0) setCurrentIndex(newIndex);
       const idsParam = typeof ids === 'string' && ids ? `?ids=${ids}` : '';
       router.replace(`/video/${videoId}${idsParam}`, undefined, { shallow: true });
     },
-    [id, ids, router]
+    [id, ids, router, videos]
   );
 
-  if (!allVideos) {
+  if (allVideos.length === 0) {
     return (
       <div className="flex h-dvh w-full items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-3">
@@ -69,14 +94,20 @@ const VideoDetailPage = () => {
       </Button>
 
       <div className="h-dvh overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none">
-        {videos.map((video) => (
-          <VideoSlide
-            key={video.id}
-            video={video}
-            onVisible={() => handleVideoVisible(video.id)}
-            initialMuted={video.id !== id}
-          />
-        ))}
+        {videos.map((video, index) => {
+          const diff = index - currentIndex;
+          let preloadMode: 'auto' | 'metadata' | 'none' = 'none';
+          if (diff >= -2 && diff <= 3) preloadMode = 'auto';
+          return (
+            <VideoSlide
+              key={video.id}
+              video={video}
+              onVisible={() => handleVideoVisible(video.id)}
+              initialMuted={video.id !== id}
+              preloadMode={preloadMode}
+            />
+          );
+        })}
       </div>
     </div>
   );

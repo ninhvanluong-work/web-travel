@@ -14,16 +14,17 @@ interface Props {
   video: IVideo;
   onVisible: () => void;
   initialMuted?: boolean;
+  preloadMode?: 'auto' | 'metadata' | 'none';
 }
 
-const VideoSlide = ({ video, onVisible, initialMuted = true }: Props) => {
+const VideoSlide = ({ video, onVisible, initialMuted = true, preloadMode = 'none' }: Props) => {
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const [muted, setMuted] = useState(initialMuted);
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(video.likeCount);
   const [likeAnimKey, setLikeAnimKey] = useState(0);
 
-  const isInView = useInView(videoEl, { threshold: 0.8 });
+  const isInView = useInView(videoEl, { threshold: 0.6 });
 
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
@@ -60,7 +61,7 @@ const VideoSlide = ({ video, onVisible, initialMuted = true }: Props) => {
         playsInline
         loop
         poster={video.thumbnail}
-        preload="none"
+        preload={preloadMode}
       />
 
       {/* Multi-stop gradient — strong bottom, subtle top vignette */}
