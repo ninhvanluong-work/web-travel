@@ -1,3 +1,10 @@
+# Phase 03 — VideoSlide Full Replacement Code
+
+Reference: [phase-03-video-slide-integration.md](./phase-03-video-slide-integration.md)
+
+## File: `src/modules/VideoDetailPage/components/video-slide.tsx`
+
+```tsx
 import React, { useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -176,3 +183,15 @@ const VideoSlide = ({ video, onVisible, initialMuted = true, preloadMode = 'none
 };
 
 export default VideoSlide;
+```
+
+## Rollback Scenario Walkthrough
+
+| Event                            | liked (UI) | likeCount (UI) | serverLikedRef | serverLikeCountRef | localStorage |
+| -------------------------------- | ---------- | -------------- | -------------- | ------------------ | ------------ |
+| Initial (count=100)              | false      | 100            | false          | 100                | absent       |
+| Click like                       | true       | 101            | false          | 100                | present      |
+| Click dislike (< 500ms)          | false      | 100            | false          | 100                | absent       |
+| Click like (< 500ms)             | true       | 101            | false          | 100                | present      |
+| 500ms silence → API fires (like) | true       | 101            | **true**       | **101**            | present      |
+| API **error** instead            | **false**  | **100**        | false          | 100                | **absent**   |

@@ -68,3 +68,13 @@ export const getVideoBySlug = async (slug: string): Promise<IVideo> => {
   });
   return toVideo(data.data);
 };
+
+// ---------- Like / Dislike ----------
+
+export const likeVideo = async (id: string): Promise<void> => {
+  await request({ url: `/video/${id}/like`, method: 'POST' });
+};
+
+export const dislikeVideo = async (id: string): Promise<void> => {
+  await request({ url: `/video/${id}/dislike`, method: 'POST' });
+};

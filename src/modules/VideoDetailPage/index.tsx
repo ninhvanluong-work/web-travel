@@ -48,8 +48,12 @@ const VideoDetailPage = () => {
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Only initialize once — do NOT reset when videos array grows (infinite load)
+  const indexInitialized = useRef(false);
   useEffect(() => {
-    if (videos.length > 0) setCurrentIndex(initialIndex);
+    if (indexInitialized.current || videos.length === 0) return;
+    setCurrentIndex(initialIndex);
+    indexInitialized.current = true;
   }, [initialIndex, videos.length]);
 
   useEffect(() => {
@@ -68,14 +72,17 @@ const VideoDetailPage = () => {
     }
   }, [currentSlug, videos]);
 
+  // Use ref for immediate dedup — router.query updates async so currentSlug lags
+  const visibleSlugRef = useRef(currentSlug);
   const handleVideoVisible = useCallback(
     (videoSlug: string) => {
-      if (videoSlug === currentSlug) return;
+      if (videoSlug === visibleSlugRef.current) return;
+      visibleSlugRef.current = videoSlug;
       const newIndex = videos.findIndex((v) => v.slug === videoSlug);
       if (newIndex >= 0) setCurrentIndex(newIndex);
       router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
     },
-    [currentSlug, router, videos]
+    [router, videos]
   );
 
   if (videos.length === 0) {
