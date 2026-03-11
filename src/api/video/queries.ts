@@ -1,11 +1,16 @@
 import { createInfiniteQuery, createQuery } from 'react-query-kit';
 
-import { getListVideo, getVideoPage } from './requests';
+import { getListVideo, getVideoBySlug, getVideoPage } from './requests';
 import type { IVideo, IVideoPage, IVideoVariables, IVideoVariablesInfinite } from './types';
 
 export const useListVideo = createQuery<IVideo[], IVideoVariables>({
   primaryKey: '/video',
   queryFn: ({ queryKey: [, variables] }) => getListVideo(variables),
+});
+
+export const useVideoBySlug = createQuery<IVideo, { slug: string }>({
+  primaryKey: '/video/slug',
+  queryFn: ({ queryKey: [, variables] }) => getVideoBySlug(variables.slug),
 });
 
 export const useInfiniteListVideo = createInfiniteQuery<IVideoPage, IVideoVariablesInfinite, Error, number | undefined>(

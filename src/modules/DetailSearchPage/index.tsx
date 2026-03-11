@@ -69,6 +69,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
 
       <VideoGrid
         videos={videos}
+        query={query || undefined}
         isLoading={isLoading}
         hasNextPage={hasNextPage ?? false}
         isFetchingMore={isFetchingNextPage}

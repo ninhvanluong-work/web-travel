@@ -49,7 +49,7 @@ const VideoSlide = ({ video, onVisible, initialMuted = true, preloadMode = 'none
 
   return (
     <div
-      id={`video-slide-${video.id}`}
+      id={`video-slide-${video.slug}`}
       className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
       {/* Video */}

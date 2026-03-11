@@ -1,6 +1,7 @@
 // Domain model
 export interface IVideo {
   id: string;
+  slug: string;
   title: string;
   link: string;
   shortUrl: string;
@@ -18,6 +19,7 @@ export interface IVideoVariables {
 // Internal API response types
 export interface ApiVideoItem {
   id: string;
+  slug: string;
   name: string;
   url: string;
   shortUrl: string;
@@ -26,6 +28,10 @@ export interface ApiVideoItem {
   tag: string | null;
   like: number;
   score: number;
+}
+
+export interface ApiVideoDetailResponse {
+  data: ApiVideoItem;
 }
 
 export interface ApiVideoListResponse {

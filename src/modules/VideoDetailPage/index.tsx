@@ -2,9 +2,10 @@ import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
-import { useInfiniteListVideo } from '@/api/video';
+import { useInfiniteListVideo, useVideoBySlug } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
+import { useVideoListStore } from '@/stores';
 
 import VideoSlide from './components/video-slide';
 
@@ -12,62 +13,72 @@ const PREFETCH_OFFSET = 3;
 
 const VideoDetailPage = () => {
   const router = useRouter();
-  const { id, ids } = router.query;
+  const { slug } = router.query;
+  const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteListVideo({
-    variables: {},
+  const storeVideos = useVideoListStore.use.videos();
+  const storeQuery = useVideoListStore.use.query();
+  const hasStoreList = storeVideos.length > 0;
+
+  const { data: slugVideo } = useVideoBySlug({
+    variables: { slug: currentSlug },
+    enabled: !!currentSlug && !hasStoreList,
   });
 
-  const allVideos = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteListVideo({
+    variables: { query: storeQuery },
+    enabled: !hasStoreList,
+  });
 
-  const videos = useMemo(() => {
-    if (allVideos.length === 0) return [];
-    const videoIds = typeof ids === 'string' ? ids.split(',') : null;
-    if (videoIds && videoIds.length > 0) {
-      return videoIds.map((vid) => allVideos.find((v) => v.id === vid)).filter(Boolean) as IVideo[];
-    }
-    return allVideos;
-  }, [allVideos, ids]);
+  const allFallbackVideos = useMemo(() => data?.pages.flatMap((p) => p.items) ?? [], [data]);
+
+  const fallbackVideos = useMemo<IVideo[]>(() => {
+    if (!slugVideo) return allFallbackVideos;
+    const rest = allFallbackVideos.filter((v) => v.slug !== slugVideo.slug);
+    return [slugVideo, ...rest];
+  }, [slugVideo, allFallbackVideos]);
+
+  const videos = hasStoreList ? storeVideos : fallbackVideos;
+
+  const initialIndex = useMemo(() => {
+    if (!currentSlug || videos.length === 0) return 0;
+    const idx = videos.findIndex((v) => v.slug === currentSlug);
+    return idx >= 0 ? idx : 0;
+  }, [currentSlug, videos]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Sync initial index khi videos load lần đầu
   useEffect(() => {
-    if (!id || allVideos.length === 0) return;
-    const idx = allVideos.findIndex((v) => v.id === id);
-    if (idx >= 0) setCurrentIndex(idx);
-  }, [id, allVideos]);
+    if (videos.length > 0) setCurrentIndex(initialIndex);
+  }, [initialIndex, videos.length]);
 
-  // Fetch trang tiếp theo khi còn <= PREFETCH_OFFSET video phía sau
   useEffect(() => {
-    if (!ids && hasNextPage && !isFetchingNextPage && currentIndex >= videos.length - PREFETCH_OFFSET) {
+    if (!hasStoreList && hasNextPage && !isFetchingNextPage && currentIndex >= videos.length - PREFETCH_OFFSET) {
       fetchNextPage();
     }
-  }, [currentIndex, videos.length, hasNextPage, isFetchingNextPage, fetchNextPage, ids]);
+  }, [currentIndex, videos.length, hasNextPage, isFetchingNextPage, fetchNextPage, hasStoreList]);
 
   const initialScrolled = useRef(false);
   useEffect(() => {
-    if (initialScrolled.current || !id || videos.length === 0) return;
-    const el = document.getElementById(`video-slide-${id}`);
+    if (initialScrolled.current || !currentSlug || videos.length === 0) return;
+    const el = document.getElementById(`video-slide-${currentSlug}`);
     if (el) {
       el.scrollIntoView({ behavior: 'instant' as ScrollBehavior });
       initialScrolled.current = true;
     }
-  }, [id, videos]);
+  }, [currentSlug, videos]);
 
   const handleVideoVisible = useCallback(
-    (videoId: string) => {
-      const currentId = typeof id === 'string' ? id : '';
-      if (videoId === currentId) return;
-      const newIndex = videos.findIndex((v) => v.id === videoId);
+    (videoSlug: string) => {
+      if (videoSlug === currentSlug) return;
+      const newIndex = videos.findIndex((v) => v.slug === videoSlug);
       if (newIndex >= 0) setCurrentIndex(newIndex);
-      const idsParam = typeof ids === 'string' && ids ? `?ids=${ids}` : '';
-      router.replace(`/video/${videoId}${idsParam}`, undefined, { shallow: true });
+      router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
     },
-    [id, ids, router, videos]
+    [currentSlug, router, videos]
   );
 
-  if (allVideos.length === 0) {
+  if (videos.length === 0) {
     return (
       <div className="flex h-dvh w-full items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-3">
@@ -100,10 +111,10 @@ const VideoDetailPage = () => {
           if (diff >= -2 && diff <= 3) preloadMode = 'auto';
           return (
             <VideoSlide
-              key={video.id}
+              key={video.slug}
               video={video}
-              onVisible={() => handleVideoVisible(video.id)}
-              initialMuted={video.id !== id}
+              onVisible={() => handleVideoVisible(video.slug)}
+              initialMuted={video.slug !== currentSlug}
               preloadMode={preloadMode}
             />
           );

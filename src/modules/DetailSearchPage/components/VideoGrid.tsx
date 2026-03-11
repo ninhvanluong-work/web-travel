@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { useInView } from '@/hooks/useInview';
+import { useVideoListStore } from '@/stores';
 
 import VideoCard from './VideoCard';
 
@@ -11,14 +12,16 @@ const PREFETCH_OFFSET = 3;
 
 interface Props {
   videos: IVideo[];
+  query?: string;
   isLoading?: boolean;
   hasNextPage?: boolean;
   isFetchingMore?: boolean;
   onFetchMore?: () => void;
 }
 
-const VideoGrid = ({ videos, isLoading, hasNextPage, isFetchingMore, onFetchMore }: Props) => {
+const VideoGrid = ({ videos, query, isLoading, hasNextPage, isFetchingMore, onFetchMore }: Props) => {
   const router = useRouter();
+  const setList = useVideoListStore.use.setList();
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
   const [sentinelEl, setSentinelEl] = useState<HTMLDivElement | null>(null);
 
@@ -42,10 +45,12 @@ const VideoGrid = ({ videos, isLoading, hasNextPage, isFetchingMore, onFetchMore
 
   const handleVideoClick = useCallback(
     (id: string) => {
-      const idsParam = videos.map((v) => v.id).join(',');
-      router.push(`/video/${id}?ids=${idsParam}`);
+      const video = videos.find((v) => v.id === id);
+      if (!video) return;
+      setList(videos, query);
+      router.push(`/video/${video.slug}`);
     },
-    [router, videos]
+    [router, videos, query, setList]
   );
 
   if (isLoading) {

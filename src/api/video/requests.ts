@@ -1,6 +1,7 @@
 import { request } from '../axios';
 import type { ApiListResponse } from '../types';
 import type {
+  ApiVideoDetailResponse,
   ApiVideoItem,
   ApiVideoListResponse,
   IVideo,
@@ -13,6 +14,7 @@ import type {
 
 const toVideo = (item: ApiVideoItem): IVideo => ({
   id: item.id,
+  slug: item.slug,
   title: item.name,
   link: item.url,
   shortUrl: item.shortUrl,
@@ -57,4 +59,12 @@ export const getVideoPage = async (variables?: IVideoVariablesInfinite): Promise
     items,
     nextCursor: items.length < pageSize ? null : data.data.stats.distanceScore ?? null,
   };
+};
+
+export const getVideoBySlug = async (slug: string): Promise<IVideo> => {
+  const { data } = await request<ApiVideoDetailResponse>({
+    url: `/video/${slug}`,
+    method: 'GET',
+  });
+  return toVideo(data.data);
 };
