@@ -1,7 +1,10 @@
+import 'animate.css';
+
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { useInfiniteListVideo } from '@/api/video';
+import { SEARCH_SUGGESTIONS } from '@/data/search';
 import type { NextPageWithLayout } from '@/types';
 
 import SearchInput from './components/SearchInput';
@@ -15,6 +18,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
 
   const [inputValue, setInputValue] = useState(() => (typeof q === 'string' ? q : ''));
   const [query, setQuery] = useState(inputValue);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -27,11 +31,15 @@ const DetailSearchPage: NextPageWithLayout = () => {
     }
   }, [router.isReady, q]);
 
-  // Debounce 300ms
-  useEffect(() => {
-    const timer = setTimeout(() => setQuery(inputValue), 300);
-    return () => clearTimeout(timer);
-  }, [inputValue]);
+  const handleSubmit = () => {
+    const trimmed = inputValue.trim();
+    setQuery(trimmed);
+    setIsFocused(false);
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+    router.replace(`/search${trimmed ? `?q=${encodeURIComponent(trimmed)}` : ''}`, undefined, { shallow: true });
+  };
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteListVideo({
     variables: { query: query || undefined },
@@ -63,8 +71,39 @@ const DetailSearchPage: NextPageWithLayout = () => {
 
   return (
     <div className="h-full w-full overflow-y-auto scrollbar-hide bg-white">
+      {isFocused && (
+        <div
+          className="fixed inset-0 bg-black/60 z-40 animate__animated animate__fadeIn"
+          onClick={() => setIsFocused(false)}
+        />
+      )}
+
       <div className="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md px-[10px] pt-[10px] pb-[10px] border-b border-neutral-100/80">
-        <SearchInput value={inputValue} onSearch={setInputValue} />
+        <SearchInput
+          value={inputValue}
+          onChange={setInputValue}
+          onSubmit={handleSubmit}
+          onFocus={() => setIsFocused(true)}
+        />
+        {isFocused && (
+          <div className="absolute top-full left-0 right-0 px-[10px] py-4 animate__animated animate__fadeIn flex flex-col gap-3">
+            <ul className="flex flex-wrap gap-2">
+              {SEARCH_SUGGESTIONS.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-md rounded-full text-white text-[13px] font-dinpro cursor-pointer transition-colors"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setInputValue(suggestion);
+                    setIsFocused(false);
+                  }}
+                >
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       <VideoGrid

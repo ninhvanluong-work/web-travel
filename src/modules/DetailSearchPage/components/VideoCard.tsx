@@ -49,12 +49,17 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
 
   return (
     <div
-      className={`group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out ${
-        isDimmed ? 'opacity-45' : 'opacity-100'
-      }`}
+      className="group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out opacity-100"
       onClick={() => onVideoClick(video.id)}
     >
       <div className="aspect-[3/4] w-full relative">
+        {/* Dimmed Overlay */}
+        <div
+          className={`absolute inset-0 bg-black/60 pointer-events-none transition-opacity duration-300 z-20 ${
+            isDimmed ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
+
         {/* Video */}
         <video
           ref={setVideoEl}
