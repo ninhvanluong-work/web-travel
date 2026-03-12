@@ -16,10 +16,11 @@ interface Props {
   isLoading?: boolean;
   hasNextPage?: boolean;
   isFetchingMore?: boolean;
+  hasScrolled?: boolean;
   onFetchMore?: () => void;
 }
 
-const VideoGrid = ({ videos, query, isLoading, hasNextPage, isFetchingMore, onFetchMore }: Props) => {
+const VideoGrid = ({ videos, query, isLoading, hasNextPage, isFetchingMore, hasScrolled, onFetchMore }: Props) => {
   const router = useRouter();
   const setList = useVideoListStore.use.setList();
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
@@ -28,12 +29,18 @@ const VideoGrid = ({ videos, query, isLoading, hasNextPage, isFetchingMore, onFe
   const isSentinelInView = useInView(sentinelEl, { threshold: 0.1 });
   const onFetchMoreRef = useRef(onFetchMore);
   onFetchMoreRef.current = onFetchMore;
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
-    if (isSentinelInView && hasNextPage && !isFetchingMore) {
+    if (!isSentinelInView) {
+      fetchedRef.current = false;
+      return;
+    }
+    if (hasScrolled && hasNextPage && !isFetchingMore && !fetchedRef.current) {
+      fetchedRef.current = true;
       onFetchMoreRef.current?.();
     }
-  }, [isSentinelInView, hasNextPage, isFetchingMore]);
+  }, [isSentinelInView, hasNextPage, isFetchingMore, hasScrolled]);
 
   const handleRequestAudio = useCallback((id: string) => {
     setActiveAudioId((prev) => (prev === id ? null : id));

@@ -19,6 +19,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
   const [inputValue, setInputValue] = useState(() => (typeof q === 'string' ? q : ''));
   const [query, setQuery] = useState(inputValue);
   const [isFocused, setIsFocused] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,6 +31,10 @@ const DetailSearchPage: NextPageWithLayout = () => {
       setQuery(q);
     }
   }, [router.isReady, q]);
+
+  useEffect(() => {
+    setHasScrolled(false);
+  }, [query]);
 
   const handleSubmit = () => {
     const trimmed = inputValue.trim();
@@ -70,7 +75,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
   }, [data?.pages.length]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="h-full w-full overflow-y-auto scrollbar-hide bg-white">
+    <div className="h-full w-full overflow-y-auto scrollbar-hide bg-white" onScroll={() => setHasScrolled(true)}>
       {isFocused && (
         <div
           className="fixed inset-0 bg-black/60 z-40 animate__animated animate__fadeIn"
@@ -112,6 +117,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
         isLoading={isLoading}
         hasNextPage={hasNextPage ?? false}
         isFetchingMore={isFetchingNextPage}
+        hasScrolled={hasScrolled}
         onFetchMore={fetchNextPage}
       />
 
