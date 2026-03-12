@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { IVideo } from '@/api/video';
+import type { IVideo, IVideoPage } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { useInView } from '@/hooks/useInview';
 import { useVideoListStore } from '@/stores';
@@ -12,6 +12,7 @@ const PREFETCH_OFFSET = 3;
 
 interface Props {
   videos: IVideo[];
+  pages?: IVideoPage[];
   query?: string;
   isLoading?: boolean;
   hasNextPage?: boolean;
@@ -20,7 +21,16 @@ interface Props {
   onFetchMore?: () => void;
 }
 
-const VideoGrid = ({ videos, query, isLoading, hasNextPage, isFetchingMore, hasScrolled, onFetchMore }: Props) => {
+const VideoGrid = ({
+  videos,
+  pages,
+  query,
+  isLoading,
+  hasNextPage,
+  isFetchingMore,
+  hasScrolled,
+  onFetchMore,
+}: Props) => {
   const router = useRouter();
   const setList = useVideoListStore.use.setList();
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
@@ -54,10 +64,24 @@ const VideoGrid = ({ videos, query, isLoading, hasNextPage, isFetchingMore, hasS
     (id: string) => {
       const video = videos.find((v) => v.id === id);
       if (!video) return;
-      setList(videos, query);
+      const clickedIndex = videos.findIndex((v) => v.id === id);
+      const excludeIds = videos.slice(0, clickedIndex).map((v) => v.id);
+      const videosFromClicked = videos.slice(clickedIndex);
+
+      let nextCursor: number | null = null;
+      if (pages) {
+        let count = 0;
+        const foundPage = pages.find((page) => {
+          count += page.items.length;
+          return clickedIndex < count;
+        });
+        nextCursor = foundPage?.nextCursor ?? null;
+      }
+
+      setList(videosFromClicked, query, video, excludeIds, nextCursor);
       router.push(`/video/${video.slug}`);
     },
-    [router, videos, query, setList]
+    [router, videos, pages, query, setList]
   );
 
   if (isLoading) {

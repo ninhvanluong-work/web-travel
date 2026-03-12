@@ -114,6 +114,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
 
       <VideoGrid
         videos={videos}
+        pages={data?.pages}
         query={query || undefined}
         isLoading={isLoading}
         hasNextPage={hasNextPage ?? false}

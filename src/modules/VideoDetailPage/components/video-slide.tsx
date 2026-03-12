@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { dislikeVideo, likeVideo } from '@/api/video';
@@ -9,12 +9,12 @@ import { useLikedVideos } from '@/hooks/useLikedVideos';
 
 interface Props {
   video: IVideo;
-  onVisible: () => void;
+  onVisible: (slug: string) => void;
   initialMuted?: boolean;
   preloadMode?: 'auto' | 'metadata' | 'none';
 }
 
-const VideoSlide = ({ video, onVisible, initialMuted = true, preloadMode = 'none' }: Props) => {
+const VideoSlide = memo(({ video, onVisible, initialMuted = true, preloadMode = 'none' }: Props) => {
   const { isLiked, toggleLike: persistLike } = useLikedVideos();
 
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
@@ -39,11 +39,11 @@ const VideoSlide = ({ video, onVisible, initialMuted = true, preloadMode = 'none
     if (isInView) {
       setMuted(false);
       videoEl?.play().catch(() => {});
-      onVisibleRef.current();
+      onVisibleRef.current(video.slug);
     } else {
       videoEl?.pause();
     }
-  }, [isInView, videoEl]);
+  }, [isInView, videoEl, video.slug]);
 
   // Clear pending API call on unmount (user scrolled away quickly)
   useEffect(() => {
@@ -173,6 +173,6 @@ const VideoSlide = ({ video, onVisible, initialMuted = true, preloadMode = 'none
       </div>
     </div>
   );
-};
+});
 
 export default VideoSlide;

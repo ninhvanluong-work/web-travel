@@ -48,8 +48,10 @@ export const getVideoPage = async (variables?: IVideoVariablesInfinite): Promise
     method: 'GET',
     params: {
       pageSize,
+      distanceScore: variables?.distanceScore ?? 0,
       ...(variables?.query && { query: variables.query }),
-      ...(variables?.distanceScore !== undefined && { distanceScore: variables.distanceScore }),
+      ...(variables?.rootId && { rootId: variables.rootId }),
+      ...(variables?.excludeIds?.length && { excludeIds: variables.excludeIds }),
     },
   });
 

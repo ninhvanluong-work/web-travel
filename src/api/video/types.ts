@@ -52,4 +52,6 @@ export interface IVideoVariablesInfinite {
   query?: string;
   pageSize?: number;
   distanceScore?: number;
+  rootId?: string;
+  excludeIds?: string[];
 }

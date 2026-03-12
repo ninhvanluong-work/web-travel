@@ -17,7 +17,7 @@ export const useInfiniteListVideo = createInfiniteQuery<IVideoPage, IVideoVariab
   {
     primaryKey: '/video/infinite',
     queryFn: ({ queryKey: [, variables], pageParam }) =>
-      getVideoPage({ ...variables, distanceScore: pageParam as number | undefined }),
+      getVideoPage({ ...variables, distanceScore: (pageParam as number | undefined) ?? variables?.distanceScore ?? 0 }),
     getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
   }
 );
