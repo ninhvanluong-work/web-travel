@@ -17,7 +17,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
   const { q } = router.query;
 
   const [inputValue, setInputValue] = useState(() => (typeof q === 'string' ? q : ''));
-  const [query, setQuery] = useState(inputValue);
+  const [query, setQuery] = useState<string | undefined>(undefined);
   const [isFocused, setIsFocused] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -26,9 +26,10 @@ const DetailSearchPage: NextPageWithLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (router.isReady && typeof q === 'string') {
-      setInputValue(q);
-      setQuery(q);
+    if (router.isReady) {
+      const val = typeof q === 'string' ? q : '';
+      setInputValue(val);
+      setQuery(val);
     }
   }, [router.isReady, q]);
 
@@ -48,7 +49,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteListVideo({
     variables: { query: query || undefined },
-    enabled: router.isReady,
+    enabled: query !== undefined,
   });
 
   const videos = data?.pages.flatMap((page) => page.items) ?? [];
