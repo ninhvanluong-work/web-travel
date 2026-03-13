@@ -44,7 +44,8 @@ const VideoDetailPage = () => {
         {videos.map((video, index) => {
           const diff = index - currentIndex;
           let preloadMode: 'auto' | 'metadata' | 'none' = 'none';
-          if (diff >= -2 && diff <= 3) preloadMode = 'auto';
+          if (diff === 0 || diff === 1) preloadMode = 'auto';
+          else if (diff >= -1 && diff <= 2) preloadMode = 'metadata';
           return (
             <VideoSlide
               key={video.slug}
