@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,15 @@ const VideoDetailPage = () => {
 
   const { videos, currentIndex, handleVideoVisible, isReloadInitializing, hasStoreList } =
     useVideoDetailFeed(currentSlug);
+
+  const [userHasScrolled, setUserHasScrolled] = useState(false);
+  const prevIndexRef = useRef(currentIndex);
+  useEffect(() => {
+    if (currentIndex !== prevIndexRef.current) setUserHasScrolled(true);
+    prevIndexRef.current = currentIndex;
+  }, [currentIndex]);
+
+  const autoUnmute = hasStoreList || userHasScrolled;
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -53,6 +62,7 @@ const VideoDetailPage = () => {
               video={video}
               onVisible={handleVideoVisible}
               initialMuted={!hasStoreList || video.slug !== currentSlug}
+              autoUnmute={autoUnmute}
               preloadMode={preloadMode}
             />
           );

@@ -11,10 +11,17 @@ interface Props {
   video: IVideo;
   onVisible: (slug: string) => void;
   initialMuted?: boolean;
+  autoUnmute?: boolean;
   preloadMode?: 'auto' | 'metadata' | 'none';
 }
 
-const VideoSlide = memo(({ video, onVisible, initialMuted = true, preloadMode = 'none' }: Props) => {
+function VideoSlideComponent({
+  video,
+  onVisible,
+  initialMuted = true,
+  autoUnmute = false,
+  preloadMode = 'none',
+}: Props) {
   const { isLiked, toggleLike: persistLike } = useLikedVideos();
 
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
@@ -37,12 +44,13 @@ const VideoSlide = memo(({ video, onVisible, initialMuted = true, preloadMode = 
 
   useEffect(() => {
     if (isInView) {
+      if (autoUnmute) setMuted(false);
       videoEl?.play().catch(() => {});
       onVisibleRef.current(video.slug);
     } else {
       videoEl?.pause();
     }
-  }, [isInView, videoEl, video.slug]);
+  }, [isInView, videoEl, video.slug, autoUnmute]);
 
   // Clear pending API call on unmount (user scrolled away quickly)
   useEffect(() => {
@@ -172,6 +180,8 @@ const VideoSlide = memo(({ video, onVisible, initialMuted = true, preloadMode = 
       </div>
     </div>
   );
-});
+}
+
+const VideoSlide = memo(VideoSlideComponent);
 
 export default VideoSlide;
