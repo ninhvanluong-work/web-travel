@@ -154,5 +154,5 @@ export const useVideoDetailFeed = (currentSlug: string) => {
 
   const isReloadInitializing = !hasStoreList && !!slugVideo && !reloadInfiniteData;
 
-  return { videos, currentIndex, initialIndex, handleVideoVisible, isReloadInitializing };
+  return { videos, currentIndex, initialIndex, handleVideoVisible, isReloadInitializing, hasStoreList };
 };

@@ -37,7 +37,6 @@ const VideoSlide = memo(({ video, onVisible, initialMuted = true, preloadMode = 
 
   useEffect(() => {
     if (isInView) {
-      setMuted(false);
       videoEl?.play().catch(() => {});
       onVisibleRef.current(video.slug);
     } else {

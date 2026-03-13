@@ -12,7 +12,8 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, currentIndex, handleVideoVisible, isReloadInitializing } = useVideoDetailFeed(currentSlug);
+  const { videos, currentIndex, handleVideoVisible, isReloadInitializing, hasStoreList } =
+    useVideoDetailFeed(currentSlug);
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -51,7 +52,7 @@ const VideoDetailPage = () => {
               key={video.slug}
               video={video}
               onVisible={handleVideoVisible}
-              initialMuted={video.slug !== currentSlug}
+              initialMuted={!hasStoreList || video.slug !== currentSlug}
               preloadMode={preloadMode}
             />
           );
