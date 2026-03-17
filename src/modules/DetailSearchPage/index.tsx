@@ -37,8 +37,8 @@ const DetailSearchPage: NextPageWithLayout = () => {
     setHasScrolled(false);
   }, [query]);
 
-  const handleSubmit = () => {
-    const trimmed = inputValue.trim();
+  const handleSubmit = (value?: string) => {
+    const trimmed = (value ?? inputValue).trim();
     setQuery(trimmed);
     setIsFocused(false);
     if (document.activeElement instanceof HTMLElement) {
@@ -101,7 +101,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
                   onMouseDown={(e) => {
                     e.preventDefault();
                     setInputValue(suggestion);
-                    setIsFocused(false);
+                    handleSubmit(suggestion);
                   }}
                 >
                   {suggestion}
