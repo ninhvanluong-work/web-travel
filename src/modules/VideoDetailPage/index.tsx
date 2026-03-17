@@ -44,8 +44,8 @@ const VideoDetailPage = () => {
       </Button>
 
       <div
-        className={`h-dvh overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none ${
-          scrollLocked ? 'overflow-hidden' : ''
+        className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
+          scrollLocked ? 'overflow-hidden' : 'overflow-y-scroll'
         }`}
       >
         {videos.map((video, index) => {

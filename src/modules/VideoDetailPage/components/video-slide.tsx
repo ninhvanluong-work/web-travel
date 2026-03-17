@@ -43,10 +43,9 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
         })
         .catch((error: unknown) => {
           if (error instanceof DOMException && error.name === 'NotAllowedError') {
-            // Unmuted blocked → fall back to silent autoplay + show overlay
+            // Blocked — keep video paused, show overlay, lock scroll
             videoEl.muted = true;
             setMuted(true);
-            videoEl.play().catch(() => {});
             setShowPlayOverlay(true);
             onBlockedChangeRef.current?.(true);
           }
