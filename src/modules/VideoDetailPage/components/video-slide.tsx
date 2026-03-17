@@ -1,105 +1,70 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
-import { dislikeVideo, likeVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInview';
-import { useLikedVideos } from '@/hooks/useLikedVideos';
+import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
+
+import VideoPlayOverlay from './video-play-overlay';
 
 interface Props {
   video: IVideo;
   onVisible: (slug: string) => void;
   initialMuted?: boolean;
-  autoUnmute?: boolean;
   preloadMode?: 'auto' | 'metadata' | 'none';
+  onBlockedChange?: (isBlocked: boolean) => void;
 }
 
-function VideoSlideComponent({
-  video,
-  onVisible,
-  initialMuted = true,
-  autoUnmute = false,
-  preloadMode = 'none',
-}: Props) {
-  const { isLiked, toggleLike: persistLike } = useLikedVideos();
-
+function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMode = 'none', onBlockedChange }: Props) {
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const [muted, setMuted] = useState(initialMuted);
-  const [liked, setLiked] = useState(() => isLiked(video.id));
-  const [likeCount, setLikeCount] = useState(video.likeCount);
-  const [likeAnimKey, setLikeAnimKey] = useState(0);
+  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
 
-  // Track last server-confirmed state — for accurate rollback after multi-click spam
-  const serverLikedRef = useRef(isLiked(video.id));
-  const serverLikeCountRef = useRef(video.likeCount);
-
-  // Debounce handle — per-slide instance
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
 
   const isInView = useInView(videoEl, { threshold: 0.6 });
 
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
+  const onBlockedChangeRef = useRef(onBlockedChange);
+  onBlockedChangeRef.current = onBlockedChange;
+
   useEffect(() => {
-    if (isInView) {
-      if (autoUnmute) setMuted(false);
-      videoEl?.play().catch(() => {});
+    if (isInView && videoEl) {
+      // Always attempt unmuted — browser allows if user has gesture (scrolled before),
+      // blocks if no gesture yet (direct link / reload) → show overlay.
+      videoEl.muted = false;
+      videoEl
+        .play()
+        .then(() => {
+          setMuted(false); // sync React state
+        })
+        .catch((error: unknown) => {
+          if (error instanceof DOMException && error.name === 'NotAllowedError') {
+            // Unmuted blocked → fall back to silent autoplay + show overlay
+            videoEl.muted = true;
+            setMuted(true);
+            videoEl.play().catch(() => {});
+            setShowPlayOverlay(true);
+            onBlockedChangeRef.current?.(true);
+          }
+        });
       onVisibleRef.current(video.slug);
     } else {
       videoEl?.pause();
+      setShowPlayOverlay(false);
+      onBlockedChangeRef.current?.(false);
     }
-  }, [isInView, videoEl, video.slug, autoUnmute]);
+  }, [isInView, videoEl, video.slug]);
 
-  // Clear pending API call on unmount (user scrolled away quickly)
-  useEffect(() => {
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, []);
-
-  const syncLikeToServer = (targetLikedState: boolean, currentLikeCount: number) => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    debounceRef.current = setTimeout(async () => {
-      // Final state matches server — no API call needed
-      if (targetLikedState === serverLikedRef.current) return;
-
-      try {
-        if (targetLikedState) {
-          await likeVideo(video.id);
-        } else {
-          await dislikeVideo(video.id);
-        }
-        // Success: advance server refs
-        serverLikedRef.current = targetLikedState;
-        serverLikeCountRef.current = currentLikeCount;
-      } catch (error) {
-        // Rollback optimistic UI to last known server state
-        setLiked(serverLikedRef.current);
-        setLikeCount(serverLikeCountRef.current);
-        // Revert localStorage (toggleLike is a pure toggle — calling again reverts)
-        persistLike(video.id);
-        console.error('[VideoSlide] like/dislike failed', error);
-      }
-    }, 500);
-  };
-
-  const toggleLike = () => {
-    const newLikedState = !liked;
-    const newLikeCount = newLikedState ? likeCount + 1 : likeCount - 1;
-
-    // 1. Optimistic UI
-    setLiked(newLikedState);
-    setLikeCount(newLikeCount);
-    setLikeAnimKey((k) => k + 1);
-
-    // 2. Persist to localStorage immediately
-    persistLike(video.id);
-
-    // 3. Debounced API sync
-    syncLikeToServer(newLikedState, newLikeCount);
+  const handleForcePlay = () => {
+    if (videoEl) videoEl.muted = false; // DOM property — immediate, before play()
+    setMuted(false); // React state — sync UI icon
+    setShowPlayOverlay(false);
+    onBlockedChangeRef.current?.(false);
+    videoEl?.play().catch(() => {});
   };
 
   return (
@@ -118,6 +83,9 @@ function VideoSlideComponent({
         poster={video.thumbnail}
         preload={preloadMode}
       />
+
+      {/* Play overlay — shown when autoplay is blocked */}
+      <VideoPlayOverlay visible={showPlayOverlay} onPlay={handleForcePlay} />
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 pointer-events-none">

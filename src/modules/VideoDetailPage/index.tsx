@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
@@ -15,14 +15,7 @@ const VideoDetailPage = () => {
   const { videos, currentIndex, handleVideoVisible, isReloadInitializing, hasStoreList } =
     useVideoDetailFeed(currentSlug);
 
-  const [userHasScrolled, setUserHasScrolled] = useState(false);
-  const prevIndexRef = useRef(currentIndex);
-  useEffect(() => {
-    if (currentIndex !== prevIndexRef.current) setUserHasScrolled(true);
-    prevIndexRef.current = currentIndex;
-  }, [currentIndex]);
-
-  const autoUnmute = hasStoreList || userHasScrolled;
+  const [scrollLocked, setScrollLocked] = useState(false);
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -50,7 +43,11 @@ const VideoDetailPage = () => {
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
-      <div className="h-dvh overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none">
+      <div
+        className={`h-dvh overflow-y-scroll snap-y snap-mandatory scrollbar-hide overscroll-none ${
+          scrollLocked ? 'overflow-hidden' : ''
+        }`}
+      >
         {videos.map((video, index) => {
           const diff = index - currentIndex;
           let preloadMode: 'auto' | 'metadata' | 'none' = 'none';
@@ -62,8 +59,8 @@ const VideoDetailPage = () => {
               video={video}
               onVisible={handleVideoVisible}
               initialMuted={!hasStoreList || video.slug !== currentSlug}
-              autoUnmute={autoUnmute}
               preloadMode={preloadMode}
+              onBlockedChange={setScrollLocked}
             />
           );
         })}
