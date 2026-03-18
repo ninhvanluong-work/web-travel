@@ -69,7 +69,7 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
     videoEl?.play().catch(() => {});
   };
 
-  const maxLength = 30;
+  const maxLength = 20;
   const isLongDesc = video.description && video.description.length > maxLength;
   const displayDesc = isLongDesc ? video.description.slice(0, maxLength) : video.description;
 
@@ -104,16 +104,14 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
         className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up"
         style={{ paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))' }}
       >
-        <div className="bg-black/30 border border-white/[0.15] backdrop-blur-md rounded-xl p-3">
+        <div
+          className="bg-black/30 border border-white/[0.15] backdrop-blur-md rounded-xl p-3 cursor-pointer"
+          onClick={() => router.push({ pathname: ROUTE.PRODUCT, query: { videoSlug: video.slug } })}
+        >
           <h2 className="text-white font-dinpro font-bold text-[18px] leading-[1.3] drop-shadow-md">{video.title}</h2>
-          <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-[1.5] drop-shadow-sm">
+          <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-none drop-shadow-sm line-clamp-1">
             {displayDesc}
-            <span
-              className="font-bold text-white ml-1 text-[13px] font-dinpro cursor-pointer"
-              onClick={() => router.push({ pathname: ROUTE.PRODUCT, query: { videoSlug: video.slug } })}
-            >
-              ... view more
-            </span>
+            <span className="font-bold text-white ml-1 text-[13px] font-dinpro">... more</span>
           </p>
         </div>
       </div>
