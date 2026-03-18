@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -5,6 +6,7 @@ import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInview';
 import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
+import { ROUTE } from '@/types/routes';
 
 import VideoPlayOverlay from './video-play-overlay';
 
@@ -17,6 +19,7 @@ interface Props {
 }
 
 function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMode = 'none', onBlockedChange }: Props) {
+  const router = useRouter();
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   const [muted, setMuted] = useState(initialMuted);
   const [showPlayOverlay, setShowPlayOverlay] = useState(false);
@@ -66,6 +69,10 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
     videoEl?.play().catch(() => {});
   };
 
+  const maxLength = 30;
+  const isLongDesc = video.description && video.description.length > maxLength;
+  const displayDesc = isLongDesc ? video.description.slice(0, maxLength) : video.description;
+
   return (
     <div
       id={`video-slide-${video.slug}`}
@@ -97,10 +104,20 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
         className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up"
         style={{ paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))' }}
       >
-        <h2 className="text-white font-dinpro font-bold text-[18px] leading-[1.3] drop-shadow-md">{video.title}</h2>
-        <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-[1.5] line-clamp-3 drop-shadow-sm">
-          {video.description}
-        </p>
+        <div className="bg-black/30 border border-white/[0.15] backdrop-blur-md rounded-xl p-3">
+          <h2 className="text-white font-dinpro font-bold text-[18px] leading-[1.3] drop-shadow-md">{video.title}</h2>
+          <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-[1.5] drop-shadow-sm">
+            {displayDesc}
+            {isLongDesc && (
+              <span
+                className="font-bold text-white ml-1 text-[13px] font-dinpro cursor-pointer"
+                onClick={() => router.push({ pathname: ROUTE.PRODUCT, query: { videoSlug: video.slug } })}
+              >
+                ... view more
+              </span>
+            )}
+          </p>
+        </div>
       </div>
 
       {/* Action bar — bottom right */}

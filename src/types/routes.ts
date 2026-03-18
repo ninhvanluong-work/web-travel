@@ -2,6 +2,7 @@ export const ROUTE = {
   HOME: '/',
   SEARCH: '/search',
   VIDEO_DETAIL: '/video/[slug]',
+  PRODUCT: '/product',
   DASHBOARD: '/dashboard',
   ME: '/me',
   SIGN_IN: '/sign-in',
