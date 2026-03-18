@@ -108,14 +108,12 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
           <h2 className="text-white font-dinpro font-bold text-[18px] leading-[1.3] drop-shadow-md">{video.title}</h2>
           <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-[1.5] drop-shadow-sm">
             {displayDesc}
-            {isLongDesc && (
-              <span
-                className="font-bold text-white ml-1 text-[13px] font-dinpro cursor-pointer"
-                onClick={() => router.push({ pathname: ROUTE.PRODUCT, query: { videoSlug: video.slug } })}
-              >
-                ... view more
-              </span>
-            )}
+            <span
+              className="font-bold text-white ml-1 text-[13px] font-dinpro cursor-pointer"
+              onClick={() => router.push({ pathname: ROUTE.PRODUCT, query: { videoSlug: video.slug } })}
+            >
+              ... view more
+            </span>
           </p>
         </div>
       </div>
