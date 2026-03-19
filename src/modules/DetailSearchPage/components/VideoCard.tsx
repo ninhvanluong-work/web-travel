@@ -66,11 +66,10 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
           src={video.shortUrl}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
           muted={!isAudioActive}
-          autoPlay
           playsInline
           loop
           poster={video.thumbnail}
-          preload="auto"
+          preload="none"
           onCanPlay={() => setReady(true)}
         />
 

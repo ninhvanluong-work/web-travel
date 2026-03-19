@@ -10,7 +10,7 @@ import type { NextPageWithLayout } from '@/types';
 import SearchInput from './components/SearchInput';
 import VideoGrid from './components/VideoGrid';
 
-const PRELOAD_COUNT = 6;
+const PRELOAD_COUNT = 2;
 
 const DetailSearchPage: NextPageWithLayout = () => {
   const router = useRouter();
