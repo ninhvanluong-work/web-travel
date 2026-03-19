@@ -112,6 +112,7 @@ const VideoGrid = ({
           <div key={video.id} ref={index === sentinelIndex ? setSentinelEl : undefined}>
             <VideoCard
               video={video}
+              index={index}
               isAudioActive={activeAudioId === video.id}
               isDimmed={activeAudioId !== null && activeAudioId !== video.id}
               onRequestAudio={handleRequestAudio}

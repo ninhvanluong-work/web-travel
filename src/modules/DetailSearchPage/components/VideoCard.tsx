@@ -7,6 +7,7 @@ import { useInView } from '@/hooks/useInview';
 
 interface Props {
   video: IVideo;
+  index: number;
   isAudioActive: boolean;
   isDimmed: boolean;
   onRequestAudio: (id: string) => void;
@@ -14,7 +15,15 @@ interface Props {
   onVideoClick: (id: string) => void;
 }
 
-const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeactivate, onVideoClick }: Props) => {
+const VideoCard = ({
+  video,
+  index,
+  isAudioActive,
+  isDimmed,
+  onRequestAudio,
+  onAudioDeactivate,
+  onVideoClick,
+}: Props) => {
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   // Detect when card is ~500px away from viewport → start buffering
@@ -30,15 +39,18 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
     }
   }, [isNear, videoEl]);
 
-  // Effect 1: play/pause by visibility
+  // Effect 1: play/pause by visibility — stagger by index to avoid iOS rejecting simultaneous play() calls
   useEffect(() => {
     if (!isInView) {
       videoEl?.pause();
       // Do NOT reset ready — keep thumbnail hidden on scroll-back
-    } else {
-      videoEl?.play().catch(() => {});
+      return undefined;
     }
-  }, [isInView, videoEl]);
+    const timer = setTimeout(() => {
+      videoEl?.play().catch(() => {});
+    }, index * 100);
+    return () => clearTimeout(timer);
+  }, [isInView, videoEl, index]);
 
   // Effect 2: notify parent when scrolled out while active
   useEffect(() => {
