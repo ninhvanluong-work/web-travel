@@ -85,6 +85,11 @@ const VideoCard = ({ video, isAudioActive, isDimmed, onRequestAudio, onAudioDeac
           />
         )}
 
+        {/* DEBUG — xóa sau khi test */}
+        <div className="absolute top-1 left-1 z-50 text-[9px] bg-black/70 text-white px-1 py-[2px] rounded leading-tight pointer-events-none">
+          {isInView ? '▶ play' : '⏸ pause'} | {isNear ? 'near' : 'far'}
+        </div>
+
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/[0.15] to-transparent pointer-events-none" />
 
