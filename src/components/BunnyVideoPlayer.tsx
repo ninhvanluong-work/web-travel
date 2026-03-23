@@ -31,7 +31,7 @@ interface Props {
   className?: string;
 }
 
-export default function BunnyVideoPlayer({ autoplay = true, muted = true, embedUrl, className }: Props) {
+export default function BunnyVideoPlayer({ muted = true, embedUrl, className }: Props) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<PlayerJS | null>(null);
   const [ready, setReady] = useState(false);
@@ -39,10 +39,11 @@ export default function BunnyVideoPlayer({ autoplay = true, muted = true, embedU
   // Freeze src on mount — never recompute to avoid iframe reload
   const srcRef = useRef(
     `${embedUrl}?${new URLSearchParams({
-      autoplay: String(autoplay),
+      autoplay: 'true',
       muted: String(muted),
       preload: 'true',
       responsive: 'true',
+      loop: 'true',
     })}`
   );
 
