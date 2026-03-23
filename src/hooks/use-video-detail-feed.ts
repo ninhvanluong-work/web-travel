@@ -14,7 +14,7 @@ export const useVideoDetailFeed = (currentSlug: string) => {
   const storeQuery = useVideoListStore.use.query();
   const storeRootVideo = useVideoListStore.use.rootVideo();
   const storeExcludeIds = useVideoListStore.use.excludeIds();
-  const storeNextCursor = useVideoListStore.use.nextCursor();
+
   const hasStoreList = storeVideos.length > 0;
 
   // rootSlug: the URL slug at page load — locked in once router is ready.
@@ -30,6 +30,11 @@ export const useVideoDetailFeed = (currentSlug: string) => {
     enabled: !!rootSlug && !hasStoreList,
   });
 
+  // Capture store video IDs once on mount to use as excludeIds when fetching more
+  const initialStoreExcludeIdsRef = useRef<string[]>(
+    hasStoreList ? [...storeExcludeIds, ...storeVideos.map((v) => v.id)] : []
+  );
+
   // Case 1 & 2: navigate từ SearchPage — không auto-fetch, chỉ fetch khi user scroll đến cuối
   const {
     data: storeInfiniteData,
@@ -40,8 +45,8 @@ export const useVideoDetailFeed = (currentSlug: string) => {
     variables: {
       query: storeQuery,
       rootId: storeRootVideo?.id,
-      excludeIds: storeExcludeIds,
-      distanceScore: storeNextCursor ?? 0,
+      excludeIds: initialStoreExcludeIdsRef.current,
+      distanceScore: 0,
     },
     enabled: false,
   });
