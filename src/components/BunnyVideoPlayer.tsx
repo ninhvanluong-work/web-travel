@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 // Khai báo type cho Player.js
 interface PlayerJS {
@@ -24,14 +24,21 @@ declare global {
   }
 }
 
+export interface BunnyPlayerHandle {
+  play: () => void;
+  pause: () => void;
+}
+
 interface Props {
-  autoplay?: boolean;
   muted?: boolean;
   embedUrl: string;
   className?: string;
 }
 
-export default function BunnyVideoPlayer({ muted = true, embedUrl, className }: Props) {
+const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVideoPlayer(
+  { muted = true, embedUrl, className },
+  ref
+) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<PlayerJS | null>(null);
   const [ready, setReady] = useState(false);
@@ -85,6 +92,11 @@ export default function BunnyVideoPlayer({ muted = true, embedUrl, className }: 
     else playerRef.current.unmute();
   }, [muted, ready]);
 
+  useImperativeHandle(ref, () => ({
+    play: () => playerRef.current?.play(),
+    pause: () => playerRef.current?.pause(),
+  }));
+
   return (
     <iframe
       ref={iframeRef}
@@ -97,4 +109,6 @@ export default function BunnyVideoPlayer({ muted = true, embedUrl, className }: 
       style={{ border: 'none' }}
     />
   );
-}
+});
+
+export default BunnyVideoPlayer;

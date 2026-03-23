@@ -3,7 +3,7 @@ import React, { memo, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
-import BunnyVideoPlayer from '@/components/BunnyVideoPlayer';
+import BunnyVideoPlayer, { type BunnyPlayerHandle } from '@/components/BunnyVideoPlayer';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInview';
 import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
@@ -16,15 +16,11 @@ interface Props {
   onMutedChange: (muted: boolean) => void;
 }
 
-function sendCommand(iframe: HTMLIFrameElement | null, command: string, value?: unknown) {
-  if (!iframe?.contentWindow) return;
-  iframe.contentWindow.postMessage(JSON.stringify({ command, value }), '*');
-}
-
 function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) {
   const router = useRouter();
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerRef = useRef<BunnyPlayerHandle>(null);
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
+  const [paused, setPaused] = useState(false);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
 
@@ -34,17 +30,23 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
   const isInView = useInView(containerEl, { threshold: 0.6 });
 
   React.useEffect(() => {
-    const iframe = iframeRef.current;
     if (isInView) {
-      sendCommand(iframe, 'play');
+      setPaused(false);
+      playerRef.current?.play();
       onVisibleRef.current(video.slug);
     } else {
-      sendCommand(iframe, 'pause');
+      playerRef.current?.pause();
     }
   }, [isInView, video.slug]);
 
-  const handleMuteToggle = () => {
-    onMutedChange(!muted);
+  const handleTap = () => {
+    if (paused) {
+      playerRef.current?.play();
+      setPaused(false);
+    } else {
+      playerRef.current?.pause();
+      setPaused(true);
+    }
   };
 
   const maxLength = 20;
@@ -58,8 +60,8 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
       className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
       {/* Bunny.net iframe — full cover */}
-
       <BunnyVideoPlayer
+        ref={playerRef}
         embedUrl={video.embedUrl}
         className="absolute inset-0 h-full w-full pointer-events-none"
         muted={muted || !isInView}
@@ -71,9 +73,20 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent h-[30%]" />
       </div>
 
+      {/* Tap zone — pause/resume */}
+      <div className="absolute inset-0 z-10" onClick={handleTap}>
+        {paused && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+              <div className="w-0 h-0 border-t-[14px] border-t-transparent border-b-[14px] border-b-transparent border-l-[24px] border-l-white ml-1" />
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Info overlay — bottom left */}
       <div
-        className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up"
+        className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up z-20"
         style={{ paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))' }}
       >
         <div
@@ -90,7 +103,7 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
 
       {/* Action bar — bottom right */}
       <div
-        className="absolute right-[14px] flex flex-col items-center gap-[22px]"
+        className="absolute right-[14px] flex flex-col items-center gap-[22px] z-20"
         style={{ bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))' }}
       >
         {/* Like */}
@@ -120,7 +133,7 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
           rounded="full"
           blur={false}
           className="p-[10px]"
-          onClick={handleMuteToggle}
+          onClick={() => onMutedChange(!muted)}
           aria-label={muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
         >
           {muted ? (
