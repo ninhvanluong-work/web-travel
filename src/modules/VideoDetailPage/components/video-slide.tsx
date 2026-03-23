@@ -14,13 +14,16 @@ interface Props {
   muted: boolean;
   onVisible: (slug: string) => void;
   onMutedChange: (muted: boolean) => void;
+  defaultPaused?: boolean;
+  onPlay?: () => void;
 }
 
-function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) {
+function VideoSlideComponent({ video, muted, onVisible, onMutedChange, defaultPaused = false, onPlay }: Props) {
   const router = useRouter();
   const playerRef = useRef<BunnyPlayerHandle>(null);
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(defaultPaused);
+  const userPlayedRef = useRef(!defaultPaused);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
 
@@ -31,8 +34,12 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
 
   React.useEffect(() => {
     if (isInView) {
-      setPaused(false);
-      playerRef.current?.play();
+      if (userPlayedRef.current) {
+        setPaused(false);
+        playerRef.current?.play();
+      } else {
+        playerRef.current?.pause();
+      }
       onVisibleRef.current(video.slug);
     } else {
       playerRef.current?.pause();
@@ -41,8 +48,11 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
 
   const handleTap = () => {
     if (paused) {
+      userPlayedRef.current = true;
       playerRef.current?.play();
       setPaused(false);
+      onMutedChange(false);
+      onPlay?.();
     } else {
       playerRef.current?.pause();
       setPaused(true);
@@ -65,6 +75,7 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) 
         embedUrl={video.embedUrl}
         className="absolute inset-0 h-full w-full pointer-events-none"
         muted={muted || !isInView}
+        autoPlay={!defaultPaused}
       />
 
       {/* Gradient overlay */}

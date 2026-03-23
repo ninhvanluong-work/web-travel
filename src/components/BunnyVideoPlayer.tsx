@@ -31,26 +31,30 @@ export interface BunnyPlayerHandle {
 
 interface Props {
   muted?: boolean;
+  autoPlay?: boolean;
   embedUrl: string;
   className?: string;
 }
 
 const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVideoPlayer(
-  { muted = true, embedUrl, className },
+  { muted = true, autoPlay = true, embedUrl, className },
   ref
 ) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<PlayerJS | null>(null);
+  const readyRef = useRef(false);
+  const pendingPlayRef = useRef<boolean | null>(null);
   const [ready, setReady] = useState(false);
 
   // Freeze src on mount — never recompute to avoid iframe reload
   const srcRef = useRef(
     `${embedUrl}?${new URLSearchParams({
-      autoplay: 'true',
+      autoplay: String(autoPlay),
       muted: String(muted),
       preload: 'true',
       responsive: 'true',
       loop: 'true',
+      playsinline: 'true',
     })}`
   );
 
@@ -61,7 +65,15 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     playerRef.current = p;
 
     p.on('ready', () => {
+      readyRef.current = true;
       setReady(true);
+      if (pendingPlayRef.current === true) {
+        pendingPlayRef.current = null;
+        p.play();
+      } else if (pendingPlayRef.current === false) {
+        pendingPlayRef.current = null;
+        p.pause();
+      }
     });
   }, []);
 
@@ -93,8 +105,21 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
   }, [muted, ready]);
 
   useImperativeHandle(ref, () => ({
-    play: () => playerRef.current?.play(),
-    pause: () => playerRef.current?.pause(),
+    play: () => {
+      if (readyRef.current && playerRef.current) {
+        playerRef.current.play();
+      } else {
+        pendingPlayRef.current = true;
+      }
+    },
+    pause: () => {
+      if (readyRef.current && playerRef.current) {
+        pendingPlayRef.current = null;
+        playerRef.current.pause();
+      } else {
+        pendingPlayRef.current = false;
+      }
+    },
   }));
 
   return (
@@ -103,7 +128,7 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
       src={srcRef.current}
       onLoad={handleIframeLoad}
       loading="lazy"
-      allow="accelerometer; gyroscope; autoplay;"
+      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
       allowFullScreen
       className={className}
       style={{ border: 'none' }}
