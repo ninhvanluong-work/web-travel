@@ -5,6 +5,7 @@ export interface IVideo {
   title: string;
   link: string;
   shortUrl: string;
+  embedUrl: string;
   thumbnail: string;
   description: string;
   likeCount: number;
@@ -23,6 +24,7 @@ export interface ApiVideoItem {
   name: string;
   url: string;
   shortUrl: string;
+  embedUrl: string;
   thumbnail: string;
   description: string;
   tag: string | null;

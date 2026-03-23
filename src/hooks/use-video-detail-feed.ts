@@ -152,7 +152,29 @@ export const useVideoDetailFeed = (currentSlug: string) => {
     [router]
   );
 
+  const handleVideoTestVisible = useCallback(
+    (videoSlug: string) => {
+      if (videoSlug === visibleSlugRef.current) return;
+      visibleSlugRef.current = videoSlug;
+      const newIndex = videosRef.current.findIndex((v) => v.slug === videoSlug);
+      if (newIndex >= 0) setCurrentIndex(newIndex);
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      rafRef.current = requestAnimationFrame(() => {
+        router.replace(`/videotest/${videoSlug}`, undefined, { shallow: true });
+      });
+    },
+    [router]
+  );
+
   const isReloadInitializing = !hasStoreList && !!slugVideo && !reloadInfiniteData;
 
-  return { videos, currentIndex, initialIndex, handleVideoVisible, isReloadInitializing, hasStoreList };
+  return {
+    videos,
+    currentIndex,
+    initialIndex,
+    handleVideoVisible,
+    handleVideoTestVisible,
+    isReloadInitializing,
+    hasStoreList,
+  };
 };
