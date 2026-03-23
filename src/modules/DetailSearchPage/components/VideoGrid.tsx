@@ -79,7 +79,7 @@ const VideoGrid = ({
       }
 
       setList(videosFromClicked, query, video, excludeIds, nextCursor);
-      router.push(`/videotest/${video.slug}`);
+      router.push(`/video/${video.slug}`);
     },
     [router, videos, pages, query, setList]
   );

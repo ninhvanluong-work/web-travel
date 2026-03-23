@@ -1,72 +1,50 @@
 import { useRouter } from 'next/router';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
+import BunnyVideoPlayer from '@/components/BunnyVideoPlayer';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInview';
 import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
 import { ROUTE } from '@/types/routes';
 
-import VideoPlayOverlay from './video-play-overlay';
-
 interface Props {
   video: IVideo;
+  muted: boolean;
   onVisible: (slug: string) => void;
-  initialMuted?: boolean;
-  preloadMode?: 'auto' | 'metadata' | 'none';
-  onBlockedChange?: (isBlocked: boolean) => void;
+  onMutedChange: (muted: boolean) => void;
 }
 
-function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMode = 'none', onBlockedChange }: Props) {
+function sendCommand(iframe: HTMLIFrameElement | null, command: string, value?: unknown) {
+  if (!iframe?.contentWindow) return;
+  iframe.contentWindow.postMessage(JSON.stringify({ command, value }), '*');
+}
+
+function VideoSlideComponent({ video, muted, onVisible, onMutedChange }: Props) {
   const router = useRouter();
-  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
-  const [muted, setMuted] = useState(initialMuted);
-  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
-
-  const isInView = useInView(videoEl, { threshold: 0.6 });
 
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const onBlockedChangeRef = useRef(onBlockedChange);
-  onBlockedChangeRef.current = onBlockedChange;
+  const isInView = useInView(containerEl, { threshold: 0.6 });
 
-  useEffect(() => {
-    if (isInView && videoEl) {
-      // Always attempt unmuted — browser allows if user has gesture (scrolled before),
-      // blocks if no gesture yet (direct link / reload) → show overlay.
-      videoEl.muted = false;
-      videoEl
-        .play()
-        .then(() => {
-          setMuted(false); // sync React state
-        })
-        .catch((error: unknown) => {
-          if (error instanceof DOMException && error.name === 'NotAllowedError') {
-            // Blocked — keep video paused, show overlay, lock scroll
-            videoEl.muted = true;
-            setMuted(true);
-            setShowPlayOverlay(true);
-            onBlockedChangeRef.current?.(true);
-          }
-        });
+  React.useEffect(() => {
+    const iframe = iframeRef.current;
+    if (isInView) {
+      sendCommand(iframe, 'play');
       onVisibleRef.current(video.slug);
     } else {
-      videoEl?.pause();
-      setShowPlayOverlay(false);
-      onBlockedChangeRef.current?.(false);
+      sendCommand(iframe, 'pause');
     }
-  }, [isInView, videoEl, video.slug]);
+  }, [isInView, video.slug]);
 
-  const handleForcePlay = () => {
-    if (videoEl) videoEl.muted = false; // DOM property — immediate, before play()
-    setMuted(false); // React state — sync UI icon
-    setShowPlayOverlay(false);
-    onBlockedChangeRef.current?.(false);
-    videoEl?.play().catch(() => {});
+  const handleMuteToggle = () => {
+    onMutedChange(!muted);
   };
 
   const maxLength = 20;
@@ -75,23 +53,17 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
 
   return (
     <div
+      ref={setContainerEl}
       id={`video-slide-${video.slug}`}
       className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
-      {/* Video */}
-      <video
-        ref={setVideoEl}
-        src={video.link}
-        className="h-full w-full object-cover"
-        muted={muted}
-        playsInline
-        loop
-        poster={video.thumbnail}
-        preload={preloadMode}
-      />
+      {/* Bunny.net iframe — full cover */}
 
-      {/* Play overlay — shown when autoplay is blocked */}
-      <VideoPlayOverlay visible={showPlayOverlay} onPlay={handleForcePlay} />
+      <BunnyVideoPlayer
+        embedUrl={video.embedUrl}
+        className="absolute inset-0 h-full w-full pointer-events-none"
+        muted={muted || !isInView}
+      />
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 pointer-events-none">
@@ -148,7 +120,7 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
           rounded="full"
           blur={false}
           className="p-[10px]"
-          onClick={() => setMuted((prev) => !prev)}
+          onClick={handleMuteToggle}
           aria-label={muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
         >
           {muted ? (

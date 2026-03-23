@@ -12,10 +12,14 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, currentIndex, handleVideoVisible, isReloadInitializing, hasStoreList } =
-    useVideoDetailFeed(currentSlug);
+  const { videos, handleVideoTestVisible, isReloadInitializing, hasStoreList } = useVideoDetailFeed(currentSlug);
+  const [muted, setMuted] = useState(!hasStoreList);
+  const [hasInteracted, setHasInteracted] = useState(hasStoreList);
 
-  const [scrollLocked, setScrollLocked] = useState(false);
+  const handlePlayTap = () => {
+    setMuted(false);
+    setHasInteracted(true);
+  };
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -43,29 +47,25 @@ const VideoDetailPage = () => {
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
-      <div
-        className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
-          scrollLocked ? 'overflow-hidden' : 'overflow-y-scroll'
-        }`}
-      >
-        {videos.map((video, index) => {
-          const diff = index - currentIndex;
-          let preloadMode: 'auto' | 'metadata' | 'none' = 'none';
-          if (diff === 0 || diff === 1) preloadMode = 'auto';
-          else if (diff === -1) preloadMode = 'auto';
-          else if (diff >= -2 && diff <= 2) preloadMode = 'metadata';
-          return (
-            <VideoSlide
-              key={video.slug}
-              video={video}
-              onVisible={handleVideoVisible}
-              initialMuted={!hasStoreList || video.slug !== currentSlug}
-              preloadMode={preloadMode}
-              onBlockedChange={setScrollLocked}
-            />
-          );
-        })}
+      <div className="h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none overflow-y-scroll">
+        {videos.map((video) => (
+          <VideoSlide
+            key={video.slug}
+            video={video}
+            muted={muted}
+            onVisible={handleVideoTestVisible}
+            onMutedChange={setMuted}
+          />
+        ))}
       </div>
+
+      {!hasInteracted && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center cursor-pointer" onClick={handlePlayTap}>
+          <div className="w-20 h-20 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+            <div className="w-0 h-0 border-t-[16px] border-t-transparent border-b-[16px] border-b-transparent border-l-[28px] border-l-white ml-2" />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

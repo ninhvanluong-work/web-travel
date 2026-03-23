@@ -160,7 +160,7 @@ export const useVideoDetailFeed = (currentSlug: string) => {
       if (newIndex >= 0) setCurrentIndex(newIndex);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
-        router.replace(`/videotest/${videoSlug}`, undefined, { shallow: true });
+        router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
       });
     },
     [router]
