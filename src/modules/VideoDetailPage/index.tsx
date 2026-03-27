@@ -12,7 +12,8 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(currentSlug);
+  const { videos, currentIndex, handleVideoTestVisible, isReloadInitializing, initialIndex } =
+    useVideoDetailFeed(currentSlug);
   // Khi đến từ grid (?autoplay=true): phát loa ngay, còn direct access thì muted
   const [muted, setMuted] = useState(() => router.query.autoplay !== 'true');
 
@@ -50,7 +51,8 @@ const VideoDetailPage = () => {
             muted={muted}
             onVisible={handleVideoTestVisible}
             onMutedChange={setMuted}
-            autoLoad={index <= initialIndex + 1}
+            autoLoad={index <= initialIndex + 2}
+            shouldPreload={index === currentIndex + 1}
           />
         ))}
       </div>

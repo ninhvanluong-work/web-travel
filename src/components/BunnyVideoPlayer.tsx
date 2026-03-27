@@ -19,16 +19,20 @@ export interface BunnyPlayerHandle {
   pause: () => void;
   unmute: () => void;
   mute: () => void;
+  isPlaying: () => boolean;
+  preload: () => void; // Bắt đầu download fragment mà không play — dùng để chuẩn bị slide kế
 }
 
 interface Props {
   muted?: boolean;
   embedUrl: string;
   className?: string;
+  poster?: string;
+  onReady?: () => void; // Gọi khi video có đủ data để phát (canplay)
 }
 
 const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVideoPlayer(
-  { muted = true, embedUrl, className },
+  { muted = true, embedUrl, className, poster, onReady },
   ref
 ) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -38,19 +42,25 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
   const mutedRef = useRef(muted);
   mutedRef.current = muted;
 
+  const onReadyRef = useRef(onReady);
+  onReadyRef.current = onReady;
+
   // Capture intent: VideoSlide đã gọi play() nhưng HLS chưa sẵn → MANIFEST_PARSED retry
   const shouldPlayRef = useRef(false);
+  // Preload intent: bắt đầu download fragment sớm cho slide kế, không cần play
+  const shouldPreloadRef = useRef(false);
 
   useImperativeHandle(ref, () => ({
     /**
      * iOS-safe play: luôn mute trước khi play(), sau đó unmute khi play() resolve.
-     * Không dùng React prop để set muted vì React reconciliation có thể override
-     * video.muted giữa mute() và play(), khiến iOS block.
+     * Gọi hls.startLoad() trước để bắt đầu load fragment (vì autoStartLoad=false).
      */
     play: () => {
       const video = videoRef.current;
       if (!video) return Promise.resolve();
       shouldPlayRef.current = true;
+      // Bắt đầu load fragment nếu chưa — nếu manifest chưa parse xong thì sẽ defer tự động
+      hlsRef.current?.startLoad(0);
       // Nếu đang play rồi thì chỉ cần sync muted state
       if (!video.paused) {
         video.muted = mutedRef.current;
@@ -61,7 +71,11 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
       return video
         .play()
         .then(() => {
-          video.muted = mutedRef.current;
+          // Delay unmute 1 rAF: đảm bảo video trước đã kịp pause() trước khi unmute,
+          // tránh 2 video cùng phát tiếng khi swipe nhanh (IO callback order không đảm bảo).
+          requestAnimationFrame(() => {
+            if (shouldPlayRef.current) video.muted = mutedRef.current;
+          });
         })
         .catch(() => {});
     },
@@ -71,8 +85,8 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     },
     /**
      * unmute trong user gesture (button click):
-     * - Nếu đang play: set muted=false trực tiếp (iOS cho phép sau khi play() đã chạy)
-     * - Nếu đang pause: cần gọi play() để unlock iOS audio session
+     * - Nếu đang play: set muted=false trực tiếp
+     * - Nếu đang pause: gọi play() để unlock iOS audio session
      */
     unmute: () => {
       const video = videoRef.current;
@@ -81,6 +95,7 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
       if (!video.paused) {
         video.muted = false;
       } else {
+        hlsRef.current?.startLoad(0);
         video.muted = true;
         video
           .play()
@@ -94,6 +109,11 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
       mutedRef.current = true;
       if (videoRef.current) videoRef.current.muted = true;
     },
+    isPlaying: () => videoRef.current !== null && !videoRef.current.paused,
+    preload: () => {
+      shouldPreloadRef.current = true;
+      hlsRef.current?.startLoad(0); // no-op nếu manifest chưa parse → MANIFEST_PARSED sẽ xử lý
+    },
   }));
 
   const src = extractM3u8Url(embedUrl);
@@ -106,24 +126,47 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     // iOS/Mac Safari: hỗ trợ HLS native → set src, VideoSlide sẽ gọi play() qua ref
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
-      return undefined;
+      // Không dùng { once: true } — cần retry khi buffering stall rồi phục hồi
+      const onCanPlay = () => {
+        onReadyRef.current?.();
+        if (shouldPlayRef.current && video.paused) {
+          video.muted = true;
+          video
+            .play()
+            .then(() => {
+              requestAnimationFrame(() => {
+                if (shouldPlayRef.current) video.muted = mutedRef.current;
+              });
+            })
+            .catch(() => {});
+        }
+      };
+      video.addEventListener('canplay', onCanPlay);
+      return () => video.removeEventListener('canplay', onCanPlay);
     }
 
     // Chrome, Firefox, Edge, Android → dùng hls.js làm bridge
     if (!Hls.isSupported()) return undefined;
 
     const hls = new Hls({
-      startLevel: -1, // để ABR tự chọn level
-      abrEwmaDefaultEstimate: 1200000, // estimate 1.2Mbps → ABR chọn 240p để start
-      maxBufferLength: 8, // chỉ cần 8s buffer để bắt đầu phát
-      backBufferLength: 0, // không buffer ngược
-      startFragPrefetch: true, // bắt đầu tải fragment sớm hơn
+      autoStartLoad: false, // Chỉ load manifest khi mount, KHÔNG load fragment.
+      // Fragment chỉ load khi play() gọi hls.startLoad(0).
+      // Tránh nhiều video đồng thời download segment → tranh băng thông.
+      startLevel: 0, // Luôn bắt đầu ở chất lượng thấp nhất (240p) → load nhanh hơn,
+      // sau đó ABR tự nâng quality khi buffer đủ.
+      abrEwmaDefaultEstimate: 1200000,
+      maxBufferLength: 10,
+      backBufferLength: 0,
     });
     hlsRef.current = hls;
     hls.loadSource(src);
     hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      // VideoSlide đã gọi play() trước khi HLS sẵn → retry bây giờ
+
+    // canplay fires khi video có đủ data để bắt đầu phát.
+    // Đây là retry chính: play() có thể bị reject khi SourceBuffer còn trống,
+    // canplay đảm bảo video sẽ phát ngay khi fragment đầu tiên sẵn sàng.
+    const onCanPlay = () => {
+      onReadyRef.current?.();
       if (shouldPlayRef.current && video.paused) {
         video.muted = true;
         video
@@ -133,6 +176,23 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
           })
           .catch(() => {});
       }
+    };
+    video.addEventListener('canplay', onCanPlay);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      // startLoad nếu cần preload (slide kế) hoặc đang chờ play
+      if (shouldPreloadRef.current || shouldPlayRef.current) {
+        hls.startLoad(0);
+      }
+      if (shouldPlayRef.current) {
+        video.muted = true;
+        video
+          .play()
+          .then(() => {
+            video.muted = mutedRef.current;
+          })
+          .catch(() => {}); // Nếu reject → canplay sẽ retry khi fragment về
+      }
     });
     hls.on(Hls.Events.ERROR, (_event, data) => {
       if (data.fatal) {
@@ -140,12 +200,12 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
       }
     });
     return () => {
+      video.removeEventListener('canplay', onCanPlay);
       hls.destroy();
     };
   }, [src]);
 
   // Sync muted prop khi đang play (ví dụ: user toggle mute từ slide khác)
-  // Chỉ apply khi đang play để tránh can thiệp vào chuỗi mute→play→unmute
   useEffect(() => {
     const video = videoRef.current;
     if (video && !video.paused) {
@@ -157,10 +217,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     <video
       ref={videoRef}
       className={className}
-      // QUAN TRỌNG: KHÔNG đặt muted prop ở đây.
-      // React reconciliation sẽ ghi đè video.muted = false (khi prop=false)
-      // ngay giữa lúc ta gọi mute() và play(), làm iOS block play().
-      // Thay vào đó, muted được quản lý hoàn toàn imperatively qua mutedRef + effects.
+      // KHÔNG đặt muted prop — React reconciliation sẽ override video.muted giữa
+      // mute() và play(), khiến iOS block. Quản lý hoàn toàn imperatively.
+      poster={poster}
       loop
       playsInline
       style={{ objectFit: 'cover' }}

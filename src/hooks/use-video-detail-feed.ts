@@ -6,6 +6,16 @@ import { useInfiniteListVideo, useVideoBySlug } from '@/api/video';
 import { useVideoListStore } from '@/stores';
 
 const PREFETCH_OFFSET = 2;
+const BUNNY_CDN = 'https://vz-186cf1b9-231.b-cdn.net';
+
+function prefetchHls(embedUrl: string) {
+  const guid = embedUrl.split('/').pop()?.split('?')[0];
+  if (!guid) return;
+  const base = `${BUNNY_CDN}/${guid}`;
+  fetch(`${base}/playlist.m3u8`).catch(() => {});
+  fetch(`${base}/240p/video.m3u8`).catch(() => {});
+  fetch(`${base}/240p/video0.ts`).catch(() => {});
+}
 
 export const useVideoDetailFeed = (currentSlug: string) => {
   const router = useRouter();
@@ -162,7 +172,14 @@ export const useVideoDetailFeed = (currentSlug: string) => {
       if (videoSlug === visibleSlugRef.current) return;
       visibleSlugRef.current = videoSlug;
       const newIndex = videosRef.current.findIndex((v) => v.slug === videoSlug);
-      if (newIndex >= 0) setCurrentIndex(newIndex);
+      if (newIndex >= 0) {
+        setCurrentIndex(newIndex);
+        // Prefetch HLS của 2 video kế tiếp để sẵn sàng trong browser cache
+        [newIndex + 1, newIndex + 2].forEach((i) => {
+          const next = videosRef.current[i];
+          if (next?.embedUrl) prefetchHls(next.embedUrl);
+        });
+      }
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
         router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
