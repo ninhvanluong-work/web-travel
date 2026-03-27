@@ -12,9 +12,17 @@ function prefetchHls(embedUrl: string) {
   const guid = embedUrl.split('/').pop()?.split('?')[0];
   if (!guid) return;
   const base = `${BUNNY_CDN}/${guid}`;
-  fetch(`${base}/playlist.m3u8`).catch(() => {});
-  fetch(`${base}/240p/video.m3u8`).catch(() => {});
-  fetch(`${base}/240p/video0.ts`).catch(() => {});
+
+  // Gửi tất cả request song song (HTTP/2 multiplexing trên cùng 1 TCP connection).
+  // Fetch 3 segment đầu (~6-9 giây video ở 240p) để HLS.js lấy từ cache ngay,
+  // thay vì download tuần tự → video play gần như không cần chờ.
+  [
+    `${base}/playlist.m3u8`,
+    `${base}/240p/video.m3u8`,
+    `${base}/240p/video0.ts`,
+    `${base}/240p/video1.ts`,
+    `${base}/240p/video2.ts`,
+  ].forEach((url) => fetch(url).catch(() => {}));
 }
 
 export const useVideoDetailFeed = (currentSlug: string) => {

@@ -1,7 +1,7 @@
-$files = $(git diff --name-only HEAD 2>$null; git diff --name-only 2>$null) |
+$files = @($(git diff --name-only HEAD 2>$null; git diff --name-only 2>$null) |
     Where-Object { $_ -match '\.(ts|tsx)$' } |
     Sort-Object -Unique |
-    Where-Object { Test-Path $_ }
+    Where-Object { Test-Path $_ })
 
 if (!$files) {
     Write-Host 'Khong co file .ts/.tsx nao thay doi.' -ForegroundColor Yellow

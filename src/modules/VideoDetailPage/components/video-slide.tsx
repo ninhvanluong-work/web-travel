@@ -14,8 +14,10 @@ interface Props {
   muted: boolean;
   onVisible: (slug: string) => void;
   onMutedChange: (muted: boolean) => void;
+  onGateOpen?: () => void;
   autoLoad?: boolean;
   shouldPreload?: boolean; // true khi slide này là slide kế — bắt đầu download fragment sớm
+  forcePause?: boolean; // true khi reload: chặn auto-play cho đến khi user bật loa
 }
 
 function VideoSlideComponent({
@@ -23,8 +25,10 @@ function VideoSlideComponent({
   muted,
   onVisible,
   onMutedChange,
+  onGateOpen,
   autoLoad = false,
   shouldPreload = false,
+  forcePause = false,
 }: Props) {
   const router = useRouter();
   const playerRef = useRef<BunnyPlayerHandle>(null);
@@ -46,6 +50,8 @@ function VideoSlideComponent({
   isInViewRef.current = isInView;
   const pausedRef = useRef(false);
   pausedRef.current = paused;
+  const forcePauseRef = useRef(false);
+  forcePauseRef.current = forcePause;
 
   // Chỉ khởi tạo HLS khi slide gần viewport (current + 1 slide kế)
   React.useEffect(() => {
@@ -60,17 +66,17 @@ function VideoSlideComponent({
   }, [shouldPreload, activated, isInView]);
 
   React.useEffect(() => {
-    if (!activated) return; // BunnyVideoPlayer chưa mount, playerRef.current = null
+    if (!activated) return;
     if (isInView) {
-      // play() tự handle iOS mute→play→unmute bên trong, không cần làm thủ công ở đây
-      if (!paused) playerRef.current?.play();
+      if (!paused && !forcePause) playerRef.current?.play();
       onVisibleRef.current(video.slug);
     } else {
       playerRef.current?.pause();
     }
-  }, [isInView, video.slug, paused, activated]);
+  }, [isInView, video.slug, paused, activated, forcePause]);
 
   const handleTap = () => {
+    if (forcePause) return;
     if (paused) {
       // User đã pause thủ công → resume
       playerRef.current?.play();
@@ -79,11 +85,13 @@ function VideoSlideComponent({
       // Video đang thực sự phát → pause
       playerRef.current.pause();
       setPaused(true);
-    } else if (videoReady) {
-      // Video đã load xong nhưng chưa phát (bị iOS block) → thử play trong gesture
+    } else {
+      // Video chưa phát: có thể đang load hoặc bị iOS block.
+      // Gọi play() trong gesture context:
+      //   - Nếu data chưa có → shouldPlayRef=true → canplay sẽ tự play khi sẵn sàng
+      //   - Nếu iOS block autoplay → gesture unlock cho phép play ngay
       playerRef.current?.play();
     }
-    // videoReady=false: đang load → bỏ qua tap
   };
 
   const maxLength = 20;
@@ -106,10 +114,7 @@ function VideoSlideComponent({
           poster={video.thumbnail}
           onReady={() => {
             setVideoReady(true);
-            // shouldPlayRef bên trong BunnyVideoPlayer có thể bị reset về false
-            // nếu pause() được gọi do scroll trước khi canplay fires.
-            // Kiểm tra lại trạng thái thực tế ở VideoSlide để quyết định có play không.
-            if (isInViewRef.current && !pausedRef.current) {
+            if (isInViewRef.current && !pausedRef.current && !forcePauseRef.current) {
               playerRef.current?.play();
             }
           }}
@@ -131,6 +136,23 @@ function VideoSlideComponent({
 
       {/* Tap zone */}
       <div className="absolute inset-0 z-10" onClick={handleTap} />
+
+      {/* Gate overlay — chỉ hiện khi reload và đang ở slide này */}
+      {forcePause && isInView && (
+        <button
+          className="absolute inset-0 z-30 flex items-center justify-center"
+          aria-label="Phát video"
+          onClick={() => {
+            playerRef.current?.unmute();
+            onMutedChange(false);
+            onGateOpen?.();
+          }}
+        >
+          <div className="flex items-center justify-center w-[72px] h-[72px] rounded-full bg-black/40 backdrop-blur-sm border border-white/20">
+            <Icons.playSolid className="w-[32px] h-[32px] text-white ml-[4px]" />
+          </div>
+        </button>
+      )}
 
       {/* Info overlay — bottom left */}
       <div
