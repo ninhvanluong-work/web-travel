@@ -14,45 +14,43 @@ interface Props {
   muted: boolean;
   onVisible: (slug: string) => void;
   onMutedChange: (muted: boolean) => void;
-  defaultPaused?: boolean;
-  onPlay?: () => void;
+  autoLoad?: boolean;
 }
 
-function VideoSlideComponent({ video, muted, onVisible, onMutedChange, defaultPaused = false, onPlay }: Props) {
+function VideoSlideComponent({ video, muted, onVisible, onMutedChange, autoLoad = false }: Props) {
   const router = useRouter();
   const playerRef = useRef<BunnyPlayerHandle>(null);
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
-  const [paused, setPaused] = useState(defaultPaused);
-  const userPlayedRef = useRef(!defaultPaused);
+  const [paused, setPaused] = useState(false);
+  const [activated, setActivated] = useState(autoLoad);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
 
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
+  const isNearView = useInView(containerEl, { rootMargin: '100% 0px', threshold: 0 });
   const isInView = useInView(containerEl, { threshold: 0.6 });
+
+  // Chỉ khởi tạo HLS khi slide gần viewport (current + 1 slide kế)
+  React.useEffect(() => {
+    if (isNearView) setActivated(true);
+  }, [isNearView]);
 
   React.useEffect(() => {
     if (isInView) {
-      if (userPlayedRef.current) {
-        setPaused(false);
-        playerRef.current?.play();
-      } else {
-        playerRef.current?.pause();
-      }
+      // play() tự handle iOS mute→play→unmute bên trong, không cần làm thủ công ở đây
+      if (!paused) playerRef.current?.play();
       onVisibleRef.current(video.slug);
     } else {
       playerRef.current?.pause();
     }
-  }, [isInView, video.slug]);
+  }, [isInView, video.slug, paused]);
 
   const handleTap = () => {
     if (paused) {
-      userPlayedRef.current = true;
       playerRef.current?.play();
       setPaused(false);
-      onMutedChange(false);
-      onPlay?.();
     } else {
       playerRef.current?.pause();
       setPaused(true);
@@ -69,14 +67,15 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange, defaultPa
       id={`video-slide-${video.slug}`}
       className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
-      {/* Bunny.net iframe — full cover */}
-      <BunnyVideoPlayer
-        ref={playerRef}
-        embedUrl={video.embedUrl}
-        className="absolute inset-0 h-full w-full pointer-events-none"
-        muted={muted || !isInView}
-        autoPlay={!defaultPaused}
-      />
+      {/* Chỉ load HLS khi slide gần viewport */}
+      {activated && (
+        <BunnyVideoPlayer
+          ref={playerRef}
+          embedUrl={video.embedUrl}
+          className="absolute inset-0 h-full w-full object-cover"
+          muted={muted}
+        />
+      )}
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 pointer-events-none">
@@ -84,7 +83,7 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange, defaultPa
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent h-[30%]" />
       </div>
 
-      {/* Tap zone — pause/resume */}
+      {/* Tap zone */}
       <div className="absolute inset-0 z-10" onClick={handleTap} />
 
       {/* Info overlay — bottom left */}
@@ -129,14 +128,23 @@ function VideoSlideComponent({ video, muted, onVisible, onMutedChange, defaultPa
           </span>
         </Button>
 
-        {/* Mute */}
+        {/* Mute toggle */}
         <Button
           variant="glassLight"
           size="icon"
           rounded="full"
           blur={false}
           className="p-[10px]"
-          onClick={() => onMutedChange(!muted)}
+          onClick={() => {
+            const next = !muted;
+            onMutedChange(next);
+            if (next) {
+              playerRef.current?.mute();
+            } else {
+              // unmute() tự gọi play() nếu cần để unlock iOS audio session
+              playerRef.current?.unmute();
+            }
+          }}
           aria-label={muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
         >
           {muted ? (

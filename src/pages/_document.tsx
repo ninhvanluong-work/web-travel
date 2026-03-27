@@ -12,6 +12,8 @@ export default function Document() {
           content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, interactive-widget=resizes-content"
         />
 
+        <link rel="preconnect" href="https://vz-186cf1b9-231.b-cdn.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://vz-186cf1b9-231.b-cdn.net" />
         <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon.png" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />

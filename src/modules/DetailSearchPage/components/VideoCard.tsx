@@ -15,6 +15,17 @@ interface Props {
   onVideoClick: (id: string) => void;
 }
 
+const BUNNY_CDN = 'https://vz-186cf1b9-231.b-cdn.net';
+
+function prefetchVideoHls(embedUrl: string) {
+  const guid = embedUrl.split('/').pop()?.split('?')[0];
+  if (!guid) return;
+  const base = `${BUNNY_CDN}/${guid}`;
+  fetch(`${base}/playlist.m3u8`).catch(() => {});
+  fetch(`${base}/240p/video.m3u8`).catch(() => {});
+  fetch(`${base}/240p/video0.ts`).catch(() => {});
+}
+
 const VideoCard = ({
   video,
   index,
@@ -62,7 +73,26 @@ const VideoCard = ({
   return (
     <div
       className="group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out opacity-100"
-      onClick={() => onVideoClick(video.id)}
+      onPointerDown={() => prefetchVideoHls(video.embedUrl)}
+      onClick={() => {
+        // Unlock iOS audio session trong user gesture trước khi navigate
+        // Nhờ đó video detail có thể phát loa ngay lập tức
+        try {
+          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioCtx) {
+            const ctx = new AudioCtx();
+            const buf = ctx.createBuffer(1, 1, 22050);
+            const src = ctx.createBufferSource();
+            src.buffer = buf;
+            src.connect(ctx.destination);
+            src.start(0);
+            src.onended = () => ctx.close().catch(() => {});
+          }
+        } catch (_) {
+          /* ignore */
+        }
+        onVideoClick(video.id);
+      }}
     >
       <div className="aspect-[3/4] w-full relative">
         {/* Dimmed Overlay */}

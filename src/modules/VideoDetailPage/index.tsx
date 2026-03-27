@@ -12,9 +12,9 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, handleVideoTestVisible, isReloadInitializing } = useVideoDetailFeed(currentSlug);
-  const [muted, setMuted] = useState(true);
-  const [hasInteracted, setHasInteracted] = useState(() => router.query.autoplay === 'true');
+  const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(currentSlug);
+  // Khi đến từ grid (?autoplay=true): phát loa ngay, còn direct access thì muted
+  const [muted, setMuted] = useState(() => router.query.autoplay !== 'true');
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -42,11 +42,7 @@ const VideoDetailPage = () => {
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
-      <div
-        className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
-          hasInteracted ? 'overflow-y-scroll' : 'overflow-hidden'
-        }`}
-      >
+      <div className="h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none overflow-y-scroll">
         {videos.map((video, index) => (
           <VideoSlide
             key={video.slug}
@@ -54,8 +50,7 @@ const VideoDetailPage = () => {
             muted={muted}
             onVisible={handleVideoTestVisible}
             onMutedChange={setMuted}
-            defaultPaused={index === 0 && !hasInteracted}
-            onPlay={() => setHasInteracted(true)}
+            autoLoad={index <= initialIndex + 1}
           />
         ))}
       </div>
