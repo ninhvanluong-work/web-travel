@@ -79,7 +79,7 @@ const VideoGrid = ({
       }
 
       setList(videosFromClicked, query, video, excludeIds, nextCursor);
-      router.push(`/video/${video.slug}`);
+      router.push(`/video/${video.slug}?autoplay=true`);
     },
     [router, videos, pages, query, setList]
   );

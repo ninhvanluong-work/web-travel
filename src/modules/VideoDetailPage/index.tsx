@@ -12,10 +12,9 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, currentIndex, handleVideoVisible, isReloadInitializing, hasStoreList } =
-    useVideoDetailFeed(currentSlug);
-
-  const [scrollLocked, setScrollLocked] = useState(false);
+  const { videos, handleVideoTestVisible, isReloadInitializing } = useVideoDetailFeed(currentSlug);
+  const [muted, setMuted] = useState(true);
+  const [hasInteracted, setHasInteracted] = useState(() => router.query.autoplay === 'true');
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -45,26 +44,20 @@ const VideoDetailPage = () => {
 
       <div
         className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
-          scrollLocked ? 'overflow-hidden' : 'overflow-y-scroll'
+          hasInteracted ? 'overflow-y-scroll' : 'overflow-hidden'
         }`}
       >
-        {videos.map((video, index) => {
-          const diff = index - currentIndex;
-          let preloadMode: 'auto' | 'metadata' | 'none' = 'none';
-          if (diff === 0 || diff === 1) preloadMode = 'auto';
-          else if (diff === -1) preloadMode = 'auto';
-          else if (diff >= -2 && diff <= 2) preloadMode = 'metadata';
-          return (
-            <VideoSlide
-              key={video.slug}
-              video={video}
-              onVisible={handleVideoVisible}
-              initialMuted={!hasStoreList || video.slug !== currentSlug}
-              preloadMode={preloadMode}
-              onBlockedChange={setScrollLocked}
-            />
-          );
-        })}
+        {videos.map((video, index) => (
+          <VideoSlide
+            key={video.slug}
+            video={video}
+            muted={muted}
+            onVisible={handleVideoTestVisible}
+            onMutedChange={setMuted}
+            defaultPaused={index === 0 && !hasInteracted}
+            onPlay={() => setHasInteracted(true)}
+          />
+        ))}
       </div>
     </div>
   );

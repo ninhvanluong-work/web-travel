@@ -1,72 +1,62 @@
 import { useRouter } from 'next/router';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
+import BunnyVideoPlayer, { type BunnyPlayerHandle } from '@/components/BunnyVideoPlayer';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInview';
 import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
 import { ROUTE } from '@/types/routes';
 
-import VideoPlayOverlay from './video-play-overlay';
-
 interface Props {
   video: IVideo;
+  muted: boolean;
   onVisible: (slug: string) => void;
-  initialMuted?: boolean;
-  preloadMode?: 'auto' | 'metadata' | 'none';
-  onBlockedChange?: (isBlocked: boolean) => void;
+  onMutedChange: (muted: boolean) => void;
+  defaultPaused?: boolean;
+  onPlay?: () => void;
 }
 
-function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMode = 'none', onBlockedChange }: Props) {
+function VideoSlideComponent({ video, muted, onVisible, onMutedChange, defaultPaused = false, onPlay }: Props) {
   const router = useRouter();
-  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
-  const [muted, setMuted] = useState(initialMuted);
-  const [showPlayOverlay, setShowPlayOverlay] = useState(false);
+  const playerRef = useRef<BunnyPlayerHandle>(null);
+  const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
+  const [paused, setPaused] = useState(defaultPaused);
+  const userPlayedRef = useRef(!defaultPaused);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
-
-  const isInView = useInView(videoEl, { threshold: 0.6 });
 
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const onBlockedChangeRef = useRef(onBlockedChange);
-  onBlockedChangeRef.current = onBlockedChange;
+  const isInView = useInView(containerEl, { threshold: 0.6 });
 
-  useEffect(() => {
-    if (isInView && videoEl) {
-      // Always attempt unmuted — browser allows if user has gesture (scrolled before),
-      // blocks if no gesture yet (direct link / reload) → show overlay.
-      videoEl.muted = false;
-      videoEl
-        .play()
-        .then(() => {
-          setMuted(false); // sync React state
-        })
-        .catch((error: unknown) => {
-          if (error instanceof DOMException && error.name === 'NotAllowedError') {
-            // Blocked — keep video paused, show overlay, lock scroll
-            videoEl.muted = true;
-            setMuted(true);
-            setShowPlayOverlay(true);
-            onBlockedChangeRef.current?.(true);
-          }
-        });
+  React.useEffect(() => {
+    if (isInView) {
+      if (userPlayedRef.current) {
+        setPaused(false);
+        playerRef.current?.play();
+      } else {
+        playerRef.current?.pause();
+      }
       onVisibleRef.current(video.slug);
     } else {
-      videoEl?.pause();
-      setShowPlayOverlay(false);
-      onBlockedChangeRef.current?.(false);
+      playerRef.current?.pause();
     }
-  }, [isInView, videoEl, video.slug]);
+  }, [isInView, video.slug]);
 
-  const handleForcePlay = () => {
-    if (videoEl) videoEl.muted = false; // DOM property — immediate, before play()
-    setMuted(false); // React state — sync UI icon
-    setShowPlayOverlay(false);
-    onBlockedChangeRef.current?.(false);
-    videoEl?.play().catch(() => {});
+  const handleTap = () => {
+    if (paused) {
+      userPlayedRef.current = true;
+      playerRef.current?.play();
+      setPaused(false);
+      onMutedChange(false);
+      onPlay?.();
+    } else {
+      playerRef.current?.pause();
+      setPaused(true);
+    }
   };
 
   const maxLength = 20;
@@ -75,23 +65,18 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
 
   return (
     <div
+      ref={setContainerEl}
       id={`video-slide-${video.slug}`}
       className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
-      {/* Video */}
-      <video
-        ref={setVideoEl}
-        src={video.link}
-        className="h-full w-full object-cover"
-        muted={muted}
-        playsInline
-        loop
-        poster={video.thumbnail}
-        preload={preloadMode}
+      {/* Bunny.net iframe — full cover */}
+      <BunnyVideoPlayer
+        ref={playerRef}
+        embedUrl={video.embedUrl}
+        className="absolute inset-0 h-full w-full pointer-events-none"
+        muted={muted || !isInView}
+        autoPlay={!defaultPaused}
       />
-
-      {/* Play overlay — shown when autoplay is blocked */}
-      <VideoPlayOverlay visible={showPlayOverlay} onPlay={handleForcePlay} />
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 pointer-events-none">
@@ -99,9 +84,12 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-transparent h-[30%]" />
       </div>
 
+      {/* Tap zone — pause/resume */}
+      <div className="absolute inset-0 z-10" onClick={handleTap} />
+
       {/* Info overlay — bottom left */}
       <div
-        className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up"
+        className="absolute bottom-0 left-0 right-[72px] px-[18px] animate-fade-up z-20"
         style={{ paddingBottom: 'calc(28px + env(safe-area-inset-bottom, 0px))' }}
       >
         <div
@@ -118,7 +106,7 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
 
       {/* Action bar — bottom right */}
       <div
-        className="absolute right-[14px] flex flex-col items-center gap-[22px]"
+        className="absolute right-[14px] flex flex-col items-center gap-[22px] z-20"
         style={{ bottom: 'calc(24px + env(safe-area-inset-bottom, 0px))' }}
       >
         {/* Like */}
@@ -148,7 +136,7 @@ function VideoSlideComponent({ video, onVisible, initialMuted = true, preloadMod
           rounded="full"
           blur={false}
           className="p-[10px]"
-          onClick={() => setMuted((prev) => !prev)}
+          onClick={() => onMutedChange(!muted)}
           aria-label={muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
         >
           {muted ? (
