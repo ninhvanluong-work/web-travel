@@ -64,6 +64,16 @@ const VideoGrid = ({
     (id: string) => {
       const video = videos.find((v) => v.id === id);
       if (!video) return;
+
+      // Unlock iOS audio session trong gesture context — trước khi navigate
+      try {
+        const AudioCtx =
+          window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (AudioCtx) new AudioCtx().resume();
+      } catch (e) {
+        console.warn('Failed to unlock AudioCtx', e);
+      }
+
       const clickedIndex = videos.findIndex((v) => v.id === id);
       const excludeIds = videos.slice(0, clickedIndex).map((v) => v.id);
       const videosFromClicked = videos.slice(clickedIndex);

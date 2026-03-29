@@ -4,6 +4,7 @@ import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { useInView } from '@/hooks/useInview';
+import { VIDEO_SILENT_MP3 } from '@/lib/const';
 
 interface Props {
   video: IVideo;
@@ -75,19 +76,13 @@ const VideoCard = ({
       className="group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out opacity-100"
       onPointerDown={() => prefetchVideoHls(video.embedUrl)}
       onClick={() => {
-        // Unlock iOS audio session trong user gesture trước khi navigate
-        // Nhờ đó video detail có thể phát loa ngay lập tức
+        // Unlock iOS Safari HTMLMediaElement audio session trong user gesture.
+        // new Audio().play() đánh dấu tab là "đã được user cho phép phát media",
+        // token này tồn tại qua Client-Side Navigation nên VideoDetailPage
+        // có thể gọi video.play() có tiếng ngay mà không cần tap lần 2.
+        // (AudioContext unlock là gate riêng, không ảnh hưởng <video> element.)
         try {
-          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-          if (AudioCtx) {
-            const ctx = new AudioCtx();
-            const buf = ctx.createBuffer(1, 1, 22050);
-            const src = ctx.createBufferSource();
-            src.buffer = buf;
-            src.connect(ctx.destination);
-            src.start(0);
-            src.onended = () => ctx.close().catch(() => {});
-          }
+          new Audio(VIDEO_SILENT_MP3).play().catch(() => {});
         } catch (_) {
           /* ignore */
         }

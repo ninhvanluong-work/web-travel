@@ -36,6 +36,9 @@ function VideoSlideComponent({
   const [paused, setPaused] = useState(false);
   const [activated, setActivated] = useState(autoLoad);
   const [videoReady, setVideoReady] = useState(false);
+  // Guard: chỉ cho phép deactivate sau khi IntersectionObserver đã fire true ít nhất 1 lần.
+  // Tránh race condition: useInView khởi tạo false → effect chạy sớm → unmount sai.
+  const hasActivatedOnce = useRef(false);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
 
@@ -53,9 +56,19 @@ function VideoSlideComponent({
   const forcePauseRef = useRef(false);
   forcePauseRef.current = forcePause;
 
-  // Chỉ khởi tạo HLS khi slide gần viewport (current + 1 slide kế)
+  // Khởi tạo / hủy HLS theo khoảng cách viewport (200% margin ≈ 2 màn hình).
+  // - Activate khi slide vào vùng gần: mount BunnyVideoPlayer, bắt đầu load HLS.
+  // - Deactivate khi slide rời xa >2 màn hình: unmount player, giải phóng iOS hardware decoder.
+  // hasActivatedOnce guard: tránh deactivate sai khi useInView khởi tạo false
+  // trước khi IntersectionObserver kịp fire lần đầu.
   React.useEffect(() => {
-    if (isNearView) setActivated(true);
+    if (isNearView) {
+      hasActivatedOnce.current = true;
+      setActivated(true);
+    } else if (hasActivatedOnce.current) {
+      setActivated(false);
+      setVideoReady(false); // reset spinner cho lần remount tiếp theo
+    }
   }, [isNearView]);
 
   // Bắt đầu download fragment sớm khi slide này là slide kế (chưa vào view)

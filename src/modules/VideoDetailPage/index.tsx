@@ -67,7 +67,7 @@ const VideoDetailPage = () => {
             onMutedChange={handleMutedChange}
             onGateOpen={() => setGated(false)}
             autoLoad={index <= initialIndex + 2}
-            shouldPreload={index === currentIndex + 1}
+            shouldPreload={index === currentIndex + 1 || index === currentIndex + 2}
             forcePause={gated}
           />
         ))}

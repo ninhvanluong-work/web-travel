@@ -142,7 +142,15 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
         }
       };
       video.addEventListener('canplay', onCanPlay);
-      return () => video.removeEventListener('canplay', onCanPlay);
+      return () => {
+        video.removeEventListener('canplay', onCanPlay);
+        // Giải phóng hardware decoder của iOS Safari khi unmount.
+        // Chỉ pause() không đủ — iOS vẫn giữ decoder slot cho src còn gán.
+        // removeAttribute('src') + load() mới thực sự trả decoder về pool.
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+      };
     }
 
     // Chrome, Firefox, Edge, Android → dùng hls.js làm bridge
