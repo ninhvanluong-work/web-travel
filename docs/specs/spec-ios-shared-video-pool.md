@@ -220,7 +220,23 @@ useEffect(() => {
 
 **KHÔNG thay đổi `forcePause` / gate logic.** Đây là behavior cố ý cho reload flow:
 
-- Reload page (`isFromGrid=false`): pool chưa unlocked → gate hiện, user phải tap → `unmute()` chạy trong gesture context → iOS cấp token lúc đó → scroll được.
+**Bổ sung `unlockVideoPool` cho Reload flow (Gate Logic):**
+
+- Reload page (`isFromGrid=false`): pool chưa unlocked ban đầu → gate hiện, user bắt buộc tap 1 lần.
+- Trong màn hình Gate của Slide đầ tiên, tích hợp `unlockVideoPool` để mượn cú Tap này unlock cho CHO CẢ 3 pool elements. Kết quả: Từ slide thứ 2 trở đi vuốt sẽ mượt như luồng Grid.
+
+```tsx
+onClick={() => {
+  // [NEW] Triệu hồi Kim Bài Miễn Tử cho CẢ 3 thẻ Video trong Pool
+  unlockVideoPool();
+
+  // Vượt gác cổng: Bật tiếng cho thẻ hiện hành
+  playerRef.current?.unmute();
+  onMutedChange(false);
+  onGateOpen?.();
+}}
+```
+
 - Từ Grid (`isFromGrid=true`): pool đã unlocked từ Tầng 2 → gate không hiện, video tự phát tiếng ngay.
 
 **Chỉ điều chỉnh 2 điểm:**
@@ -244,7 +260,7 @@ useEffect(() => {
 1. Lập trình vòng đời DOM thật trong lòng React (được Encapsulate vào Hook nên chấp nhận được).
 2. CSS Flash 1 frame có thể xảy ra nếu layout reflow chậm. Giảm thiểu bằng cách set `style.cssText` đầy đủ ngay tại `createPoolElement()`.
 3. Pool exhausted (null) nếu Eviction Policy không được thực thi đúng (Tầng 0). Component render spinner thay vì crash khi nhận null từ hook.
-4. Reload flow chỉ được unlock qua user gesture (tap gate button) — pool elements vẫn bị iOS block khi reload. Đây là hành vi đúng, không phải bug.
+4. Reload flow: User vẫn phải tap Gate 1 lần ở Video đầu tiên (do Safari block mặc định), nhưng các video sau đó đã được xử lý triệt để, scroll là có tiếng ngay.
 
 ---
 

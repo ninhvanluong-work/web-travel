@@ -5,6 +5,7 @@ import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import BunnyVideoPlayer, { type BunnyPlayerHandle } from '@/components/BunnyVideoPlayer';
 import { Button } from '@/components/ui/button';
+import { unlockVideoPool } from '@/hooks/use-shared-video';
 import { useInView } from '@/hooks/useInview';
 import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
 import { ROUTE } from '@/types/routes';
@@ -147,6 +148,8 @@ function VideoSlideComponent({
           className="absolute inset-0 z-30 flex items-center justify-center"
           aria-label="Phát video"
           onClick={() => {
+            // Mượn cú tap bắt buộc này để unlock toàn bộ pool — từ slide 2 trở đi sẽ có tiếng ngay
+            unlockVideoPool();
             playerRef.current?.unmute();
             onMutedChange(false);
             onGateOpen?.();
