@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
+import { unlockVideoPool } from '@/hooks/use-shared-video';
 import { useInView } from '@/hooks/useInview';
-import { VIDEO_SILENT_MP3 } from '@/lib/const';
 
 interface Props {
   video: IVideo;
@@ -76,16 +76,11 @@ const VideoCard = ({
       className="group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out opacity-100"
       onPointerDown={() => prefetchVideoHls(video.embedUrl)}
       onClick={() => {
-        // Unlock iOS Safari HTMLMediaElement audio session trong user gesture.
-        // new Audio().play() đánh dấu tab là "đã được user cho phép phát media",
-        // token này tồn tại qua Client-Side Navigation nên VideoDetailPage
-        // có thể gọi video.play() có tiếng ngay mà không cần tap lần 2.
-        // (AudioContext unlock là gate riêng, không ảnh hưởng <video> element.)
-        try {
-          new Audio(VIDEO_SILENT_MP3).play().catch(() => {});
-        } catch (_) {
-          /* ignore */
-        }
+        // Unlock tất cả pool elements trong user gesture context.
+        // iOS Safari gán gesture token theo từng HTMLMediaElement instance.
+        // play() gọi trong onClick → Safari cấp token vĩnh viễn cho 3 pool elements,
+        // cho phép chúng play() unmuted bất kỳ lúc nào sau đó (kể cả sau async HLS load).
+        unlockVideoPool();
         onVideoClick(video.id);
       }}
     >

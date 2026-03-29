@@ -16,7 +16,6 @@ interface Props {
   onMutedChange: (muted: boolean) => void;
   onGateOpen?: () => void;
   autoLoad?: boolean;
-  shouldPreload?: boolean; // true khi slide này là slide kế — bắt đầu download fragment sớm
   forcePause?: boolean; // true khi reload: chặn auto-play cho đến khi user bật loa
 }
 
@@ -27,7 +26,6 @@ function VideoSlideComponent({
   onMutedChange,
   onGateOpen,
   autoLoad = false,
-  shouldPreload = false,
   forcePause = false,
 }: Props) {
   const router = useRouter();
@@ -45,7 +43,7 @@ function VideoSlideComponent({
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const isNearView = useInView(containerEl, { rootMargin: '200% 0px', threshold: 0 });
+  const isNearView = useInView(containerEl, { rootMargin: '100% 0px', threshold: 0 });
   const isInView = useInView(containerEl, { threshold: 0.6 });
 
   // Refs để onReady callback đọc state hiện tại (tránh stale closure)
@@ -70,13 +68,6 @@ function VideoSlideComponent({
       setVideoReady(false); // reset spinner cho lần remount tiếp theo
     }
   }, [isNearView]);
-
-  // Bắt đầu download fragment sớm khi slide này là slide kế (chưa vào view)
-  React.useEffect(() => {
-    if (activated && shouldPreload && !isInView) {
-      playerRef.current?.preload();
-    }
-  }, [shouldPreload, activated, isInView]);
 
   React.useEffect(() => {
     if (!activated) return;

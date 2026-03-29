@@ -12,8 +12,7 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, currentIndex, handleVideoTestVisible, isReloadInitializing, initialIndex } =
-    useVideoDetailFeed(currentSlug);
+  const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(currentSlug);
 
   // autoplay=true khi đến từ grid, false khi reload/direct access
   const isFromGrid = router.query.autoplay === 'true';
@@ -66,8 +65,7 @@ const VideoDetailPage = () => {
             onVisible={handleVideoTestVisible}
             onMutedChange={handleMutedChange}
             onGateOpen={() => setGated(false)}
-            autoLoad={index <= initialIndex + 2}
-            shouldPreload={index === currentIndex + 1 || index === currentIndex + 2}
+            autoLoad={Math.abs(index - initialIndex) <= 1}
             forcePause={gated}
           />
         ))}
