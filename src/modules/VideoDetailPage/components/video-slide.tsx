@@ -55,9 +55,9 @@ function VideoSlideComponent({
   const forcePauseRef = useRef(false);
   forcePauseRef.current = forcePause;
 
-  // Khởi tạo / hủy HLS theo khoảng cách viewport (200% margin ≈ 2 màn hình).
+  // Khởi tạo / hủy HLS theo khoảng cách viewport (100% margin ≈ 1 màn hình).
   // - Activate khi slide vào vùng gần: mount BunnyVideoPlayer, bắt đầu load HLS.
-  // - Deactivate khi slide rời xa >2 màn hình: unmount player, giải phóng iOS hardware decoder.
+  // - Deactivate khi slide rời xa >1 màn hình: unmount player, trả pool element, giải phóng iOS hardware decoder.
   // hasActivatedOnce guard: tránh deactivate sai khi useInView khởi tạo false
   // trước khi IntersectionObserver kịp fire lần đầu.
   React.useEffect(() => {
@@ -155,8 +155,8 @@ function VideoSlideComponent({
             onGateOpen?.();
           }}
         >
-          <div className="flex items-center justify-center w-[72px] h-[72px] rounded-full bg-black/40 backdrop-blur-sm border border-white/20">
-            <Icons.playSolid className="w-[32px] h-[32px] text-white ml-[4px]" />
+          <div className="flex items-center justify-center w-[72px] h-[72px] rounded-full bg-black/50 backdrop-blur-md">
+            <Icons.playTriangleFill className="w-[34px] h-[34px] text-white ml-[4px]" />
           </div>
         </button>
       )}

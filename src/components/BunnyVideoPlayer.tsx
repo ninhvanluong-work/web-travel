@@ -130,9 +130,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     const video = videoElement;
     if (!video) return; // pool chưa inject — effect sẽ re-run khi videoElement thay đổi
 
-    // Reset play intent khi nhận pool element mới
-    shouldPlayRef.current = false;
-    shouldPreloadRef.current = false;
+    // KHÔNG reset shouldPlayRef ở đây — play() có thể đã được gọi từ VideoSlide
+    // trước khi pool element arrive (do React effect ordering).
+    // shouldPlayRef.current = false nằm trong useRef(false) là đủ — fresh mỗi lần component mount.
     video.muted = true;
 
     // iOS/Mac Safari: hỗ trợ HLS native → set src trực tiếp
