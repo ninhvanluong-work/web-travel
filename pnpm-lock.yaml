@@ -106,6 +106,9 @@ importers:
       framer-motion:
         specifier: ^10.15.0
         version: 10.18.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      hls.js:
+        specifier: ^1.6.15
+        version: 1.6.15
       i18next:
         specifier: ^22.4.9
         version: 22.5.1
@@ -3501,6 +3504,10 @@ packages:
     resolution:
       { integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ== }
     engines: { node: '>= 0.4' }
+
+  hls.js@1.6.15:
+    resolution:
+      { integrity: sha512-E3a5VwgXimGHwpRGV+WxRTKeSp2DW5DI5MWv34ulL3t5UNmyJWCQ1KmLEHbYzcfThfXG8amBL+fCYPneGHC4VA== }
 
   hosted-git-info@2.8.9:
     resolution:
@@ -8725,6 +8732,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hls.js@1.6.15: {}
 
   hosted-git-info@2.8.9: {}
 

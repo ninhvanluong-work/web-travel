@@ -12,9 +12,18 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, handleVideoTestVisible, isReloadInitializing } = useVideoDetailFeed(currentSlug);
-  const [muted, setMuted] = useState(true);
-  const [hasInteracted, setHasInteracted] = useState(() => router.query.autoplay === 'true');
+  const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(currentSlug);
+
+  // autoplay=true khi đến từ grid, false khi reload/direct access
+  const isFromGrid = router.query.autoplay === 'true';
+  const [muted, setMuted] = useState(() => !isFromGrid);
+
+  // Khi reload: khóa scroll + pause video cho đến khi user bật loa
+  const [gated, setGated] = useState(() => !isFromGrid);
+
+  const handleMutedChange = (newMuted: boolean) => {
+    setMuted(newMuted);
+  };
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
@@ -42,9 +51,10 @@ const VideoDetailPage = () => {
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
+      {/* gated=true: khóa scroll cho đến khi user bật loa (chỉ khi reload) */}
       <div
         className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
-          hasInteracted ? 'overflow-y-scroll' : 'overflow-hidden'
+          gated ? 'overflow-hidden' : 'overflow-y-scroll'
         }`}
       >
         {videos.map((video, index) => (
@@ -53,9 +63,10 @@ const VideoDetailPage = () => {
             video={video}
             muted={muted}
             onVisible={handleVideoTestVisible}
-            onMutedChange={setMuted}
-            defaultPaused={index === 0 && !hasInteracted}
-            onPlay={() => setHasInteracted(true)}
+            onMutedChange={handleMutedChange}
+            onGateOpen={() => setGated(false)}
+            autoLoad={Math.abs(index - initialIndex) <= 1}
+            forcePause={gated}
           />
         ))}
       </div>

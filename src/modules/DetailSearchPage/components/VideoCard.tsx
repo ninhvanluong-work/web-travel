@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
+import { unlockVideoPool } from '@/hooks/use-shared-video';
 import { useInView } from '@/hooks/useInview';
 
 interface Props {
@@ -13,6 +14,17 @@ interface Props {
   onRequestAudio: (id: string) => void;
   onAudioDeactivate: (id: string) => void;
   onVideoClick: (id: string) => void;
+}
+
+const BUNNY_CDN = 'https://vz-186cf1b9-231.b-cdn.net';
+
+function prefetchVideoHls(embedUrl: string) {
+  const guid = embedUrl.split('/').pop()?.split('?')[0];
+  if (!guid) return;
+  const base = `${BUNNY_CDN}/${guid}`;
+  fetch(`${base}/playlist.m3u8`).catch(() => {});
+  fetch(`${base}/240p/video.m3u8`).catch(() => {});
+  fetch(`${base}/240p/video0.ts`).catch(() => {});
 }
 
 const VideoCard = ({
@@ -62,7 +74,15 @@ const VideoCard = ({
   return (
     <div
       className="group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out opacity-100"
-      onClick={() => onVideoClick(video.id)}
+      onPointerDown={() => prefetchVideoHls(video.embedUrl)}
+      onClick={() => {
+        // Unlock tất cả pool elements trong user gesture context.
+        // iOS Safari gán gesture token theo từng HTMLMediaElement instance.
+        // play() gọi trong onClick → Safari cấp token vĩnh viễn cho 3 pool elements,
+        // cho phép chúng play() unmuted bất kỳ lúc nào sau đó (kể cả sau async HLS load).
+        unlockVideoPool();
+        onVideoClick(video.id);
+      }}
     >
       <div className="aspect-[3/4] w-full relative">
         {/* Dimmed Overlay */}
