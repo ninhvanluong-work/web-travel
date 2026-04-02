@@ -119,8 +119,8 @@ const VideoDetailPage = () => {
             onVisible={handleVideoTestVisible}
             onMutedChange={handleMutedChange}
             onGateOpen={() => setGated(false)}
-            autoLoad={index === initialIndex || index === initialIndex + 1}
-            isCurrentOrNext={currentIndexReady && (index === currentIndex || index === currentIndex + 1)}
+            autoLoad={Math.abs(index - initialIndex) <= 1}
+            isCurrentOrNext={currentIndexReady && Math.abs(index - currentIndex) <= 1}
             forcePause={gated}
           />
         ))}
