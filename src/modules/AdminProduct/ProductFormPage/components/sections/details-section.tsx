@@ -1,12 +1,10 @@
-import { useFormContext } from 'react-hook-form';
-
 import { Editor } from '@tinymce/tinymce-react';
+import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { ProductFormValues } from '@/lib/validations/product';
 
 const EDITOR_INIT = {
-  license_key: 'gpl',
   height: 280,
   menubar: true,
   statusbar: false,
@@ -95,6 +93,7 @@ export function DetailsSection() {
               <div className="rounded-lg overflow-hidden border border-input">
                 <Editor
                   tinymceScriptSrc="/tinymce/tinymce.min.js"
+                  licenseKey="gpl"
                   value={field.value ?? ''}
                   onEditorChange={(content) => field.onChange(content)}
                   init={EDITOR_INIT}
@@ -118,6 +117,7 @@ export function DetailsSection() {
               <div className="rounded-lg overflow-hidden border border-input">
                 <Editor
                   tinymceScriptSrc="/tinymce/tinymce.min.js"
+                  licenseKey="gpl"
                   value={field.value ?? ''}
                   onEditorChange={(content) => field.onChange(content)}
                   init={EDITOR_INIT}

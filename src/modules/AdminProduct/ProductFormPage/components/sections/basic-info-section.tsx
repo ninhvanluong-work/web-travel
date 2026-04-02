@@ -1,7 +1,6 @@
+import { Editor } from '@tinymce/tinymce-react';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-
-import { Editor } from '@tinymce/tinymce-react';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -61,10 +60,10 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
               <div className="rounded-lg overflow-hidden border border-input">
                 <Editor
                   tinymceScriptSrc="/tinymce/tinymce.min.js"
+                  licenseKey="gpl"
                   value={field.value ?? ''}
                   onEditorChange={(content) => field.onChange(content)}
                   init={{
-                    license_key: 'gpl',
                     height: 320,
                     menubar: true,
                     statusbar: false,

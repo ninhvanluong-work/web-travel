@@ -1,3 +1,4 @@
+import type { IProduct } from '@/api/product';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,7 +9,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import type { IProduct } from '@/api/product';
 
 interface DeleteConfirmDialogProps {
   target: IProduct | null;

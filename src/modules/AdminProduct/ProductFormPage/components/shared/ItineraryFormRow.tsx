@@ -1,6 +1,5 @@
-import { Trash2 } from 'lucide-react';
-
 import { Editor } from '@tinymce/tinymce-react';
+import { Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,10 +46,10 @@ export function ItineraryFormRow({ value, index, onChange, onRemove }: Itinerary
         <div className="rounded-lg overflow-hidden border border-input">
           <Editor
             tinymceScriptSrc="/tinymce/tinymce.min.js"
+            licenseKey="gpl"
             value={value.description ?? ''}
             onEditorChange={(content) => set({ description: content })}
             init={{
-              license_key: 'gpl',
               height: 260,
               menubar: true,
               statusbar: false,
