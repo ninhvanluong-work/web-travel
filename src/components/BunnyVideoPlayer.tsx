@@ -138,6 +138,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     // iOS/Mac Safari: hỗ trợ HLS native → set src trực tiếp
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
+      // pool elements có preload='none' — video.load() override để iOS AVFoundation
+      // bắt đầu fetch manifest + init hardware decoder ngay khi mount (không chờ play()).
+      video.load();
       const onCanPlay = () => {
         onReadyRef.current?.();
         if (shouldPlayRef.current && video.paused) {

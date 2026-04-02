@@ -17,6 +17,7 @@ interface Props {
   onMutedChange: (muted: boolean) => void;
   onGateOpen?: () => void;
   autoLoad?: boolean;
+  isCurrentOrNext?: boolean; // true khi slide này là currentIndex hoặc currentIndex+1 → strict 2-decoder
   forcePause?: boolean; // true khi reload: chặn auto-play cho đến khi user bật loa
 }
 
@@ -27,6 +28,7 @@ function VideoSlideComponent({
   onMutedChange,
   onGateOpen,
   autoLoad = false,
+  isCurrentOrNext = false,
   forcePause = false,
 }: Props) {
   const router = useRouter();
@@ -44,7 +46,6 @@ function VideoSlideComponent({
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const isNearView = useInView(containerEl, { rootMargin: '100% 0px', threshold: 0 });
   const isInView = useInView(containerEl, { threshold: 0.6 });
 
   // Refs để onReady callback đọc state hiện tại (tránh stale closure)
@@ -55,20 +56,20 @@ function VideoSlideComponent({
   const forcePauseRef = useRef(false);
   forcePauseRef.current = forcePause;
 
-  // Khởi tạo / hủy HLS theo khoảng cách viewport (100% margin ≈ 1 màn hình).
-  // - Activate khi slide vào vùng gần: mount BunnyVideoPlayer, bắt đầu load HLS.
-  // - Deactivate khi slide rời xa >1 màn hình: unmount player, trả pool element, giải phóng iOS hardware decoder.
-  // hasActivatedOnce guard: tránh deactivate sai khi useInView khởi tạo false
-  // trước khi IntersectionObserver kịp fire lần đầu.
+  // Activation driven bởi currentIndex (isCurrentOrNext prop) thay vì IntersectionObserver.
+  // - Strict 2-decoder: chỉ currentIndex (playing) và currentIndex+1 (preloaded) được mount.
+  // - Deactivate ngay khi slide ra ngoài window → iOS hardware decoder được giải phóng.
+  // - hasActivatedOnce guard: tránh deactivate khi slide chưa từng được activate
+  //   (ví dụ: autoLoad=false, isCurrentOrNext vừa fire false ngay lần đầu).
   React.useEffect(() => {
-    if (isNearView) {
+    if (isCurrentOrNext) {
       hasActivatedOnce.current = true;
       setActivated(true);
     } else if (hasActivatedOnce.current) {
       setActivated(false);
-      setVideoReady(false); // reset spinner cho lần remount tiếp theo
+      setVideoReady(false);
     }
-  }, [isNearView]);
+  }, [isCurrentOrNext]);
 
   React.useEffect(() => {
     if (!activated) return;

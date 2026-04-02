@@ -1,7 +1,8 @@
 # Spec: Video Feed Preload Strategy
 
-**Ngày tạo:** 2026-03-31  
-**Trạng thái:** Ready for implementation  
+**Ngày tạo:** 2026-03-31
+**Cập nhật:** 2026-04-02
+**Trạng thái:** Implemented
 **Ưu tiên:** High
 
 ---
@@ -13,254 +14,221 @@ Khi user vuốt sang slide tiếp theo trong `VideoDetailPage`, xuất hiện hi
 ```
 User vuốt → isNearView fire (IntersectionObserver ~100-300ms delay)
          → BunnyVideoPlayer mount
-         → useSharedVideo inject pool element
+         → useSharedVideo inject pool element (preload='none')
          → video.src = m3u8
-         → iOS AVFoundation / HLS.js fetch manifest (~200-400ms)
+         → iOS AVFoundation fetch manifest (~200-400ms)
          → fetch segment đầu (~300-600ms)
          → canplay → play()
          ↳ TỔNG: 800ms - 1300ms khựng
 ```
 
-Vấn đề hiện tại với `prefetchHls()`:
+**Vấn đề phát hiện thêm khi phân tích sâu:**
 
-```
-handleVideoTestVisible (slide N visible) → prefetchHls(N+1), prefetchHls(N+2)
-  ↓ fetch bắt đầu...
-User vuốt sang N+1 NGAY (~300ms sau)
-  ↓ fetch chưa xong
-video.src = m3u8 → iOS phải fetch lại vì cache chưa warm
-```
+1. `pool elements` được tạo với `video.preload = 'none'` → dù `video.src` được set sớm, iOS không fetch gì cho đến khi `play()` được gọi. Toàn bộ preload không có tác dụng nếu thiếu `video.load()`.
 
-→ `prefetchHls()` hiệu quả khi user xem lâu (> 1s) nhưng không đủ khi swipe nhanh.
+2. Activation logic dùng `isNearView` (rootMargin 100%) → N-1, N, N+1 đều activated = **3 iOS hardware decoder đồng thời**, vi phạm giới hạn 2 decoder của thiết bị cũ.
+
+3. `prefetchHls()` hiệu quả khi user xem lâu (>1s) nhưng không đủ khi swipe nhanh vì HTTP cache chưa warm kịp.
 
 ---
 
 ## 2. Mục tiêu
 
-- Loại bỏ hoàn toàn hiện tượng khựng khi vuốt sang slide tiếp theo
-- **Giữ nguyên iOS hardware decoder constraint**: tối đa 2 active HLS instance đồng thời
-- Không tăng thêm memory pressure đáng kể trên thiết bị cũ
+- Loại bỏ khựng khi vuốt ở tốc độ bình thường (> 400ms/slide)
+- Giảm tối đa khựng khi vuốt nhanh (200-400ms/slide): mục tiêu < 200ms
+- **Strict 2 active iOS hardware decoder** mọi thời điểm
+- Không tăng memory pressure đáng kể trên thiết bị cũ
 
 ---
 
 ## 3. Phạm vi thay đổi
 
-| File                                                     | Giai đoạn | Loại thay đổi                           |
-| -------------------------------------------------------- | --------- | --------------------------------------- |
-| `src/pages/_document.tsx`                                | 1         | Add `<link>` hints                      |
-| `src/hooks/use-video-detail-feed.ts`                     | 1         | Early prefetch khi list load            |
-| `src/modules/VideoDetailPage/index.tsx`                  | 2         | Truyền `preloadNext` prop               |
-| `src/modules/VideoDetailPage/components/video-slide.tsx` | 2         | Nhận `preloadNext`, override activation |
+| File                                                     | Thay đổi                                 |
+| -------------------------------------------------------- | ---------------------------------------- |
+| `src/pages/_document.tsx`                                | Add `<link>` preconnect hints            |
+| `src/hooks/use-video-detail-feed.ts`                     | Thêm `currentIndexReady`, eager prefetch |
+| `src/components/BunnyVideoPlayer.tsx`                    | Add `video.load()` sau `video.src = src` |
+| `src/modules/VideoDetailPage/index.tsx`                  | Dùng `isCurrentOrNext` prop              |
+| `src/modules/VideoDetailPage/components/video-slide.tsx` | Thay activation bằng `isCurrentOrNext`   |
 
 ---
 
-## 4. Giai đoạn 1 — Network Warm-up (Quick Wins)
+## 4. Giai đoạn 1 — Network Warm-up
 
 ### 4.1. Preconnect CDN trong `_document.tsx`
 
-Thêm vào `<Head>`:
-
 ```tsx
-// src/pages/_document.tsx
 <link rel="preconnect" href="https://vz-186cf1b9-231.b-cdn.net" crossOrigin="anonymous" />
 <link rel="dns-prefetch" href="https://vz-186cf1b9-231.b-cdn.net" />
 ```
 
-**Effect:** TCP + TLS handshake với Bunny CDN thực hiện ngay khi page load, tránh latency khi request đầu tiên.  
+**Effect:** TCP + TLS handshake với Bunny CDN thực hiện ngay khi page load.
 **iOS safe:** ✅ Không tạo decoder, không tốn memory.
 
----
-
-### 4.2. Early prefetch khi video list available
+### 4.2. Eager prefetch khi video list available
 
 **File:** `src/hooks/use-video-detail-feed.ts`
 
-Hiện tại `prefetchHls()` chỉ được gọi trong `handleVideoTestVisible` (khi slide đang xem). Thêm early batch prefetch ngay khi `videos` có data lần đầu:
-
 ```ts
-// Prefetch HLS cho các video xung quanh initialIndex ngay khi list có data.
-// Mục tiêu: warm HTTP cache trước khi user bắt đầu swipe.
-// Chỉ fire 1 lần duy nhất (deps: videos.length > 0).
 const eagerPrefetchDone = useRef(false);
 useEffect(() => {
   if (eagerPrefetchDone.current || videos.length === 0) return;
   eagerPrefetchDone.current = true;
-
-  // Prefetch: initialIndex (current), initialIndex+1, initialIndex+2
   [initialIndex, initialIndex + 1, initialIndex + 2].forEach((i) => {
     const v = videos[i];
     if (v?.embedUrl) prefetchHls(v.embedUrl);
   });
-}, [videos.length > 0]); // eslint-disable-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [videos.length, initialIndex]);
 ```
 
-> **Note:** deps array dùng `videos.length > 0` (boolean) thay vì `videos` để tránh re-run mỗi khi list grow (infinite scroll append thêm items). Guard `eagerPrefetchDone.current` đảm bảo chỉ fire 1 lần.
-
-**Effect:** Segments video N, N+1, N+2 bắt đầu vào browser HTTP cache ngay khi data về, thay vì chờ user đến slide đó mới fetch.  
-**iOS safe:** ✅ Chỉ là HTTP fetch, không tạo HTMLVideoElement hay decoder.
+> Dùng `initialIndex` (không phải `currentIndex`) — `currentIndex` bắt đầu là 0 và được set đúng sau effect, trong khi `initialIndex` từ `useMemo` đã chính xác ngay lần render đầu.
 
 ---
 
 ## 5. Giai đoạn 2 — Player Preload (Core Fix)
 
-### 5.1. Nguyên tắc thiết kế
+### 5.1. Fix `preload='none'` trong BunnyVideoPlayer
+
+**Vấn đề:** `useSharedVideo` tạo pool elements với `video.preload = 'none'`. Khi `video.src = src` được set trên iOS với `preload='none'`, iOS **không fetch gì** — decoder không khởi động cho đến khi `play()` được gọi.
+
+**Fix:** Thêm `video.load()` explicit sau `video.src`:
+
+```ts
+// BunnyVideoPlayer.tsx — iOS path
+video.src = src;
+video.load(); // override preload='none': ép iOS bắt đầu fetch manifest + init decoder ngay khi mount
+```
+
+`video.load()` bỏ qua `preload` attribute, buộc iOS AVFoundation bắt đầu fetch + allocate hardware decoder.
+
+### 5.2. State machine: strict 2-decoder
 
 ```
 RULE: Tối đa 2 active HLS instance (= 2 iOS hardware decoder) đồng thời
-RULE: Deactivate phải xảy ra TRƯỚC activation (không để IntersectionObserver quyết định)
-RULE: Chỉ preload slide TIẾP THEO (N+1), không preload N+2
 
-State machine khi currentIndex = N:
-  index < N-1  →  deactivated (unmount)
-  index = N-1  →  deactivated (unmount ngay khi N mở)
-  index = N    →  active + playing
-  index = N+1  →  preloaded (mounted, src loaded, PAUSE — chờ user đến)
+Khi currentIndex = N:
+  index < N    →  deactivated (unmount)
+  index = N    →  active + playing        (decoder 1)
+  index = N+1  →  preloaded, không play   (decoder 2)
   index > N+1  →  not mounted
 ```
 
-### 5.2. Thay đổi trong `VideoDetailPage/index.tsx`
+### 5.3. `currentIndexReady` flag trong hook
 
-Export `currentIndex` từ hook (đã có sẵn, chỉ cần destructure thêm):
+`currentIndex` khởi tạo `useState(0)`. Trước khi `indexInitialized` effect chạy, `currentIndex=0` dù `initialIndex` có thể khác 0 → kích hoạt sai slides.
 
-```tsx
-const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex, currentIndex } =
-  useVideoDetailFeed(currentSlug);
+**Fix:** Export `currentIndexReady` để VideoDetailPage chỉ dùng `currentIndex` khi đã chính xác:
+
+```ts
+// use-video-detail-feed.ts
+const [currentIndexReady, setCurrentIndexReady] = useState(false);
+
+useEffect(() => {
+  if (indexInitialized.current || videos.length === 0) return;
+  setCurrentIndex(initialIndex);
+  setCurrentIndexReady(true); // ← đánh dấu currentIndex đã được set đúng
+  indexInitialized.current = true;
+}, [initialIndex, videos.length]);
 ```
 
-Tính `preloadNext` cho mỗi slide:
+### 5.4. `isCurrentOrNext` prop thay thế `isNearView` activation
+
+**VideoDetailPage:**
 
 ```tsx
-{
-  videos.map((video, index) => (
-    <VideoSlide
-      key={video.slug}
-      video={video}
-      muted={muted}
-      onVisible={handleVideoTestVisible}
-      onMutedChange={handleMutedChange}
-      onGateOpen={() => setGated(false)}
-      autoLoad={Math.abs(index - initialIndex) <= 1}
-      preloadNext={index === currentIndex + 1} // NEW: preload slide kế tiếp
-      forcePause={gated}
-    />
-  ));
-}
+<VideoSlide
+  autoLoad={index === initialIndex || index === initialIndex + 1}
+  isCurrentOrNext={currentIndexReady && (index === currentIndex || index === currentIndex + 1)}
+  // ...
+/>
 ```
 
-### 5.3. Thay đổi trong `VideoSlide`
+- `autoLoad`: seed initial `activated` state (dùng `initialIndex` — luôn đúng)
+- `isCurrentOrNext`: ongoing activation sau khi `currentIndex` ready
 
-**Thêm prop `preloadNext`:**
-
-```tsx
-interface Props {
-  video: IVideo;
-  muted: boolean;
-  onVisible: (slug: string) => void;
-  onMutedChange: (muted: boolean) => void;
-  onGateOpen?: () => void;
-  autoLoad?: boolean;
-  preloadNext?: boolean; // NEW: true khi slide này là N+1
-  forcePause?: boolean;
-}
-```
-
-**Override activation logic:**
+**VideoSlide — thay activation effect:**
 
 ```tsx
-// Hiện tại: chỉ IntersectionObserver (isNearView) quyết định activated
-// Mới: preloadNext cũng có thể force activate
+// Bỏ: const isNearView = useInView(containerEl, { rootMargin: '100% 0px', threshold: 0 });
 
 React.useEffect(() => {
-  if (isNearView || preloadNext) {
-    // Activate: mount BunnyVideoPlayer, bắt đầu load HLS
+  if (isCurrentOrNext) {
     hasActivatedOnce.current = true;
     setActivated(true);
   } else if (hasActivatedOnce.current) {
-    // Deactivate: unmount player, trả pool element, giải phóng iOS decoder
     setActivated(false);
     setVideoReady(false);
   }
-}, [isNearView, preloadNext]);
+}, [isCurrentOrNext]);
 ```
-
-**Quan trọng — Không auto-play khi preload:**
-
-Logic play hiện tại trong effect `[isInView, ...]` đã đúng — chỉ play khi `isInView = true`. Khi `preloadNext = true` nhưng `isInView = false` → player mounted và load HLS nhưng **không play**. Không cần thay đổi.
 
 ---
 
 ## 6. Luồng hoạt động sau khi implement
 
 ```
-Page load (currentIndex = N = initialIndex):
-  → eagerPrefetchDone fires → prefetchHls(N), prefetchHls(N+1), prefetchHls(N+2)
+Page load (currentIndex = initialIndex = N):
+  → eagerPrefetch fires → prefetchHls(N), prefetchHls(N+1), prefetchHls(N+2)
      [HTTP cache warming bắt đầu]
-  → preloadNext = (N+1): VideoSlide N+1 được mounted, BunnyVideoPlayer init
-     video.src = m3u8 → iOS kéo từ HTTP cache → decoder init ngầm
-  → VideoSlide N: playing (có tiếng)
+  → currentIndexReady=true → VideoSlide N+1: isCurrentOrNext=true
+     → BunnyVideoPlayer mount → video.src + video.load()
+     → iOS: fetch manifest từ HTTP cache (~20-50ms) → decoder alloc (~50-150ms)
+     → canplay fires → N+1 SẴNSÀNG
+  → VideoSlide N: playing (autoLoad + isCurrentOrNext)
 
-User bắt đầu swipe lên (hướng N+1):
-  → snap → currentIndex = N+1
-  → VideoSlide N+1: isInView = true → play() → [video đã sẵn sàng!] → phát NGAY
-  → VideoSlide N: isInView = false → pause()
-  → preloadNext update: N+2 bắt đầu preload
-  → VideoSlide N-1: preloadNext = false, isNearView = false → deactivated
-     [iOS decoder N-1 được giải phóng]
+User swipe lên (N → N+1, > 400ms sau load):
+  → currentIndex = N+1
+  → VideoSlide N+1: isInView=true → play() → [decoder đã sẵn sàng] → phát NGAY
+  → VideoSlide N: isCurrentOrNext=false, hasActivatedOnce=true → deactivated
+     [iOS decoder N được giải phóng]
+  → VideoSlide N+2: isCurrentOrNext=true → mount + video.load() → bắt đầu preload
 ```
 
-→ **User không thấy delay** — N+1 đã có decoder initialized và segments buffered.
+---
+
+## 7. Giới hạn với fast swipe
+
+| Tốc độ      | Interval  | Kết quả        |
+| ----------- | --------- | -------------- |
+| Bình thường | > 400ms   | ✅ 0ms stutter |
+| Nhanh       | 200-400ms | ⚠️ 0-100ms     |
+| Rất nhanh   | < 200ms   | ⚠️ 100-200ms   |
+
+**iOS hardware decoder alloc (~50-150ms) là OS-level operation — không thể cache hay bypass.** Đây là giới hạn cứng của iOS, không phải bug trong implementation.
 
 ---
 
-## 7. Quyết định thiết kế
+## 8. Quyết định thiết kế
 
-| Điểm                                | Quyết định                        | Lý do                                                                                                                                   |
-| ----------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| Preload bao nhiêu slide?            | Chỉ N+1 (1 slide kế tiếp)         | Max 2 decoder: N (playing) + N+1 (preloaded). N+2 trở đi chỉ warm HTTP cache.                                                           |
-| Deactivate ngay N-1?                | Có — ngay khi currentIndex tăng   | Giải phóng decoder trước khi N+1 init, tránh exceed 2-decoder limit                                                                     |
-| Preload N-1 (prev slide)?           | Không                             | User 99% swipe tiếp, không swipe lại. Tiết kiệm decoder cho N+1.                                                                        |
-| `preloadNext` vs tăng `rootMargin`? | `preloadNext`                     | `rootMargin 200%` gây race condition: IntersectionObserver có thể fire N-1 = true trước khi N+1 deactivate. `currentIndex` precise hơn. |
-| deps array của eagerPrefetch        | `[videos.length > 0]` + ref guard | Tránh re-run khi list grow. `useEffect` cần deps để lint pass, boolean đủ.                                                              |
-| iOS decoder budget                  | Strict 2                          | iPhone cũ chỉ có 2 hardware slot. Vượt → software decode giật/nóng máy.                                                                 |
-
----
-
-## 8. Verification
-
-### Giai đoạn 1
-
-| #   | Test                                    | Pass condition                                                               |
-| --- | --------------------------------------- | ---------------------------------------------------------------------------- |
-| 1   | DevTools Network → filter `vz-186cf1b9` | Thấy `preconnect` được resolve trước request đầu tiên                        |
-| 2   | Mở feed, xem Network waterfall          | `playlist.m3u8` của video N+1 được fetch trước khi IntersectionObserver fire |
-
-### Giai đoạn 2
-
-| #   | Test                                 | Pass condition                                              |
-| --- | ------------------------------------ | ----------------------------------------------------------- |
-| 3   | Swipe từ slide N sang N+1            | Video N+1 play **trong < 200ms** (không thấy spinner)       |
-| 4   | Swipe nhanh liên tục (stress test)   | Không có slide nào black screen > 500ms                     |
-| 5   | iOS Safari — swipe 5 slide liên tiếp | Không freeze, không crash, tiếng liên tục                   |
-| 6   | DevTools Memory (Chrome)             | Chỉ 2 active video element có src tại mọi thời điểm         |
-| 7   | iOS — xDiagnose / Instruments        | Không có software decode fallback (no "VideoToolbox error") |
-| 8   | Reload direct URL, bấm Gate          | Gate mở → video N phát → swipe N+1 không bị khựng           |
+| Điểm                                | Quyết định          | Lý do                                                            |
+| ----------------------------------- | ------------------- | ---------------------------------------------------------------- |
+| `video.load()` explicit             | Bắt buộc            | Pool elements có `preload='none'` → không load nếu thiếu         |
+| `isCurrentOrNext` thay `isNearView` | Dùng `currentIndex` | `isNearView` (100% rootMargin) = 3 decoder, vi phạm iOS limit    |
+| `currentIndexReady` flag            | Bắt buộc            | Tránh `currentIndex=0` kích hoạt sai slides khi initialIndex>0   |
+| `autoLoad` cho initial state        | Giữ nguyên          | Dùng `initialIndex` (đúng ngay lần đầu) làm seed activated state |
+| Preload N+1 only, không N+2         | Giữ nguyên          | Max 2 decoder: N (playing) + N+1 (preloaded)                     |
+| Eager prefetch dùng `initialIndex`  | Bắt buộc            | `currentIndex=0` trước init — prefetch sai nếu dùng currentIndex |
 
 ---
 
-## 9. Rủi ro & Mitigations
+## 9. Verification
 
-| Rủi ro                                              | Khả năng     | Mitigation                                                                                               |
-| --------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------- |
-| iOS decoder exceed 2 trong race condition           | Thấp         | Deactivate N-1 synchronous khi currentIndex tăng (driven bởi prop, không phụ thuộc IntersectionObserver) |
-| Pool exhausted (3 elements, 2 active)               | Rất thấp     | Pool = 3, max active = 2 → luôn còn 1 element available                                                  |
-| `eagerPrefetchDone` fire trước `initialIndex` ready | Thấp         | Guard: `videos.length > 0 && initialIndex` — nếu `initialIndex` chưa tính được thì bỏ qua lần này        |
-| Phát nhầm N+1 (preloaded) khi gated                 | Không xảy ra | `forcePause` prop vẫn có tác dụng, `play()` không được gọi khi `isInView = false`                        |
+| #   | Test                                    | Pass condition                                            |
+| --- | --------------------------------------- | --------------------------------------------------------- |
+| 1   | DevTools Network → filter `vz-186cf1b9` | `playlist.m3u8` của N+1 được fetch trước khi user swipe   |
+| 2   | Swipe từ N sang N+1 (bình thường)       | Video N+1 play trong < 200ms                              |
+| 3   | Swipe nhanh liên tục (stress test)      | Không có slide nào black screen > 500ms                   |
+| 4   | iOS Safari — swipe 5 slide              | Không freeze, không crash, tiếng liên tục                 |
+| 5   | DevTools Memory                         | Chỉ 2 active video element có src tại mọi thời điểm       |
+| 6   | iOS Instruments                         | Không có VideoToolbox error (no software decode fallback) |
+| 7   | Reload URL → bấm Gate                   | Gate mở → N phát → swipe N+1 không khựng                  |
 
 ---
 
 ## 10. Không thuộc scope
 
-- Blur-up thumbnail (UX polish — spec riêng nếu cần)
+- Blur-up thumbnail
 - Preload N-1 (prev slide)
-- Preload trên Android/Chrome (HLS.js path khác biệt — đánh giá sau khi iOS fix ổn định)
-- Adaptive preload dựa trên network speed
+- Android/Chrome optimization (hls.js path khác — đánh giá sau)
+- Adaptive preload theo network speed

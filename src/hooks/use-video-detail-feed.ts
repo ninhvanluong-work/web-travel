@@ -102,13 +102,28 @@ export const useVideoDetailFeed = (currentSlug: string) => {
   }, [currentSlug, videos]);
 
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndexReady, setCurrentIndexReady] = useState(false);
 
   const indexInitialized = useRef(false);
   useEffect(() => {
     if (indexInitialized.current || videos.length === 0) return;
     setCurrentIndex(initialIndex);
+    setCurrentIndexReady(true);
     indexInitialized.current = true;
   }, [initialIndex, videos.length]);
+
+  // Eager prefetch: warm HTTP cache cho video N, N+1, N+2 ngay khi list có data lần đầu.
+  // Fire trước khi user swipe → iOS AVFoundation có thể init decoder từ cache (~100ms) thay vì cold (~400ms).
+  const eagerPrefetchDone = useRef(false);
+  useEffect(() => {
+    if (eagerPrefetchDone.current || videos.length === 0) return;
+    eagerPrefetchDone.current = true;
+    [initialIndex, initialIndex + 1, initialIndex + 2].forEach((i) => {
+      const v = videos[i];
+      if (v?.embedUrl) prefetchHls(v.embedUrl);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videos.length, initialIndex]);
 
   // Infinite scroll trigger
   useEffect(() => {
@@ -201,6 +216,7 @@ export const useVideoDetailFeed = (currentSlug: string) => {
   return {
     videos,
     currentIndex,
+    currentIndexReady,
     initialIndex,
     handleVideoVisible,
     handleVideoTestVisible,
