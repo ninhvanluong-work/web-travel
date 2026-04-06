@@ -1,3 +1,11 @@
+---
+title: 'Phân tích Edge Cases — Video Slug Store'
+created: '2026-03-06'
+status: 'reference'
+domain: 'nav'
+related: 'slug-store.md'
+---
+
 # Phân Tích & Thảo Luận: Video Slug Store (spec-video-slug-store.md)
 
 Dựa trên đề xuất quản lý state video khi di chuyển từ trang Search sang trang Detail bằng `Zustand` (chỉ lưu memory/session, không persist cache API), phương án này giải quyết tốt requirement cốt lõi "giữ đúng thứ tự video đang lướt". Tuy nhiên, có những edge-cases (trường hợp biên) mà chúng ta cần bổ sung giải pháp thiết kế trước khi implement thực tế.

@@ -1,3 +1,13 @@
+---
+title: 'iOS Safari Video Feed — Phân tích vấn đề (cũ)'
+created: '2026-03-08'
+status: 'superseded'
+domain: 'ios'
+superseded_by: 'shared-video-pool.md'
+---
+
+> ⚠️ **SUPERSEDED** — Phân tích gốc. Giải pháp hiện tại: [`shared-video-pool.md`](./shared-video-pool.md).
+
 # Feature Specification: Cải thiện trải nghiệm Video Feed trên iOS Safari
 
 ## 1. Bối cảnh & Vấn đề (Context & Problem)

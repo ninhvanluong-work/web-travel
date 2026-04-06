@@ -1,3 +1,11 @@
+---
+title: 'VideoDetailPage — Auto Audio Scroll + Text Layout + Like Count Fix'
+created: '2026-03-08'
+status: 'implemented'
+domain: 'video-core'
+supersedes: 'auto-unmute-old.md'
+---
+
 # Spec: VideoDetailPage — Auto Audio Scroll + Text Layout + Like Count Fix
 
 ## Tổng quan

@@ -1,3 +1,11 @@
+---
+title: 'Infinite Scroll với distanceScore — DetailSearchPage'
+created: '2026-03-05'
+status: 'implemented'
+domain: 'video-grid'
+supersedes: 'infinite-scroll-old.md'
+---
+
 # Spec: Infinite Scroll với `distanceScore` — `DetailSearchPage`
 
 > **Trạng thái**: 🟢 Đã chốt — sẵn sàng implement

@@ -1,3 +1,10 @@
+---
+title: 'DetailSearchPage Improvements'
+created: '2026-03-01'
+status: 'implemented'
+domain: 'video-grid'
+---
+
 # Specification: DetailSearchPage Improvements
 
 Document này mô tả giải pháp kỹ thuật đã được xác nhận cho 3 vấn đề liên quan đến `DetailSearchPage`.

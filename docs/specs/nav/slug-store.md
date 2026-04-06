@@ -1,3 +1,11 @@
+---
+title: 'Video Slug URL + Search List Cache'
+created: '2026-03-05'
+status: 'implemented'
+domain: 'nav'
+supersedes: 'url-strategy-old.md'
+---
+
 # Spec: Video Slug URL + Search List Cache
 
 ## Mục tiêu

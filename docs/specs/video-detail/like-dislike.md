@@ -1,3 +1,10 @@
+---
+title: 'Chức năng Like/Dislike Video'
+created: '2026-03-10'
+status: 'implemented'
+domain: 'video-core'
+---
+
 # Spec: Chức năng Like/Dislike Video (video-slide.tsx)
 
 ## Mục tiêu

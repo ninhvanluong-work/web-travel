@@ -1,3 +1,10 @@
+---
+title: 'Video Feed & TikTok-style Detail Page'
+created: '2026-02-28'
+status: 'implemented'
+domain: 'video-core'
+---
+
 # Spec: Video Feed & TikTok-style Detail Page
 
 **Ngày tạo:** 2026-02-28  

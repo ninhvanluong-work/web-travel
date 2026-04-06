@@ -1,3 +1,11 @@
+---
+title: 'VideoDetailPage — Navigation từ DetailSearchPage & Infinite Scroll mới'
+created: '2026-03-12'
+status: 'draft'
+domain: 'nav'
+related: 'slug-store.md'
+---
+
 # Spec: VideoDetailPage — Navigation từ DetailSearchPage & Infinite Scroll mới
 
 > **Trạng thái**: 🟡 Draft — chờ review

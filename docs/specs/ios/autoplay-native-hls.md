@@ -1,3 +1,10 @@
+---
+title: 'VideoDetailPage — Native HLS Autoplay Journey'
+created: '2026-03-10'
+status: 'reference'
+domain: 'ios'
+---
+
 # Spec: VideoDetailPage — Native HLS Autoplay (Bunny Direct Play)
 
 ## Tóm Tắt Hành Trình

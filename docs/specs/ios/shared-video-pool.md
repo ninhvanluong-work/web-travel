@@ -1,3 +1,11 @@
+---
+title: 'iOS Autoplay — Shared Video Element Pool (kiến trúc hiện tại)'
+created: '2026-03-15'
+status: 'implemented'
+domain: 'ios'
+supersedes: 'autoplay-old.md'
+---
+
 # Spec: Giải quyết lỗi Autoplay iOS bằng Kiến trúc Shared Video Element Pool (Hook-based)
 
 ## 1. Bối cảnh & Vấn đề (Context & Problem)

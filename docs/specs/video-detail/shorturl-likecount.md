@@ -1,3 +1,10 @@
+---
+title: 'Video Grid — shortUrl & Video Detail — Like Count'
+created: '2026-03-10'
+status: 'implemented'
+domain: 'video-core'
+---
+
 # Spec: Video Grid — shortUrl & Video Detail — Like Count
 
 ## Bối cảnh

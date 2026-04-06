@@ -1,3 +1,10 @@
+---
+title: 'Single Active Audio Source — DetailSearchPage'
+created: '2026-03-03'
+status: 'implemented'
+domain: 'video-grid'
+---
+
 # Spec: Single Active Audio Source — DetailSearchPage
 
 ## Vấn đề

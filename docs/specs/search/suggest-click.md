@@ -1,3 +1,10 @@
+---
+title: 'Bấm Suggest → Search Ngay'
+created: '2026-03-05'
+status: 'implemented'
+domain: 'search'
+---
+
 # Spec: Bấm Suggest → Search Ngay
 
 ## 1. Mục tiêu

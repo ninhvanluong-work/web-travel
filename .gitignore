@@ -41,3 +41,5 @@ next-env.d.ts
 # Claude env secrets
 .claude/.env
 .claude/hooks/.env
+
+/public/tinymce/

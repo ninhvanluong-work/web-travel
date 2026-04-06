@@ -60,3 +60,21 @@ Zustand stores live in `src/stores/`. `UserStore` is persisted to `localStorage`
 ### Environment Variables
 
 `NEXT_PUBLIC_API_URL` — base URL for the backend API. Must be set for any API calls to work.
+
+## Critical Rules — DO NOT VIOLATE
+
+### Do not modify existing logic without explicit permission
+
+Before changing any existing logic (video behavior, state management, scroll, IntersectionObserver, Zustand, React Query, API layer), you MUST:
+
+1. Stop and explain exactly what you intend to change and why.
+2. Wait for explicit user confirmation before making the change.
+
+**Rationale:** Many behaviors in this codebase are intentional design decisions (e.g. reload gate, `forcePause`, shared video pool). Silently modifying surrounding code while implementing a feature frequently breaks other flows.
+
+**Scope:**
+
+- Adding a new feature → only add, do not refactor existing code around it.
+- Must touch existing logic to complete the task → list the specific changes first, ask for approval.
+- Never "clean up" or "improve" code that was not part of the request.
+- If existing code looks wrong while reading for context, do not change it — it may be intentional.

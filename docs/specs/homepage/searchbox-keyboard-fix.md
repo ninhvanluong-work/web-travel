@@ -1,3 +1,10 @@
+---
+title: 'SearchBox Keyboard Push Fix (HomePage)'
+created: '2026-02-28'
+status: 'implemented'
+domain: 'homepage'
+---
+
 # Spec: SearchBox Keyboard Push Fix (HomePage)
 
 **Ngày tạo:** 2026-02-28  

@@ -1,3 +1,11 @@
+---
+title: 'VideoDetailPage — Full-screen Popup từ DetailSearchPage'
+created: '2026-03-15'
+status: 'draft'
+domain: 'nav'
+conflicts_with: 'from-search.md'
+---
+
 # Spec: VideoDetailPage — Full-screen Popup từ DetailSearchPage
 
 ## Bối cảnh & Vấn đề

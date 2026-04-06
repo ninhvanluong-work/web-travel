@@ -1,3 +1,10 @@
+---
+title: 'Video Detail — Safe Area Fix (UI bị che trên màn hình lớn)'
+created: '2026-03-05'
+status: 'implemented'
+domain: 'video-core'
+---
+
 # Spec: Video Detail — UI Elements Bị Che Trên Điện Thoại Màn Hình Lớn
 
 ## Vấn đề

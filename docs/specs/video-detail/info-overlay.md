@@ -1,3 +1,10 @@
+---
+title: 'Video Detail — Info Overlay Update (Title & Description Box)'
+created: '2026-03-08'
+status: 'implemented'
+domain: 'video-core'
+---
+
 # Spec: Video Detail - Info Overlay Update (Title & Description Box)
 
 ## 1. Overview

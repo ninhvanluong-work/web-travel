@@ -1,3 +1,13 @@
+---
+title: 'Migration Native video → iframe Embed (cũ)'
+created: '2026-03-03'
+status: 'superseded'
+domain: 'video-core'
+superseded_by: '../ios/autoplay-native-hls.md'
+---
+
+> ⚠️ **SUPERSEDED** — Hướng iframe đã bị bỏ. Xem [`autoplay-native-hls.md`](../ios/autoplay-native-hls.md) (Native HLS).
+
 # Specification: Migration from Native `<video>` to `<iframe>` Embed
 
 **Khái quát:** Tài liệu này phân tích và đặc tả các bước kỹ thuật cần thiết để chuyển đổi player video từ `<video src="mp4_url">` truyền thống sang dùng `<iframe>` thông qua thuộc tính `embedUrl` của **Bunny.net/MediaDelivery** trong màn hình `VideoDetailPage` (Tiktok-style scroll).

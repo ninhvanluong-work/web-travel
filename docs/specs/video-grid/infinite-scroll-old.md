@@ -1,3 +1,13 @@
+---
+title: 'Infinite Scroll cho VideoGrid (cũ)'
+created: '2026-02-28'
+status: 'superseded'
+domain: 'video-grid'
+superseded_by: 'infinite-scroll.md'
+---
+
+> ⚠️ **SUPERSEDED** — Xem [`infinite-scroll.md`](./infinite-scroll.md) (cursor-based approach hiện tại).
+
 # Specification: Infinite Scroll cho VideoGrid (DetailSearchPage)
 
 ## 1. Vấn đề hiện tại

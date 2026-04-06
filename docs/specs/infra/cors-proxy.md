@@ -1,3 +1,10 @@
+---
+title: 'Xử lý lỗi CORS bằng Next.js Proxy'
+created: '2026-03-01'
+status: 'implemented'
+domain: 'infra'
+---
+
 # Spec: Xử lý lỗi CORS bằng Next.js Proxy
 
 **Dự án:** web-travel  

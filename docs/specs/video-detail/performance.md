@@ -1,3 +1,10 @@
+---
+title: 'Video Performance — Phân Tích & Thảo Luận'
+created: '2026-03-05'
+status: 'reference'
+domain: 'video-core'
+---
+
 # Spec: Video Performance — Phân Tích & Thảo Luận
 
 > **Liên quan:** [video-format-strategy.md](./video-format-strategy.md) — encoding standards, CDN, format decisions

@@ -1,3 +1,10 @@
+---
+title: 'Fix Homepage Mobile Issues'
+created: '2026-02-26'
+status: 'implemented'
+domain: 'homepage'
+---
+
 # Spec: Fix Homepage Mobile Issues
 
 **Date:** 2026-02-26  

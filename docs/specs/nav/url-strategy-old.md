@@ -1,3 +1,13 @@
+---
+title: 'Chiến lược URL cho VideoDetailPage (cũ)'
+created: '2026-03-04'
+status: 'superseded'
+domain: 'nav'
+superseded_by: 'slug-store.md'
+---
+
+> ⚠️ **SUPERSEDED** — Xem [`slug-store.md`](./slug-store.md) (phương án đã chốt).
+
 # Spec: Chiến lược URL cho VideoDetailPage
 
 **Ngày tạo:** 2026-03-04

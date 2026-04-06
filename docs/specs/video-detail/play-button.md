@@ -1,3 +1,10 @@
+---
+title: 'Nút Play Overlay (Autoplay Policy Handling)'
+created: '2026-03-05'
+status: 'implemented'
+domain: 'video-core'
+---
+
 # Spec: Nút Play Overlay (Autoplay Policy Handling)
 
 ## 1. Mục tiêu (Objective)

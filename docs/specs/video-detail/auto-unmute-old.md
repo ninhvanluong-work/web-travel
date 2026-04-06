@@ -1,3 +1,13 @@
+---
+title: 'Auto-Unmute When Scrolling to Next Video (cũ)'
+created: '2026-03-05'
+status: 'superseded'
+domain: 'video-core'
+superseded_by: 'improvements.md'
+---
+
+> ⚠️ **SUPERSEDED** — Đã gộp vào [`improvements.md`](./improvements.md).
+
 # Spec: Auto-Unmute When Scrolling to Next Video
 
 **Ngày tạo:** 2026-03-05  

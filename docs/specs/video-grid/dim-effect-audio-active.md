@@ -1,3 +1,10 @@
+---
+title: 'Dim Effect Khi Bật Âm Thanh Trong VideoGrid'
+created: '2026-03-03'
+status: 'implemented'
+domain: 'video-grid'
+---
+
 # Spec: Dim Effect Khi Bật Âm Thanh Trong VideoGrid
 
 ## Mô tả tính năng
