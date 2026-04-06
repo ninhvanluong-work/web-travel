@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
+import { useSwipeBack } from '@/hooks/use-swipe-back';
 import { useVideoDetailFeed } from '@/hooks/use-video-detail-feed';
 
 import VideoSlide from './components/video-slide';
@@ -25,6 +26,10 @@ const VideoDetailPage = () => {
     setMuted(newMuted);
   };
 
+  const { containerRef, onPointerDown, onPointerMove, onPointerUp } = useSwipeBack({
+    disabled: gated,
+  });
+
   if (videos.length === 0 || isReloadInitializing) {
     return (
       <div className="flex h-dvh w-full items-center justify-center bg-black">
@@ -37,7 +42,13 @@ const VideoDetailPage = () => {
   }
 
   return (
-    <div className="relative h-dvh overflow-hidden bg-black">
+    <div
+      ref={containerRef}
+      className="relative h-dvh overflow-hidden bg-black"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+    >
       <Button
         variant="glass"
         size="icon"
@@ -56,6 +67,7 @@ const VideoDetailPage = () => {
         className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
           gated ? 'overflow-hidden' : 'overflow-y-scroll'
         }`}
+        style={{ touchAction: 'pan-y' }}
       >
         {videos.map((video, index) => (
           <VideoSlide
