@@ -1,19 +1,24 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { useSwipeBack } from '@/hooks/use-swipe-back';
 import { useVideoDetailFeed } from '@/hooks/use-video-detail-feed';
 
-import VideoSlide from './components/video-slide';
+import VideoSlide, { type VideoSlideHandle } from './components/video-slide';
 
 const VideoDetailPage = () => {
   const router = useRouter();
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
-  const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(currentSlug);
+  const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(
+    currentSlug,
+    (newIndex) => {
+      slideRefs.current.get(newIndex + 1)?.preload();
+    }
+  );
 
   // autoplay=true khi đến từ grid, false khi reload/direct access
   const isFromGrid = router.query.autoplay === 'true';
@@ -25,6 +30,8 @@ const VideoDetailPage = () => {
   const handleMutedChange = (newMuted: boolean) => {
     setMuted(newMuted);
   };
+
+  const slideRefs = useRef<Map<number, VideoSlideHandle>>(new Map());
 
   const { containerRef, onPointerDown, onPointerMove, onPointerUp } = useSwipeBack({
     disabled: gated,
@@ -72,6 +79,10 @@ const VideoDetailPage = () => {
         {videos.map((video, index) => (
           <VideoSlide
             key={video.slug}
+            ref={(handle) => {
+              if (handle) slideRefs.current.set(index, handle);
+              else slideRefs.current.delete(index);
+            }}
             video={video}
             muted={muted}
             onVisible={handleVideoTestVisible}

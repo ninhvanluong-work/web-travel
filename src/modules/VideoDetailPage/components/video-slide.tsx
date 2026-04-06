@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { memo, useRef, useState } from 'react';
+import React, { forwardRef, memo, useImperativeHandle, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
@@ -20,17 +20,20 @@ interface Props {
   forcePause?: boolean; // true khi reload: chặn auto-play cho đến khi user bật loa
 }
 
-function VideoSlideComponent({
-  video,
-  muted,
-  onVisible,
-  onMutedChange,
-  onGateOpen,
-  autoLoad = false,
-  forcePause = false,
-}: Props) {
+export interface VideoSlideHandle {
+  preload: () => void;
+}
+
+const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSlideComponent(
+  { video, muted, onVisible, onMutedChange, onGateOpen, autoLoad = false, forcePause = false }: Props,
+  ref
+) {
   const router = useRouter();
   const playerRef = useRef<BunnyPlayerHandle>(null);
+
+  useImperativeHandle(ref, () => ({
+    preload: () => playerRef.current?.preload(),
+  }));
   const [containerEl, setContainerEl] = useState<HTMLDivElement | null>(null);
   const [paused, setPaused] = useState(false);
   const [activated, setActivated] = useState(autoLoad);
@@ -44,7 +47,7 @@ function VideoSlideComponent({
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const isNearView = useInView(containerEl, { rootMargin: '100% 0px', threshold: 0 });
+  const isNearView = useInView(containerEl, { rootMargin: '200% 0px', threshold: 0 });
   const isInView = useInView(containerEl, { threshold: 0.6 });
 
   // Refs để onReady callback đọc state hiện tại (tránh stale closure)
@@ -231,7 +234,7 @@ function VideoSlideComponent({
       </div>
     </div>
   );
-}
+});
 
 const VideoSlide = memo(VideoSlideComponent);
 

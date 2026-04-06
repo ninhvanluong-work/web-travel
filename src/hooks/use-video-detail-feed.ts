@@ -10,22 +10,32 @@ const BUNNY_CDN = 'https://vz-186cf1b9-231.b-cdn.net';
 
 function prefetchHls(embedUrl: string) {
   const guid = embedUrl.split('/').pop()?.split('?')[0];
-  if (!guid) return;
+  if (!guid || typeof document === 'undefined') return;
   const base = `${BUNNY_CDN}/${guid}`;
 
-  // Gửi tất cả request song song (HTTP/2 multiplexing trên cùng 1 TCP connection).
-  // Fetch 3 segment đầu (~6-9 giây video ở 240p) để HLS.js lấy từ cache ngay,
-  // thay vì download tuần tự → video play gần như không cần chờ.
+  // Use <link rel="preload"> instead of fetch() — iOS Safari video element uses
+  // a separate media cache from fetch(), so fetch() cache misses on iOS.
+  // <link rel="preload"> goes through the browser preload scanner shared with
+  // the media pipeline on both iOS Safari and Chrome.
   [
     `${base}/playlist.m3u8`,
     `${base}/240p/video.m3u8`,
     `${base}/240p/video0.ts`,
     `${base}/240p/video1.ts`,
     `${base}/240p/video2.ts`,
-  ].forEach((url) => fetch(url).catch(() => {}));
+  ].forEach((href) => {
+    if (document.querySelector(`link[data-preload-hls="${href}"]`)) return;
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'fetch';
+    link.crossOrigin = 'anonymous';
+    link.href = href;
+    link.dataset.preloadHls = href;
+    document.head.appendChild(link);
+  });
 }
 
-export const useVideoDetailFeed = (currentSlug: string) => {
+export const useVideoDetailFeed = (currentSlug: string, onIndexChange?: (newIndex: number) => void) => {
   const router = useRouter();
 
   const storeVideos = useVideoListStore.use.videos();
@@ -182,7 +192,7 @@ export const useVideoDetailFeed = (currentSlug: string) => {
       const newIndex = videosRef.current.findIndex((v) => v.slug === videoSlug);
       if (newIndex >= 0) {
         setCurrentIndex(newIndex);
-        // Prefetch HLS của 2 video kế tiếp để sẵn sàng trong browser cache
+        onIndexChange?.(newIndex);
         [newIndex + 1, newIndex + 2].forEach((i) => {
           const next = videosRef.current[i];
           if (next?.embedUrl) prefetchHls(next.embedUrl);
@@ -193,7 +203,7 @@ export const useVideoDetailFeed = (currentSlug: string) => {
         router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
       });
     },
-    [router]
+    [router, onIndexChange]
   );
 
   const isReloadInitializing = !hasStoreList && !!slugVideo && !reloadInfiniteData;
