@@ -85,7 +85,9 @@ export interface ApiAdminVideoResponse {
 
 export interface CreateVideoPayload {
   name: string;
-  url: string;
+  url?: string;
+  guid: string;
+  productId?: string;
   thumbnail?: string;
   description?: string;
   type: 'hero' | 'normal';

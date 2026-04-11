@@ -41,7 +41,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
     try {
       const dbVideo = await createVideo({
         name: form.name,
-        url: bunnyVideoId,
+        guid: bunnyVideoId,
         thumbnail: '',
         description: form.description,
         type: 'hero',

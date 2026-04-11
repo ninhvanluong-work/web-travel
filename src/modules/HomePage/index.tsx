@@ -108,7 +108,7 @@ const HomePage: NextPageWithLayout = () => {
         ref={videoRef}
         id="myVideo"
         className="fixed top-1/2 left-1/2 h-[100dvh] max-h-[932px] w-full max-w-[430px] -translate-x-1/2 -translate-y-1/2 object-cover"
-        src="https://web-travel.sgp1.cdn.digitaloceanspaces.com/dev/village-tour.mp4"
+        src="https://web-travel.b-cdn.net/five5/village-tour.mp4"
         autoPlay
         loop
         muted={isMuted}
