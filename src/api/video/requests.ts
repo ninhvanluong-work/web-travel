@@ -1,13 +1,17 @@
 import { request } from '../axios';
 import type { ApiListResponse } from '../types';
 import type {
+  ApiAdminVideoItem,
+  ApiAdminVideoResponse,
   ApiVideoDetailResponse,
   ApiVideoItem,
   ApiVideoListResponse,
+  CreateVideoPayload,
   IVideo,
   IVideoPage,
   IVideoVariables,
   IVideoVariablesInfinite,
+  UpdateVideoPayload,
 } from './types';
 
 // ---------- Mapper ----------
@@ -22,6 +26,9 @@ const toVideo = (item: ApiVideoItem): IVideo => ({
   thumbnail: item.thumbnail,
   description: item.description,
   likeCount: item.like,
+  tag: item.tag ?? null,
+  type: item.type ?? null,
+  uploadingStatus: item.uploadingStatus ?? null,
 });
 
 // ---------- Defaults ----------
@@ -30,6 +37,11 @@ const DEFAULT_PAGE_SIZE = 6;
 
 // ---------- Requests ----------
 
+export interface GetListVideoResult {
+  items: IVideo[];
+  nextCursor: number | null;
+}
+
 export const getListVideo = async (variables?: IVideoVariables): Promise<IVideo[]> => {
   const { data } = await request<ApiListResponse<ApiVideoItem>>({
     url: '/video',
@@ -37,9 +49,28 @@ export const getListVideo = async (variables?: IVideoVariables): Promise<IVideo[
     params: {
       pageSize: variables?.pageSize ?? DEFAULT_PAGE_SIZE,
       ...(variables?.query && { query: variables.query }),
+      ...(variables?.distanceScore !== undefined && { distanceScore: variables.distanceScore }),
     },
   });
   return data.data.items.map(toVideo);
+};
+
+export const getListVideoPaged = async (variables?: IVideoVariables): Promise<GetListVideoResult> => {
+  const pageSize = variables?.pageSize ?? DEFAULT_PAGE_SIZE;
+  const { data } = await request<ApiVideoListResponse>({
+    url: '/video',
+    method: 'GET',
+    params: {
+      pageSize,
+      distanceScore: variables?.distanceScore ?? 0,
+      ...(variables?.query && { query: variables.query }),
+    },
+  });
+  const items = data.data.items.map(toVideo);
+  return {
+    items,
+    nextCursor: items.length < pageSize ? null : data.data.stats.distanceScore ?? null,
+  };
 };
 
 export const getVideoPage = async (variables?: IVideoVariablesInfinite): Promise<IVideoPage> => {
@@ -80,4 +111,30 @@ export const likeVideo = async (id: string): Promise<void> => {
 
 export const dislikeVideo = async (id: string): Promise<void> => {
   await request({ url: `/video/${id}/dislike`, method: 'POST' });
+};
+
+export const getVideoById = async (id: string): Promise<IVideo> => {
+  const { data } = await request<ApiVideoDetailResponse>({
+    url: `/video/id/${id}`,
+    method: 'GET',
+  });
+  return toVideo(data.data);
+};
+
+export const createVideo = async (payload: CreateVideoPayload): Promise<ApiAdminVideoItem> => {
+  const { data } = await request<ApiAdminVideoResponse>({
+    url: '/video',
+    method: 'POST',
+    data: payload,
+  });
+  return data.data;
+};
+
+export const updateVideo = async (id: string, payload: UpdateVideoPayload): Promise<ApiAdminVideoItem> => {
+  const { data } = await request<ApiAdminVideoResponse>({
+    url: `/video/${id}`,
+    method: 'PUT',
+    data: payload,
+  });
+  return data.data;
 };
