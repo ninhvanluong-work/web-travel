@@ -14,9 +14,7 @@ import { BasicInfoSection } from './components/sections/basic-info-section';
 import { DetailsSection } from './components/sections/details-section';
 import { ImagesSection } from './components/sections/images-section';
 import { OptionsSection } from './components/sections/options-section';
-import { PricingCard, RelationCard } from './components/sections/pricing-section';
 import { TimeItinerarySection } from './components/sections/time-itinerary-section';
-import { VideoCard } from './components/sidebar/VideoCard';
 
 interface ProductFormPageProps {
   productId?: string;
@@ -38,43 +36,42 @@ const NAV_SECTIONS = [
 
 const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
 
-function SectionHeader({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
+function SectionHeader({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-2">
-      <Icon size={15} className="text-gray-400 dark:text-gray-500" />
-      <h2 className="text-sm font-semibold text-gray-700 dark:text-white/90">{label}</h2>
+      <h2 className="text-lg font-bold text-slate-800 dark:text-white/90 tracking-tight">{label}</h2>
     </div>
   );
 }
 
-function SectionCard({
-  id,
-  icon,
-  label,
-  children,
-}: {
-  id: string;
-  icon: React.ElementType;
-  label: string;
-  children: React.ReactNode;
-}) {
+function SectionCard({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
   return (
     <div
       id={id}
-      className="scroll-mt-20 overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+      className="scroll-mt-20 overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
     >
-      <div className="border-b border-gray-200 dark:border-gray-800 px-5 py-4">
-        <SectionHeader icon={icon} label={label} />
+      <div className="border-b border-slate-100 dark:border-gray-800 px-6 py-5">
+        <SectionHeader label={label} />
       </div>
-      <div className="p-5">{children}</div>
+      <div className="px-6 pt-8 pb-7">{children}</div>
     </div>
   );
 }
 
 export default function ProductFormPage({ productId }: ProductFormPageProps) {
   const router = useRouter();
-  const { form, isEdit, productData, itineraries, setItineraries, options, setOptions, onSubmit, isPending, draft } =
-    useProductForm(productId);
+  const {
+    form,
+    isEdit,
+    productData: _productData,
+    itineraries,
+    setItineraries,
+    options,
+    setOptions,
+    onSubmit,
+    isPending,
+    draft,
+  } = useProductForm(productId);
 
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
@@ -84,8 +81,8 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
   }, [draft.hasDraft, isEdit]);
 
   const currentStatus = form.watch('status') ?? 'draft';
-  const status = STATUS_CONFIG[currentStatus] ?? STATUS_CONFIG.draft;
-  const pageTitle = isEdit ? form.watch('name') || '...' : 'Tạo tour mới';
+  const _status = STATUS_CONFIG[currentStatus] ?? STATUS_CONFIG.draft;
+  const _pageTitle = isEdit ? form.watch('name') || '...' : 'Tạo tour mới';
 
   const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }));
   const handleSaveChanges = form.handleSubmit((data) => onSubmit(data));
@@ -117,24 +114,23 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
             <ArrowLeft size={18} />
           </Button>
           <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-gray-400">{isEdit ? 'Chỉnh sửa tour' : 'Tour mới'}</span>
-              {isEdit && (
-                <span
-                  className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full ring-1 ${status.label}`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} /> {status.text}
-                </span>
-              )}
-              {isEdit && productData?.code && (
-                <span className="text-[10px] font-mono text-gray-400 bg-gray-100 px-2 py-0.5 rounded-md">
-                  #{productData.code}
-                </span>
-              )}
-            </div>
-            <h1 className="text-base font-bold text-gray-900 truncate leading-tight">{pageTitle}</h1>
+            <h1 className="text-xl font-bold text-slate-800 dark:text-white/90 truncate leading-tight">
+              {isEdit ? 'Chỉnh sửa tour' : 'Thêm tour mới'}
+            </h1>
           </div>
         </div>
+
+        {/* Minimal Breadcrumbs on the right */}
+        <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
+          <span className="hover:text-brand-500 cursor-pointer transition-colors" onClick={() => router.push('/admin')}>
+            Trang chủ
+          </span>
+          <span>&gt;</span>
+          <span className="font-medium text-slate-600 dark:text-gray-200">
+            {isEdit ? 'Chỉnh sửa tour' : 'Thêm tour mới'}
+          </span>
+        </div>
+
         <div className="flex items-center gap-2 shrink-0 ml-4">
           {draft.lastSaved && (
             <span className="text-[10px] text-gray-400 hidden sm:block">Nháp lúc {draft.lastSaved}</span>
@@ -162,11 +158,11 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
         />
       )}
 
-      <div className="flex-1 p-6">
+      <div className="flex-1">
         <FormWrapper form={form} onSubmit={onSubmit}>
-          <div className="flex gap-6 items-start w-full">
+          <div className="flex gap-20 items-start w-full">
             {/* Scroll-spy nav sidebar */}
-            <div className="hidden lg:flex flex-col gap-1 sticky top-[57px] w-36 shrink-0">
+            <div className="hidden lg:flex flex-col gap-1 sticky top-[57px] w-40 shrink-0">
               {NAV_SECTIONS.map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -185,54 +181,22 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
             </div>
 
             {/* Main content */}
-            <div className="flex-1 min-w-0 space-y-4">
-              <SectionCard id="section-overview" icon={FileText} label="Tổng quan">
+            <div className="flex-1 min-w-0 space-y-6">
+              <SectionCard id="section-overview" label="Mô tả sản phẩm">
                 <BasicInfoSection isEdit={isEdit} />
               </SectionCard>
-              <SectionCard id="section-images" icon={ImageIcon} label="Hình ảnh">
+              <SectionCard id="section-images" label="Hình ảnh sản phẩm">
                 <ImagesSection />
               </SectionCard>
-              <SectionCard id="section-itinerary" icon={Calendar} label="Lịch trình">
+              <SectionCard id="section-itinerary" label="Lịch trình tour">
                 <TimeItinerarySection itineraries={itineraries} onChange={setItineraries} />
               </SectionCard>
-              <SectionCard id="section-pricing" icon={DollarSign} label="Gói giá">
+              <SectionCard id="section-pricing" label="Gói giá & Tình trạng">
                 <OptionsSection options={options} onChange={setOptions} />
               </SectionCard>
-              <SectionCard id="section-details" icon={AlignLeft} label="Chi tiết">
+              <SectionCard id="section-details" label="Chi tiết tour">
                 <DetailsSection />
               </SectionCard>
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-4 sticky top-[57px] w-[280px] shrink-0">
-              {isEdit && (
-                <div className="overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
-                  <div className="border-b border-gray-200 dark:border-gray-800 px-5 py-4">
-                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                      Trạng thái
-                    </p>
-                  </div>
-                  <div className="p-5 space-y-3">
-                    <div
-                      className={`inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-lg ring-1 ${status.label}`}
-                    >
-                      <span className={`w-2 h-2 rounded-full ${status.dot}`} />
-                      {status.text}
-                    </div>
-                    {productData?.code && (
-                      <p className="text-xs text-gray-400">
-                        Mã tour:{' '}
-                        <span className="font-mono text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded">
-                          {productData.code}
-                        </span>
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-              <PricingCard />
-              <RelationCard />
-              <VideoCard />
             </div>
           </div>
         </FormWrapper>

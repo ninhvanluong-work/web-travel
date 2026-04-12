@@ -56,9 +56,9 @@ const DETAIL_FIELDS: Array<{
   label: string;
   accent: string;
 }> = [
-  { name: 'highlight', label: 'Điểm nổi bật (Highlight)', accent: 'text-amber-500' },
-  { name: 'include', label: 'Bao gồm (Include)', accent: 'text-emerald-500' },
-  { name: 'exclude', label: 'Không bao gồm (Exclude)', accent: 'text-red-500' },
+  { name: 'highlight', label: 'Điểm nổi bật của sản phẩm', accent: 'text-amber-500' },
+  { name: 'include', label: 'Dịch vụ bao gồm', accent: 'text-emerald-500' },
+  { name: 'exclude', label: 'Dịch vụ không bao gồm', accent: 'text-red-500' },
 ];
 
 export function DetailsSection() {
@@ -66,17 +66,14 @@ export function DetailsSection() {
 
   return (
     <div className="space-y-5">
-      {DETAIL_FIELDS.map(({ name, label, accent }) => (
+      {DETAIL_FIELDS.map(({ name, label }) => (
         <FormField
           key={name}
           control={control}
           name={name}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>
-                <span className={`${accent} mr-1`}>●</span>
-                {label}
-              </FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">{label}</FormLabel>
               <FormControl>
                 <div className="rounded-lg overflow-hidden border border-input">
                   <Editor

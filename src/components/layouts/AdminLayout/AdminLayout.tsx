@@ -18,7 +18,7 @@ const AdminLayout = ({ children }: Props) => {
       {/* Main Area (Header + Content) - Right Column */}
       <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-clip">
         <AdminHeader onToggle={() => setIsCollapsed(!isCollapsed)} />
-        <main className="p-4 md:p-6 2xl:p-10">
+        <main className="p-6">
           <div className="mx-auto max-w-[2420px]">{children}</div>
         </main>
       </div>

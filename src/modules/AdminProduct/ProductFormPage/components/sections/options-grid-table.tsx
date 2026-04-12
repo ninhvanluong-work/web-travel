@@ -42,10 +42,10 @@ export function OptionsGridTable({ options, lockCurrency, onSet, onClone, onRemo
   };
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-gray-200">
+    <div className="overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
       <table ref={tableRef} className="w-full text-xs">
         <thead>
-          <tr className="bg-gray-50 border-b border-gray-200 text-gray-500 font-medium">
+          <tr className="bg-slate-50/50 border-b border-slate-100 text-slate-500 font-medium">
             <th className="py-2.5 pl-3 pr-2 text-left w-10">#</th>
             <th className="py-2.5 px-2 text-left min-w-[160px]">Tên gói</th>
             <th className="py-2.5 px-2 text-right w-32">Người lớn</th>
@@ -58,8 +58,8 @@ export function OptionsGridTable({ options, lockCurrency, onSet, onClone, onRemo
         <tbody>
           {options.map((opt, i) => (
             // eslint-disable-next-line react/no-array-index-key
-            <tr key={i} className="border-b border-gray-100 last:border-0 hover:bg-slate-50/60 transition-colors">
-              <td className="py-2 pl-3 pr-2 text-gray-400 tabular-nums">{i + 1}</td>
+            <tr key={i} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/60 transition-colors">
+              <td className="py-2 pl-3 pr-2 text-slate-400 tabular-nums">{i + 1}</td>
               <td className="py-2 px-2">
                 <Input
                   size="sm"
@@ -103,7 +103,7 @@ export function OptionsGridTable({ options, lockCurrency, onSet, onClone, onRemo
               </td>
               <td className="py-2 px-2 text-center">
                 {lockCurrency ? (
-                  <span className="text-gray-500 font-medium">{opt.currency}</span>
+                  <span className="text-slate-500 font-medium">{opt.currency}</span>
                 ) : (
                   <Select value={opt.currency} onValueChange={(v) => onSet(i, { currency: v })}>
                     <SelectTrigger inputSize="sm" className="w-20">
@@ -124,7 +124,7 @@ export function OptionsGridTable({ options, lockCurrency, onSet, onClone, onRemo
                   <button
                     type="button"
                     title="Nhân bản"
-                    className="text-gray-400 hover:text-violet-600 transition-colors"
+                    className="text-slate-400 hover:text-brand-600 transition-colors"
                     onClick={() => onClone(i)}
                   >
                     <Copy size={13} />
@@ -132,7 +132,7 @@ export function OptionsGridTable({ options, lockCurrency, onSet, onClone, onRemo
                   <button
                     type="button"
                     title="Xóa"
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-slate-400 hover:text-red-500 transition-colors"
                     onClick={() => onRemove(i)}
                   >
                     <Trash2 size={13} />

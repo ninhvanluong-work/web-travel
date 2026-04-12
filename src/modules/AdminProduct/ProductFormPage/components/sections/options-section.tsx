@@ -52,11 +52,11 @@ export function OptionsSection({ options, onChange }: Props) {
       <button
         type="button"
         onClick={handleAdd}
-        className="w-full border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center gap-2 text-gray-400 hover:border-indigo-300 hover:text-indigo-500 hover:bg-indigo-50/40 transition-colors"
+        className="w-full border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center gap-2 text-slate-400 hover:border-brand-300 hover:text-brand-500 hover:bg-brand-50/40 transition-colors"
       >
         <DollarSign size={20} className="opacity-50" />
         <span className="text-sm font-medium">Chưa có gói giá</span>
-        <span className="text-xs">Nhấn để thêm gói đầu tiên</span>
+        <span className="text-xs text-slate-400">Nhấn để thêm gói đầu tiên</span>
       </button>
     );
   }
@@ -94,7 +94,7 @@ export function OptionsSection({ options, onChange }: Props) {
         size="xs"
         rounded="md"
         blur={false}
-        className="text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 border border-indigo-200 px-3 gap-1"
+        className="text-brand-600 hover:text-brand-700 hover:bg-brand-50 border border-brand-200 px-3 gap-1"
         onClick={handleAdd}
       >
         <Plus size={12} />

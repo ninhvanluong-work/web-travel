@@ -83,10 +83,14 @@ type FormItemContextValue = {
 
 const FormItemContext = React.createContext<FormItemContextValue>({} as FormItemContextValue);
 
-const FormItem: FCC = ({ children }) => {
+const FormItem: FCC<{ className?: string }> = ({ children, className }) => {
   const id = React.useId();
 
-  return <FormItemContext.Provider value={{ id }}>{children}</FormItemContext.Provider>;
+  return (
+    <FormItemContext.Provider value={{ id }}>
+      <div className={cn(className)}>{children}</div>
+    </FormItemContext.Provider>
+  );
 };
 FormItem.displayName = 'FormItem';
 
