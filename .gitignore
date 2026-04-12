@@ -45,3 +45,5 @@ next-env.d.ts
 .claude/hooks/.env
 
 /public/tinymce/
+
+/free-nextjs-admin-dashboard-main

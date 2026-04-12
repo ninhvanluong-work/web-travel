@@ -49,12 +49,12 @@ export function VideoCard() {
   }, [debouncedQuery]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden">
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2.5">
+    <div className="overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2.5">
         <span className="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
           <Film size={13} className="text-rose-500" />
         </span>
-        <span className="text-xs font-semibold text-gray-700 tracking-wide">Video</span>
+        <span className="text-xs font-semibold text-gray-700 dark:text-white/90 tracking-wide">Video</span>
       </div>
 
       <div className="p-4 space-y-3">

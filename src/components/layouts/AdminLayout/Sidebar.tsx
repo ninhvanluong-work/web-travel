@@ -1,4 +1,4 @@
-import { BookOpen, Film, LayoutDashboard, MapPin, Package, Users } from 'lucide-react';
+import { Film, LayoutDashboard, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -6,54 +6,66 @@ import Logo from '@/components/ui/logo-dashboard';
 import { cn } from '@/lib/utils';
 import { ROUTE } from '@/types/routes';
 
+interface SidebarProps {
+  isCollapsed?: boolean;
+}
+
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
   { label: 'Sản phẩm', href: ROUTE.ADMIN_PRODUCTS, icon: Package },
   { label: 'Video', href: ROUTE.ADMIN_VIDEOS, icon: Film },
-  { label: 'Nhà cung cấp', href: '/admin/suppliers', icon: Users },
-  { label: 'Điểm đến', href: '/admin/destinations', icon: MapPin },
-  { label: 'Đặt tour', href: '/admin/bookings', icon: BookOpen },
 ];
 
-const Sidebar = () => {
-  const { pathname } = useRouter();
+function Sidebar({ isCollapsed }: SidebarProps) {
+  const router = useRouter();
 
   return (
-    <aside className="w-60 flex-shrink-0 bg-white border-r border-gray-200 flex flex-col">
-      <div className="flex items-center gap-2.5 px-4 py-4 border-b border-gray-100">
-        <Logo width={32} height={32} />
-        <span className="font-bold text-sm text-gray-900 whitespace-nowrap">Travel Admin</span>
+    <aside
+      className={cn(
+        'flex-shrink-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300',
+        isCollapsed ? 'w-20' : 'w-full sm:w-64'
+      )}
+    >
+      {/* Logo */}
+      <div className="h-20 flex items-center justify-center border-b border-gray-200 dark:border-gray-800">
+        <Logo />
       </div>
 
-      <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
-        {NAV_ITEMS.map(({ label, href, icon: Icon, exact }) => {
-          const active = exact ? pathname === href : pathname.startsWith(href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
-                active ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
-              )}
-            >
-              <Icon size={16} className={active ? 'text-white' : 'text-gray-400'} />
-              {label}
-            </Link>
-          );
-        })}
+      {/* Navigation */}
+      <nav className="flex-1 overflow-y-auto">
+        <ul className="space-y-1 p-4">
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.exact ? router.pathname === item.href : router.pathname.startsWith(item.href);
+            const Icon = item.icon;
+
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={cn(
+                    'group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-main text-white'
+                      : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900'
+                  )}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  <span className={cn('hidden sm:inline', isCollapsed && 'sm:hidden')}>{item.label}</span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
       </nav>
 
-      <div className="px-3 py-3 border-t border-gray-100">
-        <Link
-          href="/"
-          className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-50 transition-colors whitespace-nowrap"
-        >
-          ← Về trang chủ
-        </Link>
+      {/* Footer */}
+      <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+        <button className="w-full rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900">
+          Logout
+        </button>
       </div>
     </aside>
   );
-};
+}
 
 export default Sidebar;

@@ -9,7 +9,11 @@ import type { ProductFormValues } from '@/lib/validations/product';
 
 function SidebarCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white rounded-2xl shadow-sm ring-1 ring-black/5 overflow-hidden ${className}`}>{children}</div>
+    <div
+      className={`overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03] ${className}`}
+    >
+      {children}
+    </div>
   );
 }
 
@@ -28,11 +32,11 @@ function CardSection({
 }) {
   return (
     <SidebarCard>
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2.5">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2.5">
         <span className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}>
           <Icon size={13} className={iconColor} />
         </span>
-        <span className="text-xs font-semibold text-gray-700 tracking-wide">{label}</span>
+        <span className="text-xs font-semibold text-gray-700 dark:text-white/90 tracking-wide">{label}</span>
       </div>
       <div className="p-4 space-y-3">{children}</div>
     </SidebarCard>
@@ -71,11 +75,11 @@ export function RelationCard() {
 
   return (
     <SidebarCard>
-      <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-2.5">
+      <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2.5">
         <span className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-violet-50">
           <Store size={13} className="text-violet-600" />
         </span>
-        <span className="text-xs font-semibold text-gray-700 tracking-wide">Nhà cung cấp</span>
+        <span className="text-xs font-semibold text-gray-700 dark:text-white/90 tracking-wide">Nhà cung cấp</span>
       </div>
       <div className="p-4">
         <FormField
@@ -104,11 +108,11 @@ export function RelationCard() {
         />
       </div>
 
-      <div className="border-t border-gray-50 px-4 py-3 flex items-center gap-2.5">
+      <div className="border-t border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center gap-2.5">
         <span className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 bg-sky-50">
           <MapPin size={13} className="text-sky-600" />
         </span>
-        <span className="text-xs font-semibold text-gray-700 tracking-wide">Điểm đến</span>
+        <span className="text-xs font-semibold text-gray-700 dark:text-white/90 tracking-wide">Điểm đến</span>
       </div>
       <div className="px-4 pb-4">
         <FormField

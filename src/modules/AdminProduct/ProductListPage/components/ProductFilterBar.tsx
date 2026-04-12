@@ -1,6 +1,5 @@
-import { X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import type { ProductSelectFilters } from '@/hooks/use-product-filters';
 import type { LookupItem } from '@/lib/validations/product';
@@ -8,112 +7,118 @@ import type { LookupItem } from '@/lib/validations/product';
 import { DateRangeDropdown } from './DateRangeDropdown';
 
 interface Props {
-  keyword: string;
   selects: ProductSelectFilters;
   suppliers: LookupItem[];
   destinations: LookupItem[];
-  hasActiveFilters: boolean;
-  onKeywordChange: (v: string) => void;
-  onSelectChange: (patch: Partial<ProductSelectFilters>) => void;
+  onSelectChange: (patch: ProductSelectFilters) => void;
   onReset: () => void;
 }
 
-export function ProductFilterBar({
-  keyword,
-  selects,
-  suppliers,
-  destinations,
-  hasActiveFilters,
-  onKeywordChange,
-  onSelectChange,
-  onReset,
-}: Props) {
+export function ProductFilterBar({ selects, suppliers, destinations, onSelectChange, onReset }: Props) {
+  // Local state to hold selections before "Apply" is clicked
+  const [localSelects, setLocalSelects] = useState<ProductSelectFilters>(selects);
+
+  // Sync local state when external state changes (e.g., when popover opens)
+  useEffect(() => {
+    setLocalSelects(selects);
+  }, [selects]);
+
+  const handleUpdateLocal = (patch: Partial<ProductSelectFilters>) => {
+    setLocalSelects((prev) => ({ ...prev, ...patch }));
+  };
+
+  const handleApply = () => {
+    onSelectChange(localSelects);
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
-      <div className="flex flex-wrap items-end gap-3">
-        {/* Keyword — debounced in hook */}
-        <div className="space-y-1 min-w-[200px] flex-1">
-          <label className="text-xs font-medium text-gray-500">Từ khóa</label>
-          <Input
-            size="sm"
-            placeholder="Tìm theo tên tour..."
-            value={keyword}
-            onChange={(e) => onKeywordChange(e.target.value)}
-          />
-        </div>
-
-        {/* Supplier */}
-        <div className="space-y-1 w-[152px]">
-          <label className="text-xs font-medium text-gray-500">Nhà cung cấp</label>
-          <Select value={selects.supplierId} onValueChange={(v) => onSelectChange({ supplierId: v })}>
-            <SelectTrigger inputSize="sm" className="w-full">
-              <SelectValue placeholder="Tất cả" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Tất cả</SelectItem>
-              {suppliers.map((s) => (
-                <SelectItem key={s.id} value={s.id}>
-                  {s.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Destination */}
-        <div className="space-y-1 w-[152px]">
-          <label className="text-xs font-medium text-gray-500">Điểm đến</label>
-          <Select value={selects.destinationId} onValueChange={(v) => onSelectChange({ destinationId: v })}>
-            <SelectTrigger inputSize="sm" className="w-full">
-              <SelectValue placeholder="Tất cả" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Tất cả</SelectItem>
-              {destinations.map((d) => (
-                <SelectItem key={d.id} value={d.id}>
-                  {d.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Status */}
-        <div className="space-y-1 w-[130px]">
-          <label className="text-xs font-medium text-gray-500">Trạng thái</label>
-          <Select value={selects.status} onValueChange={(v) => onSelectChange({ status: v })}>
-            <SelectTrigger inputSize="sm" className="w-full">
-              <SelectValue placeholder="Tất cả" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="">Tất cả</SelectItem>
-              <SelectItem value="draft">Bản nháp</SelectItem>
-              <SelectItem value="published">Công khai</SelectItem>
-              <SelectItem value="hidden">Đã ẩn</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Date range */}
-        <div className="space-y-1">
-          <label className="text-xs font-medium text-gray-500">Thời gian tạo</label>
-          <DateRangeDropdown
-            value={{ fromDate: selects.fromDate, toDate: selects.toDate }}
-            onChange={({ fromDate, toDate }) => onSelectChange({ fromDate, toDate })}
-          />
-        </div>
-
-        {/* Clear link */}
-        {hasActiveFilters && (
-          <button
-            type="button"
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-700 transition-colors pb-1"
-            onClick={onReset}
+    <div className="flex flex-col gap-6">
+      {/* Supplier */}
+      <div className="space-y-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Nhà cung cấp</p>
+        <Select value={localSelects.supplierId} onValueChange={(v) => handleUpdateLocal({ supplierId: v })}>
+          <SelectTrigger
+            inputSize="sm"
+            className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
           >
-            <X size={12} />
-            Xóa bộ lọc
-          </button>
-        )}
+            <SelectValue placeholder="Tất cả nhà cung cấp" />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl shadow-theme-lg">
+            <SelectItem value="">Tất cả nhà cung cấp</SelectItem>
+            {suppliers.map((s) => (
+              <SelectItem key={s.id} value={s.id}>
+                {s.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Destination */}
+      <div className="space-y-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Điểm đến</p>
+        <Select value={localSelects.destinationId} onValueChange={(v) => handleUpdateLocal({ destinationId: v })}>
+          <SelectTrigger
+            inputSize="sm"
+            className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
+          >
+            <SelectValue placeholder="Tất cả điểm đến" />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl shadow-theme-lg">
+            <SelectItem value="">Tất cả điểm đến</SelectItem>
+            {destinations.map((d) => (
+              <SelectItem key={d.id} value={d.id}>
+                {d.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Status */}
+      <div className="space-y-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Trạng thái</p>
+        <Select value={localSelects.status} onValueChange={(v) => handleUpdateLocal({ status: v })}>
+          <SelectTrigger
+            inputSize="sm"
+            className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
+          >
+            <SelectValue placeholder="Tất cả trạng thái" />
+          </SelectTrigger>
+          <SelectContent className="rounded-xl shadow-theme-lg">
+            <SelectItem value="">Tất cả trạng thái</SelectItem>
+            <SelectItem value="draft">Bản nháp</SelectItem>
+            <SelectItem value="published">Công khai</SelectItem>
+            <SelectItem value="hidden">Đã ẩn</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Date range */}
+      <div className="space-y-2">
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Thời gian tạo</p>
+        <DateRangeDropdown
+          value={{ fromDate: localSelects.fromDate, toDate: localSelects.toDate }}
+          onChange={({ fromDate, toDate }) => handleUpdateLocal({ fromDate, toDate })}
+        />
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex items-center gap-3 pt-2">
+        <button
+          type="button"
+          className="flex-1 h-11 flex items-center justify-center text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
+          onClick={onReset}
+        >
+          Xóa
+        </button>
+        <button
+          type="button"
+          className="flex-[2] h-11 flex items-center justify-center text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-xl transition-all shadow-md shadow-brand-500/20"
+          onClick={handleApply}
+        >
+          Áp dụng
+        </button>
       </div>
     </div>
   );

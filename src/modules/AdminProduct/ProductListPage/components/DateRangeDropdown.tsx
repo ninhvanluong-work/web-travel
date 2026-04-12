@@ -42,9 +42,9 @@ export function DateRangeDropdown({ value, onChange }: Props) {
   }
 
   const label = (() => {
-    if (!value.fromDate && !value.toDate) return 'Thời gian tạo';
-    const from = value.fromDate ? format(new Date(value.fromDate), 'dd/MM/yy') : '...';
-    const to = value.toDate ? format(new Date(value.toDate), 'dd/MM/yy') : '...';
+    if (!value.fromDate && !value.toDate) return 'Chọn ngày...';
+    const from = value.fromDate ? format(new Date(value.fromDate), 'dd/MM/yyyy') : '...';
+    const to = value.toDate ? format(new Date(value.toDate), 'dd/MM/yyyy') : '...';
     return `${from} – ${to}`;
   })();
 
@@ -53,25 +53,25 @@ export function DateRangeDropdown({ value, onChange }: Props) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className={`inline-flex items-center gap-1.5 text-xs h-8 px-2.5 rounded-lg border transition-colors ${
+          className={`inline-flex items-center gap-2 h-11 px-3 py-2.5 rounded-lg border text-sm shadow-theme-xs transition-colors w-full ${
             hasValue
-              ? 'border-indigo-300 bg-indigo-50 text-indigo-700'
-              : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+              ? 'border-brand-300 bg-brand-50 text-brand-700 dark:border-brand-700 dark:bg-brand-500/10 dark:text-brand-400'
+              : 'border-gray-200 bg-white text-gray-800 hover:border-gray-400 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90'
           }`}
         >
-          <CalendarDays size={13} className={hasValue ? 'text-indigo-500' : 'text-gray-400'} />
-          <span className="max-w-[160px] truncate">{label}</span>
+          <CalendarDays size={15} className={hasValue ? 'text-brand-500 shrink-0' : 'text-gray-400 shrink-0'} />
+          <span className="flex-1 text-left truncate text-sm">{label}</span>
           {hasValue ? (
             <X
-              size={12}
-              className="text-indigo-400 hover:text-indigo-700 shrink-0"
+              size={14}
+              className="text-brand-400 hover:text-brand-700 shrink-0"
               onClick={(e) => {
                 e.stopPropagation();
                 clearDates();
               }}
             />
           ) : (
-            <ChevronDown size={12} className="text-gray-400 shrink-0" />
+            <ChevronDown size={14} className="text-gray-400 shrink-0" />
           )}
         </button>
       </PopoverTrigger>

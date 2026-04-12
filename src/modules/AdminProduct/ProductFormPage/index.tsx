@@ -40,9 +40,33 @@ const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
 
 function SectionHeader({ icon: Icon, label }: { icon: React.ElementType; label: string }) {
   return (
-    <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-100">
-      <Icon size={15} className="text-gray-400" />
-      <h2 className="text-sm font-semibold text-gray-700">{label}</h2>
+    <div className="flex items-center gap-2">
+      <Icon size={15} className="text-gray-400 dark:text-gray-500" />
+      <h2 className="text-sm font-semibold text-gray-700 dark:text-white/90">{label}</h2>
+    </div>
+  );
+}
+
+function SectionCard({
+  id,
+  icon,
+  label,
+  children,
+}: {
+  id: string;
+  icon: React.ElementType;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      id={id}
+      className="scroll-mt-20 overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+    >
+      <div className="border-b border-gray-200 dark:border-gray-800 px-5 py-4">
+        <SectionHeader icon={icon} label={label} />
+      </div>
+      <div className="p-5">{children}</div>
     </div>
   );
 }
@@ -78,9 +102,9 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-full bg-slate-50">
+    <div className="flex flex-col min-h-full bg-gray-50 dark:bg-gray-900">
       {/* Sticky header */}
-      <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-md border-b border-gray-100 px-6 py-3 flex items-center justify-between shadow-sm">
+      <div className="sticky top-0 z-10 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-4 flex items-center justify-between shadow-theme-sm">
         <div className="flex items-center gap-3 min-w-0">
           <Button
             variant="ghost"
@@ -150,8 +174,8 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                   onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
                   className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left ${
                     activeSection === id
-                      ? 'bg-indigo-50 text-indigo-700'
-                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800'
+                      ? 'bg-brand-50 text-brand-600'
+                      : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
                   }`}
                 >
                   <Icon size={13} className="shrink-0" />
@@ -162,53 +186,48 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
 
             {/* Main content */}
             <div className="flex-1 min-w-0 space-y-4">
-              <div
-                id="section-overview"
-                className="scroll-mt-20 bg-white rounded-2xl shadow-sm ring-1 ring-black/5 p-6"
-              >
-                <SectionHeader icon={FileText} label="Tổng quan" />
+              <SectionCard id="section-overview" icon={FileText} label="Tổng quan">
                 <BasicInfoSection isEdit={isEdit} />
-              </div>
-              <div id="section-images" className="scroll-mt-20 bg-white rounded-2xl shadow-sm ring-1 ring-black/5 p-6">
-                <SectionHeader icon={ImageIcon} label="Hình ảnh" />
+              </SectionCard>
+              <SectionCard id="section-images" icon={ImageIcon} label="Hình ảnh">
                 <ImagesSection />
-              </div>
-              <div
-                id="section-itinerary"
-                className="scroll-mt-20 bg-white rounded-2xl shadow-sm ring-1 ring-black/5 p-6"
-              >
-                <SectionHeader icon={Calendar} label="Lịch trình" />
+              </SectionCard>
+              <SectionCard id="section-itinerary" icon={Calendar} label="Lịch trình">
                 <TimeItinerarySection itineraries={itineraries} onChange={setItineraries} />
-              </div>
-              <div id="section-pricing" className="scroll-mt-20 bg-white rounded-2xl shadow-sm ring-1 ring-black/5 p-6">
-                <SectionHeader icon={DollarSign} label="Gói giá" />
+              </SectionCard>
+              <SectionCard id="section-pricing" icon={DollarSign} label="Gói giá">
                 <OptionsSection options={options} onChange={setOptions} />
-              </div>
-              <div id="section-details" className="scroll-mt-20 bg-white rounded-2xl shadow-sm ring-1 ring-black/5 p-6">
-                <SectionHeader icon={AlignLeft} label="Chi tiết" />
+              </SectionCard>
+              <SectionCard id="section-details" icon={AlignLeft} label="Chi tiết">
                 <DetailsSection />
-              </div>
+              </SectionCard>
             </div>
 
             {/* Sidebar */}
             <div className="space-y-4 sticky top-[57px] w-[280px] shrink-0">
               {isEdit && (
-                <div className="bg-white rounded-2xl shadow-sm ring-1 ring-black/5 p-4">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Trạng thái</p>
-                  <div
-                    className={`inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-lg ring-1 ${status.label}`}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${status.dot}`} />
-                    {status.text}
-                  </div>
-                  {productData?.code && (
-                    <p className="mt-3 text-xs text-gray-400">
-                      Mã tour:{' '}
-                      <span className="font-mono text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded">
-                        {productData.code}
-                      </span>
+                <div className="overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
+                  <div className="border-b border-gray-200 dark:border-gray-800 px-5 py-4">
+                    <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                      Trạng thái
                     </p>
-                  )}
+                  </div>
+                  <div className="p-5 space-y-3">
+                    <div
+                      className={`inline-flex items-center gap-2 text-sm font-medium px-3 py-1.5 rounded-lg ring-1 ${status.label}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full ${status.dot}`} />
+                      {status.text}
+                    </div>
+                    {productData?.code && (
+                      <p className="text-xs text-gray-400">
+                        Mã tour:{' '}
+                        <span className="font-mono text-gray-600 bg-gray-50 px-1.5 py-0.5 rounded">
+                          {productData.code}
+                        </span>
+                      </p>
+                    )}
+                  </div>
                 </div>
               )}
               <PricingCard />
