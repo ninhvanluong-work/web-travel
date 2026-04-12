@@ -10,7 +10,8 @@ interface Props {
   selects: ProductSelectFilters;
   suppliers: LookupItem[];
   destinations: LookupItem[];
-  onSelectChange: (patch: ProductSelectFilters) => void;
+  hasActiveFilters: boolean;
+  onSelectChange: (patch: Partial<ProductSelectFilters>) => void;
   onReset: () => void;
 }
 

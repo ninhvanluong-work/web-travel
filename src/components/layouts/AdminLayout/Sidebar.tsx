@@ -1,4 +1,6 @@
-import { Film, LayoutDashboard, Package } from 'lucide-react';
+import 'animate.css';
+
+import { Film, LayoutDashboard, LogOut, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -22,18 +24,18 @@ function Sidebar({ isCollapsed }: SidebarProps) {
   return (
     <aside
       className={cn(
-        'flex-shrink-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300',
-        isCollapsed ? 'w-20' : 'w-full sm:w-64'
+        'group/sidebar flex-shrink-0 bg-white dark:bg-gray-950 border-r border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 z-50',
+        isCollapsed ? 'w-[96px] hover:w-[280px] hover:shadow-2xl' : 'w-[280px]'
       )}
     >
       {/* Logo */}
-      <div className="h-20 flex items-center justify-center border-b border-gray-200 dark:border-gray-800">
+      <div className="h-20 flex items-center justify-center border-b border-gray-200 dark:border-gray-800 overflow-hidden whitespace-nowrap">
         <Logo />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto">
-        <ul className="space-y-1 p-4">
+      <nav className="flex-1 overflow-y-auto overflow-x-hidden">
+        <ul className="space-y-[6px] p-[16px]">
           {NAV_ITEMS.map((item) => {
             const isActive = item.exact ? router.pathname === item.href : router.pathname.startsWith(item.href);
             const Icon = item.icon;
@@ -43,14 +45,23 @@ function Sidebar({ isCollapsed }: SidebarProps) {
                 <Link
                   href={item.href}
                   className={cn(
-                    'group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors',
+                    'flex items-center gap-[16px] rounded-xl px-[20px] py-[14px] text-sm font-medium transition-colors',
                     isActive
                       ? 'bg-main text-white'
                       : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900'
                   )}
                 >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
-                  <span className={cn('hidden sm:inline', isCollapsed && 'sm:hidden')}>{item.label}</span>
+                  <Icon className="h-[24px] w-[24px] flex-shrink-0" />
+                  <span
+                    className={cn(
+                      'whitespace-nowrap overflow-hidden transition-all duration-300',
+                      isCollapsed
+                        ? 'hidden group-hover/sidebar:inline-block animate__animated animate__slideInLeft animate__faster'
+                        : 'inline-block'
+                    )}
+                  >
+                    {item.label}
+                  </span>
                 </Link>
               </li>
             );
@@ -59,9 +70,19 @@ function Sidebar({ isCollapsed }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 dark:border-gray-800 p-4">
-        <button className="w-full rounded-lg px-4 py-3 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900">
-          Logout
+      <div className="border-t border-gray-200 dark:border-gray-800 p-[16px] overflow-hidden">
+        <button className="flex w-full items-center gap-[16px] rounded-xl px-[20px] py-[14px] text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900 whitespace-nowrap">
+          <LogOut className="h-[24px] w-[24px] flex-shrink-0" />
+          <span
+            className={cn(
+              'transition-all duration-300',
+              isCollapsed
+                ? 'hidden group-hover/sidebar:inline-block animate__animated animate__slideInLeft animate__faster'
+                : 'inline-block'
+            )}
+          >
+            Logout
+          </span>
         </button>
       </div>
     </aside>
