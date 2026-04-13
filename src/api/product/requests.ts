@@ -29,19 +29,19 @@ function toApiPayload(values: ProductFormValues) {
   return {
     name: values.name,
     slug: values.slug,
-    description: values.description ?? undefined,
-    thumbnail: values.thumbnail ?? undefined,
+    description: values.description || undefined,
+    thumbnail: values.thumbnail || undefined,
     images: (values.images ?? []).map((img) => img.url).filter(Boolean),
-    itineraryImage: values.itineraryImage ?? undefined,
+    itineraryImage: values.itineraryImage || undefined,
     duration: values.duration,
     durationType: values.durationType,
-    highlight: values.highlight ?? undefined,
-    include: values.include ?? undefined,
-    exclude: values.exclude ?? undefined,
+    highlight: values.highlight || undefined,
+    include: values.include || undefined,
+    exclude: values.exclude || undefined,
     status: values.status,
     minPrice: values.minPrice,
-    destinationId: values.destinationId ?? undefined,
-    supplierId: values.supplierId ?? undefined,
+    destinationId: values.destinationId || undefined,
+    supplierId: values.supplierId || undefined,
   };
 }
 

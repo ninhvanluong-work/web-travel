@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { uploadImage } from '@/api/upload';
 import { Icons } from '@/assets/icons';
+import AlertBanner from '@/components/ui/AlertBanner';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import type { ProductFormValues } from '@/lib/validations/product';
 
@@ -140,7 +141,11 @@ export function ImageUploadCard({ label, fieldName }: ImageUploadCardProps) {
                   )}
                 </div>
 
-                {error && <p className="px-3 pb-2 text-[11px] text-red-500">{error}</p>}
+                {error && (
+                  <div className="px-3 pb-3">
+                    <AlertBanner variant="error" title="Tải ảnh thất bại" message={error} />
+                  </div>
+                )}
 
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
               </div>
