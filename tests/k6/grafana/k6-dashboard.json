@@ -1,0 +1,218 @@
+{
+  "uid": "gz6f48",
+  "title": "Travel",
+  "timezone": "browser",
+  "refresh": "10s",
+  "time": { "from": "now-3h", "to": "now" },
+  "schemaVersion": 42,
+  "panels": [
+    {
+      "id": 1,
+      "title": "Virtual Users (VUs)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "#6366f1" },
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT mean(\"value\") AS \"VUs\" FROM \"vus\" WHERE $timeFilter GROUP BY time($__interval) fill(previous)"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Request Rate (req/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "#4ade80" },
+          "custom": { "lineWidth": 2, "fillOpacity": 15 }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT non_negative_derivative(max(\"value\"), 1s) AS \"req/s\" FROM \"http_reqs\" WHERE $timeFilter GROUP BY time($__interval) fill(0)"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Response Time p95 — by Page",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 16, "h": 9 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "lineWidth": 2, "fillOpacity": 8 }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT percentile(\"value\", 95) AS \"Homepage\" FROM \"http_req_duration\" WHERE \"page\"='home' AND $timeFilter GROUP BY time($__interval) fill(none)"
+        },
+        {
+          "refId": "B",
+          "rawQuery": true,
+          "query": "SELECT percentile(\"value\", 95) AS \"Search\" FROM \"http_req_duration\" WHERE \"page\"='search' AND $timeFilter GROUP BY time($__interval) fill(none)"
+        },
+        {
+          "refId": "C",
+          "rawQuery": true,
+          "query": "SELECT percentile(\"value\", 95) AS \"Video Detail\" FROM \"http_req_duration\" WHERE \"page\"='video' AND $timeFilter GROUP BY time($__interval) fill(none)"
+        },
+        {
+          "refId": "D",
+          "rawQuery": true,
+          "query": "SELECT percentile(\"value\", 95) AS \"Video List API\" FROM \"http_req_duration\" WHERE \"endpoint\"='video-list' AND $timeFilter GROUP BY time($__interval) fill(none)"
+        },
+        {
+          "refId": "E",
+          "rawQuery": true,
+          "query": "SELECT percentile(\"value\", 95) AS \"Video Search API\" FROM \"http_req_duration\" WHERE \"endpoint\"='video-search' AND $timeFilter GROUP BY time($__interval) fill(none)"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Error Rate",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 8, "w": 8, "h": 9 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "color": { "mode": "fixed", "fixedColor": "#ef4444" },
+          "custom": { "lineWidth": 2, "fillOpacity": 20 },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 0.01 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT mean(\"value\") AS \"Error Rate\" FROM \"http_req_failed\" WHERE $timeFilter GROUP BY time($__interval) fill(0)"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "p95 Response Time (overall)",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 17, "w": 6, "h": 5 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 800 },
+              { "color": "red", "value": 1500 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT percentile(\"value\", 95) AS \"p95\" FROM \"http_req_duration\" WHERE $timeFilter"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "avg Response Time",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 17, "w": 6, "h": 5 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 1000 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT mean(\"value\") AS \"avg\" FROM \"http_req_duration\" WHERE $timeFilter"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Total Requests",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 17, "w": 6, "h": 5 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "fixed", "fixedColor": "#6366f1" },
+          "unit": "short"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT count(\"value\") AS \"total\" FROM \"http_req_duration\" WHERE $timeFilter"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Error Rate (overall)",
+      "type": "stat",
+      "gridPos": { "x": 18, "y": 17, "w": 6, "h": 5 },
+      "datasource": { "type": "influxdb", "uid": "InfluxDB" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 0.01 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQuery": true,
+          "query": "SELECT mean(\"value\") AS \"error rate\" FROM \"http_req_failed\" WHERE $timeFilter"
+        }
+      ]
+    }
+  ]
+}

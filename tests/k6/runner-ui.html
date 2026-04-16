@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>k6 Test Runner</title>
+    <link rel="stylesheet" href="/runner-ui.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>k6 Test Runner</h1>
+      <p class="subtitle">Run load tests against backend API and Vercel frontend</p>
+
+      <!-- Controls -->
+      <div class="card">
+        <div class="row">
+          <select id="testSelect">
+            <option value="capacity">Capacity Test — 10→100 VUs, ~21 min (recommended)</option>
+            <option value="api">API Test — 100 VUs, ~4 min</option>
+            <option value="fe">Frontend Test — 10→50 VUs, ~13 min</option>
+            <option value="spike">Spike Test — 200 VUs, ~8 min</option>
+            <option value="stress">Stress Test — 300 VUs, ~38 min</option>
+          </select>
+
+          <label class="toggle">
+            <input type="checkbox" id="influxToggle" checked />
+            Gửi vào Grafana
+          </label>
+
+          <button class="btn btn-run" id="btnRun">▶ Run</button>
+          <button class="btn btn-stop" id="btnStop" disabled>■ Stop</button>
+        </div>
+      </div>
+
+      <!-- Status + terminal -->
+      <div class="card">
+        <div class="status-row">
+          <span id="badge" class="badge badge-idle">
+            <span class="dot" id="dot"></span>
+            <span id="statusText">Idle</span>
+          </span>
+          <a class="grafana-link" href="http://localhost:3001" target="_blank"> Grafana Dashboard ↗ </a>
+        </div>
+
+        <div class="terminal" id="terminal">
+          <span class="line-dim">// Select a test and click Run to start...</span>
+        </div>
+
+        <p class="hint" id="hint"></p>
+      </div>
+    </div>
+    <script src="/runner-ui.js"></script>
+  </body>
+</html>

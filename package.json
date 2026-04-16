@@ -17,7 +17,11 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache",
     "check-types": "tsc --noEmit --pretty",
     "clean": "rimraf .next out",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "test:k6": "k6 run",
+    "test:k6:load": "k6 run tests/k6/load-test.js",
+    "test:k6:stress": "k6 run tests/k6/stress-test.js",
+    "test:k6:spike": "k6 run tests/k6/spike-test.js"
   },
   "packageManager": "pnpm@9.1.0",
   "dependencies": {
