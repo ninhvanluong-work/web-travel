@@ -3,6 +3,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 import { useSharedVideo } from '@/hooks/use-shared-video';
 import { extractM3u8Url } from '@/lib/bunny';
+import { logger } from '@/lib/logger';
 
 export interface BunnyPlayerHandle {
   play: () => Promise<void>;
@@ -77,7 +78,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
             if (shouldPlayRef.current) video.muted = mutedRef.current;
           });
         })
-        .catch(() => {});
+        .catch((err) => {
+          logger.warn('play() rejected on swipe', { src, reason: (err as Error).message });
+        });
     },
     pause: () => {
       // No-op if never officially played — prevents re-render from killing a
@@ -105,7 +108,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
           .then(() => {
             video.muted = false;
           })
-          .catch(() => {});
+          .catch((err) => {
+            logger.warn('play() rejected on unmute', { src, reason: (err as Error).message });
+          });
       }
     },
     mute: () => {
@@ -126,7 +131,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
         // set here — when the real play() is called on swipe, video is already
         // playing so it just updates muted state (near-instant).
         video.muted = true;
-        video.play().catch(() => {});
+        video.play().catch((err) => {
+          logger.debug('preload play() rejected (expected on iOS backgrounding)', { reason: (err as Error).message });
+        });
         return;
       }
       hlsRef.current?.startLoad(0);
@@ -149,7 +156,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
       // shouldPreloadRef=true means we need a silent play to force AVFoundation buffering.
       if (shouldPreloadRef.current && !shouldPlayRef.current) {
         video.muted = true;
-        video.play().catch(() => {});
+        video.play().catch((err) => {
+          logger.debug('preload play() rejected on pool arrive', { reason: (err as Error).message });
+        });
       }
       const onCanPlay = () => {
         onReadyRef.current?.();
@@ -162,7 +171,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
                 if (shouldPlayRef.current) video.muted = mutedRef.current;
               });
             })
-            .catch(() => {});
+            .catch((err) => {
+              logger.warn('play() rejected on canplay (iOS)', { src, reason: (err as Error).message });
+            });
         }
       };
       video.addEventListener('canplay', onCanPlay);
@@ -204,7 +215,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
           .then(() => {
             video.muted = mutedRef.current;
           })
-          .catch(() => {});
+          .catch((err) => {
+            logger.warn('play() rejected on canplay (Android)', { src, reason: (err as Error).message });
+          });
       }
     };
     video.addEventListener('canplay', onCanPlay);
@@ -220,13 +233,17 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
           .then(() => {
             video.muted = mutedRef.current;
           })
-          .catch(() => {}); // nếu reject → canplay sẽ retry khi fragment về
+          .catch((err) => {
+            logger.debug('play() rejected on MANIFEST_PARSED — canplay will retry', { reason: (err as Error).message });
+          });
       }
     });
 
     hls.on(Hls.Events.ERROR, (_event, data) => {
       if (data.fatal) {
-        console.error('[BunnyVideoPlayer] HLS fatal error:', data.type, data.details, src);
+        logger.fatal('HLS fatal error', { type: data.type, details: data.details, src });
+      } else {
+        logger.debug('HLS non-fatal error', { type: data.type, details: data.details });
       }
     });
 
