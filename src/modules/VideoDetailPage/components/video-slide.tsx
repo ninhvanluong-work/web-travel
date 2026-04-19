@@ -47,7 +47,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const isNearView = useInView(containerEl, { rootMargin: '200% 0px', threshold: 0 });
+  const isNearView = useInView(containerEl, { rootMargin: '150% 0px', threshold: 0 });
   const isInView = useInView(containerEl, { threshold: 0.6 });
 
   // Refs để onReady callback đọc state hiện tại (tránh stale closure)

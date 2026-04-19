@@ -1,10 +1,12 @@
 import { useRouter } from 'next/router';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
+import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { useSwipeBack } from '@/hooks/use-swipe-back';
 import { useVideoDetailFeed } from '@/hooks/use-video-detail-feed';
+import { useVideoPreloader } from '@/hooks/use-video-preloader';
 
 import VideoSlide, { type VideoSlideHandle } from './components/video-slide';
 
@@ -13,12 +15,31 @@ const VideoDetailPage = () => {
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
 
+  const { preload: preloadVideo } = useVideoPreloader();
+  const videosRef = useRef<IVideo[]>([]);
+
   const { videos, handleVideoTestVisible, isReloadInitializing, initialIndex } = useVideoDetailFeed(
     currentSlug,
     (newIndex) => {
+      const nextVideo = videosRef.current[newIndex + 1];
+      if (nextVideo?.embedUrl) preloadVideo(nextVideo.embedUrl);
       slideRefs.current.get(newIndex + 1)?.preload();
     }
   );
+  videosRef.current = videos;
+
+  // Trigger 1: preload slide after initialIndex as soon as feed data arrives.
+  // Fixes stutter on the very first swipe before any onIndexChange fires.
+  useEffect(() => {
+    if (videos.length === 0) return;
+    const nextIdx = initialIndex + 1;
+    const nextVideo = videos[nextIdx];
+    if (!nextVideo?.embedUrl) return;
+    preloadVideo(nextVideo.embedUrl); // Android: shadow hls.js warm-up
+    slideRefs.current.get(nextIdx)?.preload(); // iOS: pool element play() buffering
+    // preloadVideo is a stable module-level function, safe to omit from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videos, initialIndex]);
 
   // autoplay=true khi đến từ grid, false khi reload/direct access
   const isFromGrid = router.query.autoplay === 'true';

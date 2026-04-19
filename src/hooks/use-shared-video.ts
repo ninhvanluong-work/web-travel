@@ -7,14 +7,16 @@ function createPoolElement(): HTMLVideoElement {
   video.playsInline = true;
   video.loop = true;
   video.muted = true;
-  video.preload = 'none';
+  video.preload = 'metadata';
   return video;
 }
 
 // Singleton pool — khởi tạo 1 lần duy nhất, sống suốt session.
 // Guard SSR: document không tồn tại trên server.
 const pool: HTMLVideoElement[] =
-  typeof window !== 'undefined' ? [createPoolElement(), createPoolElement(), createPoolElement()] : [];
+  typeof window !== 'undefined'
+    ? [createPoolElement(), createPoolElement(), createPoolElement(), createPoolElement(), createPoolElement()]
+    : [];
 
 const available: HTMLVideoElement[] = [...pool];
 

@@ -2,19 +2,7 @@ import Hls from 'hls.js';
 import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 import { useSharedVideo } from '@/hooks/use-shared-video';
-
-// CDN pullzone domain dùng để build link m3u8 từ videoGuid
-const BUNNY_CDN_DOMAIN = 'vz-186cf1b9-231.b-cdn.net';
-
-/**
- * Trích xuất videoGuid từ embedUrl của Bunny Stream.
- * VD: https://player.mediadelivery.net/embed/622547/19e8f6fd-... → 19e8f6fd-...
- */
-function extractM3u8Url(embedUrl: string): string {
-  const parts = embedUrl.split('/');
-  const videoGuid = parts[parts.length - 1].split('?')[0];
-  return `https://${BUNNY_CDN_DOMAIN}/${videoGuid}/playlist.m3u8`;
-}
+import { extractM3u8Url } from '@/lib/bunny';
 
 export interface BunnyPlayerHandle {
   play: () => Promise<void>;
@@ -59,6 +47,10 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
   const shouldPlayRef = useRef(false);
   const shouldPreloadRef = useRef(false);
 
+  const src = extractM3u8Url(embedUrl);
+  const srcRef = useRef(src);
+  srcRef.current = src;
+
   useImperativeHandle(ref, () => ({
     /**
      * iOS-safe play: set intent trước, sau đó thực thi nếu element sẵn sàng.
@@ -88,6 +80,9 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
         .catch(() => {});
     },
     pause: () => {
+      // No-op if never officially played — prevents re-render from killing a
+      // preload-initiated play() before the user swipes to this slide.
+      if (!shouldPlayRef.current) return;
       shouldPlayRef.current = false;
       videoElRef.current?.pause();
     },
@@ -120,11 +115,23 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     isPlaying: () => videoElRef.current !== null && !videoElRef.current.paused,
     preload: () => {
       shouldPreloadRef.current = true;
+      const video = videoElRef.current;
+      if (video && video.canPlayType('application/vnd.apple.mpegurl')) {
+        if (!video.src) {
+          video.src = srcRef.current;
+          video.load();
+        }
+        // iOS won't buffer segments without play(). Muted off-screen play forces
+        // AVFoundation to fill its buffer before user swipes. shouldPlayRef is NOT
+        // set here — when the real play() is called on swipe, video is already
+        // playing so it just updates muted state (near-instant).
+        video.muted = true;
+        video.play().catch(() => {});
+        return;
+      }
       hlsRef.current?.startLoad(0);
     },
   }));
-
-  const src = extractM3u8Url(embedUrl);
 
   useEffect(() => {
     const video = videoElement;
@@ -138,6 +145,12 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     // iOS/Mac Safari: hỗ trợ HLS native → set src trực tiếp
     if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
+      // preload() may have been called before pool element arrived (setState delay).
+      // shouldPreloadRef=true means we need a silent play to force AVFoundation buffering.
+      if (shouldPreloadRef.current && !shouldPlayRef.current) {
+        video.muted = true;
+        video.play().catch(() => {});
+      }
       const onCanPlay = () => {
         onReadyRef.current?.();
         if (shouldPlayRef.current && video.paused) {
@@ -170,9 +183,10 @@ const BunnyVideoPlayer = forwardRef<BunnyPlayerHandle, Props>(function BunnyVide
     if (!Hls.isSupported()) return;
 
     const hls = new Hls({
-      autoStartLoad: false, // Chỉ load manifest khi mount, KHÔNG load fragment.
-      // Fragment chỉ load khi play() gọi hls.startLoad(0).
-      startLevel: 0, // Luôn bắt đầu ở chất lượng thấp nhất (240p) → load nhanh hơn
+      autoStartLoad: true, // Start loading fragments immediately on mount.
+      // Adjacent slides activate early (rootMargin:'150%'), so fragments are in
+      // buffer before the user swipes — eliminates cold-start delay on every swipe.
+      startLevel: 0,
       abrEwmaDefaultEstimate: 1200000,
       maxBufferLength: 10,
       backBufferLength: 0,
