@@ -46,7 +46,6 @@ export const productSchema = z.object({
   videoId: z.string().optional().nullable(),
 });
 
-// ── Option (gói giá) ──────────────────────────────────────────────────────
 export const optionSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().min(1, 'Tên gói không được để trống'),
@@ -58,7 +57,6 @@ export const optionSchema = z.object({
   order: z.coerce.number().int().min(0).default(0),
 });
 
-// ── Itinerary (lịch trình) ────────────────────────────────────────────────
 export const itinerarySchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1, 'Tiêu đề ngày không được để trống'),

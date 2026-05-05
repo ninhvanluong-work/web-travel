@@ -35,7 +35,6 @@ export const useVideoDetailFeed = (currentSlug: string, onIndexChange?: (newInde
     hasStoreList ? [...storeExcludeIds, ...storeVideos.map((v) => v.id)] : []
   );
 
-  // Case 1 & 2: navigate từ SearchPage — không auto-fetch, chỉ fetch khi user scroll đến cuối
   const {
     data: storeInfiniteData,
     fetchNextPage: storeFetchNextPage,

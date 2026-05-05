@@ -64,7 +64,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
 
   return (
     <div className="space-y-6">
-      {/* Row 1: Tên tour | Danh mục */}
       <div className="flex flex-row gap-5">
         <div className="flex-1 min-w-0">
           <FormField
@@ -113,7 +112,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         </div>
       </div>
 
-      {/* Row 2: Nhà cung cấp | Đường dẫn */}
       <div className="flex flex-row gap-5">
         <div className="flex-1 min-w-0">
           <FormField
@@ -167,7 +165,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         </div>
       </div>
 
-      {/* Row 3: Giá khởi điểm | Video tour */}
       <div className="flex flex-row gap-5">
         <div className="flex-1 min-w-0">
           <FormField
@@ -264,7 +261,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         </div>
       </div>
 
-      {/* Row 4: Thời lượng | Đơn vị tính */}
       <div className="flex flex-row gap-5">
         <div className="flex-1 min-w-0">
           <FormField
@@ -313,7 +309,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         </div>
       </div>
 
-      {/* Row 5: Mô tả */}
       <FormField
         control={control}
         name="description"

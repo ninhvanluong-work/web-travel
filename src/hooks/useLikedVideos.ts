@@ -20,7 +20,7 @@ function writeToStorage(ids: Set<string>): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(ids)));
   } catch {
-    // localStorage full hoặc unavailable — silently fail
+    /* silently fail */
   }
 }
 

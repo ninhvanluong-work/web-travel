@@ -75,7 +75,6 @@ export function VideoTableRow({ video, index, onCopyEmbed }: Props) {
         <UploadStatusIcon status={video.uploadingStatus} />
       </td>
 
-      {/* Thích */}
       <td className="py-3 px-2 text-right text-gray-500 tabular-nums">
         {video.likeCount > 0 ? video.likeCount.toLocaleString() : <span className="text-gray-300">0</span>}
       </td>

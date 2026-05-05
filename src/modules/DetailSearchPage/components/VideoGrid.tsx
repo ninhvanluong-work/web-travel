@@ -65,7 +65,6 @@ const VideoGrid = ({
       const video = videos.find((v) => v.id === id);
       if (!video) return;
 
-      // Unlock iOS audio session trong gesture context — trước khi navigate
       try {
         const AudioCtx =
           window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;

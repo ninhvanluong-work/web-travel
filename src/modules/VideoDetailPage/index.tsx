@@ -41,11 +41,9 @@ const VideoDetailPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [videos, initialIndex]);
 
-  // autoplay=true khi đến từ grid, false khi reload/direct access
   const isFromGrid = router.query.autoplay === 'true';
   const [muted, setMuted] = useState(() => !isFromGrid);
 
-  // Khi reload: khóa scroll + pause video cho đến khi user bật loa
   const [gated, setGated] = useState(() => !isFromGrid);
 
   const handleMutedChange = (newMuted: boolean) => {
@@ -90,7 +88,6 @@ const VideoDetailPage = () => {
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>
 
-      {/* gated=true: khóa scroll cho đến khi user bật loa (chỉ khi reload) */}
       <div
         className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
           gated ? 'overflow-hidden' : 'overflow-y-scroll'
