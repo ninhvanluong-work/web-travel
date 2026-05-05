@@ -1,5 +1,7 @@
 import { type RefObject, useEffect, useRef, useState } from 'react';
 
+import { logger } from '@/lib/logger';
+
 function createPoolElement(): HTMLVideoElement {
   const video = document.createElement('video');
   // CSS phải set bằng JS — pool element nằm ngoài React tree, Tailwind không áp dụng được.
@@ -67,10 +69,10 @@ export function useSharedVideo(
 
     const video = available.pop() ?? null;
     if (!video) {
-      if (process.env.NODE_ENV !== 'production') {
-        // eslint-disable-next-line no-console
-        console.warn('[VideoPool] Pool exhausted — slide eviction quá chậm, kiểm tra rootMargin');
-      }
+      logger.error('Video pool exhausted — slide eviction too slow, check rootMargin', {
+        poolSize: pool.length,
+        available: available.length,
+      });
       return;
     }
 
