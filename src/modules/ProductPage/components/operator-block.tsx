@@ -26,7 +26,7 @@ export default function OperatorBlock({
       <div className="border border-black/[0.08] rounded-[14px] overflow-hidden">
         {/* Header */}
         <div className="p-4 flex items-center gap-3">
-          <div className="w-12 h-12 rounded-md bg-[#0F6E56] flex items-center justify-center text-white text-[15px] font-medium flex-shrink-0 tracking-[-0.3px]">
+          <div className="w-14 h-14 rounded-md bg-[#0F6E56] flex items-center justify-center text-white text-[15px] font-medium flex-shrink-0 tracking-[-0.3px]">
             {initials}
           </div>
           <div className="flex-1 min-w-0">

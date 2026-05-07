@@ -27,7 +27,15 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
     setActiveIndex(api.selectedScrollSnap());
 
     api.on('select', () => {
-      setActiveIndex(api.selectedScrollSnap());
+      const newIndex = api.selectedScrollSnap();
+      setActiveIndex(newIndex);
+      setPlayingIndex((prev) => {
+        if (prev !== null && prev !== newIndex) {
+          videoRefs.current.get(prev)?.pause();
+          return null;
+        }
+        return prev;
+      });
     });
   }, [api]);
 
@@ -80,20 +88,26 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
                     <span className="w-1.5 h-1.5 rounded-full bg-[#E24B4A]" />
                     <span className="text-[11px] text-white font-medium">Hero video</span>
                   </div>
-                  {/* Play button */}
-                  {playingIndex !== i && (
-                    <button
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 flex items-center justify-center pointer-events-none"
-                      aria-label="Play video"
-                    >
-                      <svg width="20" height="20" viewBox="0 0 12 12">
-                        <path d="M3 2L10 6L3 10Z" fill="black" />
-                      </svg>
-                    </button>
-                  )}
+                  {/* Play/Pause button */}
+                  <button
+                    className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 flex items-center justify-center transition-opacity ${
+                      playingIndex === i ? 'opacity-0 hover:opacity-100' : 'opacity-100'
+                    }`}
+                    aria-label={playingIndex === i ? 'Pause video' : 'Play video'}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleVideo(i);
+                    }}
+                  >
+                    {playingIndex === i ? (
+                      <Icons.pause className="w-5 h-5 text-black" />
+                    ) : (
+                      <Icons.playTriangleFill className="w-5 h-5 text-black" />
+                    )}
+                  </button>
                 </>
               ) : (
-                <img src={item.url} alt="" className="w-full h-full object-cover" />
+                <img src={item.url} alt="Image unavailable" className="w-full h-full object-cover" />
               )}
             </CarouselItem>
           ))}
@@ -117,16 +131,20 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
       </div>
 
       {/* Pagination dots + counter */}
-      <div className="absolute bottom-7 left-3.5 flex gap-1">
+      <div className="absolute bottom-7 left-3.5 flex">
         {media.map((_, i) => (
           <button
             key={i}
             onClick={() => scrollToSlide(i)}
             aria-label={`Go to slide ${i + 1}`}
-            className={`h-[3px] rounded-[2px] transition-all ${
-              i === activeIndex ? 'w-[18px] bg-white' : 'w-2 bg-white/50'
-            }`}
-          />
+            className="flex items-center justify-center py-5 px-1"
+          >
+            <span
+              className={`block h-[3px] rounded-[2px] transition-all ${
+                i === activeIndex ? 'w-[18px] bg-white' : 'w-2 bg-white/50'
+              }`}
+            />
+          </button>
         ))}
       </div>
       <div className="absolute bottom-7 right-3.5 px-2.5 py-1 bg-black/50 backdrop-blur-sm rounded-full">
@@ -134,6 +152,11 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
           {activeIndex + 1} / {media.length}
         </span>
       </div>
+
+      {/* Screen reader live region */}
+      <span aria-live="polite" className="sr-only">
+        Slide {activeIndex + 1} of {media.length}
+      </span>
 
       {/* Curved bottom edge */}
       <div className="absolute bottom-[-1px] left-0 right-0 h-6 bg-white rounded-t-[24px]" />

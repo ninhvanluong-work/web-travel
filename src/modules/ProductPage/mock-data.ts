@@ -85,7 +85,7 @@ export const MOCK_PRODUCT: MockProduct = {
     { icon: 'sunRise', title: 'Sunrise panorama', subtitle: "Sapa's most beautiful moment" },
   ],
   uniqueSellingPoint:
-    'Most Sapa tours rush you past the scenery. This one slows down — two full days, a real homestay, and a guide whose family has farmed these slopes for generations.',
+    'The only tour where you sleep in the home of a Hmong elder who has practised traditional weaving for 40 years.',
   operator: {
     initials: 'VV',
     name: 'Vietnam Village Vibes',

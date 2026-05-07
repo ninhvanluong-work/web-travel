@@ -47,8 +47,8 @@ export default function ProductPage() {
         {p.freeCancellation && (
           <motion.div {...fadeInUp} className="px-[18px] pb-[22px]">
             <div className="flex items-center gap-3 p-[12px_14px] bg-[#E1F5EE] rounded-[14px]">
-              <div className="w-8 h-8 rounded-full bg-[#0F6E56] flex items-center justify-center flex-shrink-0">
-                <Icons.check className="w-[14px] h-[14px] text-white" />
+              <div className="w-10 h-10 rounded-full bg-[#0F6E56] flex items-center justify-center flex-shrink-0">
+                <Icons.check className="w-[18px] h-[18px] text-white" />
               </div>
               <div>
                 <p className="text-[13px] font-medium text-[#04342C]">

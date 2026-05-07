@@ -71,6 +71,7 @@ import moneyBag from '@/assets/svg/money-bag.svg';
 import mountain from '@/assets/svg/mountain.svg';
 import music from '@/assets/svg/music.svg';
 import paper from '@/assets/svg/paper.svg';
+import pause from '@/assets/svg/pause.svg';
 import personBest from '@/assets/svg/person-best.svg';
 import personHome from '@/assets/svg/person-home.svg';
 import personPickup from '@/assets/svg/person-pickup.svg';
@@ -176,6 +177,7 @@ const IconList = {
   left,
   music,
   paper,
+  pause,
   play,
   sound,
   up,
