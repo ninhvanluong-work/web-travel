@@ -59,6 +59,7 @@
     "cmdk": "^0.2.0",
     "date-fns": "^2.30.0",
     "dayjs": "^1.11.9",
+    "embla-carousel-react": "^8.6.0",
     "framer-motion": "^10.15.0",
     "hls.js": "^1.6.15",
     "i18next": "^22.4.9",

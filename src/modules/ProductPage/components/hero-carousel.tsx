@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
+import { Carousel, type CarouselApi, CarouselContent, CarouselItem } from '@/components/ui/carousel';
 
 interface MediaItem {
   type: 'image' | 'video';
@@ -15,36 +16,23 @@ interface HeroCarouselProps {
 }
 
 export default function HeroCarousel({ media }: HeroCarouselProps) {
-  const trackRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<Map<number, HTMLVideoElement>>(new Map());
   const [activeIndex, setActiveIndex] = useState(0);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
-    const track = trackRef.current;
-    const observers: IntersectionObserver[] = [];
+    if (!api) return;
 
-    if (track) {
-      const slides = track.querySelectorAll('[data-slide]');
-      slides.forEach((slide, i) => {
-        const obs = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) setActiveIndex(i);
-          },
-          { root: track, threshold: 0.6 }
-        );
-        obs.observe(slide);
-        observers.push(obs);
-      });
-    }
+    setActiveIndex(api.selectedScrollSnap());
 
-    return () => observers.forEach((o) => o.disconnect());
-  }, [media.length]);
+    api.on('select', () => {
+      setActiveIndex(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   const scrollToSlide = (index: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' });
+    api?.scrollTo(index);
   };
 
   const toggleVideo = (index: number) => {
@@ -62,55 +50,55 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
   return (
     <div className="relative w-full aspect-[16/10]">
       {/* Slide track */}
-      <div
-        ref={trackRef}
-        className="flex w-full h-full overflow-x-auto scrollbar-hide"
-        style={{ scrollSnapType: 'x mandatory' }}
-      >
-        {media.map((item, i) => (
-          <div key={i} data-slide className="flex-shrink-0 w-full h-full relative" style={{ scrollSnapAlign: 'start' }}>
-            {item.type === 'video' ? (
-              <>
-                <div className="w-full h-full bg-black relative overflow-hidden">
-                  {item.url && (
-                    <video
-                      ref={(el) => {
-                        if (el) videoRefs.current.set(i, el);
-                        else videoRefs.current.delete(i);
-                      }}
-                      src={item.url}
-                      poster={item.poster}
-                      className="w-full h-full object-cover"
-                      playsInline
-                      preload="metadata"
-                      onEnded={() => setPlayingIndex(null)}
-                    />
-                  )}
-                </div>
-                {/* Hero video badge */}
-                <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 px-[11px] py-1.5 bg-black/40 backdrop-blur-sm rounded-full">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E24B4A]" />
-                  <span className="text-[11px] text-white font-medium">Hero video</span>
-                </div>
-                {/* Play button */}
-                {playingIndex !== i && (
-                  <button
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 flex items-center justify-center"
+      <Carousel setApi={setApi} className="w-full h-full [&>div]:h-full">
+        <CarouselContent className="h-full ml-0">
+          {media.map((item, i) => (
+            <CarouselItem key={i} className="pl-0 h-full relative">
+              {item.type === 'video' ? (
+                <>
+                  <div
+                    className="w-full h-full bg-black relative overflow-hidden cursor-pointer"
                     onClick={() => toggleVideo(i)}
-                    aria-label="Play video"
                   >
-                    <svg width="20" height="20" viewBox="0 0 12 12">
-                      <path d="M3 2L10 6L3 10Z" fill="black" />
-                    </svg>
-                  </button>
-                )}
-              </>
-            ) : (
-              <img src={item.url} alt="" className="w-full h-full object-cover" />
-            )}
-          </div>
-        ))}
-      </div>
+                    {item.url && (
+                      <video
+                        ref={(el) => {
+                          if (el) videoRefs.current.set(i, el);
+                          else videoRefs.current.delete(i);
+                        }}
+                        src={item.url}
+                        poster={item.poster}
+                        className="w-full h-full object-cover"
+                        playsInline
+                        preload="metadata"
+                        onEnded={() => setPlayingIndex(null)}
+                      />
+                    )}
+                  </div>
+                  {/* Hero video badge */}
+                  <div className="absolute top-3.5 left-3.5 flex items-center gap-1.5 px-[11px] py-1.5 bg-black/40 backdrop-blur-sm rounded-full">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#E24B4A]" />
+                    <span className="text-[11px] text-white font-medium">Hero video</span>
+                  </div>
+                  {/* Play button */}
+                  {playingIndex !== i && (
+                    <button
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-white/95 flex items-center justify-center pointer-events-none"
+                      aria-label="Play video"
+                    >
+                      <svg width="20" height="20" viewBox="0 0 12 12">
+                        <path d="M3 2L10 6L3 10Z" fill="black" />
+                      </svg>
+                    </button>
+                  )}
+                </>
+              ) : (
+                <img src={item.url} alt="" className="w-full h-full object-cover" />
+              )}
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
 
       {/* Save + Share buttons */}
       <div className="absolute top-3.5 right-3.5 flex gap-2">
