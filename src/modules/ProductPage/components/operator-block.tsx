@@ -3,6 +3,7 @@ import { Icons } from '@/assets/icons';
 interface OperatorBlockProps {
   initials: string;
   name: string;
+  avatar?: string | null;
   rating: number;
   reviewCount: number;
   verified: boolean;
@@ -14,6 +15,7 @@ interface OperatorBlockProps {
 export default function OperatorBlock({
   initials,
   name,
+  avatar,
   rating,
   reviewCount,
   yearsOnPlatform,
@@ -26,8 +28,8 @@ export default function OperatorBlock({
       <div className="border border-black/[0.08] rounded-[14px] overflow-hidden">
         {/* Header */}
         <div className="p-4 flex items-center gap-3">
-          <div className="w-14 h-14 rounded-md bg-[#0F6E56] flex items-center justify-center text-white text-[15px] font-medium flex-shrink-0 tracking-[-0.3px]">
-            {initials}
+          <div className="w-14 h-14 rounded-md bg-[#0F6E56] flex items-center justify-center text-white text-[15px] font-medium flex-shrink-0 tracking-[-0.3px] overflow-hidden">
+            {avatar ? <img src={avatar} alt={name} className="w-full h-full object-cover" /> : initials}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 mb-0.5">

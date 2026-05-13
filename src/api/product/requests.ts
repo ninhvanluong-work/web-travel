@@ -1,7 +1,35 @@
 import type { ProductFormValues } from '@/lib/validations/product';
 
 import { request } from '../axios';
-import type { ApiProductDetail, ApiProductListResponse, IProductListParams, IProductListResult } from './types';
+import type {
+  ApiProductDetail,
+  ApiProductListResponse,
+  ApiProductReviewListResponse,
+  IProductListParams,
+  IProductListResult,
+  IProductReview,
+  IProductReviewResult,
+} from './types';
+
+function toProductReview(item: { id: string; createdAt: string; comment: string; point: number }): IProductReview {
+  const d = new Date(item.createdAt);
+  return {
+    id: item.id,
+    comment: item.comment,
+    point: item.point,
+    date: d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+  };
+}
+
+export async function getProductReviews(id: string, pageSize = 2): Promise<IProductReviewResult> {
+  const { data } = await request.get<ApiProductReviewListResponse>(`/product/${id}/review`, {
+    params: { page: 1, pageSize },
+  });
+  return {
+    items: data.data.items.map(toProductReview),
+    pagination: data.data.pagination,
+  };
+}
 
 export async function getProductList(params: IProductListParams): Promise<IProductListResult> {
   const cleanParams = Object.fromEntries(

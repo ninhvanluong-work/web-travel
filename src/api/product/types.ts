@@ -38,6 +38,63 @@ export interface IProductListParams {
   toDate?: string;
 }
 
+// ── Supplier ──────────────────────────────────────────────────────────────
+export interface ApiSupplier {
+  id: string;
+  name: string;
+  contact: string | null;
+  avatar: string | null;
+  ratingCount: number;
+  ratingRate: number;
+  isVerified: boolean;
+  tourOffered: number;
+  responseRate: number;
+}
+
+// ── Product detail sub-types ──────────────────────────────────────────────
+export interface ApiBannerItem {
+  url: string;
+  type: 'image' | 'video';
+}
+
+export interface ApiReadBeforeItem {
+  key: string;
+  title: string;
+  description: string;
+}
+
+export interface ApiItineraryItem {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  name: string;
+  featuredName: string;
+  order: number;
+  description: string;
+  productId: string;
+}
+
+export interface ApiTagItem {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  name: string;
+}
+
+export interface ApiTourGuide {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  name: string;
+  avatar: string | null;
+  ratingCount: number;
+  expYear: number;
+  ratingStar: number;
+}
+
 // ── Full product detail (GET /product/:id, POST/PATCH response) ───────────
 export interface ApiProductDetail {
   id: string;
@@ -46,10 +103,13 @@ export interface ApiProductDetail {
   deletedAt: string | null;
   name: string;
   description: string | null;
+  shortDescription: string | null;
   slug: string;
   thumbnail: string | null;
-  code: string; // server-generated, read-only
+  code: string | null;
   images: string[];
+  banner: ApiBannerItem[];
+  readBefore: ApiReadBeforeItem[];
   itineraryImage: string | null;
   duration: number;
   durationType: string;
@@ -59,8 +119,49 @@ export interface ApiProductDetail {
   status: 'draft' | 'published' | 'hidden';
   minPrice: string; // server returns decimal string e.g. "1500000.00"
   reviewPoint: number; // computed from user reviews, read-only
+  reviewCount: number;
   destinationId: string | null;
   supplierId: string | null;
+  supplier: ApiSupplier | null;
+  itineraries: ApiItineraryItem[];
+  tags: ApiTagItem[];
+  tourGuides: ApiTourGuide[];
+}
+
+// ── Product review ────────────────────────────────────────────────────────
+export interface IProductReview {
+  id: string;
+  comment: string;
+  point: number;
+  date: string; // formatted from createdAt e.g. "April 2026"
+}
+
+export interface IProductReviewResult {
+  items: IProductReview[];
+  pagination: IProductPagination;
+}
+
+export interface IProductReviewParams {
+  id: string;
+  pageSize?: number;
+}
+
+interface ApiProductReviewItem {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  comment: string;
+  point: number;
+}
+
+export interface ApiProductReviewListResponse {
+  data: {
+    items: ApiProductReviewItem[];
+    pagination: IProductPagination;
+  };
+  code: number;
+  error: string | null;
+  message: string;
 }
 
 // ── Raw API list response ─────────────────────────────────────────────────

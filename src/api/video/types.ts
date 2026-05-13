@@ -12,6 +12,7 @@ export interface IVideo {
   tag: string | null;
   type: 'hero' | 'normal' | null;
   uploadingStatus: number | null;
+  product: { id: string; slug: string } | null;
 }
 
 // Query variables
@@ -36,6 +37,7 @@ export interface ApiVideoItem {
   uploadingStatus?: number;
   like: number;
   score: number;
+  product?: { id: string; slug: string } | null;
 }
 
 export interface ApiVideoDetailResponse {

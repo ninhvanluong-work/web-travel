@@ -29,6 +29,7 @@ const toVideo = (item: ApiVideoItem): IVideo => ({
   tag: item.tag ?? null,
   type: item.type ?? null,
   uploadingStatus: item.uploadingStatus ?? null,
+  product: item.product ?? null,
 });
 
 // ---------- Defaults ----------
