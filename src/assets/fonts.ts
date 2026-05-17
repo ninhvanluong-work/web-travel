@@ -1,4 +1,4 @@
-import { Poppins as FontSans } from 'next/font/google';
+import { Outfit as FontSans } from 'next/font/google';
 
 export const fontSans = FontSans({
   subsets: ['latin'],

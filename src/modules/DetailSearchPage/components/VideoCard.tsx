@@ -76,10 +76,6 @@ const VideoCard = ({
       className="group relative overflow-hidden bg-black cursor-pointer transition-opacity duration-300 ease-in-out opacity-100"
       onPointerDown={() => prefetchVideoHls(video.embedUrl)}
       onClick={() => {
-        // Unlock tất cả pool elements trong user gesture context.
-        // iOS Safari gán gesture token theo từng HTMLMediaElement instance.
-        // play() gọi trong onClick → Safari cấp token vĩnh viễn cho 3 pool elements,
-        // cho phép chúng play() unmuted bất kỳ lúc nào sau đó (kể cả sau async HLS load).
         unlockVideoPool();
         onVideoClick(video.id);
       }}

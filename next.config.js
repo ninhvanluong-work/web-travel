@@ -1,3 +1,4 @@
+const { withSentryConfig } = require('@sentry/nextjs');
 // eslint-disable-next-line import/no-extraneous-dependencies
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -55,7 +56,7 @@ const KEYS_TO_OMIT = [
   'assetPrefix',
 ];
 
-module.exports = (_phase, { defaultConfig }) => {
+const makeConfig = (_phase, { defaultConfig }) => {
   const plugins = [
     [withBundleAnalyzer, {}],
     [withReactSvg, {}],
@@ -75,3 +76,11 @@ module.exports = (_phase, { defaultConfig }) => {
 
   return finalConfig;
 };
+
+module.exports = withSentryConfig(makeConfig, {
+  silent: true,
+  org: 'longtranvan',
+  project: 'web-travel',
+  widenClientFileUpload: true,
+  hideSourceMaps: true,
+});

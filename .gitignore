@@ -38,8 +38,12 @@ next-env.d.ts
 
 /public/sw.js
 /public/workbox-*.js
+/public/tinymce/
+
 # Claude env secrets
 .claude/.env
 .claude/hooks/.env
 
 /public/tinymce/
+
+/free-nextjs-admin-dashboard-main

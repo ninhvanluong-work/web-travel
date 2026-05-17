@@ -24,18 +24,24 @@ const SelectValue = React.forwardRef<
 
 export const selectTriggerVariants = cva(
   cn(
-    'placeholder:text-muted-foreground flex items-center justify-between focus:outline-none bg-transparent text-sm disabled:cursor-not-allowed disabled:opacity-50 peer'
+    'flex items-center justify-between focus:outline-none bg-transparent text-sm disabled:cursor-not-allowed disabled:opacity-50 peer',
+    'shadow-theme-xs placeholder:text-gray-400 dark:placeholder:text-white/30'
   ),
   {
     variants: {
       variant: {
-        default: 'border border-input ring-offset-background focus:ring-transparent focus:ring-2 focus:ring-offset-2',
-        ghost: '',
+        default: cn(
+          'border border-gray-300 dark:border-gray-700',
+          'focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10',
+          'dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800',
+          'text-gray-800 dark:text-white/90'
+        ),
+        ghost: 'border-none shadow-none hover:bg-gray-100 dark:hover:bg-gray-800 focus:ring-0 px-2 py-1',
       },
       inputSize: {
-        sm: 'h-11 px-3 py-2 rounded-sm',
-        default: 'h-14 p-3 rounded-sm',
-        mixin: 'p-0 rounded-sm',
+        sm: 'h-11 px-3 py-2.5 rounded-lg',
+        default: 'h-14 p-3 rounded-lg',
+        mixin: 'p-0 rounded-lg',
       },
     },
     defaultVariants: {
@@ -97,13 +103,19 @@ SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayNam
 
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = 'popper', ...props }, ref) => (
-  <SelectPrimitive.Portal>
+  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> & { usePortal?: boolean }
+>(({ className, children, position = 'popper', usePortal = true, ...props }, ref) => {
+  const content = (
     <SelectPrimitive.Content
       ref={ref}
       className={cn(
-        'bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 max-h-96 min-w-[8rem] overflow-hidden rounded-md border shadow-md',
+        'relative z-50 min-w-[8rem] overflow-hidden',
+        'rounded-xl border border-gray-200 bg-white shadow-theme-lg',
+        'dark:border-gray-800 dark:bg-gray-900',
+        'data-[state=open]:animate-in data-[state=closed]:animate-out',
+        'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
+        'data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2',
         position === 'popper' &&
           'data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1',
         className
@@ -114,17 +126,20 @@ const SelectContent = React.forwardRef<
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
-          'p-1',
-          position === 'popper' &&
-            'h-[var(--radix-select-trigger-height)] w-full min-w-[var(--radix-select-trigger-width)]'
+          'p-1 max-h-60 overflow-y-auto',
+          position === 'popper' && 'w-full min-w-[var(--radix-select-trigger-width)]'
         )}
       >
         {children}
       </SelectPrimitive.Viewport>
       <SelectScrollDownButton />
     </SelectPrimitive.Content>
-  </SelectPrimitive.Portal>
-));
+  );
+
+  if (!usePortal) return content;
+
+  return <SelectPrimitive.Portal>{content}</SelectPrimitive.Portal>;
+});
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 
 const SelectLabel = React.forwardRef<
@@ -142,7 +157,10 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-2 text-sm outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center rounded-lg py-2 pl-8 pr-2 text-sm outline-none',
+      'text-gray-700 dark:text-gray-300',
+      'focus:bg-brand-50 focus:text-brand-700 dark:focus:bg-brand-500/10 dark:focus:text-brand-400',
+      'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className
     )}
     {...props}

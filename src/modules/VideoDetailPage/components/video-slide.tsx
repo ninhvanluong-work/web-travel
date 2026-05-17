@@ -17,7 +17,7 @@ interface Props {
   onMutedChange: (muted: boolean) => void;
   onGateOpen?: () => void;
   autoLoad?: boolean;
-  forcePause?: boolean; // true khi reload: chặn auto-play cho đến khi user bật loa
+  forcePause?: boolean;
 }
 
 export interface VideoSlideHandle {
@@ -38,8 +38,6 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   const [paused, setPaused] = useState(false);
   const [activated, setActivated] = useState(autoLoad);
   const [videoReady, setVideoReady] = useState(false);
-  // Guard: chỉ cho phép deactivate sau khi IntersectionObserver đã fire true ít nhất 1 lần.
-  // Tránh race condition: useInView khởi tạo false → effect chạy sớm → unmount sai.
   const hasActivatedOnce = useRef(false);
 
   const { liked, likeCount, likeAnimKey, toggleLike } = useVideoSlideLike(video.id, video.likeCount);
@@ -47,10 +45,9 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const isNearView = useInView(containerEl, { rootMargin: '200% 0px', threshold: 0 });
+  const isNearView = useInView(containerEl, { rootMargin: '150% 0px', threshold: 0 });
   const isInView = useInView(containerEl, { threshold: 0.6 });
 
-  // Refs để onReady callback đọc state hiện tại (tránh stale closure)
   const isInViewRef = useRef(false);
   isInViewRef.current = isInView;
   const pausedRef = useRef(false);
@@ -58,18 +55,13 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   const forcePauseRef = useRef(false);
   forcePauseRef.current = forcePause;
 
-  // Khởi tạo / hủy HLS theo khoảng cách viewport (100% margin ≈ 1 màn hình).
-  // - Activate khi slide vào vùng gần: mount BunnyVideoPlayer, bắt đầu load HLS.
-  // - Deactivate khi slide rời xa >1 màn hình: unmount player, trả pool element, giải phóng iOS hardware decoder.
-  // hasActivatedOnce guard: tránh deactivate sai khi useInView khởi tạo false
-  // trước khi IntersectionObserver kịp fire lần đầu.
   React.useEffect(() => {
     if (isNearView) {
       hasActivatedOnce.current = true;
       setActivated(true);
     } else if (hasActivatedOnce.current) {
       setActivated(false);
-      setVideoReady(false); // reset spinner cho lần remount tiếp theo
+      setVideoReady(false);
     }
   }, [isNearView]);
 
@@ -86,18 +78,12 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   const handleTap = () => {
     if (forcePause) return;
     if (paused) {
-      // User đã pause thủ công → resume
       playerRef.current?.play();
       setPaused(false);
     } else if (playerRef.current?.isPlaying()) {
-      // Video đang thực sự phát → pause
       playerRef.current.pause();
       setPaused(true);
     } else {
-      // Video chưa phát: có thể đang load hoặc bị iOS block.
-      // Gọi play() trong gesture context:
-      //   - Nếu data chưa có → shouldPlayRef=true → canplay sẽ tự play khi sẵn sàng
-      //   - Nếu iOS block autoplay → gesture unlock cho phép play ngay
       playerRef.current?.play();
     }
   };
@@ -112,7 +98,6 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
       id={`video-slide-${video.slug}`}
       className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
-      {/* Chỉ load HLS khi slide gần viewport */}
       {activated && (
         <BunnyVideoPlayer
           ref={playerRef}
@@ -129,7 +114,6 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
         />
       )}
 
-      {/* Loading spinner — hiện khi HLS chưa sẵn sàng */}
       {activated && !videoReady && (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
           <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
@@ -145,13 +129,11 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
       {/* Tap zone */}
       <div className="absolute inset-0 z-10" onClick={handleTap} />
 
-      {/* Gate overlay — chỉ hiện khi reload và đang ở slide này */}
       {forcePause && isInView && (
         <button
           className="absolute inset-0 z-30 flex items-center justify-center"
           aria-label="Phát video"
           onClick={() => {
-            // Mượn cú tap bắt buộc này để unlock toàn bộ pool — từ slide 2 trở đi sẽ có tiếng ngay
             unlockVideoPool();
             playerRef.current?.unmute();
             onMutedChange(false);
@@ -219,7 +201,6 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
             if (next) {
               playerRef.current?.mute();
             } else {
-              // unmute() tự gọi play() nếu cần để unlock iOS audio session
               playerRef.current?.unmute();
             }
           }}

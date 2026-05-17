@@ -230,6 +230,20 @@ module.exports = {
         '8': '8px',
       },
       colors: {
+        brand: {
+          25: '#F5F8FF',
+          50: '#EEF4FF',
+          100: '#E0EAFF',
+          200: '#C7D7FD',
+          300: '#A4BCFD',
+          400: '#8098F9',
+          500: '#465fff',
+          600: '#3641F5',
+          700: '#2D31D4',
+          800: '#2421A0',
+          900: '#1E1B6B',
+          950: '#11134B',
+        },
         neon: {
           100: '#EDFFC2',
           200: '#E1FF9A',
@@ -403,6 +417,11 @@ module.exports = {
       },
       boxShadow: {
         active: '0 0 80px 0 rgba(0, 0, 0, 0.10)',
+        'theme-xs': '0px 1px 2px 0px rgba(16, 24, 40, 0.05)',
+        'theme-sm': '0px 1px 3px 0px rgba(16, 24, 40, 0.10), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)',
+        'theme-md': '0px 4px 8px -2px rgba(16, 24, 40, 0.10), 0px 2px 4px -2px rgba(16, 24, 40, 0.06)',
+        'theme-lg': '0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)',
+        'theme-xl': '0px 20px 24px -4px rgba(16, 24, 40, 0.08), 0px 8px 8px -4px rgba(16, 24, 40, 0.03)',
       },
       keyframes: {
         'accordion-down': {

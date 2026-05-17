@@ -1,0 +1,25 @@
+
+=================================================================
+  FRONTEND LOAD TEST REPORT
+  Target  : https://web-travel-git-dev-luongworks-projects.vercel.app
+  Platform: Vercel (free tier)
+  Generated: 2026-04-16T14:03:27.627Z
+=================================================================
+
+  Page             │  avg (ms)  │  p95 (ms)  │  Result
+  ─────────────────┼────────────┼────────────┼─────────
+  Homepage     /   │      43ms  │      69ms  │  ✓ PASS
+  Search       /search│      42ms  │      68ms  │  ✓ PASS
+  Video Detail /video/:slug│      43ms  │      69ms  │  ✓ PASS
+
+-----------------------------------------------------------------
+
+  Total requests : 15856
+  Throughput     : 25.0 req/s
+  Error rate     : 0.00%
+
+  NOTE: Vercel CDN caches static HTML — p95 reflects
+  cache hit latency, not server render time.
+  High p95 usually means SSR pages calling slow backend.
+
+=================================================================

@@ -10,6 +10,9 @@ export const ROUTE = {
   PROFILE: '/profile',
   SUPPORT: '/support',
   SUPPORT_NEW: '/support_new',
+  ADMIN_PRODUCTS: '/admin/products',
+  ADMIN_PRODUCTS_CREATE: '/admin/products/create',
+  ADMIN_VIDEOS: '/admin/videos',
 } as const;
 
 export type ROUTE_KEY = keyof typeof ROUTE;

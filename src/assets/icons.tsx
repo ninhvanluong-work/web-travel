@@ -7,7 +7,9 @@ import {
   ChevronUp,
   Copy,
   HelpCircle,
+  ImageIcon,
   LogOut,
+  Package,
   ThumbsUp,
   User,
   Volume2,
@@ -27,10 +29,13 @@ import calendar from '@/assets/svg/calendar.svg';
 import check from '@/assets/svg/check.svg';
 import checkCircle from '@/assets/svg/check-circle.svg';
 import checkCircleXs from '@/assets/svg/check-circle-xs.svg';
+import clock from '@/assets/svg/clock.svg';
 import close from '@/assets/svg/close.svg';
 import closeCircle from '@/assets/svg/close-circle.svg';
+import clothingWear from '@/assets/svg/clothing-wear.svg';
 import coin from '@/assets/svg/coin.svg';
 import creaditCard from '@/assets/svg/creadit-card.svg';
+import culturalSmile from '@/assets/svg/cultural-smile.svg';
 import discord from '@/assets/svg/discord.svg';
 import dollar from '@/assets/svg/dollar.svg';
 import dots from '@/assets/svg/dots.svg';
@@ -44,9 +49,13 @@ import eye from '@/assets/svg/eye.svg';
 import eyeHidden from '@/assets/svg/eye-hidden.svg';
 import facebook from '@/assets/svg/facebook.svg';
 import facebookCircle from '@/assets/svg/facebook_circle.svg';
+import globe from '@/assets/svg/globe.svg';
 import google from '@/assets/svg/google.svg';
+import groupPeople from '@/assets/svg/group-people.svg';
 import heart from '@/assets/svg/heart.svg';
 import heartSolid from '@/assets/svg/heart-solid.svg';
+import hearthFire from '@/assets/svg/hearth-fire.svg';
+import houseBring from '@/assets/svg/house-bring.svg';
 import image from '@/assets/svg/image.svg';
 import image1 from '@/assets/svg/image_1.svg';
 import information from '@/assets/svg/information.svg';
@@ -59,8 +68,13 @@ import menu from '@/assets/svg/menu.svg';
 import message from '@/assets/svg/message.svg';
 import metamask from '@/assets/svg/metamask.svg';
 import moneyBag from '@/assets/svg/money-bag.svg';
+import mountain from '@/assets/svg/mountain.svg';
 import music from '@/assets/svg/music.svg';
 import paper from '@/assets/svg/paper.svg';
+import pause from '@/assets/svg/pause.svg';
+import personBest from '@/assets/svg/person-best.svg';
+import personHome from '@/assets/svg/person-home.svg';
+import personPickup from '@/assets/svg/person-pickup.svg';
 import play from '@/assets/svg/play.svg';
 import playSolid from '@/assets/svg/play-solid.svg';
 import playTriangleFill from '@/assets/svg/play-triangle-fill.svg';
@@ -72,7 +86,9 @@ import security from '@/assets/svg/security.svg';
 import sound from '@/assets/svg/sound.svg';
 import spinner from '@/assets/svg/spinner.svg';
 import star from '@/assets/svg/star.svg';
+import sunRise from '@/assets/svg/sun-rise.svg';
 import trash from '@/assets/svg/trash.svg';
+import trekMountain from '@/assets/svg/trek-mountain.svg';
 import twitter from '@/assets/svg/twitter.svg';
 import twitterFill from '@/assets/svg/twitter-fill.svg';
 import unlink from '@/assets/svg/unlink.svg';
@@ -83,6 +99,7 @@ import volume2Fill from '@/assets/svg/volume-2-fill.svg';
 import volumeXFill from '@/assets/svg/volume-x-fill.svg';
 import wallet from '@/assets/svg/wallet.svg';
 import warning from '@/assets/svg/warning.svg';
+import warningCircle from '@/assets/svg/warning-circle.svg';
 import X from '@/assets/svg/X.svg';
 import xBold from '@/assets/svg/x_bold.svg';
 import youtube from '@/assets/svg/youtube.svg';
@@ -160,6 +177,7 @@ const IconList = {
   left,
   music,
   paper,
+  pause,
   play,
   sound,
   up,
@@ -169,12 +187,28 @@ const IconList = {
   thumbsUp: ThumbsUp,
   volume2: Volume2,
   volumeX: VolumeX,
+  imageIcon: ImageIcon,
+  packageIcon: Package,
   heart,
   heartSolid,
   volumeXFill,
   volume2Fill,
   playTriangleFill,
   videoOff,
+  clock,
+  globe,
+  groupPeople,
+  personPickup,
+  mountain,
+  trekMountain,
+  hearthFire,
+  personHome,
+  sunRise,
+  personBest,
+  warningCircle,
+  houseBring,
+  clothingWear,
+  culturalSmile,
 };
 
 export const Icons = IconList as Record<keyof typeof IconList, Icon>;
