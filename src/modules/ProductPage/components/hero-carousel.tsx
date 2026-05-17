@@ -24,11 +24,11 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
   const [api, setApi] = useState<CarouselApi>();
 
   useEffect(() => {
-    if (!api) return;
+    if (!api) return () => {};
 
     setActiveIndex(api.selectedScrollSnap());
 
-    api.on('select', () => {
+    const handleSelect = () => {
       const newIndex = api.selectedScrollSnap();
 
       setPlayingIndex((prev) => {
@@ -37,7 +37,12 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
       });
 
       setActiveIndex(newIndex);
-    });
+    };
+
+    api.on('select', handleSelect);
+    return () => {
+      api.off('select', handleSelect);
+    };
   }, [api]);
 
   const scrollToSlide = (index: number) => {

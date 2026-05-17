@@ -17,8 +17,10 @@ interface Props<T extends FieldValues = FieldValues>
   accept?: MIME_TYPE[];
 }
 
+const EMPTY_ACCEPT: MIME_TYPE[] = [];
+
 const AvatarUploadField = <T extends FieldValues>({
-  accept = [],
+  accept = EMPTY_ACCEPT,
   control,
   name,
   defaultValue,

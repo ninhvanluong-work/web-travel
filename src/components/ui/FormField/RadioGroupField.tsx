@@ -14,10 +14,12 @@ interface RadioGroupFieldProps<T extends FieldValues = FieldValues> {
   className?: string;
 }
 
+const EMPTY_DATA: ISelectOption<string>[] = [];
+
 const RadioGroupField = <T extends FieldValues>({
   control,
   name,
-  data = [],
+  data = EMPTY_DATA,
   className,
   defaultValue,
 }: RadioGroupFieldProps<T>) => {
