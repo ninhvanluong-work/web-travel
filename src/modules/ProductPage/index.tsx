@@ -8,7 +8,7 @@ import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
-import { mapApiToProductPage, TEMP_PRODUCT_ID } from './adapter';
+import { mapApiToProductPage } from './adapter';
 import BeforeYouBook from './components/before-you-book';
 import ExperienceCards from './components/experience-cards';
 import GuideBlock from './components/guide-block';
@@ -52,11 +52,14 @@ const fadeInUp = {
 
 export default function ProductPage() {
   const router = useRouter();
-  const productId = (router.query.productId as string) ?? TEMP_PRODUCT_ID;
+  const productId = router.query.id as string | undefined;
 
-  const { data, isLoading, isError, refetch } = useProductById({ variables: { id: productId } });
+  const { data, isLoading, isError, refetch } = useProductById({
+    variables: { id: productId! },
+    enabled: !!productId,
+  });
   const { data: reviewData, isLoading: reviewsLoading } = useProductReviews({
-    variables: { id: productId, pageSize: 2 },
+    variables: { id: productId!, pageSize: 2 },
     enabled: !!productId,
   });
 

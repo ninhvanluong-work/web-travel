@@ -11,10 +11,17 @@ import type {
   IProductReviewResult,
 } from './types';
 
-function toProductReview(item: { id: string; createdAt: string; comment: string; point: number }): IProductReview {
+function toProductReview(item: {
+  id: string;
+  createdAt: string;
+  comment: string;
+  point: number;
+  user?: { name?: string };
+}): IProductReview {
   const d = new Date(item.createdAt);
   return {
     id: item.id,
+    name: item.user?.name ?? '',
     comment: item.comment,
     point: item.point,
     date: d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),

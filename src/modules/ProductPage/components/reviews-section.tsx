@@ -35,7 +35,11 @@ export default function ReviewsSection({ rating, reviewCount, reviews, isLoading
               >
                 &ldquo;{r.comment}&rdquo;
               </p>
-              <p className="text-[12px] text-[#888884]">{r.date}</p>
+              <div className="flex items-center gap-1.5 mt-2">
+                {r.name && <span className="text-[12px] text-[#888884]">{r.name}</span>}
+                {r.name && <span className="text-[12px] text-[#888884]">·</span>}
+                <span className="text-[12px] text-[#888884]">{r.date}</span>
+              </div>
             </div>
           ))}
 

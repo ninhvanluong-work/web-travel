@@ -132,6 +132,7 @@ export interface ApiProductDetail {
 // ── Product review ────────────────────────────────────────────────────────
 export interface IProductReview {
   id: string;
+  name: string;
   comment: string;
   point: number;
   date: string; // formatted from createdAt e.g. "April 2026"

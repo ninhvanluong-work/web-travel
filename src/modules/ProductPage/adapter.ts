@@ -12,8 +12,6 @@ import type { BookItemType } from './types';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
-export const TEMP_PRODUCT_ID = '3dde9474-2f66-45d2-9951-320a4ae5dc68';
-
 // ── Helpers ───────────────────────────────────────────────────────────────
 
 function parseListString(s: string | null | undefined): string[] {
