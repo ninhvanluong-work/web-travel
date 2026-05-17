@@ -12,12 +12,10 @@ import type { BookItemType } from './types';
 
 // ── Constants ─────────────────────────────────────────────────────────────
 
-/** Hardcode tạm — xóa khi VideoDetailPage trả productId trong response */
 export const TEMP_PRODUCT_ID = '3dde9474-2f66-45d2-9951-320a4ae5dc68';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-/** Parse chuỗi phân cách bằng dấu phẩy thành string[] */
 function parseListString(s: string | null | undefined): string[] {
   if (!s) return [];
   return s
@@ -26,7 +24,6 @@ function parseListString(s: string | null | undefined): string[] {
     .filter(Boolean);
 }
 
-/** Lấy N chữ cái đầu của mỗi từ trong tên → initials */
 function getInitials(name: string, count = 2): string {
   return name
     .split(/\s+/)
@@ -50,7 +47,6 @@ function getBookItemType(key: string): BookItemType {
   return 'bestFor';
 }
 
-/** Parse highlight string → highlights array cho ExperienceCards */
 function parseHighlights(highlight: string | null | undefined): { image?: string; title: string; subtitle: string }[] {
   if (!highlight) return [];
   return parseListString(highlight)
@@ -61,7 +57,6 @@ function parseHighlights(highlight: string | null | undefined): { image?: string
     }));
 }
 
-/** Map itineraries[] từ API → steps[] cho ItineraryAccordion */
 function mapItinerary(items: ApiItineraryItem[]): MockProduct['itinerary'] {
   return [...items]
     .sort((a, b) => a.order - b.order)
@@ -73,7 +68,6 @@ function mapItinerary(items: ApiItineraryItem[]): MockProduct['itinerary'] {
     }));
 }
 
-/** Map readBefore[] từ API → beforeYouBook[] cho BeforeYouBook component */
 function mapReadBefore(items: ApiReadBeforeItem[]): MockProduct['beforeYouBook'] {
   return items.map((item) => ({
     type: getBookItemType(item.key),
@@ -82,7 +76,6 @@ function mapReadBefore(items: ApiReadBeforeItem[]): MockProduct['beforeYouBook']
   }));
 }
 
-/** Map tourGuide đầu tiên → guide object cho GuideBlock */
 function mapGuide(guide?: ApiTourGuide): MockProduct['guide'] {
   if (!guide) {
     return {
@@ -104,7 +97,6 @@ function mapGuide(guide?: ApiTourGuide): MockProduct['guide'] {
   };
 }
 
-/** Map supplier từ API → operator object cho OperatorBlock */
 function mapOperator(supplier: ApiSupplier | null): MockProduct['operator'] {
   const name = supplier?.name ?? '';
   return {
@@ -120,7 +112,6 @@ function mapOperator(supplier: ApiSupplier | null): MockProduct['operator'] {
   };
 }
 
-/** Map banner[] từ API → media[] cho HeroCarousel */
 function mapMedia(banner: ApiBannerItem[], thumbnail: string | null): MockProduct['media'] {
   if (banner && banner.length > 0) {
     return banner.map((item) => ({
@@ -128,7 +119,6 @@ function mapMedia(banner: ApiBannerItem[], thumbnail: string | null): MockProduc
       url: item.url,
     }));
   }
-  // Fallback: dùng thumbnail nếu banner rỗng
   if (thumbnail) {
     return [{ type: 'image', url: thumbnail }];
   }
@@ -137,12 +127,6 @@ function mapMedia(banner: ApiBannerItem[], thumbnail: string | null): MockProduc
 
 // ── Main adapter ──────────────────────────────────────────────────────────
 
-/**
- * Transform `ApiProductDetail` → `MockProduct` shape mà ProductPage UI đang dùng.
- *
- * Đây là layer duy nhất chứa fallback logic.
- * Khi backend bổ sung thêm field, chỉ cần sửa hàm này — UI không bị ảnh hưởng.
- */
 export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
   const price = parseFloat(data.minPrice) || 0;
 
@@ -157,11 +141,11 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     rating: data.reviewPoint ?? 0,
     reviewCount: data.reviewCount ?? 0,
 
-    // ── Cancellation (API chưa có → ẩn badge) ────────────────────────────
+    // ── Cancellation ──────────────────────────────────────────────────────
     freeCancellation: false,
     cancellationDeadlineHours: 24,
 
-    // ── Quick Facts (API chưa đủ field → fallback "—") ───────────────────
+    // ── Quick Facts ───────────────────────────────────────────────────────
     quickFacts: {
       duration: `${data.duration} ${data.durationType}`,
       departurePoint: '—',
@@ -171,10 +155,10 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
       difficulty: '—',
     },
 
-    // ── Highlights (chưa có trong API, để trống tạm thời) ────────────────
+    // ── Highlights ────────────────────────────────────────────────────────
     highlights: [],
 
-    // ── USP (map từ trường highlight) ─────────────────────────
+    // ── USP ───────────────────────────────────────────────────────────────
     uniqueSellingPoint: data.highlight ?? '',
 
     // ── Operator ──────────────────────────────────────────────────────────
