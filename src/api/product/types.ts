@@ -49,6 +49,7 @@ export interface ApiSupplier {
   isVerified: boolean;
   tourOffered: number;
   responseRate: number;
+  expYears: number;
 }
 
 // ── Product detail sub-types ──────────────────────────────────────────────

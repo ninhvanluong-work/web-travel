@@ -114,7 +114,7 @@ function mapOperator(supplier: ApiSupplier | null): MockProduct['operator'] {
     rating: supplier?.ratingRate ?? 0,
     reviewCount: supplier?.ratingCount ?? 0,
     verified: supplier?.isVerified ?? false,
-    yearsOnPlatform: 0,
+    yearsOnPlatform: supplier?.expYears ?? 0,
     toursOffered: supplier?.tourOffered ?? 0,
     responseRate: supplier?.responseRate ?? 0,
   };
@@ -171,12 +171,11 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
       difficulty: '—',
     },
 
-    // ── Highlights (parse từ highlight string) ────────────────────────────
-    highlights: parseHighlights(data.highlight),
+    // ── Highlights (chưa có trong API, để trống tạm thời) ────────────────
+    highlights: [],
 
-    // ── USP (field chưa có trong API → fake tạm) ─────────────────────────
-    uniqueSellingPoint:
-      'The only tour where you sleep in the home of a local elder and experience authentic traditions passed down through generations.',
+    // ── USP (map từ trường highlight) ─────────────────────────
+    uniqueSellingPoint: data.highlight ?? '',
 
     // ── Operator ──────────────────────────────────────────────────────────
     operator: mapOperator(data.supplier ?? null),

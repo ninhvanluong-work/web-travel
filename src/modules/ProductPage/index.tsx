@@ -124,26 +124,30 @@ export default function ProductPage() {
           <QuickFactsGrid {...p.quickFacts} />
         </motion.div>
 
-        <motion.div {...fadeInUp}>
-          <ExperienceCards highlights={p.highlights} />
-        </motion.div>
+        {p.highlights && p.highlights.length > 0 && (
+          <motion.div {...fadeInUp}>
+            <ExperienceCards highlights={p.highlights} />
+          </motion.div>
+        )}
 
-        <motion.div {...fadeInUp} className="px-[18px] pb-6 border-t border-black/[0.08] pt-6">
-          <div className="border border-[#0F6E56] rounded-[14px] p-4 flex gap-3 items-start">
-            <Icons.star className="w-[14px] h-[14px] text-[#0F6E56] flex-shrink-0 mt-[2px]" />
-            <div>
-              <p className="text-[11px] uppercase tracking-wide text-[#0F6E56] font-medium mb-1">
-                What makes this different
-              </p>
-              <p
-                className="text-[15px] leading-[1.55]"
-                style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}
-              >
-                {p.uniqueSellingPoint}
-              </p>
+        {p.uniqueSellingPoint && (
+          <motion.div {...fadeInUp} className="px-[18px] pb-6 border-t border-black/[0.08] pt-6">
+            <div className="border border-[#0F6E56] rounded-[14px] p-4 flex gap-3 items-start">
+              <Icons.star className="w-[14px] h-[14px] text-[#0F6E56] flex-shrink-0 mt-[2px]" />
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-[#0F6E56] font-medium mb-1">
+                  What makes this different
+                </p>
+                <p
+                  className="text-[15px] leading-[1.55]"
+                  style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}
+                >
+                  {p.uniqueSellingPoint}
+                </p>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
         <motion.div {...fadeInUp}>
           <OperatorBlock {...p.operator} />
