@@ -1,5 +1,6 @@
 import type {
   ApiBannerItem,
+  ApiExperienceItem,
   ApiItineraryItem,
   ApiProductDetail,
   ApiReadBeforeItem,
@@ -45,14 +46,12 @@ function getBookItemType(key: string): BookItemType {
   return 'bestFor';
 }
 
-function parseHighlights(highlight: string | null | undefined): { image?: string; title: string; subtitle: string }[] {
-  if (!highlight) return [];
-  return parseListString(highlight)
-    .slice(0, 10)
-    .map((title) => ({
-      title,
-      subtitle: '',
-    }));
+function mapExperience(items: ApiExperienceItem[]): MockProduct['highlights'] {
+  return items.map((item) => ({
+    image: item.imageUrl,
+    title: item.title,
+    subtitle: item.content,
+  }));
 }
 
 function mapItinerary(items: ApiItineraryItem[]): MockProduct['itinerary'] {
@@ -154,7 +153,7 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     },
 
     // ── Highlights ────────────────────────────────────────────────────────
-    highlights: [],
+    highlights: mapExperience(data.experience ?? []),
 
     // ── USP ───────────────────────────────────────────────────────────────
     uniqueSellingPoint: data.highlight ?? '',

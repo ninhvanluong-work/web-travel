@@ -64,6 +64,12 @@ export interface ApiReadBeforeItem {
   description: string;
 }
 
+export interface ApiExperienceItem {
+  imageUrl: string;
+  title: string;
+  content: string;
+}
+
 export interface ApiItineraryItem {
   id: string;
   createdAt: string;
@@ -111,6 +117,7 @@ export interface ApiProductDetail {
   images: string[];
   banner: ApiBannerItem[];
   readBefore: ApiReadBeforeItem[];
+  experience: ApiExperienceItem[];
   itineraryImage: string | null;
   duration: number;
   durationType: string;
