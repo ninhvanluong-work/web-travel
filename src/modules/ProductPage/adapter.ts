@@ -185,7 +185,7 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     reviewCount: data.reviewCount ?? 0,
 
     // ── Cancellation ──────────────────────────────────────────────────────
-    freeCancellation: false,
+    freeCancellation: true,
     cancellationDeadlineHours: 24,
 
     // ── Quick Facts ───────────────────────────────────────────────────────
