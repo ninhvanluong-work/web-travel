@@ -102,6 +102,14 @@ export interface ApiTourGuide {
   ratingStar: number;
 }
 
+export interface ApiElementItem {
+  id: string;
+  key: string;
+  name: string;
+  description: string | null;
+  isActive: boolean;
+}
+
 // ── Full product detail (GET /product/:id, POST/PATCH response) ───────────
 export interface ApiProductDetail {
   id: string;
@@ -134,6 +142,7 @@ export interface ApiProductDetail {
   itineraries: ApiItineraryItem[];
   tags: ApiTagItem[];
   tourGuides: ApiTourGuide[];
+  elements: ApiElementItem[];
 }
 
 // ── Product review ────────────────────────────────────────────────────────

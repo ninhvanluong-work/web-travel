@@ -1,5 +1,6 @@
 import type {
   ApiBannerItem,
+  ApiElementItem,
   ApiExperienceItem,
   ApiItineraryItem,
   ApiProductDetail,
@@ -109,6 +110,51 @@ function mapOperator(supplier: ApiSupplier | null): MockProduct['operator'] {
   };
 }
 
+function mapElements(elements: ApiElementItem[], fallbackDuration: string): MockProduct['quickFacts'] {
+  const byKey = elements.reduce<Record<string, string>>((acc, el) => {
+    if (el.isActive) acc[el.key] = el.name;
+    return acc;
+  }, {});
+
+  const dayVal = byKey.day;
+  const nightVal = byKey.night;
+  let duration = fallbackDuration;
+  if (dayVal || nightVal) {
+    const parts: string[] = [];
+    if (dayVal) {
+      const d = parseInt(dayVal, 10);
+      parts.push(`${d} ${d === 1 ? 'day' : 'days'}`);
+    }
+    if (nightVal) {
+      const n = parseInt(nightVal, 10);
+      parts.push(`${n} ${n === 1 ? 'night' : 'nights'}`);
+    }
+    duration = parts.join(', ');
+  }
+
+  const pickup = byKey.pickup ?? '';
+  const dropOff = byKey.dropOff ?? '';
+  const pickupTime = pickup && dropOff ? `${pickup} → ${dropOff}` : pickup || dropOff || '—';
+
+  const groupSize = byKey.groupSize ?? '—';
+
+  const languages = byKey.language
+    ? byKey.language
+        .split(',')
+        .map((l) => l.trim())
+        .filter(Boolean)
+    : ['VI'];
+
+  return {
+    duration,
+    departurePoint: byKey.departure ?? '—',
+    pickupTime,
+    groupSize,
+    languages,
+    difficulty: byKey.difficulty ?? '—',
+  };
+}
+
 function mapMedia(banner: ApiBannerItem[], thumbnail: string | null): MockProduct['media'] {
   if (banner && banner.length > 0) {
     return banner.map((item) => ({
@@ -143,14 +189,7 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     cancellationDeadlineHours: 24,
 
     // ── Quick Facts ───────────────────────────────────────────────────────
-    quickFacts: {
-      duration: `${data.duration} ${data.durationType}`,
-      departurePoint: '—',
-      pickupTime: '—',
-      groupSize: '—',
-      languages: ['VI'],
-      difficulty: '—',
-    },
+    quickFacts: mapElements(data.elements ?? [], `${data.duration} ${data.durationType}`),
 
     // ── Highlights ────────────────────────────────────────────────────────
     highlights: mapExperience(data.experience ?? []),
