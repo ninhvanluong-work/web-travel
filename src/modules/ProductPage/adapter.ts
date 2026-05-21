@@ -76,14 +76,7 @@ function mapReadBefore(items: ApiReadBeforeItem[]): MockProduct['beforeYouBook']
 
 function mapGuide(guide?: ApiTourGuide): MockProduct['guide'] {
   if (!guide) {
-    return {
-      initials: '?',
-      name: 'Guide',
-      rating: 0,
-      yearsExperience: 0,
-      toursInArea: 0,
-      area: 'Vietnam',
-    };
+    return null;
   }
   return {
     initials: getInitials(guide.name, 1),

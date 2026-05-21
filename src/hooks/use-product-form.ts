@@ -1,16 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { useCreateProduct, useProductById, useUpdateProduct } from '@/api/product';
-import {
-  type ItineraryFormValues,
-  type OptionFormValues,
-  type ProductFormValues,
-  productSchema,
-} from '@/lib/validations/product';
+import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { ROUTE } from '@/types/routes';
 
 import { useProductDraft } from './use-product-draft';
@@ -21,6 +16,7 @@ const DEFAULT_VALUES: ProductFormValues = {
   description: '',
   destinationId: null,
   supplierId: null,
+  tourGuideIds: [],
   duration: 1,
   durationType: 'day',
   highlight: '',
@@ -32,14 +28,18 @@ const DEFAULT_VALUES: ProductFormValues = {
   itineraryImage: '',
   images: [],
   videoId: null,
+  shortDescription: null,
+  tags: [],
+  banner: [],
+  elements: [],
+  experiences: [],
+  itineraries: [],
+  readBefores: READ_BEFORE_KEY_OPTIONS.map((opt) => ({ key: opt.value, description: '' })),
 };
 
 export function useProductForm(productId?: string) {
   const router = useRouter();
   const isEdit = !!productId;
-
-  const [itineraries, setItineraries] = useState<ItineraryFormValues[]>([]);
-  const [options, setOptions] = useState<OptionFormValues[]>([]);
 
   const { data: productData } = useProductById({ variables: { id: productId! }, enabled: isEdit }, undefined);
 
@@ -48,7 +48,7 @@ export function useProductForm(productId?: string) {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const draft = useProductDraft(productId, form, itineraries, options);
+  const draft = useProductDraft(productId, form);
 
   useEffect(() => {
     if (!productData) return;
@@ -58,6 +58,7 @@ export function useProductForm(productId?: string) {
       description: productData.description,
       destinationId: productData.destinationId,
       supplierId: productData.supplierId,
+      tourGuideIds: (productData.tourGuides ?? []).map((g) => g.id),
       duration: productData.duration,
       durationType: productData.durationType,
       highlight: productData.highlight,
@@ -69,6 +70,26 @@ export function useProductForm(productId?: string) {
       itineraryImage: productData.itineraryImage,
       images: (productData.images ?? []).map((url) => ({ url })),
       videoId: (productData as any).videoId ?? null,
+      shortDescription: productData.shortDescription ?? null,
+      tags: (productData.tags ?? []).map((t) => ({ id: t.id, name: t.name })),
+      banner: (productData.banner ?? []).map((b) => ({ url: b.url, type: b.type })),
+      elements: (productData.elements ?? []).map((e) => ({ key: e.key, name: e.name })),
+      experiences: (productData.experience ?? []).map((e) => ({
+        imageUrl: e.imageUrl,
+        title: e.title,
+        content: e.content,
+      })),
+      itineraries: (productData.itineraries ?? []).map((it) => ({
+        id: it.id,
+        name: it.name,
+        featuredName: it.featuredName ?? '',
+        order: it.order,
+        description: it.description ?? '',
+      })),
+      readBefores: READ_BEFORE_KEY_OPTIONS.map((opt) => {
+        const found = (productData.readBefore ?? []).find((r) => r.key === opt.value);
+        return { key: opt.value, description: found?.description ?? '' };
+      }),
     });
   }, [productData, form]);
 
@@ -104,5 +125,5 @@ export function useProductForm(productId?: string) {
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
-  return { form, isEdit, productData, itineraries, setItineraries, options, setOptions, onSubmit, isPending, draft };
+  return { form, isEdit, productData, onSubmit, isPending, draft };
 }

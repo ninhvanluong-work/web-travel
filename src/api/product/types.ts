@@ -90,6 +90,23 @@ export interface ApiTagItem {
   name: string;
 }
 
+export interface ApiTagListResponse {
+  data: {
+    items: ApiTagItem[];
+    pagination: IProductPagination;
+  };
+  code: number;
+  error: string | null;
+  message: string;
+}
+
+export interface ApiTagCreateResponse {
+  data: ApiTagItem;
+  code: number;
+  error: string | null;
+  message: string;
+}
+
 export interface ApiTourGuide {
   id: string;
   createdAt: string;
@@ -100,6 +117,16 @@ export interface ApiTourGuide {
   ratingCount: number;
   expYear: number;
   ratingStar: number;
+}
+
+export interface ApiTourGuideListResponse {
+  data: {
+    items: ApiTourGuide[];
+    pagination: IProductPagination;
+  };
+  code: number;
+  error: string | null;
+  message: string;
 }
 
 export interface ApiElementItem {

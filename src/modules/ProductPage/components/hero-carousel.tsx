@@ -51,9 +51,10 @@ export default function HeroCarousel({ media }: HeroCarouselProps) {
 
   // Cleanup stale player refs when media slides change
   useEffect(() => {
+    const refs = playerRefs.current;
     return () => {
-      playerRefs.current.forEach((p) => p.pause());
-      playerRefs.current.clear();
+      refs.forEach((p) => p.pause());
+      refs.clear();
     };
   }, [media]);
 

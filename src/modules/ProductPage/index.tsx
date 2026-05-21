@@ -152,9 +152,11 @@ export default function ProductPage() {
           <OperatorBlock {...p.operator} />
         </motion.div>
 
-        <motion.div {...fadeInUp}>
-          <GuideBlock {...p.guide} />
-        </motion.div>
+        {p.guide && (
+          <motion.div {...fadeInUp}>
+            <GuideBlock {...p.guide} />
+          </motion.div>
+        )}
 
         <motion.div {...fadeInUp}>
           <ItineraryAccordion steps={p.itinerary} />

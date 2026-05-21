@@ -1,15 +1,17 @@
-import { Editor } from '@tinymce/tinymce-react';
 import { Film, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { useDestinationList, useSupplierList } from '@/api/product/lookup';
+import { useTourGuideListInfinite } from '@/api/tour-guide';
 import { getListVideo, getVideoById } from '@/api/video/requests';
 import type { IVideo } from '@/api/video/types';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DURATION_TYPES, generateSlug, type ProductFormValues } from '@/lib/validations/product';
+import SelectWithSearch from '@/components/ui/select-with-search';
+import { TextArea } from '@/components/ui/textarea';
+import { generateSlug, type ProductFormValues } from '@/lib/validations/product';
 
 function useDebounce(value: string, delay: number) {
   const [debounced, setDebounced] = useState(value);
@@ -27,8 +29,15 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
 
   const { data: destinations = [] } = useDestinationList();
   const { data: suppliers = [] } = useSupplierList();
+  const { data: tourGuidesData, fetchNextPage, hasNextPage, isFetchingNextPage } = useTourGuideListInfinite();
 
-  // Video Search States
+  const tourGuideOptions = (tourGuidesData?.pages ?? [])
+    .flatMap((p) => p.items)
+    .map((item) => ({
+      label: item.name,
+      value: item.id,
+    }));
+
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<IVideo[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(null);
@@ -42,7 +51,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
     }
   }, [isEdit, nameValue, setValue]);
 
-  // Load selected video on edit mode
   useEffect(() => {
     if (!currentVideoId || selectedVideo?.id === currentVideoId) return;
     getVideoById(currentVideoId)
@@ -50,7 +58,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
       .catch(() => null);
   }, [currentVideoId, selectedVideo?.id]);
 
-  // Search videos
   useEffect(() => {
     if (!debouncedQuery && !showDropdown) return;
     setIsSearching(true);
@@ -64,6 +71,7 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
 
   return (
     <div className="space-y-6">
+      {/* Row 1: name + slug */}
       <div className="flex flex-row gap-5">
         <div className="flex-1 min-w-0">
           <FormField
@@ -84,72 +92,10 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         <div className="flex-1 min-w-0">
           <FormField
             control={control}
-            name="destinationId"
-            render={({ field }) => (
-              <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Danh mục (Điểm đến)</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value ?? undefined}>
-                  <FormControl>
-                    <SelectTrigger
-                      inputSize="sm"
-                      className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
-                    >
-                      <SelectValue placeholder="Chọn danh mục" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {destinations.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-row gap-5">
-        <div className="flex-1 min-w-0">
-          <FormField
-            control={control}
-            name="supplierId"
-            render={({ field }) => (
-              <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Nhà cung cấp</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value ?? undefined}>
-                  <FormControl>
-                    <SelectTrigger
-                      inputSize="sm"
-                      className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
-                    >
-                      <SelectValue placeholder="Chọn nhà cung cấp" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {suppliers.map((item) => (
-                      <SelectItem key={item.id} value={item.id}>
-                        {item.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <FormField
-            control={control}
             name="slug"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Đường dẫn (URL)</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Đường dẫn URL</FormLabel>
                 <FormControl>
                   <Input
                     size="sm"
@@ -165,6 +111,90 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         </div>
       </div>
 
+      {/* Row 2: destinationId + supplierId + tourGuideIds */}
+      <div className="grid grid-cols-3 gap-5">
+        <FormField
+          control={control}
+          name="destinationId"
+          render={({ field }) => (
+            <FormItem className="space-y-1.5">
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Điểm đến</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value ?? undefined}>
+                <FormControl>
+                  <SelectTrigger
+                    inputSize="sm"
+                    className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
+                  >
+                    <SelectValue placeholder="Chọn danh mục" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {destinations.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="supplierId"
+          render={({ field }) => (
+            <FormItem className="space-y-1.5">
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Nhà cung cấp</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value ?? undefined}>
+                <FormControl>
+                  <SelectTrigger
+                    inputSize="sm"
+                    className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
+                  >
+                    <SelectValue placeholder="Chọn nhà cung cấp" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {suppliers.map((item) => (
+                    <SelectItem key={item.id} value={item.id}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="tourGuideIds"
+          render={({ field }) => (
+            <FormItem className="space-y-1.5">
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Hướng dẫn viên</FormLabel>
+              <FormControl>
+                <SelectWithSearch
+                  placeholder="Chọn hướng dẫn viên"
+                  value={field.value?.[0] ?? ''}
+                  onValueChange={(v) => field.onChange(v ? [v] : [])}
+                  data={[{ label: 'Không chọn', value: '' }, ...tourGuideOptions]}
+                  onScrollToBottom={() => {
+                    if (hasNextPage) fetchNextPage();
+                  }}
+                  isLoadingMore={isFetchingNextPage}
+                  className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+
+      {/* Row 3: minPrice + videoId */}
       <div className="flex flex-row gap-5">
         <div className="flex-1 min-w-0">
           <FormField
@@ -172,9 +202,9 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
             name="minPrice"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Giá khởi điểm (VND)</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Giá khởi điểm</FormLabel>
                 <FormControl>
-                  <Input type="number" size="sm" placeholder="2.500.000" {...field} />
+                  <Input type="number" size="sm" placeholder="Ví dụ: 1.500.000" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -206,7 +236,6 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
                     onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
                   />
 
-                  {/* Selected video badge - repositioned for 2-column mode */}
                   {field.value && selectedVideo && (
                     <div className="absolute right-1 top-1/2 -translate-y-1/2 flex items-center gap-1.5 px-2 py-0.5 bg-brand-50 border border-brand-100 rounded-md max-w-[150px]">
                       <span className="text-[10px] text-brand-600 truncate font-semibold uppercase">
@@ -225,11 +254,10 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
                     </div>
                   )}
 
-                  {/* Dropdown search video */}
                   {showDropdown && (
                     <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-200 py-1 max-h-48 overflow-y-auto">
                       {isSearching ? (
-                        <div className="py-4 text-center text-[11px] text-slate-400 italic">Đang tìm dữ liệu...</div>
+                        <div className="py-4 text-center text-[11px] text-slate-400 italic">Đang tìm kiếm...</div>
                       ) : (
                         results.map((video) => (
                           <button
@@ -261,98 +289,49 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
         </div>
       </div>
 
-      <div className="flex flex-row gap-5">
-        <div className="flex-1 min-w-0">
-          <FormField
-            control={control}
-            name="duration"
-            render={({ field }) => (
-              <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Thời lượng</FormLabel>
-                <FormControl>
-                  <Input type="number" size="sm" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <div className="flex-1 min-w-0">
-          <FormField
-            control={control}
-            name="durationType"
-            render={({ field }) => (
-              <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Đơn vị tính</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger
-                      inputSize="sm"
-                      className="bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {DURATION_TYPES.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </div>
-
-      <FormField
-        control={control}
-        name="description"
-        render={({ field }) => (
-          <FormItem className="space-y-2 pt-2 border-t border-slate-100">
-            <FormLabel className="text-[13px] text-slate-500 font-medium">Mô tả chi tiết tour</FormLabel>
-            <FormControl>
-              <div className="rounded-xl overflow-hidden border border-slate-200 shadow-theme-xs mt-1 ring-offset-white focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
-                <Editor
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
-                  licenseKey="gpl"
+      {/* Row 4: shortDescription + highlight (2-col) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t border-slate-100">
+        <FormField
+          control={control}
+          name="shortDescription"
+          render={({ field }) => (
+            <FormItem className="space-y-1.5">
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Mô tả ngắn</FormLabel>
+              <FormControl>
+                <TextArea
+                  placeholder="Nhập mô tả ngắn về tour..."
+                  className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs"
+                  maxLength={500}
+                  rows={4}
+                  {...field}
                   value={field.value ?? ''}
-                  onEditorChange={(content) => field.onChange(content)}
-                  init={{
-                    height: 280,
-                    menubar: false,
-                    statusbar: false,
-                    branding: false,
-                    promotion: false,
-                    plugins: [
-                      'advlist',
-                      'autolink',
-                      'lists',
-                      'link',
-                      'image',
-                      'charmap',
-                      'preview',
-                      'searchreplace',
-                      'wordcount',
-                      'table',
-                      'fullscreen',
-                      'code',
-                    ],
-                    toolbar: 'undo redo | bold italic underline | bullist numlist | link image | fullscreen code',
-                    content_style:
-                      'body { font-family: Outfit, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; color: #111827; line-height: 1.6; }',
-                  }}
                 />
-              </div>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="highlight"
+          render={({ field }) => (
+            <FormItem className="space-y-1.5">
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Điểm nổi bật</FormLabel>
+              <FormControl>
+                <TextArea
+                  placeholder="Mô tả điểm nổi bật của tour..."
+                  className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs italic font-medium text-slate-700"
+                  rows={4}
+                  {...field}
+                  value={field.value ?? ''}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
     </div>
   );
 }

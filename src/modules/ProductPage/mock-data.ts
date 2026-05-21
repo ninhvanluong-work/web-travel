@@ -37,7 +37,7 @@ export interface MockProduct {
     yearsExperience: number;
     toursInArea: number;
     area: string;
-  };
+  } | null;
   itinerary: { step: number; time: string; title: string; description: string }[];
   beforeYouBook: { type: BookItemType; title: string; description: string }[];
   included: string[];

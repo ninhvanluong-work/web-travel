@@ -1,4 +1,4 @@
-import type { ProductFormValues } from '@/lib/validations/product';
+import { type ProductFormValues, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 
 import { request } from '../axios';
 import type {
@@ -60,11 +60,12 @@ export async function getProductById(id: string): Promise<ApiProductDetail> {
   return data.data;
 }
 
-function toApiPayload(values: ProductFormValues) {
+function toApiPayload(values: ProductFormValues, isUpdate = false) {
   return {
     name: values.name,
     slug: values.slug,
     description: values.description || undefined,
+    shortDescription: values.shortDescription || undefined,
     thumbnail: values.thumbnail || undefined,
     images: (values.images ?? []).map((img) => img.url).filter(Boolean),
     itineraryImage: values.itineraryImage || undefined,
@@ -77,16 +78,41 @@ function toApiPayload(values: ProductFormValues) {
     minPrice: values.minPrice,
     destinationId: values.destinationId || undefined,
     supplierId: values.supplierId || undefined,
+    tagIds: values.tags?.length ? values.tags.map((t) => t.id) : undefined,
+    tourGuideIds: values.tourGuideIds?.length ? values.tourGuideIds : undefined,
+    experience: values.experiences?.length
+      ? values.experiences.map((e) => ({ imageUrl: e.imageUrl ?? '', title: e.title, content: e.content ?? '' }))
+      : undefined,
+    readBefore: values.readBefores?.length
+      ? values.readBefores
+          .filter((r) => r.description?.trim())
+          .map((r) => ({
+            key: r.key,
+            title: READ_BEFORE_KEY_OPTIONS.find((o) => o.value === r.key)?.label ?? r.key,
+            description: r.description ?? '',
+          }))
+      : undefined,
+    elements: values.elements?.length ? values.elements : undefined,
+    banner: values.banner?.length ? values.banner : undefined,
+    itineraries: values.itineraries?.length
+      ? values.itineraries.map((it) => ({
+          ...(isUpdate && it.id ? { id: it.id } : {}),
+          name: it.name,
+          featuredName: it.featuredName || undefined,
+          order: Number(it.order),
+          description: it.description || '',
+        }))
+      : undefined,
   };
 }
 
 export async function createProduct(values: ProductFormValues): Promise<ApiProductDetail> {
-  const { data } = await request.post<{ data: ApiProductDetail }>('/product', toApiPayload(values));
+  const { data } = await request.post<{ data: ApiProductDetail }>('/product', toApiPayload(values, false));
   return data.data;
 }
 
 export async function updateProduct(id: string, values: ProductFormValues): Promise<ApiProductDetail> {
-  const { data } = await request.patch<{ data: ApiProductDetail }>(`/product/${id}`, toApiPayload(values));
+  const { data } = await request.patch<{ data: ApiProductDetail }>(`/product/${id}`, toApiPayload(values, true));
   return data.data;
 }
 

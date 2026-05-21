@@ -54,11 +54,9 @@ const EDITOR_INIT = {
 const DETAIL_FIELDS: Array<{
   name: keyof ProductFormValues;
   label: string;
-  accent: string;
 }> = [
-  { name: 'highlight', label: 'Điểm nổi bật của sản phẩm', accent: 'text-amber-500' },
-  { name: 'include', label: 'Dịch vụ bao gồm', accent: 'text-emerald-500' },
-  { name: 'exclude', label: 'Dịch vụ không bao gồm', accent: 'text-red-500' },
+  { name: 'include', label: 'Dịch vụ bao gồm' },
+  { name: 'exclude', label: 'Dịch vụ không bao gồm' },
 ];
 
 export function DetailsSection() {

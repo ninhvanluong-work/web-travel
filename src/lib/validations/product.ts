@@ -23,6 +23,36 @@ export const CURRENCY_OPTIONS = [
   { label: 'USD', value: 'USD' },
 ];
 
+export const ELEMENT_KEY_OPTIONS = [
+  { label: 'Độ khó', value: 'difficulty' },
+  { label: 'Ngôn ngữ', value: 'language' },
+  { label: 'Điểm khởi hành', value: 'departure' },
+  { label: 'Quy mô nhóm', value: 'groupSize' },
+  { label: 'Thời lượng', value: 'duration' },
+  { label: 'Giờ đón (Pickup)', value: 'pickup' },
+  { label: 'Giờ trả (Drop-off)', value: 'dropOff' },
+  { label: 'Số ngày', value: 'day' },
+  { label: 'Số đêm', value: 'night' },
+];
+
+export const READ_BEFORE_KEY_OPTIONS = [
+  { label: 'Hộ chiếu/Giấy tờ', value: 'passport' },
+  { label: 'Cần mang theo', value: 'bring' },
+  { label: 'Không khuyến khích cho', value: 'not_recommended' },
+  { label: 'Trang phục', value: 'wear' },
+  { label: 'Văn hóa/Ứng xử', value: 'cultural' },
+  { label: 'Khác', value: 'other' },
+];
+
+// ── Itinerary (standalone schema, reused in productSchema) ────────────────
+export const itinerarySchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(1, 'Tiêu đề ngày không được để trống'),
+  featuredName: z.string().optional().nullable(),
+  order: z.coerce.number().int().min(1).default(1),
+  description: z.string().optional().nullable(),
+});
+
 // ── Product ──────────────────────────────────────────────────────────────
 export const productSchema = z.object({
   name: z.string().min(1, 'Tên sản phẩm không được để trống').max(500),
@@ -30,7 +60,8 @@ export const productSchema = z.object({
   description: z.string().optional().nullable(),
   destinationId: z.string().uuid('Điểm đến không hợp lệ').optional().nullable(),
   supplierId: z.string().uuid('Nhà cung cấp không hợp lệ').optional().nullable(),
-  duration: z.coerce.number().int().min(1, 'Thời lượng phải ≥ 1').default(1),
+  tourGuideIds: z.array(z.string().uuid()).optional().default([]),
+  duration: z.coerce.number().int().min(1).default(1),
   durationType: z.string().default('day'),
   highlight: z.string().optional().nullable(),
   include: z.string().optional().nullable(),
@@ -44,6 +75,40 @@ export const productSchema = z.object({
     .optional()
     .nullable(),
   videoId: z.string().optional().nullable(),
+  shortDescription: z.string().max(500).optional().nullable(),
+  tags: z
+    .array(z.object({ id: z.string(), name: z.string() }))
+    .optional()
+    .default([]),
+  banner: z
+    .array(z.object({ url: z.string(), type: z.enum(['image', 'video']) }))
+    .optional()
+    .default([]),
+  elements: z
+    .array(z.object({ key: z.string().min(1), name: z.string() }))
+    .optional()
+    .default([]),
+  experiences: z
+    .array(
+      z.object({
+        imageUrl: z.string().optional().nullable(),
+        title: z.string().min(1, 'Title required'),
+        content: z.string().optional().nullable(),
+      })
+    )
+    .optional()
+    .default([]),
+  itineraries: z.array(itinerarySchema).optional().default([]),
+  readBefores: z
+    .array(
+      z.object({
+        key: z.string().min(1),
+        title: z.string().optional().nullable(),
+        description: z.string().optional().nullable(),
+      })
+    )
+    .optional()
+    .default([]),
 });
 
 export const optionSchema = z.object({
@@ -55,19 +120,30 @@ export const optionSchema = z.object({
   infantPrice: z.coerce.number().min(0).default(0),
   currency: z.string().default('VND'),
   order: z.coerce.number().int().min(0).default(0),
-});
-
-export const itinerarySchema = z.object({
-  id: z.string().uuid().optional(),
-  name: z.string().min(1, 'Tiêu đề ngày không được để trống'),
-  featuredName: z.string().optional().nullable(),
-  order: z.coerce.number().int().min(1).default(1),
-  description: z.string().optional().nullable(),
+  originalPrice: z.coerce.number().min(0).optional().nullable(),
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;
 export type OptionFormValues = z.infer<typeof optionSchema>;
 export type ItineraryFormValues = z.infer<typeof itinerarySchema>;
+export type ElementFormItem = { key: string; name: string };
+
+export type ExperienceFormValues = {
+  imageUrl?: string | null;
+  title: string;
+  content?: string | null;
+};
+
+export type ReadBeforeFormValues = {
+  key: string;
+  title?: string | null;
+  description?: string | null;
+};
+
+export type BannerFormValues = {
+  url: string;
+  type: 'image' | 'video';
+};
 
 export type LookupItem = { id: string; name: string };
 
@@ -76,7 +152,7 @@ export const generateSlug = (name: string): string =>
   name
     .toLowerCase()
     .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[̀-ͯ]/g, '')
     .replace(/đ/gi, 'd')
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')

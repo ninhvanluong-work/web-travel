@@ -1,4 +1,15 @@
-import { AlignLeft, ArrowLeft, Calendar, DollarSign, FileText, ImageIcon, Loader2 } from 'lucide-react';
+import {
+  AlertTriangle,
+  AlignLeft,
+  ArrowLeft,
+  Calendar,
+  FileText,
+  Loader2,
+  MapPin,
+  Sparkles,
+  Tag,
+  Tv,
+} from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -10,11 +21,17 @@ import { ROUTE } from '@/types/routes';
 
 import { DraftRecoveryBanner } from './components/draft-recovery-banner';
 import { FormActionButtons } from './components/form-action-buttons';
+import { BannerSection } from './components/sections/banner-section';
 import { BasicInfoSection } from './components/sections/basic-info-section';
 import { DetailsSection } from './components/sections/details-section';
-import { ImagesSection } from './components/sections/images-section';
-import { OptionsSection } from './components/sections/options-section';
+import { ExperiencesSection } from './components/sections/experiences-section';
+import { QuickFactsSection } from './components/sections/quick-facts-section';
+import { ReadBeforeSection } from './components/sections/read-before-section';
+import { TagsSection } from './components/sections/tags-section';
 import { TimeItinerarySection } from './components/sections/time-itinerary-section';
+// Commented out since client does not need them yet
+// import { ImagesSection } from './components/sections/images-section';
+// import { OptionsSection } from './components/sections/options-section';
 
 interface ProductFormPageProps {
   productId?: string;
@@ -27,10 +44,15 @@ const STATUS_CONFIG: Record<string, { dot: string; label: string; text: string }
 };
 
 const NAV_SECTIONS = [
-  { id: 'section-overview', label: 'Tổng quan', icon: FileText },
-  { id: 'section-images', label: 'Hình ảnh', icon: ImageIcon },
+  { id: 'section-banner', label: 'Video Sản phẩm', icon: Tv },
+  { id: 'section-tags', label: 'Tag sản phẩm', icon: Tag },
+  { id: 'section-overview', label: 'Mô tả sản phẩm', icon: FileText },
+  // { id: 'section-images', label: 'Hình ảnh', icon: ImageIcon },
+  { id: 'section-quick-facts', label: 'Thông tin nhanh', icon: MapPin },
+  { id: 'section-experiences', label: 'Trải nghiệm', icon: Sparkles },
   { id: 'section-itinerary', label: 'Lịch trình', icon: Calendar },
-  { id: 'section-pricing', label: 'Gói giá', icon: DollarSign },
+  // { id: 'section-pricing', label: 'Gói giá & Tình trạng', icon: DollarSign },
+  { id: 'section-read-before', label: 'Lưu ý', icon: AlertTriangle },
   { id: 'section-details', label: 'Chi tiết', icon: AlignLeft },
 ];
 
@@ -60,18 +82,7 @@ function SectionCard({ id, label, children }: { id: string; label: string; child
 
 export default function ProductFormPage({ productId }: ProductFormPageProps) {
   const router = useRouter();
-  const {
-    form,
-    isEdit,
-    productData: _productData,
-    itineraries,
-    setItineraries,
-    options,
-    setOptions,
-    onSubmit,
-    isPending,
-    draft,
-  } = useProductForm(productId);
+  const { form, isEdit, productData: _productData, onSubmit, isPending, draft } = useProductForm(productId);
 
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
@@ -90,11 +101,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
   const handleHide = form.handleSubmit((data) => onSubmit({ ...data, status: 'hidden' }));
 
   function handleRestoreDraft() {
-    const restored = draft.restoreDraft();
-    if (restored) {
-      setItineraries(restored.itineraries);
-      setOptions(restored.options);
-    }
+    draft.restoreDraft();
     setShowDraftBanner(false);
   }
 
@@ -120,7 +127,6 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
           </div>
         </div>
 
-        {/* Minimal Breadcrumbs on the right */}
         <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
           <span className="hover:text-brand-500 cursor-pointer transition-colors" onClick={() => router.push('/admin')}>
             Trang chủ
@@ -182,17 +188,34 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
 
             {/* Main content */}
             <div className="flex-1 min-w-0 space-y-6">
+              <SectionCard id="section-banner" label="Video Sản phẩm">
+                <BannerSection />
+              </SectionCard>
+              <SectionCard id="section-tags" label="Tag sản phẩm">
+                <TagsSection />
+              </SectionCard>
               <SectionCard id="section-overview" label="Mô tả sản phẩm">
                 <BasicInfoSection isEdit={isEdit} />
               </SectionCard>
+              <SectionCard id="section-quick-facts" label="Thông tin nhanh">
+                <QuickFactsSection />
+              </SectionCard>
+              <SectionCard id="section-experiences" label="Trải nghiệm nổi bật">
+                <ExperiencesSection />
+              </SectionCard>
+              <SectionCard id="section-itinerary" label="Lịch trình tour">
+                <TimeItinerarySection />
+              </SectionCard>
+              {/* Commented out since client does not need them yet
               <SectionCard id="section-images" label="Hình ảnh sản phẩm">
                 <ImagesSection />
               </SectionCard>
-              <SectionCard id="section-itinerary" label="Lịch trình tour">
-                <TimeItinerarySection itineraries={itineraries} onChange={setItineraries} />
-              </SectionCard>
               <SectionCard id="section-pricing" label="Gói giá & Tình trạng">
-                <OptionsSection options={options} onChange={setOptions} />
+                <OptionsSection options={[]} onChange={() => null} />
+              </SectionCard>
+              */}
+              <SectionCard id="section-read-before" label="Lưu ý trước khi đặt">
+                <ReadBeforeSection />
               </SectionCard>
               <SectionCard id="section-details" label="Chi tiết tour">
                 <DetailsSection />
