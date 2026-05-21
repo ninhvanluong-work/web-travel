@@ -78,6 +78,7 @@ function toApiPayload(values: ProductFormValues, isUpdate = false) {
     minPrice: values.minPrice,
     destinationId: values.destinationId || undefined,
     supplierId: values.supplierId || undefined,
+    heroVideoId: values.videoId || undefined,
     tagIds: values.tags?.length ? values.tags.map((t) => t.id) : undefined,
     tourGuideIds: values.tourGuideIds?.length ? values.tourGuideIds : undefined,
     experience: values.experiences?.length
@@ -92,7 +93,7 @@ function toApiPayload(values: ProductFormValues, isUpdate = false) {
             description: r.description ?? '',
           }))
       : undefined,
-    elements: values.elements?.length ? values.elements : undefined,
+    elementIds: values.elements?.length ? values.elements.map((e) => e.id).filter(Boolean) : undefined,
     banner: values.banner?.length ? values.banner : undefined,
     itineraries: values.itineraries?.length
       ? values.itineraries.map((it) => ({

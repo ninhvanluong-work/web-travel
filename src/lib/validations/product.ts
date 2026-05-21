@@ -85,7 +85,7 @@ export const productSchema = z.object({
     .optional()
     .default([]),
   elements: z
-    .array(z.object({ key: z.string().min(1), name: z.string() }))
+    .array(z.object({ id: z.string().uuid().optional(), key: z.string().min(1), name: z.string() }))
     .optional()
     .default([]),
   experiences: z

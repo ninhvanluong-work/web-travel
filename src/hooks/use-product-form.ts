@@ -69,11 +69,11 @@ export function useProductForm(productId?: string) {
       thumbnail: productData.thumbnail,
       itineraryImage: productData.itineraryImage,
       images: (productData.images ?? []).map((url) => ({ url })),
-      videoId: (productData as any).videoId ?? null,
+      videoId: (productData as any).heroVideoId ?? (productData as any).videoId ?? null,
       shortDescription: productData.shortDescription ?? null,
       tags: (productData.tags ?? []).map((t) => ({ id: t.id, name: t.name })),
       banner: (productData.banner ?? []).map((b) => ({ url: b.url, type: b.type })),
-      elements: (productData.elements ?? []).map((e) => ({ key: e.key, name: e.name })),
+      elements: (productData.elements ?? []).map((e) => ({ id: e.id, key: e.key, name: e.name })),
       experiences: (productData.experience ?? []).map((e) => ({
         imageUrl: e.imageUrl,
         title: e.title,
