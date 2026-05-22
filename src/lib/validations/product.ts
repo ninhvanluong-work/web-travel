@@ -36,18 +36,18 @@ export const ELEMENT_KEY_OPTIONS = [
 ];
 
 export const READ_BEFORE_KEY_OPTIONS = [
-  { label: 'Hộ chiếu/Giấy tờ', value: 'passport' },
-  { label: 'Cần mang theo', value: 'bring' },
-  { label: 'Không khuyến khích cho', value: 'not_recommended' },
-  { label: 'Trang phục', value: 'wear' },
-  { label: 'Văn hóa/Ứng xử', value: 'cultural' },
-  { label: 'Khác', value: 'other' },
+  { label: 'Passport / ID / Documents', value: 'passport' },
+  { label: 'What to bring', value: 'bring' },
+  { label: 'Not recommended for', value: 'not_recommended' },
+  { label: 'What to wear', value: 'wear' },
+  { label: 'Cultural / Etiquette', value: 'cultural' },
+  { label: 'Others', value: 'other' },
 ];
 
 // ── Itinerary (standalone schema, reused in productSchema) ────────────────
 export const itinerarySchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, 'Tiêu đề ngày không được để trống'),
+  name: z.string().min(1, 'Day title is required'),
   featuredName: z.string().optional().nullable(),
   order: z.coerce.number().int().min(1).default(1),
   description: z.string().optional().nullable(),
@@ -55,18 +55,18 @@ export const itinerarySchema = z.object({
 
 // ── Product ──────────────────────────────────────────────────────────────
 export const productSchema = z.object({
-  name: z.string().min(1, 'Tên sản phẩm không được để trống').max(500),
-  slug: z.string().min(1, 'Đường dẫn không được để trống'),
+  name: z.string().min(1, 'Product name is required').max(500),
+  slug: z.string().min(1, 'URL path is required'),
   description: z.string().optional().nullable(),
-  destinationId: z.string().uuid('Điểm đến không hợp lệ').optional().nullable(),
-  supplierId: z.string().uuid('Nhà cung cấp không hợp lệ').optional().nullable(),
+  destinationId: z.string().uuid('Invalid destination').optional().nullable(),
+  supplierId: z.string().uuid('Invalid supplier').optional().nullable(),
   tourGuideIds: z.array(z.string().uuid()).optional().default([]),
   duration: z.coerce.number().int().min(1).default(1),
   durationType: z.string().default('day'),
   highlight: z.string().optional().nullable(),
   include: z.string().optional().nullable(),
   exclude: z.string().optional().nullable(),
-  minPrice: z.coerce.number().min(0, 'Giá không được âm').default(0),
+  minPrice: z.coerce.number().min(0, 'Price cannot be negative').default(0),
   status: z.enum(['draft', 'published', 'hidden']).default('draft'),
   thumbnail: z.string().optional().nullable(),
   itineraryImage: z.string().optional().nullable(),
@@ -84,10 +84,7 @@ export const productSchema = z.object({
     .array(z.object({ url: z.string(), type: z.enum(['image', 'video']) }))
     .optional()
     .default([]),
-  elements: z
-    .array(z.object({ id: z.string().uuid().optional(), key: z.string().min(1), name: z.string() }))
-    .optional()
-    .default([]),
+  elementIds: z.array(z.string().uuid()).optional().default([]),
   experiences: z
     .array(
       z.object({
@@ -113,7 +110,7 @@ export const productSchema = z.object({
 
 export const optionSchema = z.object({
   id: z.string().uuid().optional(),
-  title: z.string().min(1, 'Tên gói không được để trống'),
+  title: z.string().min(1, 'Package name is required'),
   description: z.string().optional().nullable(),
   adultPrice: z.coerce.number().min(0).default(0),
   childPrice: z.coerce.number().min(0).default(0),
@@ -126,7 +123,6 @@ export const optionSchema = z.object({
 export type ProductFormValues = z.infer<typeof productSchema>;
 export type OptionFormValues = z.infer<typeof optionSchema>;
 export type ItineraryFormValues = z.infer<typeof itinerarySchema>;
-export type ElementFormItem = { key: string; name: string };
 
 export type ExperienceFormValues = {
   imageUrl?: string | null;

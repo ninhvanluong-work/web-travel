@@ -144,7 +144,7 @@ function mapElements(elements: ApiElementItem[], fallbackDuration: string): Mock
         .split(',')
         .map((l) => l.trim())
         .filter(Boolean)
-    : ['VI'];
+    : ['EN'];
 
   return {
     duration,

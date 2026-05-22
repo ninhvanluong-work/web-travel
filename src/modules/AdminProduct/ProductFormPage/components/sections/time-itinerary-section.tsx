@@ -1,6 +1,6 @@
 import { Calendar, Plus } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { type ItineraryFormValues, type ProductFormValues } from '@/lib/validations/product';
@@ -8,12 +8,13 @@ import { type ItineraryFormValues, type ProductFormValues } from '@/lib/validati
 import { ItineraryFormRow } from '../shared/ItineraryFormRow';
 
 export function TimeItinerarySection() {
-  const { control } = useFormContext<ProductFormValues>();
-  const { fields, append, remove, move, update, insert } = useFieldArray({
+  const { control, setValue } = useFormContext<ProductFormValues>();
+  const { fields, append, remove, move, insert } = useFieldArray({
     control,
     name: 'itineraries',
     keyName: '_id' as any,
   });
+  const watchedItineraries = useWatch({ control, name: 'itineraries' }) as ItineraryFormValues[];
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const dragIndex = useRef<number | null>(null);
@@ -25,8 +26,9 @@ export function TimeItinerarySection() {
   };
 
   const handleChange = (index: number, patch: Partial<ItineraryFormValues>) => {
-    const current = fields[index] as unknown as ItineraryFormValues;
-    update(index, { ...current, ...patch });
+    (Object.entries(patch) as [keyof ItineraryFormValues, unknown][]).forEach(([key, val]) => {
+      setValue(`itineraries.${index}.${key}`, val as any);
+    });
   };
 
   const handleRemove = (index: number) => {
@@ -101,7 +103,7 @@ export function TimeItinerarySection() {
         ) : (
           <div className="space-y-2">
             {fields.map((item, i) => {
-              const field = item as unknown as ItineraryFormValues;
+              const field = (watchedItineraries?.[i] ?? item) as ItineraryFormValues;
               return (
                 <div
                   key={(item as any)._id ?? i}

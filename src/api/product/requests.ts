@@ -60,7 +60,7 @@ export async function getProductById(id: string): Promise<ApiProductDetail> {
   return data.data;
 }
 
-function toApiPayload(values: ProductFormValues, isUpdate = false) {
+function toApiPayload(values: ProductFormValues) {
   return {
     name: values.name,
     slug: values.slug,
@@ -93,11 +93,10 @@ function toApiPayload(values: ProductFormValues, isUpdate = false) {
             description: r.description ?? '',
           }))
       : undefined,
-    elementIds: values.elements?.length ? values.elements.map((e) => e.id).filter(Boolean) : undefined,
+    elementIds: values.elementIds?.length ? values.elementIds : undefined,
     banner: values.banner?.length ? values.banner : undefined,
     itineraries: values.itineraries?.length
       ? values.itineraries.map((it) => ({
-          ...(isUpdate && it.id ? { id: it.id } : {}),
           name: it.name,
           featuredName: it.featuredName || undefined,
           order: Number(it.order),
@@ -108,12 +107,12 @@ function toApiPayload(values: ProductFormValues, isUpdate = false) {
 }
 
 export async function createProduct(values: ProductFormValues): Promise<ApiProductDetail> {
-  const { data } = await request.post<{ data: ApiProductDetail }>('/product', toApiPayload(values, false));
+  const { data } = await request.post<{ data: ApiProductDetail }>('/product', toApiPayload(values));
   return data.data;
 }
 
 export async function updateProduct(id: string, values: ProductFormValues): Promise<ApiProductDetail> {
-  const { data } = await request.patch<{ data: ApiProductDetail }>(`/product/${id}`, toApiPayload(values, true));
+  const { data } = await request.put<{ data: ApiProductDetail }>(`/product/${id}`, toApiPayload(values));
   return data.data;
 }
 
@@ -122,6 +121,11 @@ export async function patchProductStatus(
   status: 'draft' | 'published' | 'hidden'
 ): Promise<ApiProductDetail> {
   const { data } = await request.patch<{ data: ApiProductDetail }>(`/product/${id}`, { status });
+  return data.data;
+}
+
+export async function publishProduct(id: string): Promise<ApiProductDetail> {
+  const { data } = await request.post<{ data: ApiProductDetail }>(`/product/${id}/publish`);
   return data.data;
 }
 

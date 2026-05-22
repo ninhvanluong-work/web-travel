@@ -1,10 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { useCreateProduct, useProductById, useUpdateProduct } from '@/api/product';
+import { useCreateProduct, useProductById, usePublishProduct, useUpdateProduct } from '@/api/product';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { ROUTE } from '@/types/routes';
 
@@ -31,7 +32,7 @@ const DEFAULT_VALUES: ProductFormValues = {
   shortDescription: null,
   tags: [],
   banner: [],
-  elements: [],
+  elementIds: [],
   experiences: [],
   itineraries: [],
   readBefores: READ_BEFORE_KEY_OPTIONS.map((opt) => ({ key: opt.value, description: '' })),
@@ -39,7 +40,10 @@ const DEFAULT_VALUES: ProductFormValues = {
 
 export function useProductForm(productId?: string) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const isEdit = !!productId;
+
+  const invalidateList = () => queryClient.removeQueries({ queryKey: ['/product'] });
 
   const { data: productData } = useProductById({ variables: { id: productId! }, enabled: isEdit }, undefined);
 
@@ -73,7 +77,7 @@ export function useProductForm(productId?: string) {
       shortDescription: productData.shortDescription ?? null,
       tags: (productData.tags ?? []).map((t) => ({ id: t.id, name: t.name })),
       banner: (productData.banner ?? []).map((b) => ({ url: b.url, type: b.type })),
-      elements: (productData.elements ?? []).map((e) => ({ id: e.id, key: e.key, name: e.name })),
+      elementIds: (productData.elements ?? []).map((e) => e.id),
       experiences: (productData.experience ?? []).map((e) => ({
         imageUrl: e.imageUrl,
         title: e.title,
@@ -96,34 +100,63 @@ export function useProductForm(productId?: string) {
   const createMutation = useCreateProduct({
     onSuccess: () => {
       draft.clearDraftOnSuccess();
-      toast.success('Tạo tour thành công');
+      invalidateList();
+      toast.success('Tour created successfully');
       router.push(ROUTE.ADMIN_PRODUCTS);
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'Có lỗi xảy ra, vui lòng thử lại');
+      toast.error(err?.response?.data?.message ?? 'An error occurred, please try again');
     },
   });
 
   const updateMutation = useUpdateProduct({
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message ?? 'An error occurred, please try again');
+    },
+  });
+
+  const publishMutation = usePublishProduct({
     onSuccess: () => {
       draft.clearDraftOnSuccess();
-      toast.success('Cập nhật tour thành công');
+      invalidateList();
+      toast.success('Tour published successfully');
       router.push(ROUTE.ADMIN_PRODUCTS);
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'Có lỗi xảy ra, vui lòng thử lại');
+      toast.error(err?.response?.data?.message ?? 'Failed to publish tour');
     },
   });
 
   const onSubmit = (data: ProductFormValues) => {
     if (isEdit) {
-      updateMutation.mutate({ id: productId!, values: data });
+      updateMutation.mutate(
+        { id: productId!, values: data },
+        {
+          onSuccess: () => {
+            draft.clearDraftOnSuccess();
+            invalidateList();
+            toast.success('Tour updated successfully');
+            router.push(ROUTE.ADMIN_PRODUCTS);
+          },
+        }
+      );
     } else {
       createMutation.mutate(data);
     }
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const onPublish = (data: ProductFormValues) => {
+    if (!isEdit) {
+      createMutation.mutate(data);
+      return;
+    }
+    updateMutation.mutate(
+      { id: productId!, values: data },
+      { onSuccess: () => publishMutation.mutate({ id: productId! }) }
+    );
+  };
 
-  return { form, isEdit, productData, onSubmit, isPending, draft };
+  const isPending = createMutation.isPending || updateMutation.isPending || publishMutation.isPending;
+
+  return { form, isEdit, productData, onSubmit, onPublish, isPending, draft };
 }
