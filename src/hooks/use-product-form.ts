@@ -43,7 +43,10 @@ export function useProductForm(productId?: string) {
   const queryClient = useQueryClient();
   const isEdit = !!productId;
 
-  const invalidateList = () => queryClient.removeQueries({ queryKey: ['/product'] });
+  const invalidateList = () => {
+    queryClient.removeQueries({ queryKey: ['/product'] });
+    queryClient.removeQueries({ queryKey: ['/product/detail'] });
+  };
 
   const { data: productData } = useProductById({ variables: { id: productId! }, enabled: isEdit }, undefined);
 
