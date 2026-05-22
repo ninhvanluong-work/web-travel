@@ -36,7 +36,7 @@ export function FormActionButtons({
         disabled={disabled}
       >
         <BookmarkIcon size={14} />
-        Lưu nháp
+        Save Draft
       </Button>
     );
   }
@@ -54,7 +54,7 @@ export function FormActionButtons({
         disabled={disabled}
       >
         <SaveIcon size={14} />
-        Lưu thay đổi
+        Save Changes
       </Button>
 
       {currentStatus === 'published' && (
@@ -69,7 +69,7 @@ export function FormActionButtons({
           disabled={disabled}
         >
           <EyeOffIcon size={14} />
-          Ẩn sản phẩm
+          Hide Product
         </Button>
       )}
 
@@ -85,7 +85,7 @@ export function FormActionButtons({
           disabled={disabled}
         >
           <EyeIcon size={14} />
-          Công khai lại
+          Publish Again
         </Button>
       )}
 
@@ -101,7 +101,7 @@ export function FormActionButtons({
           disabled={disabled}
         >
           <RocketIcon size={14} />
-          Đăng công khai
+          Publish
         </Button>
       )}
     </>

@@ -16,8 +16,13 @@ import type { BookItemType } from './types';
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-function parseListString(s: string | null | undefined): string[] {
+function isHtmlString(s: string): boolean {
+  return /<[a-z][\s\S]*>/i.test(s);
+}
+
+function parseInclude(s: string | null | undefined): string | string[] {
   if (!s) return [];
+  if (isHtmlString(s)) return s;
   return s
     .split(',')
     .map((item) => item.trim())
@@ -60,7 +65,7 @@ function mapItinerary(items: ApiItineraryItem[]): MockProduct['itinerary'] {
     .sort((a, b) => a.order - b.order)
     .map((item, idx) => ({
       step: idx + 1,
-      time: item.featuredName ?? `Điểm ${idx + 1}`,
+      time: item.featuredName ?? `Point ${idx + 1}`,
       title: item.name,
       description: item.description,
     }));
@@ -129,7 +134,10 @@ function mapElements(elements: ApiElementItem[], fallbackDuration: string): Mock
   const dropOff = byKey.dropOff ?? '';
   const pickupTime = pickup && dropOff ? `${pickup} → ${dropOff}` : pickup || dropOff || '—';
 
-  const groupSize = byKey.groupSize ?? '—';
+  let groupSize = byKey.groupSize ?? '—';
+  if (groupSize !== '—' && /^\d+$/.test(groupSize)) {
+    groupSize = `Up to ${groupSize} people`;
+  }
 
   const languages = byKey.language
     ? byKey.language
@@ -203,8 +211,8 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     beforeYouBook: mapReadBefore(data.readBefore ?? []),
 
     // ── Included / Not included ───────────────────────────────────────────
-    included: parseListString(data.include),
-    notIncluded: parseListString(data.exclude),
+    included: parseInclude(data.include),
+    notIncluded: parseInclude(data.exclude),
 
     // ── Pricing ───────────────────────────────────────────────────────────
     originalPrice: price > 0 ? Math.round(price / 0.85) : 138,

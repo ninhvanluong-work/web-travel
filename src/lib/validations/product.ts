@@ -24,15 +24,15 @@ export const CURRENCY_OPTIONS = [
 ];
 
 export const ELEMENT_KEY_OPTIONS = [
-  { label: 'Độ khó', value: 'difficulty' },
-  { label: 'Ngôn ngữ', value: 'language' },
-  { label: 'Điểm khởi hành', value: 'departure' },
-  { label: 'Quy mô nhóm', value: 'groupSize' },
-  { label: 'Thời lượng', value: 'duration' },
-  { label: 'Giờ đón (Pickup)', value: 'pickup' },
-  { label: 'Giờ trả (Drop-off)', value: 'dropOff' },
-  { label: 'Số ngày', value: 'day' },
-  { label: 'Số đêm', value: 'night' },
+  { label: 'Difficulty', value: 'difficulty' },
+  { label: 'Language', value: 'language' },
+  { label: 'Departure', value: 'departure' },
+  { label: 'Group size', value: 'groupSize' },
+  { label: 'Duration', value: 'duration' },
+  { label: 'Pickup time', value: 'pickup' },
+  { label: 'Drop-off time', value: 'dropOff' },
+  { label: 'Days', value: 'day' },
+  { label: 'Nights', value: 'night' },
 ];
 
 export const READ_BEFORE_KEY_OPTIONS = [

@@ -79,9 +79,9 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
             name="name"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Tên tour</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Name</FormLabel>
                 <FormControl>
-                  <Input size="sm" placeholder="Nhập tên sản phẩm" {...field} />
+                  <Input size="sm" placeholder="Enter product name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -95,11 +95,11 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
             name="slug"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Đường dẫn URL</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">URL Path</FormLabel>
                 <FormControl>
                   <Input
                     size="sm"
-                    placeholder="slug-san-pham"
+                    placeholder="product-slug"
                     {...field}
                     className="bg-slate-50/50 text-slate-500 border-slate-200"
                   />
@@ -118,14 +118,14 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
           name="destinationId"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Điểm đến</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Destination</FormLabel>
               <Select onValueChange={field.onChange} value={field.value ?? undefined}>
                 <FormControl>
                   <SelectTrigger
                     inputSize="sm"
                     className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
                   >
-                    <SelectValue placeholder="Chọn danh mục" />
+                    <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -146,14 +146,14 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
           name="supplierId"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Nhà cung cấp</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Supplier</FormLabel>
               <Select onValueChange={field.onChange} value={field.value ?? undefined}>
                 <FormControl>
                   <SelectTrigger
                     inputSize="sm"
                     className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
                   >
-                    <SelectValue placeholder="Chọn nhà cung cấp" />
+                    <SelectValue placeholder="Select supplier" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -174,13 +174,13 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
           name="tourGuideIds"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Hướng dẫn viên</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Guide</FormLabel>
               <FormControl>
                 <SelectWithSearch
-                  placeholder="Chọn hướng dẫn viên"
+                  placeholder="Select tour guide"
                   value={field.value?.[0] ?? ''}
                   onValueChange={(v) => field.onChange(v ? [v] : [])}
-                  data={[{ label: 'Không chọn', value: '' }, ...tourGuideOptions]}
+                  data={[{ label: 'None', value: '' }, ...tourGuideOptions]}
                   onScrollToBottom={() => {
                     if (hasNextPage) fetchNextPage();
                   }}
@@ -202,9 +202,9 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
             name="minPrice"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Giá khởi điểm</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Starting Price</FormLabel>
                 <FormControl>
-                  <Input type="number" size="sm" placeholder="Ví dụ: 1.500.000" {...field} />
+                  <Input type="number" size="sm" placeholder="e.g. 1,500,000" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -218,7 +218,7 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
             name="videoId"
             render={({ field }) => (
               <FormItem className="space-y-1.5 relative">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Video tour</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Video</FormLabel>
                 <div className="relative group">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-brand-500 transition-colors">
                     <Film size={14} />
@@ -226,7 +226,7 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
                   <Input
                     size="sm"
                     className="pl-9 pr-24"
-                    placeholder="Tìm video..."
+                    placeholder="Search videos..."
                     value={query}
                     onChange={(e) => {
                       setQuery(e.target.value);
@@ -257,7 +257,7 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
                   {showDropdown && (
                     <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-200 py-1 max-h-48 overflow-y-auto">
                       {isSearching ? (
-                        <div className="py-4 text-center text-[11px] text-slate-400 italic">Đang tìm kiếm...</div>
+                        <div className="py-4 text-center text-[11px] text-slate-400 italic">Searching...</div>
                       ) : (
                         results.map((video) => (
                           <button
@@ -296,10 +296,10 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
           name="shortDescription"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Mô tả ngắn</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Short Description</FormLabel>
               <FormControl>
                 <TextArea
-                  placeholder="Nhập mô tả ngắn về tour..."
+                  placeholder="Enter short description of the tour..."
                   className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs"
                   maxLength={500}
                   rows={4}
@@ -317,10 +317,10 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
           name="highlight"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Điểm nổi bật</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">Highlights</FormLabel>
               <FormControl>
                 <TextArea
-                  placeholder="Mô tả điểm nổi bật của tour..."
+                  placeholder="Describe the tour highlights..."
                   className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs italic font-medium text-slate-700"
                   rows={4}
                   {...field}

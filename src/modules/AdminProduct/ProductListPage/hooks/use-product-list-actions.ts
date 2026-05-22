@@ -11,16 +11,16 @@ export function useProductListActions(refetch: () => void) {
 
   const patchStatus = usePatchProductStatus({
     onSuccess: () => refetch(),
-    onError: () => toast.error('Cập nhật trạng thái thất bại'),
+    onError: () => toast.error('Failed to update status'),
   });
 
   const deleteMutation = useDeleteProduct({
     onSuccess: () => {
-      toast.success('Đã xóa tour');
+      toast.success('Tour deleted');
       setDeleteTarget(null);
       refetch();
     },
-    onError: () => toast.error('Xóa tour thất bại'),
+    onError: () => toast.error('Failed to delete tour'),
   });
 
   const handleChangeStatus = (product: IProduct, status: ProductStatus) => {

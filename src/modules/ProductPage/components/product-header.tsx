@@ -26,12 +26,11 @@ export default function ProductHeader({ tags, name, shortDescription, rating, re
 
       <p className="text-[23px] font-medium leading-[1.25] tracking-[-0.4px] mb-2">{name}</p>
 
-      <p
-        className="text-[15px] text-[#888884] leading-[1.55] mb-0"
+      <div
+        className="text-[15px] text-[#888884] leading-[1.55] mb-0 [&_p]:italic [&_*]:font-serif"
         style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}
-      >
-        {shortDescription}
-      </p>
+        dangerouslySetInnerHTML={{ __html: shortDescription }}
+      />
 
       <div className="flex items-center gap-3 pt-3 border-t border-black/[0.08] mt-3">
         <div className="flex items-baseline gap-1.5">

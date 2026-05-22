@@ -58,7 +58,10 @@ export default function ItineraryAccordion({ steps }: ItineraryAccordionProps) {
                     transition={{ duration: 0.25, ease: 'easeInOut' }}
                     style={{ overflow: 'hidden' }}
                   >
-                    <p className="px-4 pb-4 text-[13px] text-[#888884] leading-[1.55]">{step.description}</p>
+                    <div
+                      className="px-4 pb-4 text-[13px] text-[#888884] leading-[1.55] [&_ul]:list-disc [&_ul]:pl-4 [&_ol]:list-decimal [&_ol]:pl-4 [&_li]:mt-1"
+                      dangerouslySetInnerHTML={{ __html: step.description }}
+                    />
                   </motion.div>
                 )}
               </AnimatePresence>

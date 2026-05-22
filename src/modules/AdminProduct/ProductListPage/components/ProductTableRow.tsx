@@ -16,15 +16,15 @@ import { cn } from '@/lib/utils';
 type ProductStatus = 'draft' | 'published' | 'hidden';
 
 const STATUS_CONFIG: Record<ProductStatus, { label: string; className: string }> = {
-  draft: { label: 'Bản nháp', className: 'bg-amber-50 text-amber-700 ring-amber-200' },
-  published: { label: 'Công khai', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
-  hidden: { label: 'Đã ẩn', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
+  draft: { label: 'Draft', className: 'bg-amber-50 text-amber-700 ring-amber-200' },
+  published: { label: 'Published', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
+  hidden: { label: 'Hidden', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
 };
 
 const STATUS_OPTIONS: { value: ProductStatus; label: string }[] = [
-  { value: 'published', label: 'Công khai' },
-  { value: 'draft', label: 'Bản nháp' },
-  { value: 'hidden', label: 'Ẩn' },
+  { value: 'published', label: 'Publish' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'hidden', label: 'Hide' },
 ];
 
 function StarRating({ point }: { point: number }) {
@@ -158,7 +158,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
             <DropdownMenuItem asChild>
               <Link href={`/admin/products/${product.id}/edit`} className="flex items-center">
                 <Pencil size={14} className="mr-2" />
-                Chỉnh sửa
+                Edit
               </Link>
             </DropdownMenuItem>
 
@@ -179,7 +179,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
               onSelect={() => onDelete(product)}
             >
               <Trash2 size={14} className="mr-2" />
-              Xóa tour
+              Delete Tour
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

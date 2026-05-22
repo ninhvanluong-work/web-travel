@@ -98,7 +98,7 @@ export function TagsSection() {
         <Input
           ref={inputRef}
           size="sm"
-          placeholder="Tìm hoặc tạo tag mới..."
+          placeholder="Find or create a new tag..."
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -131,7 +131,7 @@ export function TagsSection() {
               >
                 <Tag size={12} className="text-brand-500 shrink-0" />
                 <span className="text-[13px] text-brand-600 font-medium">
-                  {isCreating ? 'Đang tạo...' : `+ Tạo tag mới: "${query.trim()}"`}
+                  {isCreating ? 'Creating...' : `+ Create new tag: "${query.trim()}"`}
                 </span>
               </button>
             )}
@@ -140,7 +140,7 @@ export function TagsSection() {
       </div>
 
       <div className="space-y-2">
-        <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Tag phổ biến</p>
+        <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Popular Tags</p>
         <div className="flex flex-wrap gap-2">
           {allTags.map((tag) => {
             const isSelected = selectedIds.includes(tag.id);
@@ -166,7 +166,7 @@ export function TagsSection() {
               disabled={isFetchingNextPage}
               className="inline-flex items-center px-3 py-1 rounded-full text-[12px] font-medium border border-dashed border-slate-300 text-slate-400 hover:border-brand-300 hover:text-brand-500 transition-all disabled:opacity-50"
             >
-              {isFetchingNextPage ? 'Đang tải...' : 'Xem thêm'}
+              {isFetchingNextPage ? 'Loading...' : 'View More'}
             </button>
           )}
         </div>

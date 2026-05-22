@@ -38,13 +38,13 @@ export function ExperienceImageUpload({
             <img src={value} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
               <ImageIcon size={20} className="text-white" />
-              <span className="text-[11px] font-medium text-white">Đổi ảnh</span>
+              <span className="text-[11px] font-medium text-white">Change image</span>
             </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-slate-400 group-hover:text-brand-500 transition-colors">
             {uploading ? <Loader2 size={24} className="animate-spin text-brand-500" /> : <ImageIcon size={24} />}
-            <span className="text-[12px] font-medium">{uploading ? 'Đang tải...' : 'Tải ảnh lên'}</span>
+            <span className="text-[12px] font-medium">{uploading ? 'Uploading...' : 'Upload image'}</span>
           </div>
         )}
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
@@ -53,7 +53,7 @@ export function ExperienceImageUpload({
       <div className="relative">
         <Input
           size="sm"
-          placeholder="Hoặc dán URL ảnh trực tiếp..."
+          placeholder="Or paste image URL directly..."
           value={value ?? ''}
           onChange={(e) => onChange(e.target.value)}
           className="pl-3 pr-8 text-[12px] h-9 bg-slate-50/80 border-slate-200 hover:bg-white focus:bg-white focus:border-brand-400 transition-all shadow-sm w-full"

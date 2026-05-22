@@ -36,16 +36,16 @@ export function ProductFilterBar({ selects, suppliers, destinations, onSelectCha
     <div className="flex flex-col gap-6">
       {/* Supplier */}
       <div className="space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Nhà cung cấp</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Supplier</p>
         <Select value={localSelects.supplierId} onValueChange={(v) => handleUpdateLocal({ supplierId: v })}>
           <SelectTrigger
             inputSize="sm"
             className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
           >
-            <SelectValue placeholder="Tất cả nhà cung cấp" />
+            <SelectValue placeholder="All Suppliers" />
           </SelectTrigger>
           <SelectContent className="rounded-xl shadow-theme-lg">
-            <SelectItem value="">Tất cả nhà cung cấp</SelectItem>
+            <SelectItem value="">All Suppliers</SelectItem>
             {suppliers.map((s) => (
               <SelectItem key={s.id} value={s.id}>
                 {s.name}
@@ -57,16 +57,16 @@ export function ProductFilterBar({ selects, suppliers, destinations, onSelectCha
 
       {/* Destination */}
       <div className="space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Điểm đến</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Destination</p>
         <Select value={localSelects.destinationId} onValueChange={(v) => handleUpdateLocal({ destinationId: v })}>
           <SelectTrigger
             inputSize="sm"
             className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
           >
-            <SelectValue placeholder="Tất cả điểm đến" />
+            <SelectValue placeholder="All Destinations" />
           </SelectTrigger>
           <SelectContent className="rounded-xl shadow-theme-lg">
-            <SelectItem value="">Tất cả điểm đến</SelectItem>
+            <SelectItem value="">All Destinations</SelectItem>
             {destinations.map((d) => (
               <SelectItem key={d.id} value={d.id}>
                 {d.name}
@@ -78,26 +78,26 @@ export function ProductFilterBar({ selects, suppliers, destinations, onSelectCha
 
       {/* Status */}
       <div className="space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Trạng thái</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Status</p>
         <Select value={localSelects.status} onValueChange={(v) => handleUpdateLocal({ status: v })}>
           <SelectTrigger
             inputSize="sm"
             className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
           >
-            <SelectValue placeholder="Tất cả trạng thái" />
+            <SelectValue placeholder="All Statuses" />
           </SelectTrigger>
           <SelectContent className="rounded-xl shadow-theme-lg">
-            <SelectItem value="">Tất cả trạng thái</SelectItem>
-            <SelectItem value="draft">Bản nháp</SelectItem>
-            <SelectItem value="published">Công khai</SelectItem>
-            <SelectItem value="hidden">Đã ẩn</SelectItem>
+            <SelectItem value="">All Statuses</SelectItem>
+            <SelectItem value="draft">Draft</SelectItem>
+            <SelectItem value="published">Published</SelectItem>
+            <SelectItem value="hidden">Hidden</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       {/* Date range */}
       <div className="space-y-2">
-        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Thời gian tạo</p>
+        <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Created Date</p>
         <DateRangeDropdown
           value={{ fromDate: localSelects.fromDate, toDate: localSelects.toDate }}
           onChange={({ fromDate, toDate }) => handleUpdateLocal({ fromDate, toDate })}
@@ -111,14 +111,14 @@ export function ProductFilterBar({ selects, suppliers, destinations, onSelectCha
           className="flex-1 h-11 flex items-center justify-center text-sm font-semibold text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all"
           onClick={onReset}
         >
-          Xóa
+          Clear
         </button>
         <button
           type="button"
           className="flex-[2] h-11 flex items-center justify-center text-sm font-semibold text-white bg-brand-500 hover:bg-brand-600 rounded-xl transition-all shadow-md shadow-brand-500/20"
           onClick={handleApply}
         >
-          Áp dụng
+          Apply
         </button>
       </div>
     </div>

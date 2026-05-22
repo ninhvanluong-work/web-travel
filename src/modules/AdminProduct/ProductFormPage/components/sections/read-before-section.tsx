@@ -19,7 +19,7 @@ export function ReadBeforeSection() {
               <FormLabel className="text-[13px] text-slate-600 font-semibold">{opt.label}</FormLabel>
               <FormControl>
                 <TextArea
-                  placeholder={`Nhập nội dung cho mục "${opt.label}"...`}
+                  placeholder={`Enter content for "${opt.label}"...`}
                   rows={3}
                   className="resize-none bg-slate-50/50 border-slate-200 focus-visible:bg-white transition-colors text-[13px]"
                   {...field}

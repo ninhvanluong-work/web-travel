@@ -71,8 +71,8 @@ export function TimeItinerarySection() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-medium text-gray-700">
-            Chi tiết lịch trình
-            {fields.length > 0 && <span className="ml-2 text-xs font-normal text-gray-400">{fields.length} ngày</span>}
+            Itinerary Details
+            {fields.length > 0 && <span className="ml-2 text-xs font-normal text-gray-400">{fields.length} days</span>}
           </p>
           <Button
             type="button"
@@ -84,7 +84,7 @@ export function TimeItinerarySection() {
             onClick={handleAdd}
           >
             <Plus size={12} />
-            Thêm ngày
+            Add Day
           </Button>
         </div>
 
@@ -95,8 +95,8 @@ export function TimeItinerarySection() {
             className="w-full border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center gap-2 text-gray-400 hover:border-violet-300 hover:text-violet-500 hover:bg-violet-50/40 transition-colors"
           >
             <Calendar size={20} className="opacity-50" />
-            <span className="text-sm font-medium">Chưa có lịch trình</span>
-            <span className="text-xs">Nhấn để thêm ngày đầu tiên</span>
+            <span className="text-sm font-medium">No itinerary yet</span>
+            <span className="text-xs">Click to add the first day</span>
           </button>
         ) : (
           <div className="space-y-2">

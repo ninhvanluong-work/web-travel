@@ -28,11 +28,11 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
 
   async function handleFile(file: File) {
     if (!BANNER_ALLOWED_TYPES.includes(file.type)) {
-      setUploadState({ status: 'error', message: 'Chỉ hỗ trợ MP4, MOV' });
+      setUploadState({ status: 'error', message: 'Only MP4, MOV supported' });
       return;
     }
     if (file.size > BANNER_MAX_SIZE) {
-      setUploadState({ status: 'error', message: 'File quá lớn (tối đa 100 MB)' });
+      setUploadState({ status: 'error', message: 'File too large (max 100 MB)' });
       return;
     }
 
@@ -71,13 +71,13 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
               name: file.name.substring(0, 50),
               guid: bunnyVideoId,
               thumbnail: '',
-              description: 'Video banner sản phẩm',
+              description: 'Product banner video',
               type: 'normal',
             });
             onChange(`https://player.mediadelivery.net/embed/${libraryId}/${bunnyVideoId}`);
             setUploadState({ status: 'idle' });
           } catch {
-            setUploadState({ status: 'error', message: 'Lưu thông tin thất bại, vui lòng thử lại.' });
+            setUploadState({ status: 'error', message: 'Failed to save, please try again.' });
           }
         },
         onError(err) {
@@ -91,7 +91,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
     } catch (err) {
       setUploadState({
         status: 'error',
-        message: err instanceof Error ? err.message : 'Có lỗi xảy ra, vui lòng thử lại.',
+        message: err instanceof Error ? err.message : 'An error occurred, please try again.',
       });
     }
   }
@@ -103,12 +103,12 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
 
   const getUploadStatusMessage = () => {
     if (uploadState.status === 'uploading') {
-      return `Đang tải lên... ${uploadState.progress}%`;
+      return `Uploading... ${uploadState.progress}%`;
     }
     if (uploadState.status === 'processing') {
-      return 'Đang xử lý...';
+      return 'Processing...';
     }
-    return 'Đang khởi tạo...';
+    return 'Initializing...';
   };
 
   const renderDropzone = () => {
@@ -147,7 +147,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
       >
         <Video size={28} className="text-slate-600 group-hover:text-brand-400 transition-colors" />
         <p className="text-[12px] font-medium text-slate-400 group-hover:text-brand-300 transition-colors">
-          Nhấn để chọn video
+          Click to select video
         </p>
       </div>
     );
@@ -180,7 +180,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
         className="w-full gap-2 h-9 text-[13px] bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-medium shadow-sm"
       >
         <Upload size={14} className="text-slate-400" />
-        {value ? 'Tải file khác' : 'Tải file lên'}
+        {value ? 'Upload another file' : 'Upload file'}
       </Button>
 
       <input

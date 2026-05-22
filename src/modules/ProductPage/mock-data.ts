@@ -40,8 +40,8 @@ export interface MockProduct {
   } | null;
   itinerary: { step: number; time: string; title: string; description: string }[];
   beforeYouBook: { type: BookItemType; title: string; description: string }[];
-  included: string[];
-  notIncluded: string[];
+  included: string | string[];
+  notIncluded: string | string[];
   originalPrice: number;
   salePrice: number;
   discountPercent: number;

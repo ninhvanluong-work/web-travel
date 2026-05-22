@@ -9,7 +9,7 @@ import { BannerImageUpload } from './banner-image-upload';
 import { BannerVideoUpload } from './banner-video-upload';
 
 const BANNER_TYPE_OPTIONS = [
-  { label: 'Hinh anh', value: 'image', icon: ImageIcon },
+  { label: 'Image', value: 'image', icon: ImageIcon },
   { label: 'Video', value: 'video', icon: Video },
 ] as const;
 
@@ -23,7 +23,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
         type="button"
         onClick={onRemove}
         className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all z-10 opacity-0 group-hover:opacity-100 focus:opacity-100"
-        title="Xóa media này"
+        title="Delete this media"
       >
         <Trash2 size={16} />
       </button>
@@ -51,7 +51,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
-                Loại hiển thị
+                Display type
               </FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
@@ -83,7 +83,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
-                {type === 'video' ? 'Đường dẫn Video (embed)' : 'Đường dẫn Hình ảnh trực tiếp'}
+                {type === 'video' ? 'Video URL (embed)' : 'Direct Image URL'}
               </FormLabel>
               <FormControl>
                 <div className="relative group/input">
@@ -98,8 +98,8 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
                     <span className="text-[13px] text-slate-400 truncate w-full">
                       {field.value ||
                         (type === 'video'
-                          ? 'Chưa có video — nhấn ô bên trái để tải lên'
-                          : 'Chưa có ảnh — nhấn ô bên trái để tải lên')}
+                          ? 'No video — click the box on the left to upload'
+                          : 'No image — click the box on the left to upload')}
                     </span>
                   </div>
                 </div>

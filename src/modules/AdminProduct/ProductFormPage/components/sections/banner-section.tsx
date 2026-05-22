@@ -94,15 +94,15 @@ export function BannerSection() {
       {fields.length === 0 && (
         <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
           <ImageIcon size={32} className="text-slate-300 mb-3" />
-          <p className="text-[14px] font-medium text-slate-600">Chưa có banner nào</p>
-          <p className="text-[13px] text-slate-400 mt-1 mb-4">Nhấn nút bên dưới để thêm hình ảnh hoặc video</p>
+          <p className="text-[14px] font-medium text-slate-600">No banners yet</p>
+          <p className="text-[13px] text-slate-400 mt-1 mb-4">Click the button below to add images or videos</p>
         </div>
       )}
 
       {fields.length > 1 && (
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-brand-50 border border-brand-100 w-fit">
           <GripVertical size={13} className="text-brand-400 shrink-0" />
-          <span className="text-[12px] font-medium text-brand-600">Giữ và kéo để sắp xếp lại thứ tự</span>
+          <span className="text-[12px] font-medium text-brand-600">Hold and drag to reorder</span>
         </div>
       )}
 
@@ -131,7 +131,7 @@ export function BannerSection() {
           className="gap-2 h-10 px-4 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-theme-xs transition-colors rounded-lg font-medium"
         >
           <ImageIcon size={16} className="text-slate-400" />
-          Thêm hình ảnh
+          Add Image
         </Button>
         <Button
           type="button"
@@ -141,7 +141,7 @@ export function BannerSection() {
           className="gap-2 h-10 px-4 bg-brand-500 hover:bg-brand-600 text-white font-semibold shadow-theme-xs transition-colors rounded-lg border-none"
         >
           <Video size={16} className="text-white" />
-          Thêm video
+          Add Video
         </Button>
       </div>
     </div>

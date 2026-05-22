@@ -55,8 +55,8 @@ const DETAIL_FIELDS: Array<{
   name: keyof ProductFormValues;
   label: string;
 }> = [
-  { name: 'include', label: 'Dịch vụ bao gồm' },
-  { name: 'exclude', label: 'Dịch vụ không bao gồm' },
+  { name: 'include', label: 'Services Included' },
+  { name: 'exclude', label: 'Services Not Included' },
 ];
 
 export function DetailsSection() {

@@ -38,22 +38,22 @@ interface ProductFormPageProps {
 }
 
 const STATUS_CONFIG: Record<string, { dot: string; label: string; text: string }> = {
-  published: { dot: 'bg-emerald-500', label: 'bg-emerald-50 text-emerald-700 ring-emerald-200', text: 'Công khai' },
-  hidden: { dot: 'bg-slate-400', label: 'bg-slate-50 text-slate-600 ring-slate-200', text: 'Đã ẩn' },
-  draft: { dot: 'bg-amber-400', label: 'bg-amber-50 text-amber-700 ring-amber-200', text: 'Bản nháp' },
+  published: { dot: 'bg-emerald-500', label: 'bg-emerald-50 text-emerald-700 ring-emerald-200', text: 'Published' },
+  hidden: { dot: 'bg-slate-400', label: 'bg-slate-50 text-slate-600 ring-slate-200', text: 'Hidden' },
+  draft: { dot: 'bg-amber-400', label: 'bg-amber-50 text-amber-700 ring-amber-200', text: 'Draft' },
 };
 
 const NAV_SECTIONS = [
-  { id: 'section-banner', label: 'Video Sản phẩm', icon: Tv },
-  { id: 'section-tags', label: 'Tag sản phẩm', icon: Tag },
-  { id: 'section-overview', label: 'Mô tả sản phẩm', icon: FileText },
+  { id: 'section-banner', label: 'Product Video', icon: Tv },
+  { id: 'section-tags', label: 'Product Tags', icon: Tag },
+  { id: 'section-overview', label: 'Product Overview', icon: FileText },
   // { id: 'section-images', label: 'Hình ảnh', icon: ImageIcon },
-  { id: 'section-quick-facts', label: 'Thông tin nhanh', icon: MapPin },
-  { id: 'section-experiences', label: 'Trải nghiệm', icon: Sparkles },
-  { id: 'section-itinerary', label: 'Lịch trình', icon: Calendar },
+  { id: 'section-quick-facts', label: 'Quick Facts', icon: MapPin },
+  { id: 'section-experiences', label: 'Highlights', icon: Sparkles },
+  { id: 'section-itinerary', label: 'Itinerary', icon: Calendar },
   // { id: 'section-pricing', label: 'Gói giá & Tình trạng', icon: DollarSign },
-  { id: 'section-read-before', label: 'Lưu ý', icon: AlertTriangle },
-  { id: 'section-details', label: 'Chi tiết', icon: AlignLeft },
+  { id: 'section-read-before', label: 'Notes', icon: AlertTriangle },
+  { id: 'section-details', label: 'Details', icon: AlignLeft },
 ];
 
 const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
@@ -93,7 +93,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
 
   const currentStatus = form.watch('status') ?? 'draft';
   const _status = STATUS_CONFIG[currentStatus] ?? STATUS_CONFIG.draft;
-  const _pageTitle = isEdit ? form.watch('name') || '...' : 'Tạo tour mới';
+  const _pageTitle = isEdit ? form.watch('name') || '...' : 'Create New Tour';
 
   const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }));
   const handleSaveChanges = form.handleSubmit((data) => onSubmit(data));
@@ -122,24 +122,22 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
           </Button>
           <div className="min-w-0">
             <h1 className="text-xl font-bold text-slate-800 dark:text-white/90 truncate leading-tight">
-              {isEdit ? 'Chỉnh sửa tour' : 'Thêm tour mới'}
+              {isEdit ? 'Edit Tour' : 'Add New Tour'}
             </h1>
           </div>
         </div>
 
         <div className="hidden md:flex items-center gap-2 text-xs text-slate-400">
           <span className="hover:text-brand-500 cursor-pointer transition-colors" onClick={() => router.push('/admin')}>
-            Trang chủ
+            Home
           </span>
           <span>&gt;</span>
-          <span className="font-medium text-slate-600 dark:text-gray-200">
-            {isEdit ? 'Chỉnh sửa tour' : 'Thêm tour mới'}
-          </span>
+          <span className="font-medium text-slate-600 dark:text-gray-200">{isEdit ? 'Edit Tour' : 'Add New Tour'}</span>
         </div>
 
         <div className="flex items-center gap-2 shrink-0 ml-4">
           {draft.lastSaved && (
-            <span className="text-[10px] text-gray-400 hidden sm:block">Nháp lúc {draft.lastSaved}</span>
+            <span className="text-[10px] text-gray-400 hidden sm:block">Draft at {draft.lastSaved}</span>
           )}
           {isPending && <Loader2 size={16} className="animate-spin text-gray-400" />}
           <FormActionButtons
@@ -188,22 +186,22 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
 
             {/* Main content */}
             <div className="flex-1 min-w-0 space-y-6">
-              <SectionCard id="section-banner" label="Video Sản phẩm">
+              <SectionCard id="section-banner" label="Product Video">
                 <BannerSection />
               </SectionCard>
-              <SectionCard id="section-tags" label="Tag sản phẩm">
+              <SectionCard id="section-tags" label="Product Tags">
                 <TagsSection />
               </SectionCard>
-              <SectionCard id="section-overview" label="Mô tả sản phẩm">
+              <SectionCard id="section-overview" label="Product Overview">
                 <BasicInfoSection isEdit={isEdit} />
               </SectionCard>
-              <SectionCard id="section-quick-facts" label="Thông tin nhanh">
+              <SectionCard id="section-quick-facts" label="Quick Facts">
                 <QuickFactsSection />
               </SectionCard>
-              <SectionCard id="section-experiences" label="Trải nghiệm nổi bật">
+              <SectionCard id="section-experiences" label="Highlights">
                 <ExperiencesSection />
               </SectionCard>
-              <SectionCard id="section-itinerary" label="Lịch trình tour">
+              <SectionCard id="section-itinerary" label="Itinerary">
                 <TimeItinerarySection />
               </SectionCard>
               {/* Commented out since client does not need them yet
@@ -214,10 +212,10 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                 <OptionsSection options={[]} onChange={() => null} />
               </SectionCard>
               */}
-              <SectionCard id="section-read-before" label="Lưu ý trước khi đặt">
+              <SectionCard id="section-read-before" label="Notes">
                 <ReadBeforeSection />
               </SectionCard>
-              <SectionCard id="section-details" label="Chi tiết tour">
+              <SectionCard id="section-details" label="Details">
                 <DetailsSection />
               </SectionCard>
             </div>

@@ -26,15 +26,15 @@ export function DeleteConfirmDialog({ target, onConfirm, onCancel }: DeleteConfi
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Xác nhận xóa sản phẩm</AlertDialogTitle>
+          <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
           <AlertDialogDescription>
-            Bạn có chắc muốn xóa sản phẩm &quot;{target?.name}&quot; không? Hành động này không thể hoàn tác.
+            Are you sure you want to delete &quot;{target?.name}&quot;? This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Hủy</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} className="bg-red-600 text-white hover:bg-red-700">
-            Xóa sản phẩm
+            Delete Product
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

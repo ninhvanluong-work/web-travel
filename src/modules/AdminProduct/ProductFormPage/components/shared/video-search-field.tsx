@@ -60,7 +60,7 @@ export function VideoSearchField() {
             <Input
               size="sm"
               className="pl-9 pr-24"
-              placeholder="Tim video..."
+              placeholder="Search videos..."
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
@@ -89,7 +89,7 @@ export function VideoSearchField() {
             {showDropdown && (
               <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-200 py-1 max-h-48 overflow-y-auto">
                 {isSearching ? (
-                  <div className="py-4 text-center text-[11px] text-slate-400 italic">Dang tim du lieu...</div>
+                  <div className="py-4 text-center text-[11px] text-slate-400 italic">Searching...</div>
                 ) : (
                   results.map((video) => (
                     <button
