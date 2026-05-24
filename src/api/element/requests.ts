@@ -3,7 +3,7 @@ import type { ApiElementItem, ApiElementListResponse, ElementListParams } from '
 
 export async function getElements(params?: ElementListParams): Promise<ApiElementItem[]> {
   const { data } = await request.get<ApiElementListResponse>('/element', {
-    params: { isActive: true, pageSize: 100, ...params },
+    params: { isActive: true, ...params },
   });
-  return data.data.items;
+  return data.data;
 }

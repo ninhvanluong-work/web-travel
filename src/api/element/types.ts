@@ -1,12 +1,9 @@
-import type { ApiElementItem, IProductPagination } from '@/api/product/types';
+import type { ApiElementItem } from '@/api/product/types';
 
 export type { ApiElementItem };
 
 export interface ApiElementListResponse {
-  data: {
-    items: ApiElementItem[];
-    pagination: IProductPagination;
-  };
+  data: ApiElementItem[];
   code: number;
   error: string | null;
   message: string;
