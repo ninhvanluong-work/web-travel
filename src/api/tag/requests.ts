@@ -8,9 +8,20 @@ export interface TagPage {
   nextPage: number | undefined;
 }
 
-export async function getTagPage(page: number): Promise<TagPage> {
+export async function getTagPage(page: number, pageSize = 10): Promise<TagPage> {
   const { data } = await request.get<ApiTagListResponse>('/tag', {
-    params: { page, pageSize: 49 },
+    params: { page, pageSize },
+  });
+  const { items, pagination } = data.data;
+  return {
+    items: items.map(toTagItem),
+    nextPage: pagination.page < pagination.totalPages ? pagination.page + 1 : undefined,
+  };
+}
+
+export async function searchTagPage(keyword: string, page: number, pageSize = 10): Promise<TagPage> {
+  const { data } = await request.get<ApiTagListResponse>('/tag', {
+    params: { ...(keyword ? { keyword } : {}), page, pageSize },
   });
   const { items, pagination } = data.data;
   return {

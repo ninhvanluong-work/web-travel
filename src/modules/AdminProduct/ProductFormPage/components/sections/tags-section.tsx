@@ -1,10 +1,13 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { Tag, X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { useCreateTag, useTagListInfinite } from '@/api/tag';
-import { Input } from '@/components/ui/input';
+import { useTagListInfinite } from '@/api/tag';
+import { useDebounce } from '@/hooks/use-debounce';
 import type { ProductFormValues } from '@/lib/validations/product';
+
+import { TagSearchDropdown } from './tag-search-dropdown';
 
 type TagItem = { id: string; name: string };
 
@@ -16,23 +19,27 @@ export function TagsSection() {
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data: tagData, fetchNextPage, hasNextPage, isFetchingNextPage } = useTagListInfinite();
-  const allTags = (tagData?.pages ?? []).flatMap((p) => p.items);
-  const { mutateAsync: createTagMutation, isPending: isCreating } = useCreateTag();
+  const debouncedQuery = useDebounce(query, 300);
 
+  const {
+    data: popularData,
+    fetchNextPage: fetchNextPopular,
+    hasNextPage: hasNextPopular,
+    isFetchingNextPage: isFetchingPopular,
+  } = useTagListInfinite();
+
+  const popularTags = (popularData?.pages ?? []).flatMap((p) => p.items);
   const selectedIds = tags.map((t) => t.id);
-  const filtered = allTags.filter(
-    (t) => !selectedIds.includes(t.id) && t.name.toLowerCase().includes(query.toLowerCase())
-  );
-  const exactMatch = allTags.some((t) => t.name.toLowerCase() === query.trim().toLowerCase());
-  const hasDropdownContent = filtered.length > 0 || (query.trim() && !exactMatch);
 
-  function addTag(tag: TagItem) {
-    setValue('tags', [...tags, tag], { shouldValidate: true });
-    setQuery('');
-    setShowDropdown(false);
-    inputRef.current?.focus();
-  }
+  const addTag = useCallback(
+    (tag: TagItem, shouldFocus = true) => {
+      setValue('tags', [...tags, tag], { shouldValidate: true });
+      setQuery('');
+      setShowDropdown(false);
+      if (shouldFocus) inputRef.current?.focus();
+    },
+    [tags, setValue]
+  );
 
   function removeTag(id: string) {
     setValue(
@@ -42,22 +49,7 @@ export function TagsSection() {
     );
   }
 
-  async function handleCreateTag() {
-    const name = query.trim();
-    if (!name || isCreating) return;
-    const newTag = await createTagMutation(name);
-    addTag(newTag);
-  }
-
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      if (filtered.length > 0) {
-        addTag(filtered[0]);
-      } else if (query.trim() && !exactMatch) {
-        handleCreateTag();
-      }
-    }
     if (e.key === 'Backspace' && !query && tags.length > 0) {
       removeTag(tags[tags.length - 1].id);
     }
@@ -67,89 +59,78 @@ export function TagsSection() {
     if (selectedIds.includes(tag.id)) {
       removeTag(tag.id);
     } else {
-      addTag(tag);
+      addTag(tag, false);
     }
   }
 
   return (
-    <div className="space-y-4">
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <span
-              key={tag.id}
-              className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 border border-brand-200 text-brand-700 text-[12px] font-semibold rounded-full"
-            >
-              <Tag size={11} />
-              {tag.name}
-              <button
-                type="button"
-                onClick={() => removeTag(tag.id)}
-                className="text-brand-400 hover:text-brand-700 transition-colors ml-0.5"
-              >
-                <X size={11} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      <div className="relative">
-        <Input
-          ref={inputRef}
-          size="sm"
-          placeholder="Find or create a new tag..."
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            setShowDropdown(true);
-          }}
-          onFocus={() => setShowDropdown(true)}
-          onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-          onKeyDown={handleKeyDown}
-          className="bg-slate-50/50 border-slate-200 hover:bg-white focus:bg-white transition-colors"
-        />
-        {showDropdown && hasDropdownContent && (
-          <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-200 py-1 max-h-48 overflow-y-auto">
-            {filtered.map((tag) => (
-              <button
+    <div className="space-y-5">
+      <TagSearchDropdown
+        open={showDropdown}
+        onOpenChange={setShowDropdown}
+        query={query}
+        debouncedQuery={debouncedQuery}
+        selectedIds={selectedIds}
+        onAddTag={addTag}
+      >
+        <div
+          onClick={() => inputRef.current?.focus()}
+          className="flex flex-wrap items-center gap-1.5 p-2 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white focus-within:bg-white focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 transition-all duration-200 cursor-text w-full min-h-[46px]"
+        >
+          <AnimatePresence initial={false}>
+            {tags.map((tag) => (
+              <motion.span
                 key={tag.id}
-                type="button"
-                onMouseDown={() => addTag(tag)}
-                className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-slate-50 text-left transition-colors"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.15 }}
+                className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-50 border border-brand-200 text-brand-700 text-[12px] font-semibold rounded-full select-none"
               >
-                <Tag size={12} className="text-slate-400 shrink-0" />
-                <span className="text-[13px] text-slate-700">{tag.name}</span>
-              </button>
+                <Tag size={11} aria-hidden="true" className="text-brand-500" />
+                {tag.name}
+                <button
+                  type="button"
+                  aria-label={`Remove tag ${tag.name}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeTag(tag.id);
+                  }}
+                  className="text-brand-400 hover:text-brand-700 transition-colors ml-0.5"
+                >
+                  <X size={11} aria-hidden="true" />
+                </button>
+              </motion.span>
             ))}
-            {query.trim() && !exactMatch && (
-              <button
-                type="button"
-                onMouseDown={handleCreateTag}
-                disabled={isCreating}
-                className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-brand-50 text-left transition-colors border-t border-slate-100 disabled:opacity-50"
-              >
-                <Tag size={12} className="text-brand-500 shrink-0" />
-                <span className="text-[13px] text-brand-600 font-medium">
-                  {isCreating ? 'Creating...' : `+ Create new tag: "${query.trim()}"`}
-                </span>
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+          </AnimatePresence>
 
-      <div className="space-y-2">
-        <p className="text-[11px] text-slate-400 font-medium uppercase tracking-wider">Popular Tags</p>
+          <input
+            ref={inputRef}
+            placeholder={tags.length === 0 ? 'Find or create a new tag...' : ''}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setShowDropdown(true);
+            }}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setShowDropdown(true)}
+            autoComplete="off"
+            className="flex-1 min-w-[140px] bg-transparent border-0 outline-none focus:ring-0 p-1 text-[13px] text-slate-800 placeholder-slate-400"
+          />
+        </div>
+      </TagSearchDropdown>
+
+      <div className="space-y-2.5">
+        <p className="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Popular Tags</p>
         <div className="flex flex-wrap gap-2">
-          {allTags.map((tag) => {
+          {popularTags.map((tag) => {
             const isSelected = selectedIds.includes(tag.id);
             return (
               <button
                 key={tag.id}
                 type="button"
                 onClick={() => togglePopular(tag)}
-                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-medium border transition-all ${
+                className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-medium border transition-all duration-200 ${
                   isSelected
                     ? 'bg-brand-500 border-brand-500 text-white shadow-sm'
                     : 'bg-white border-slate-200 text-slate-600 hover:border-brand-300 hover:text-brand-600 hover:bg-brand-50'
@@ -159,14 +140,14 @@ export function TagsSection() {
               </button>
             );
           })}
-          {hasNextPage && (
+          {hasNextPopular && (
             <button
               type="button"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-              className="inline-flex items-center px-3 py-1 rounded-full text-[12px] font-medium border border-dashed border-slate-300 text-slate-400 hover:border-brand-300 hover:text-brand-500 transition-all disabled:opacity-50"
+              onClick={() => fetchNextPopular()}
+              disabled={isFetchingPopular}
+              className="inline-flex items-center px-3.5 py-1.5 rounded-full text-[12px] font-medium border border-dashed border-slate-300 text-slate-400 hover:border-brand-300 hover:text-brand-500 transition-all disabled:opacity-50"
             >
-              {isFetchingNextPage ? 'Loading...' : 'View More'}
+              {isFetchingPopular ? 'Loading...' : 'View More'}
             </button>
           )}
         </div>

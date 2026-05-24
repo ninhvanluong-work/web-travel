@@ -1,65 +1,125 @@
-# Spec: Product Tags Multi-Select
+---
+title: 'Product Tags Multi-Select & Search Builder'
+created: '2026-05-24'
+status: 'draft'
+domain: 'admin'
+related: 'spec-admin-product-fields-sync.md'
+---
 
-## 1. Vấn đề hiện tại (Context)
+# Spec: Product Tags Multi-Select & Premium Selection UX
 
-- **UI hiện tại (`TagsInputField`)**: Cho phép người dùng nhập tự do các tag dưới dạng chuỗi văn bản (ví dụ: gõ "Best Seller" và nhấn Enter).
-- **Yêu cầu API**: API tạo/cập nhật Sản phẩm không nhận mảng chuỗi văn bản (text), mà yêu cầu một mảng **`tagIds`** (các UUID của tag đã được định nghĩa sẵn trong hệ thống).
-  ```json
-  "tagIds": [
-    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-  ]
-  ```
-- **Vấn đề**: Việc nhập liệu tự do trên UI đang bị sai lệch (mismatch) hoàn toàn so với thiết kế của API.
+## 1. Vấn đề & Mục tiêu
 
-## 2. Giải pháp đề xuất (Proposed Solution)
+Trang quản trị sản phẩm (`ProductFormPage`) cung cấp tính năng gán nhãn (Tags) cho Tour du lịch. Cơ chế quản lý nhãn hiện tại gặp các bất cập sau:
 
-Thay thế cơ chế gõ văn bản tự do bằng một **Multi-Select Combobox** (Menu thả xuống cho phép tìm kiếm và chọn nhiều lựa chọn có sẵn).
+1. **Tải lượng dữ liệu quá lớn ở Popular Tags:** `pageSize: 49` gây lãng phí tài nguyên và làm loãng khu vực hiển thị.
+2. **Trải nghiệm chọn nhãn bị ngắt quãng:** Nhấp chọn tag phổ biến → `addTag` luôn gọi `inputRef.current?.focus()` → dropdown tự mở che khuất giao diện.
+3. **Dropdown tìm kiếm chật hẹp:** `max-h-48` (192px) hiển thị quá ít gợi ý, dùng `absolute div` dễ bị cắt bởi `overflow-hidden` của container cha.
+4. **False "Create new tag":** Khi pageSize nhỏ, `exactMatch` chỉ check trong tags đã load → tag tồn tại ở trang chưa load vẫn bị coi là mới.
 
-May mắn là trong thư mục `src/components/ui/` đã có sẵn component **`MultipleAutoComplete`** (`multiple-autocomplete.tsx`), được build dựa trên `Command` (cmdk) và `Popover`. Component này hoàn toàn phù hợp để giải quyết bài toán này.
+**Mục tiêu:**
 
-## 3. Các thay đổi kỹ thuật chi tiết (Implementation Details)
+- Popular Tags: `pageSize=10` + infinite scroll.
+- Ô search: infinite scroll `pageSize=10`; bổ sung API `searchTag` riêng để check existence trước khi cho phép create.
+- Fix focus: `addTag` nhận flag `shouldFocus`, Popular Tags click không focus input.
+- Nâng cấp dropdown: Radix `Popover` + `max-h-72` + `w-[var(--radix-popover-trigger-width)]`.
+- Không thay đổi `toApiPayload` — `tagIds` đang đúng, backend nhận đúng field này.
 
-### 3.1 Cập nhật Validation Schema
+---
 
-File: `src/lib/validations/product.ts`
+## 2. Hành vi mong muốn (User Experience)
 
-- Đổi tên biến `tags` thành `tagIds`.
-- Cập nhật kiểu dữ liệu thành mảng chứa UUID.
+| Hành động                            | Kết quả mong đợi                                                                                               |
+| :----------------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| **Tải trang**                        | Popular Tags hiển thị 10 nhãn đầu. Nếu còn thêm, nút _View More_ dạng dashed-border xuất hiện ở cuối.          |
+| **Nhấp "View More"**                 | Load thêm 10 nhãn tiếp theo, bổ sung vào danh sách.                                                            |
+| **Nhấp chọn/hủy tag ở Popular Tags** | Tag thay đổi trạng thái highlight. **Không focus input, không mở dropdown.**                                   |
+| **Click vào ô tìm kiếm**             | Radix Popover mở, dropdown rộng 100% trigger, `max-h-72`, bo tròn mềm, shadow premium.                         |
+| **Gõ keyword**                       | Gọi API search với keyword; khi scroll gần cuối dropdown load trang tiếp (infinite scroll).                    |
+| **Gõ tên tag và bấm "+ Create"**     | Gọi `searchTag` trước để xác nhận tag chưa tồn tại → nếu chưa có thì tạo mới → auto-add vào danh sách đã chọn. |
 
-```diff
-- tags: z.array(z.string()).optional().nullable(),
-+ tagIds: z.array(z.string().uuid()).optional().nullable(),
+---
+
+## 3. Thay đổi kỹ thuật
+
+### 3.1. `src/api/tag/requests.ts`
+
+```typescript
+// Đổi pageSize mặc định từ 49 → 10
+export async function getTagPage(page: number, pageSize = 10): Promise<TagPage> {
+  const { data } = await request.get<ApiTagListResponse>('/tag', {
+    params: { page, pageSize },
+  });
+  // ...
+}
+
+// Thêm search function (dùng cho ô tìm kiếm)
+export async function searchTagPage(keyword: string, page: number, pageSize = 10): Promise<TagPage> {
+  const { data } = await request.get<ApiTagListResponse>('/tag', {
+    params: { keyword, page, pageSize },
+  });
+  // ...
+}
 ```
 
-### 3.2 Luồng người dùng (User Flow)
+### 3.2. `src/api/tag/queries.ts`
 
-- **Hiển thị (View)**: Khi vào trang Edit Product, form sẽ tự động hiển thị các tags hiện đang gắn với sản phẩm đó (ví dụ: `Hehe`, `mountain`) dưới dạng các Badges/Chips.
-- **Thêm vào sản phẩm (Add/Select)**: Người dùng bấm vào ô nhập, một menu xổ xuống chứa danh sách các tag khả dụng. Người dùng có thể tìm kiếm và click chọn. Tag được chọn sẽ được gán vào sản phẩm.
-- **Xóa khỏi sản phẩm (Remove)**: Trên mỗi Badge/Chip của tag đang được gán, sẽ có nút `x`. Người dùng bấm vào để gỡ tag đó ra khỏi sản phẩm.
+```typescript
+// Truyền pageSize tường minh cho Popular Tags query
+export const useTagListInfinite = createInfiniteQuery<TagPage, void>({
+  primaryKey: '/tag',
+  queryFn: ({ pageParam = 1 }) => getTagPage(pageParam as number, 10),
+  getNextPageParam: (lastPage) => lastPage.nextPage,
+});
 
-### 3.3 Tái cấu trúc (Refactor) Component `TagsInputField`
+// Query mới cho ô search (infinite + keyword)
+export const useTagSearchInfinite = createInfiniteQuery<TagPage, { keyword: string }>({
+  primaryKey: '/tag/search',
+  queryFn: ({ queryKey: [, vars], pageParam = 1 }) => searchTagPage(vars.keyword, pageParam as number, 10),
+  getNextPageParam: (lastPage) => lastPage.nextPage,
+});
+```
 
-File: `src/modules/AdminProduct/ProductFormPage/components/shared/tags-input-field.tsx`
+### 3.3. `src/modules/AdminProduct/ProductFormPage/components/sections/tags-section.tsx`
 
-**Trước khi sửa:**
+**Thay đổi chính:**
 
-- Lưu trữ mảng chuỗi: `['Tag 1', 'Tag 2']`
-- Lắng nghe phím Enter/Phẩy để push text vào mảng.
+1. `addTag(tag, shouldFocus = true)` — Popular Tags gọi với `shouldFocus = false`.
+2. Thay `absolute div` bằng Radix `Popover` — xoá `onBlur + setTimeout`.
+3. Ô search dùng `useTagSearchInfinite` thay vì filter client-side từ `useTagListInfinite`.
+4. Khi user gõ, debounce 300ms rồi set keyword vào query.
+5. `exactMatch` check qua `searchTag` API trước khi hiện nút Create — nếu API trả về kết quả exact thì ẩn nút.
+6. Dropdown: `max-h-72`, `w-[var(--radix-popover-trigger-width)]`, shadow premium, góc bo `rounded-xl`.
+7. Infinite scroll trong dropdown: sentinel element ở cuối list, dùng `IntersectionObserver` để trigger `fetchNextPage`.
 
-**Sau khi sửa:**
+### 3.4. Không thay đổi
 
-- Import component `<MultipleAutoComplete />`.
-- Kết nối `options` của `<MultipleAutoComplete />` với danh sách Tags lấy từ API (hoặc Mock Data nếu chưa có API).
-  Format của option: `{ value: tag.id, label: tag.name }`
-- Khi người dùng click chọn trên menu, component sẽ tự động lưu mảng `tag.id` vào React Hook Form.
+- `src/api/product/requests.ts` — `toApiPayload` giữ nguyên `tagIds`.
+- Mọi logic display tag đã chọn (badge list + remove) giữ nguyên.
 
-### 3.3 Tích hợp vào API và Form
+---
 
-- Đảm bảo khi gửi data qua `adapter.ts` (nếu có) hoặc khi gọi hàm POST/PUT, trường `tagIds` được gửi đi thay vì `tags`.
+## 4. Dependencies & Conflicts
 
-## 4. Quyết định kỹ thuật (Technical Decisions)
+- **Depends on:** `@radix-ui/react-popover` (đã có qua `src/components/ui/popover.tsx`).
+- **Modifies:**
+  - `src/api/tag/requests.ts`
+  - `src/api/tag/queries.ts`
+  - `src/modules/AdminProduct/ProductFormPage/components/sections/tags-section.tsx`
+- **Must NOT break:**
+  - Tạo mới tag trong dropdown search.
+  - Hiển thị tags ở frontend sản phẩm.
+  - Lưu sản phẩm với tagIds.
+- **Conflicts with:** Không có.
 
-Do hiện tại hệ thống chưa có API `GET /tags` trả về danh sách Master Tags, mà chỉ có dữ liệu tags trả về kèm theo chi tiết từng Product. Do đó, chúng ta quyết định:
+---
 
-- **Sử dụng Dữ liệu giả (Mock Data)**: Tạm thời hard-code một mảng `MOCK_TAGS` trực tiếp trong component `TagsInputField` bằng cách lấy các ID và Name từ payload JSON mẫu mà team đã cung cấp (ví dụ: `Hehe`, `mountain`).
-- **Tương lai**: Khi backend phát triển xong API Master Tags, chỉ cần đổi mảng `MOCK_TAGS` này thành giá trị trả về từ `useQuery`.
+## 5. Kế hoạch kiểm thử
+
+1. **Popular Tags pageSize:** F12 Network → `GET /tag` truyền `pageSize=10`.
+2. **Infinite scroll Popular Tags:** Click View More → load thêm 10 tags, không reload trang.
+3. **Click Popular Tags không focus:** Click 3 tags liên tiếp → không có dropdown mở, input không được focus.
+4. **Dropdown search:** Click input → Popover mở đúng width, `max-h-72`, scroll mượt.
+5. **Search infinite scroll:** Gõ keyword, scroll xuống cuối dropdown → load trang tiếp.
+6. **Không tạo duplicate:** Gõ tên tag đã có → nút "+ Create" không xuất hiện.
+7. **Tạo tag mới & lưu:** Tạo tag `"Adventure Nature"` → Save → F12 confirm `tagIds` có ID tag mới → F5 reload vẫn hiển thị đúng.
