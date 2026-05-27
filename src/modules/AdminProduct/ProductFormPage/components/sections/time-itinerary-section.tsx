@@ -1,5 +1,5 @@
 import { Calendar, Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -19,9 +19,18 @@ export function TimeItinerarySection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const dragIndex = useRef<number | null>(null);
 
+  // Keep order values in sync with array positions after any mutation
+  const fieldIds = fields.map((f: any) => f._id ?? '').join(',');
+  useEffect(() => {
+    fields.forEach((_, i) => {
+      setValue(`itineraries.${i}.order`, i + 1);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldIds]);
+
   const handleAdd = () => {
     const newIndex = fields.length;
-    append({ name: '', featuredName: '', order: newIndex + 1, description: '' });
+    append({ name: `Day ${newIndex + 1}`, featuredName: '', order: newIndex + 1, description: '' });
     setOpenIndex(newIndex);
   };
 
@@ -45,7 +54,7 @@ export function TimeItinerarySection() {
     insert(index + 1, {
       name: current.name,
       featuredName: current.featuredName,
-      order: current.order,
+      order: index + 2,
       description: current.description,
     });
     setOpenIndex(index + 1);
@@ -69,7 +78,7 @@ export function TimeItinerarySection() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div>
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-medium text-gray-700">

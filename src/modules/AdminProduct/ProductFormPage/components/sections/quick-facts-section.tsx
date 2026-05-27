@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ELEMENT_KEY_OPTIONS, type ProductFormValues } from '@/lib/validations/product';
 
+import { ElementCombobox } from '../shared/element-value-combobox';
+
 interface RowState {
   rowKey: string;
   key: string;
@@ -21,10 +23,6 @@ export function QuickFactsSection() {
 
   const [rows, setRows] = useState<RowState[]>([]);
 
-  // Re-sync rows whenever selectedIds or allElements change and they're out of sync.
-  // "Out of sync" = the confirmed element IDs in rows don't match form selectedIds.
-  // This handles: initial load, product data arriving after elements, and form.reset().
-  // It does NOT re-init when the user edits rows (because syncForm keeps them in sync).
   useEffect(() => {
     if (allElements.length === 0) return;
     const rowIds = new Set(rows.map((r) => r.elementId).filter(Boolean));
@@ -71,7 +69,6 @@ export function QuickFactsSection() {
     syncForm(newRows);
   };
 
-  // Keys that have at least one element in the API
   const availableKeys = new Set(allElements.map((e) => e.key));
   const usedKeys = rows.map((r) => r.key).filter(Boolean);
 
@@ -79,14 +76,13 @@ export function QuickFactsSection() {
     <div className="space-y-4">
       {rows.length === 0 && (
         <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-          <p className="text-[14px] font-medium text-slate-600">No quick facts configured</p>
+          <p className="text-[14px] font-medium text-slate-600">No configuration set</p>
           <p className="text-[13px] text-slate-400 mt-1">Click the button below to add quick facts for this tour</p>
         </div>
       )}
 
       <div className="space-y-3">
         {rows.map((row) => {
-          const elementOptions = allElements.filter((e) => e.key === row.key);
           const otherRowElementIds = rows
             .filter((r) => r.rowKey !== row.rowKey)
             .map((r) => r.elementId)
@@ -94,7 +90,6 @@ export function QuickFactsSection() {
 
           return (
             <div key={row.rowKey} className="flex items-center gap-4">
-              {/* Key selector */}
               <Select value={row.key} onValueChange={(v) => handleKeyChange(row.rowKey, v)}>
                 <SelectTrigger
                   inputSize="sm"
@@ -115,32 +110,15 @@ export function QuickFactsSection() {
                 </SelectContent>
               </Select>
 
-              {/* Element value selector */}
-              <div className="w-[360px] shrink-0">
-                <Select
-                  value={row.elementId}
-                  onValueChange={(v) => handleElementChange(row.rowKey, v)}
-                  disabled={!row.key}
-                >
-                  <SelectTrigger
-                    inputSize="sm"
-                    className="w-full bg-white border-slate-200 hover:bg-slate-50 transition-colors disabled:bg-slate-50 disabled:text-slate-400"
-                  >
-                    <SelectValue placeholder={row.key ? 'Select value...' : 'Select type first...'} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {elementOptions
-                      .filter((e) => !otherRowElementIds.includes(e.id))
-                      .map((e) => (
-                        <SelectItem key={e.id} value={e.id}>
-                          {e.name}
-                        </SelectItem>
-                      ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <ElementCombobox
+                rowKey={row.rowKey}
+                elementKey={row.key}
+                selectedId={row.elementId}
+                allElements={allElements}
+                otherSelectedIds={otherRowElementIds}
+                onChange={handleElementChange}
+              />
 
-              {/* Delete */}
               <button
                 type="button"
                 onClick={() => removeRow(row.rowKey)}
