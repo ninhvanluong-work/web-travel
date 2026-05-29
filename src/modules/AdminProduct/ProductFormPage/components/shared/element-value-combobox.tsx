@@ -14,6 +14,7 @@ interface ElementComboboxProps {
   allElements: ApiElementItem[];
   otherSelectedIds: string[];
   onChange: (rowKey: string, elementId: string) => void;
+  className?: string;
 }
 
 export function ElementCombobox({
@@ -23,6 +24,7 @@ export function ElementCombobox({
   allElements,
   otherSelectedIds,
   onChange,
+  className,
 }: ElementComboboxProps) {
   const queryClient = useQueryClient();
   const { mutateAsync: createEl, isPending: isCreating } = useCreateElement();
@@ -91,7 +93,7 @@ export function ElementCombobox({
     ) : undefined;
 
   return (
-    <div className="relative w-[360px] shrink-0">
+    <div className={className ?? 'relative w-[360px] shrink-0'}>
       <Input
         ref={inputRef}
         size="sm"

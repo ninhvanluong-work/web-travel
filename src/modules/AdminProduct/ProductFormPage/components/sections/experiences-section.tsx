@@ -49,8 +49,8 @@ function DraggableExperienceItem({
           <Menu size={16} />
         </div>
 
-        <div className="flex-1 flex flex-col sm:flex-row gap-6 min-w-0">
-          <div className="shrink-0 w-full max-w-[280px] sm:w-[240px]">
+        <div className="flex-1 flex flex-col gap-4 min-w-0">
+          <div className="w-full">
             <FormField
               control={control}
               name={`experiences.${index}.imageUrl`}
@@ -58,7 +58,7 @@ function DraggableExperienceItem({
             />
           </div>
 
-          <div className="flex-1 w-full min-w-0 space-y-4 pr-6 sm:pr-8">
+          <div className="flex-1 w-full min-w-0 space-y-4 pr-6">
             <FormField
               control={control}
               name={`experiences.${index}.title`}
@@ -162,7 +162,7 @@ export function ExperiencesSection() {
         </div>
       )}
 
-      <Reorder.Group axis="y" values={displayOrder} onReorder={handleReorder} className="space-y-4">
+      <Reorder.Group axis="y" values={displayOrder} onReorder={handleReorder} className="grid grid-cols-2 gap-4">
         {displayOrder.map((item) => {
           const fieldIndex = fields.findIndex((f) => f.id === item.id);
           if (fieldIndex === -1) return null;

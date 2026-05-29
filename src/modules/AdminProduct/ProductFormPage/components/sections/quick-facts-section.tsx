@@ -81,7 +81,7 @@ export function QuickFactsSection() {
         </div>
       )}
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
         {rows.map((row) => {
           const otherRowElementIds = rows
             .filter((r) => r.rowKey !== row.rowKey)
@@ -89,13 +89,13 @@ export function QuickFactsSection() {
             .filter(Boolean);
 
           return (
-            <div key={row.rowKey} className="flex items-center gap-4">
+            <div key={row.rowKey} className="flex items-center gap-2">
               <Select value={row.key} onValueChange={(v) => handleKeyChange(row.rowKey, v)}>
                 <SelectTrigger
                   inputSize="sm"
-                  className="w-[240px] shrink-0 bg-slate-50/50 border-slate-200 hover:bg-white transition-colors"
+                  className="w-[130px] shrink-0 bg-slate-50/50 border-slate-200 hover:bg-white transition-colors"
                 >
-                  <SelectValue placeholder="Select fact type..." />
+                  <SelectValue placeholder="Select type..." />
                 </SelectTrigger>
                 <SelectContent>
                   {ELEMENT_KEY_OPTIONS.filter((opt) => availableKeys.has(opt.value)).map((opt) => (
@@ -117,14 +117,15 @@ export function QuickFactsSection() {
                 allElements={allElements}
                 otherSelectedIds={otherRowElementIds}
                 onChange={handleElementChange}
+                className="relative flex-1 min-w-0"
               />
 
               <button
                 type="button"
                 onClick={() => removeRow(row.rowKey)}
-                className="shrink-0 p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                className="shrink-0 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
               >
-                <Trash2 size={15} />
+                <Trash2 size={14} />
               </button>
             </div>
           );

@@ -3,6 +3,7 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { PriceInput } from '@/components/ui/price-input';
 import { TextArea } from '@/components/ui/textarea';
 import { generateSlug, type ProductFormValues } from '@/lib/validations/product';
 
@@ -64,9 +65,10 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
       {/* destination + supplier + tour guide */}
       <TourMetadataSelects />
 
-      {/* minPrice + video */}
-      <div className="flex flex-row gap-5">
-        <div className="flex-1 min-w-0">
+      {/* 2-column: left = price + short desc, right = video + highlights */}
+      <div className="grid grid-cols-2 gap-5 pt-4 border-t border-slate-100">
+        {/* Left column */}
+        <div className="space-y-5">
           <FormField
             control={control}
             name="minPrice"
@@ -74,18 +76,27 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
               <FormItem className="space-y-1.5">
                 <FormLabel className="text-[13px] text-slate-500 font-medium">Starting Price</FormLabel>
                 <FormControl>
-                  <Input
-                    type="number"
-                    size="sm"
-                    fullWidth
-                    min={0}
-                    step={1000}
-                    placeholder="0"
-                    suffix={<span className="text-[11px] font-bold text-slate-400 select-none">VNĐ</span>}
+                  <PriceInput value={field.value ?? 0} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={control}
+            name="shortDescription"
+            render={({ field }) => (
+              <FormItem className="space-y-1.5">
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Short Description</FormLabel>
+                <FormControl>
+                  <TextArea
+                    placeholder="Enter short description of the tour..."
+                    className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs"
+                    maxLength={500}
+                    rows={4}
                     {...field}
-                    onKeyDown={(e) => {
-                      if (e.key === '-' || e.key === 'e') e.preventDefault();
-                    }}
+                    value={field.value ?? ''}
                   />
                 </FormControl>
                 <FormMessage />
@@ -94,53 +105,30 @@ export function BasicInfoSection({ isEdit }: { isEdit: boolean }) {
           />
         </div>
 
-        <div className="flex-1 min-w-0">
+        {/* Right column */}
+        <div className="space-y-5">
           <VideoSearchField />
+
+          <FormField
+            control={control}
+            name="highlight"
+            render={({ field }) => (
+              <FormItem className="space-y-1.5">
+                <FormLabel className="text-[13px] text-slate-500 font-medium">Highlights</FormLabel>
+                <FormControl>
+                  <TextArea
+                    placeholder="Describe the tour highlights..."
+                    className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs italic font-medium text-slate-700"
+                    rows={4}
+                    {...field}
+                    value={field.value ?? ''}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
-      </div>
-
-      {/* shortDescription + highlight */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t border-slate-100">
-        <FormField
-          control={control}
-          name="shortDescription"
-          render={({ field }) => (
-            <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Short Description</FormLabel>
-              <FormControl>
-                <TextArea
-                  placeholder="Enter short description of the tour..."
-                  className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs"
-                  maxLength={500}
-                  rows={4}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={control}
-          name="highlight"
-          render={({ field }) => (
-            <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Highlights</FormLabel>
-              <FormControl>
-                <TextArea
-                  placeholder="Describe the tour highlights..."
-                  className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs italic font-medium text-slate-700"
-                  rows={4}
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { Icons } from '@/assets/icons';
+import { Button } from '@/components/ui/button';
 
 interface OperatorBlockProps {
   initials: string;
@@ -60,9 +61,15 @@ export default function OperatorBlock({
         </div>
 
         {/* View profile */}
-        <button className="w-full py-3 text-center text-[13px] border-t border-black/[0.08]">
+        <Button
+          variant="ghost"
+          rounded="none"
+          size="icon"
+          blur={false}
+          className="w-full py-3 text-center text-[13px] border-t border-black/[0.08] hover:bg-[#F8F6F0] h-auto font-normal active:scale-95"
+        >
           View operator profile →
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import { Film, X } from 'lucide-react';
+import { Check, Film, Search, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -43,69 +43,104 @@ export function VideoSearchField() {
       control={control}
       name="videoId"
       render={({ field }) => (
-        <FormItem className="space-y-1.5 relative">
+        <FormItem className="space-y-1.5">
           <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Video</FormLabel>
-          <div className="relative">
-            <Input
-              size="sm"
-              fullWidth
-              placeholder="Search videos..."
-              prefix={<Film size={14} className="text-slate-400" />}
-              suffix={
-                field.value && selectedVideo ? (
-                  <div className="flex items-center gap-1.5 px-2 py-0.5 bg-brand-50 border border-brand-100 rounded-md max-w-[150px]">
-                    <span className="text-[10px] text-brand-600 truncate font-semibold uppercase">
-                      {selectedVideo.title}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setValue('videoId', null);
-                        setSelectedVideo(null);
-                      }}
-                      className="text-brand-400 hover:text-brand-600 shrink-0"
-                    >
-                      <X size={11} />
-                    </button>
+
+          {field.value && selectedVideo ? (
+            <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200 group hover:border-brand-200 hover:bg-brand-50/30 transition-colors">
+              <div className="w-14 h-9 rounded-lg overflow-hidden bg-slate-200 shrink-0 ring-1 ring-black/5">
+                {selectedVideo.thumbnail ? (
+                  <img src={selectedVideo.thumbnail} alt="" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <Film size={13} className="text-slate-400" />
                   </div>
-                ) : undefined
-              }
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setShowDropdown(true);
-              }}
-              onFocus={() => setShowDropdown(true)}
-              onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
-            />
-            {showDropdown && (
-              <div className="absolute z-50 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-xl border border-slate-200 py-1 max-h-72 overflow-y-auto">
-                {isSearching && <div className="py-6 text-center text-[11px] text-slate-400 italic">Searching...</div>}
-                {!isSearching && results.length === 0 && (
-                  <div className="py-6 text-center text-[12px] text-slate-400">No videos found</div>
                 )}
-                {!isSearching &&
-                  results.map((video) => (
-                    <button
-                      key={video.id}
-                      type="button"
-                      className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-slate-50 text-left transition-colors"
-                      onMouseDown={() => {
-                        field.onChange(video.id);
-                        setSelectedVideo(video);
-                        setQuery('');
-                        setShowDropdown(false);
-                      }}
-                    >
-                      <div className="w-12 h-12 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden ring-1 ring-slate-200">
-                        {video.thumbnail && <img src={video.thumbnail} alt="" className="w-full h-full object-cover" />}
-                      </div>
-                      <span className="text-[13px] text-slate-700 font-medium truncate">{video.title}</span>
-                    </button>
-                  ))}
               </div>
-            )}
-          </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[12px] font-semibold text-slate-700 truncate leading-tight">{selectedVideo.title}</p>
+                <p className="text-[10px] text-brand-500 font-medium mt-0.5 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block" />
+                  Linked
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setValue('videoId', null);
+                  setSelectedVideo(null);
+                }}
+                className="w-6 h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-rose-500 hover:bg-rose-50 transition-colors shrink-0"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ) : (
+            <div className="relative">
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10"
+              />
+              <Input
+                size="sm"
+                fullWidth
+                placeholder="Search videos..."
+                className="pl-9"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setShowDropdown(true);
+                }}
+                onFocus={() => setShowDropdown(true)}
+                onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+              />
+
+              {showDropdown && (
+                <div className="absolute z-50 top-full left-0 right-0 mt-1.5 bg-white rounded-xl shadow-lg border border-slate-200/80 py-1 max-h-60 overflow-y-auto">
+                  {isSearching && (
+                    <div className="flex items-center justify-center gap-2 py-5">
+                      <div className="w-3.5 h-3.5 border-2 border-slate-200 border-t-brand-400 rounded-full animate-spin" />
+                      <span className="text-[11px] text-slate-400">Searching...</span>
+                    </div>
+                  )}
+
+                  {!isSearching && results.length === 0 && (
+                    <div className="py-5 flex flex-col items-center gap-1.5">
+                      <Film size={20} className="text-slate-300" />
+                      <span className="text-[12px] text-slate-400">No videos found</span>
+                    </div>
+                  )}
+
+                  {!isSearching &&
+                    results.map((video) => (
+                      <button
+                        key={video.id}
+                        type="button"
+                        className="w-full flex items-center gap-3 px-3 py-2 hover:bg-slate-50 text-left transition-colors group/item"
+                        onMouseDown={() => {
+                          field.onChange(video.id);
+                          setSelectedVideo(video);
+                          setQuery('');
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <div className="w-14 h-9 rounded-lg bg-slate-100 flex-shrink-0 overflow-hidden ring-1 ring-slate-200 group-hover/item:ring-brand-200 transition-all">
+                          {video.thumbnail ? (
+                            <img src={video.thumbnail} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Film size={12} className="text-slate-300" />
+                            </div>
+                          )}
+                        </div>
+                        <span className="text-[13px] text-slate-700 font-medium truncate flex-1">{video.title}</span>
+                        {field.value === video.id && <Check size={13} className="text-brand-500 shrink-0" />}
+                      </button>
+                    ))}
+                </div>
+              )}
+            </div>
+          )}
         </FormItem>
       )}
     />
