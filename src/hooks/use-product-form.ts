@@ -3,10 +3,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
 import { useCreateProduct, useProductById, usePublishProduct, useUpdateProduct } from '@/api/product';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
+import { useAlertStore } from '@/stores/use-alert-store';
 import { ROUTE } from '@/types/routes';
 
 import { useProductDraft } from './use-product-draft';
@@ -96,21 +96,23 @@ export function useProductForm(productId?: string) {
     });
   }, [productData, form]);
 
+  const { addAlert } = useAlertStore.getState();
+
   const createMutation = useCreateProduct({
     onSuccess: () => {
       draft.clearDraftOnSuccess();
       invalidateList();
-      toast.success('Tour created successfully');
+      addAlert({ type: 'success', title: 'Tour created successfully' });
       router.push(ROUTE.ADMIN_PRODUCTS);
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'An error occurred, please try again');
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
     },
   });
 
   const updateMutation = useUpdateProduct({
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'An error occurred, please try again');
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
     },
   });
 
@@ -118,11 +120,11 @@ export function useProductForm(productId?: string) {
     onSuccess: () => {
       draft.clearDraftOnSuccess();
       invalidateList();
-      toast.success('Tour published successfully');
+      addAlert({ type: 'success', title: 'Tour published successfully' });
       router.push(ROUTE.ADMIN_PRODUCTS);
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'Failed to publish tour');
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Failed to publish tour' });
     },
   });
 
@@ -134,7 +136,7 @@ export function useProductForm(productId?: string) {
           onSuccess: () => {
             draft.clearDraftOnSuccess();
             invalidateList();
-            toast.success('Tour updated successfully');
+            addAlert({ type: 'success', title: 'Tour updated successfully' });
             router.push(ROUTE.ADMIN_PRODUCTS);
           },
         }

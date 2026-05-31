@@ -1,13 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Loader2, Plus, X } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { toast } from 'sonner';
 
 import { useCreateElement } from '@/api/element';
 import type { ApiElementItem } from '@/api/element/types';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 interface ElementComboboxProps {
   rowKey: string;
@@ -86,12 +86,11 @@ export function ElementCombobox({
       onChange(rowKey, newEl.id);
       setQuery('');
       setOpen(false);
-      toast.success(`Created element "${newEl.name}" successfully`);
+      useAlertStore.getState().addAlert({ type: 'success', title: `Created element "${newEl.name}" successfully` });
     } catch (err: unknown) {
       const axiosMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       const msg = axiosMsg ?? (err instanceof Error ? err.message : 'Failed to create element');
-      console.error('Error creating element:', err);
-      toast.error(msg);
+      useAlertStore.getState().addAlert({ type: 'error', title: msg });
     }
   }
 

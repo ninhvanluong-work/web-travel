@@ -9,6 +9,7 @@ import type { ReactNode } from 'react';
 
 import { fontSans, fontSerif } from '@/assets/fonts';
 import { MainLayout, ModuleLayout } from '@/components/layouts';
+import { GlobalAlertProvider } from '@/components/ui/Alert/global-alert-provider';
 import { siteConfig } from '@/config/site';
 import Provider from '@/lib/Provider';
 import type { NextPageWithLayout } from '@/types';
@@ -53,6 +54,7 @@ const MyApp = (props: AppPropsWithLayout) => {
       `}</style>
       <div>
         <Provider>
+          <GlobalAlertProvider />
           <ModuleLayout>{getLayout(<Component {...pageProps} />)}</ModuleLayout>
         </Provider>
       </div>

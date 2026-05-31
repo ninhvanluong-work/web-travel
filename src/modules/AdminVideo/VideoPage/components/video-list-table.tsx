@@ -1,7 +1,7 @@
 import { Film, Search } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { Input } from '@/components/ui/input';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import type { PageSizeOption } from './use-video-list-paged';
 import { PAGE_SIZE_OPTIONS, useVideoListPaged } from './use-video-list-paged';
@@ -16,13 +16,14 @@ export function VideoListTable({ refreshKey }: Props) {
     useVideoListPaged(refreshKey);
 
   function handleCopyEmbed(embedUrl: string) {
+    const { addAlert } = useAlertStore.getState();
     navigator.clipboard
       .writeText(embedUrl)
       .then(() => {
-        toast.success('Đã copy embed URL');
+        addAlert({ type: 'success', title: 'Đã copy embed URL' });
       })
       .catch(() => {
-        toast.error('Không thể copy');
+        addAlert({ type: 'error', title: 'Không thể copy' });
       });
   }
 
