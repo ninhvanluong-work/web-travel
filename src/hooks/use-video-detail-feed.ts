@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { IVideo } from '@/api/video';
 import { useInfiniteListVideo, useVideoBySlug } from '@/api/video';
 import { useVideoListStore } from '@/stores';
+import { ROUTE } from '@/types/routes';
 
 const PREFETCH_OFFSET = 2;
 
@@ -153,7 +154,7 @@ export const useVideoDetailFeed = (currentSlug: string, onIndexChange?: (newInde
       if (newIndex >= 0) setCurrentIndex(newIndex);
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
-        router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
+        router.replace(ROUTE.VIDEO_DETAIL_PATH(videoSlug), undefined, { shallow: true });
       });
     },
     [router]
@@ -170,7 +171,7 @@ export const useVideoDetailFeed = (currentSlug: string, onIndexChange?: (newInde
       }
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
       rafRef.current = requestAnimationFrame(() => {
-        router.replace(`/video/${videoSlug}`, undefined, { shallow: true });
+        router.replace(ROUTE.VIDEO_DETAIL_PATH(videoSlug), undefined, { shallow: true });
       });
     },
     [router]

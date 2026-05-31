@@ -1,6 +1,7 @@
 import { AlertTriangle, AlignLeft, Calendar, FileText, MapPin, Sparkles, Tag, Tv } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
+import { Button } from '@/components/ui/button';
 import { FormWrapper } from '@/components/ui/form';
 import { useProductForm } from '@/hooks/use-product-form';
 import { useScrollSpy } from '@/hooks/use-scroll-spy';
@@ -37,9 +38,9 @@ function SectionCard({ id, label, children }: { id: string; label: string; child
   return (
     <div
       id={id}
-      className="scroll-mt-20 overflow-hidden bg-white rounded-2xl border border-slate-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
+      className="scroll-mt-20 bg-white rounded-2xl border border-slate-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
     >
-      <div className="border-b border-slate-100 dark:border-gray-800 px-5 py-4">
+      <div className="border-b border-slate-100 dark:border-gray-800 px-5 py-4 rounded-t-2xl">
         <h2 className="text-base font-bold text-slate-800 dark:text-white/90 tracking-tight">{label}</h2>
       </div>
       <div className="px-5 pt-5 pb-5">{children}</div>
@@ -97,19 +98,19 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
             {/* Scroll-spy nav */}
             <div className="hidden lg:flex flex-col gap-0.5 sticky top-[130px] w-40 shrink-0 pt-4">
               {NAV_SECTIONS.map(({ id, label, icon: Icon }) => (
-                <button
+                <Button
                   key={id}
-                  type="button"
+                  variant="ghost"
                   onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left ${
+                  className={`w-full justify-start gap-2 px-3 py-2 rounded-lg text-xs font-medium text-left ${
                     activeSection === id
-                      ? 'bg-brand-50 text-brand-600'
+                      ? 'bg-brand-50 text-brand-600 hover:bg-brand-50 hover:text-brand-600'
                       : 'text-gray-500 hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200'
                   }`}
                 >
                   <Icon size={13} className="shrink-0" />
                   {label}
-                </button>
+                </Button>
               ))}
             </div>
 

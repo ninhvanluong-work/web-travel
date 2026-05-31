@@ -34,14 +34,14 @@ function SortableHeader({
 }) {
   const active = sort?.key === sortKey;
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
       onClick={() => onSort(sortKey)}
-      className="flex items-center gap-1 group hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+      className="flex items-center gap-1 px-0 hover:bg-transparent hover:text-gray-700 dark:hover:text-gray-200"
     >
       {label}
-      <ChevronsUpDown size={12} className={active ? 'text-brand-500' : 'text-gray-400 group-hover:text-gray-500'} />
-    </button>
+      <ChevronsUpDown size={12} className={active ? 'text-brand-500' : 'text-gray-400'} />
+    </Button>
   );
 }
 

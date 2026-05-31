@@ -93,7 +93,7 @@ export function QuickFactsSection() {
               <Select value={row.key} onValueChange={(v) => handleKeyChange(row.rowKey, v)}>
                 <SelectTrigger
                   inputSize="sm"
-                  className="w-[130px] shrink-0 bg-slate-50/50 border-slate-200 hover:bg-white transition-colors"
+                  className="w-[150px] shrink-0 bg-slate-50/50 border-slate-200 hover:bg-white transition-colors"
                 >
                   <SelectValue placeholder="Select type..." />
                 </SelectTrigger>
@@ -120,13 +120,14 @@ export function QuickFactsSection() {
                 className="relative flex-1 min-w-0"
               />
 
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => removeRow(row.rowKey)}
-                className="shrink-0 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                className="shrink-0 p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg"
               >
                 <Trash2 size={14} />
-              </button>
+              </Button>
             </div>
           );
         })}

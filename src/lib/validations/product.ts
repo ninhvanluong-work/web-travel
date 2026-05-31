@@ -6,12 +6,6 @@ export const PRODUCT_STATUS = {
   hidden: 'hidden',
 } as const;
 
-export const DURATION_TYPES = [
-  { label: 'Ngày', value: 'day' },
-  { label: 'Đêm', value: 'night' },
-  { label: 'Giờ', value: 'hour' },
-];
-
 export const STATUS_OPTIONS = [
   { label: 'Bản nháp', value: 'draft' },
   { label: 'Công khai', value: 'published' },
@@ -61,8 +55,6 @@ export const productSchema = z.object({
   destinationId: z.string().uuid('Invalid destination').optional().nullable(),
   supplierId: z.string().uuid('Invalid supplier').optional().nullable(),
   tourGuideIds: z.array(z.string().uuid()).optional().default([]),
-  duration: z.coerce.number().int().min(1).default(1),
-  durationType: z.string().default('day'),
   highlight: z.string().optional().nullable(),
   include: z.string().optional().nullable(),
   exclude: z.string().optional().nullable(),

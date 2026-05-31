@@ -69,8 +69,6 @@ function toApiPayload(values: ProductFormValues) {
     thumbnail: values.thumbnail || undefined,
     images: (values.images ?? []).map((img) => img.url).filter(Boolean),
     itineraryImage: values.itineraryImage || undefined,
-    duration: values.duration,
-    durationType: values.durationType,
     highlight: values.highlight || undefined,
     include: values.include || undefined,
     exclude: values.exclude || undefined,

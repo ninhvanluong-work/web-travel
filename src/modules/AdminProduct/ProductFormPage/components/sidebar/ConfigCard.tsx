@@ -1,9 +1,8 @@
 import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DURATION_TYPES, type ProductFormValues, STATUS_OPTIONS } from '@/lib/validations/product';
+import { type ProductFormValues, STATUS_OPTIONS } from '@/lib/validations/product';
 
 export function ConfigCard() {
   const { control } = useFormContext<ProductFormValues>();
@@ -37,50 +36,6 @@ export function ConfigCard() {
           </FormItem>
         )}
       />
-
-      {/* Duration */}
-      <div className="flex gap-2">
-        <FormField
-          control={control}
-          name="duration"
-          render={({ field }) => (
-            <div className="flex-1">
-              <FormItem>
-                <FormLabel>Thời lượng</FormLabel>
-                <FormControl>
-                  <Input type="number" size="sm" min={1} {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </div>
-          )}
-        />
-        <FormField
-          control={control}
-          name="durationType"
-          render={({ field }) => (
-            <div className="w-28">
-              <FormItem>
-                <FormLabel>Đơn vị</FormLabel>
-                <FormControl>
-                  <Select value={field.value ?? ''} onValueChange={field.onChange}>
-                    <SelectTrigger inputSize="sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {DURATION_TYPES.map((t) => (
-                        <SelectItem key={t.value} value={t.value}>
-                          {t.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-              </FormItem>
-            </div>
-          )}
-        />
-      </div>
     </div>
   );
 }

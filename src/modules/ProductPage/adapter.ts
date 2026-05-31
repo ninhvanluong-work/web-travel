@@ -108,7 +108,7 @@ function mapOperator(supplier: ApiSupplier | null): MockProduct['operator'] {
   };
 }
 
-function mapElements(elements: ApiElementItem[], fallbackDuration: string): MockProduct['quickFacts'] {
+function mapElements(elements: ApiElementItem[]): MockProduct['quickFacts'] {
   const byKey = elements.reduce<Record<string, string>>((acc, el) => {
     if (el.isActive) acc[el.key] = el.name;
     return acc;
@@ -116,7 +116,7 @@ function mapElements(elements: ApiElementItem[], fallbackDuration: string): Mock
 
   const dayVal = byKey.day;
   const nightVal = byKey.night;
-  let duration = fallbackDuration;
+  let duration = '—';
   if (dayVal || nightVal) {
     const parts: string[] = [];
     if (dayVal) {
@@ -190,7 +190,7 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     cancellationDeadlineHours: 24,
 
     // ── Quick Facts ───────────────────────────────────────────────────────
-    quickFacts: mapElements(data.elements ?? [], `${data.duration} ${data.durationType}`),
+    quickFacts: mapElements(data.elements ?? []),
 
     // ── Highlights ────────────────────────────────────────────────────────
     highlights: mapExperience(data.experience ?? []),

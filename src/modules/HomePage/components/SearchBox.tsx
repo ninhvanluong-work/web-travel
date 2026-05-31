@@ -4,6 +4,7 @@ import React from 'react';
 
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { ROUTE } from '@/types/routes';
 
 interface SearchBoxProps {
   autoFocus?: boolean;
@@ -19,9 +20,9 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
     const handleSearch = () => {
       const query = searchValue.trim();
       if (query) {
-        router.push(`/search?q=${encodeURIComponent(query)}`);
-      } else if (router.pathname !== '/search') {
-        router.push('/search');
+        router.push(`${ROUTE.SEARCH}?q=${encodeURIComponent(query)}`);
+      } else if (router.pathname !== ROUTE.SEARCH) {
+        router.push(ROUTE.SEARCH);
       }
     };
 

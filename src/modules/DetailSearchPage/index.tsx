@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useInfiniteListVideo } from '@/api/video';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
 import type { NextPageWithLayout } from '@/types';
+import { ROUTE } from '@/types/routes';
 
 import SearchInput from './components/SearchInput';
 import VideoGrid from './components/VideoGrid';
@@ -44,7 +45,9 @@ const DetailSearchPage: NextPageWithLayout = () => {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur();
     }
-    router.replace(`/search${trimmed ? `?q=${encodeURIComponent(trimmed)}` : ''}`, undefined, { shallow: true });
+    router.replace(`${ROUTE.SEARCH}${trimmed ? `?q=${encodeURIComponent(trimmed)}` : ''}`, undefined, {
+      shallow: true,
+    });
   };
 
   const { data, isLoading, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteListVideo({

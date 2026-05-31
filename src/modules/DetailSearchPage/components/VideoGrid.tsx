@@ -5,6 +5,7 @@ import type { IVideo, IVideoPage } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { useInView } from '@/hooks/useInview';
 import { useVideoListStore } from '@/stores';
+import { ROUTE } from '@/types/routes';
 
 import VideoCard from './VideoCard';
 
@@ -88,7 +89,7 @@ const VideoGrid = ({
       }
 
       setList(videosFromClicked, query, video, excludeIds, nextCursor);
-      router.push(`/video/${video.slug}?autoplay=true`);
+      router.push(`${ROUTE.VIDEO_DETAIL_PATH(video.slug)}?autoplay=true`);
     },
     [router, videos, pages, query, setList]
   );

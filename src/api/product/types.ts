@@ -154,8 +154,8 @@ export interface ApiProductDetail {
   readBefore: ApiReadBeforeItem[];
   experience: ApiExperienceItem[];
   itineraryImage: string | null;
-  duration: number;
-  durationType: string;
+  duration?: number;
+  durationType?: string;
   highlight: string | null;
   include: string | null;
   exclude: string | null;
