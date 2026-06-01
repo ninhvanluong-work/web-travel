@@ -72,7 +72,7 @@ export function useProductForm(productId?: string) {
       thumbnail: productData.thumbnail,
       itineraryImage: productData.itineraryImage,
       images: (productData.images ?? []).map((url) => ({ url })),
-      videoId: (productData as any).heroVideoId ?? (productData as any).videoId ?? null,
+      videoId: productData.heroVideo?.id ?? null,
       shortDescription: productData.shortDescription ?? null,
       tags: (productData.tags ?? []).map((t) => ({ id: t.id, name: t.name })),
       banner: (productData.banner ?? []).map((b) => ({ url: b.url, type: b.type })),

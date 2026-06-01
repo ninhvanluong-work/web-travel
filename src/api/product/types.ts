@@ -167,6 +167,7 @@ export interface ApiProductDetail {
   supplierId: string | null;
   supplier: ApiSupplier | null;
   itineraries: ApiItineraryItem[];
+  heroVideo: { id: string; name: string; embedUrl: string; thumbnail: string } | null;
   tags: ApiTagItem[];
   tourGuides: ApiTourGuide[];
   elements: ApiElementItem[];

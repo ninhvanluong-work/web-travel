@@ -5,6 +5,20 @@ import * as tus from 'tus-js-client';
 import { createVideo } from '@/api/video/requests';
 import { Button } from '@/components/ui/button';
 
+function getOptimizedEmbedUrl(url: string): string {
+  if (!url) return '';
+  try {
+    const urlObj = new URL(url);
+    urlObj.searchParams.set('autoplay', 'false');
+    urlObj.searchParams.set('loop', 'true');
+    urlObj.searchParams.delete('muted');
+    return urlObj.toString();
+  } catch {
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}autoplay=false&loop=true`;
+  }
+}
+
 const BANNER_MAX_SIZE = 100 * 1024 * 1024;
 const BANNER_ALLOWED_TYPES = ['video/mp4', 'video/quicktime'];
 
@@ -115,7 +129,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
     if (value && !isBusy) {
       return (
         <iframe
-          src={value}
+          src={getOptimizedEmbedUrl(value)}
           className="w-full h-full absolute inset-0 border-0"
           allow="autoplay; fullscreen"
           allowFullScreen
@@ -165,7 +179,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
         <p className="text-[11px] text-red-500">
           {uploadState.message}{' '}
           <button type="button" className="underline" onClick={() => setUploadState({ status: 'idle' })}>
-            Thử lại
+            Try again
           </button>
         </p>
       )}

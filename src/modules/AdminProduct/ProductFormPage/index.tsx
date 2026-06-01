@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { FormWrapper } from '@/components/ui/form';
 import { useProductForm } from '@/hooks/use-product-form';
 import { useScrollSpy } from '@/hooks/use-scroll-spy';
+import type { ProductFormValues } from '@/lib/validations/product';
 
 import { DraftRecoveryBanner } from './components/draft-recovery-banner';
 import { ProductFormHeader } from './components/product-form-header';
@@ -12,6 +13,8 @@ import { BannerSection } from './components/sections/banner-section';
 import { BasicInfoSection } from './components/sections/basic-info-section';
 import { DetailsSection } from './components/sections/details-section';
 import { ExperiencesSection } from './components/sections/experiences-section';
+// import { ImagesSection } from './components/sections/images-section';
+// import { OptionsSection } from './components/sections/options-section';
 import { QuickFactsSection } from './components/sections/quick-facts-section';
 import { ReadBeforeSection } from './components/sections/read-before-section';
 import { TagsSection } from './components/sections/tags-section';
@@ -30,7 +33,30 @@ const NAV_SECTIONS = [
   { id: 'section-itinerary', label: 'Itinerary', icon: Calendar },
   { id: 'section-read-before', label: 'Notes', icon: AlertTriangle },
   { id: 'section-details', label: 'Details', icon: AlignLeft },
+  // { id: 'section-images', label: 'Images', icon: ImageIcon },
+  // { id: 'section-options', label: 'Pricing Options', icon: DollarSign },
 ];
+
+const SECTION_ERROR_FIELDS: Record<string, (keyof ProductFormValues)[]> = {
+  'section-banner': ['banner'],
+  'section-tags': ['tags'],
+  'section-overview': [
+    'name',
+    'slug',
+    'minPrice',
+    'shortDescription',
+    'highlight',
+    'destinationId',
+    'supplierId',
+    'tourGuideIds',
+    'videoId',
+  ],
+  'section-quick-facts': ['elementIds'],
+  'section-experiences': ['experiences'],
+  'section-itinerary': ['itineraries'],
+  'section-read-before': ['readBefores'],
+  'section-details': ['include', 'exclude'],
+};
 
 const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
 
@@ -49,7 +75,7 @@ function SectionCard({ id, label, children }: { id: string; label: string; child
 }
 
 export default function ProductFormPage({ productId }: ProductFormPageProps) {
-  const { form, isEdit, productData: _productData, onSubmit, onPublish, isPending, draft } = useProductForm(productId);
+  const { form, isEdit, productData, onSubmit, onPublish, isPending, draft } = useProductForm(productId);
 
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
@@ -59,26 +85,17 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
   }, [draft.hasDraft, isEdit]);
 
   const currentStatus = form.watch('status') ?? 'draft';
+  const { errors } = form.formState;
 
   const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }));
   const handleSaveChanges = form.handleSubmit((data) => onSubmit(data));
   const handlePublish = form.handleSubmit((data) => onPublish(data));
   const handleHide = form.handleSubmit((data) => onSubmit({ ...data, status: 'hidden' }));
 
+  const sectionHasError = (sectionId: string) => (SECTION_ERROR_FIELDS[sectionId] ?? []).some((f) => !!errors[f]);
+
   return (
     <div className="flex flex-col min-h-full bg-gray-50 dark:bg-gray-900">
-      <ProductFormHeader
-        isEdit={isEdit}
-        productId={productId}
-        currentStatus={currentStatus}
-        lastSaved={draft.lastSaved}
-        isPending={isPending}
-        onSaveDraft={handleSaveDraft}
-        onSaveChanges={handleSaveChanges}
-        onPublish={handlePublish}
-        onHide={handleHide}
-      />
-
       {showDraftBanner && (
         <DraftRecoveryBanner
           onRestore={() => {
@@ -91,6 +108,18 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
           }}
         />
       )}
+
+      <ProductFormHeader
+        isEdit={isEdit}
+        productId={productId}
+        currentStatus={currentStatus}
+        lastSaved={draft.lastSaved}
+        isPending={isPending}
+        onSaveDraft={handleSaveDraft}
+        onSaveChanges={handleSaveChanges}
+        onPublish={handlePublish}
+        onHide={handleHide}
+      />
 
       <div className="flex-1">
         <FormWrapper form={form} onSubmit={onSubmit}>
@@ -109,7 +138,10 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                   }`}
                 >
                   <Icon size={13} className="shrink-0" />
-                  {label}
+                  <span className="flex-1 text-left">{label}</span>
+                  {sectionHasError(id) && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
+                  )}
                 </Button>
               ))}
             </div>
@@ -123,7 +155,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                 <TagsSection />
               </SectionCard>
               <SectionCard id="section-overview" label="Product Overview">
-                <BasicInfoSection isEdit={isEdit} />
+                <BasicInfoSection isEdit={isEdit} heroVideo={productData?.heroVideo ?? null} />
               </SectionCard>
               <SectionCard id="section-quick-facts" label="Configuration">
                 <QuickFactsSection />
@@ -138,8 +170,27 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                 <ReadBeforeSection />
               </SectionCard>
               <SectionCard id="section-details" label="Details">
-                <DetailsSection />
+                {!isEdit || productData ? (
+                  <DetailsSection />
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-2 animate-pulse">
+                      <div className="h-4 bg-slate-200/80 rounded w-28" />
+                      <div className="h-[280px] bg-slate-100 border border-slate-100 rounded-xl" />
+                    </div>
+                    <div className="space-y-2 animate-pulse">
+                      <div className="h-4 bg-slate-200/80 rounded w-36" />
+                      <div className="h-[280px] bg-slate-100 border border-slate-100 rounded-xl" />
+                    </div>
+                  </div>
+                )}
               </SectionCard>
+              {/* <SectionCard id="section-images" label="Images">
+                  <ImagesSection />
+                </SectionCard> */}
+              {/* <SectionCard id="section-options" label="Pricing Options">
+                  <OptionsSection />
+                </SectionCard> */}
             </div>
           </div>
         </FormWrapper>

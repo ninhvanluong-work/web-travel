@@ -37,6 +37,8 @@ export function DescriptionEditorField() {
                 value={field.value ?? ''}
                 onEditorChange={(content) => field.onChange(content)}
                 init={{
+                  base_url: '/tinymce',
+                  suffix: '.min',
                   height: 280,
                   menubar: false,
                   statusbar: false,

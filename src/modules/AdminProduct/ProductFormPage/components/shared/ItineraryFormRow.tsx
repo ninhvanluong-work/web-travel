@@ -107,6 +107,8 @@ export function ItineraryFormRow({
                 value={value.description ?? ''}
                 onEditorChange={(content) => set({ description: content })}
                 init={{
+                  base_url: '/tinymce',
+                  suffix: '.min',
                   height: 260,
                   menubar: false,
                   statusbar: false,

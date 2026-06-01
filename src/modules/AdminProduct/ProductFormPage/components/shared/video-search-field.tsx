@@ -9,13 +9,34 @@ import { Input } from '@/components/ui/input';
 import { useDebounce } from '@/hooks/use-debounce';
 import type { ProductFormValues } from '@/lib/validations/product';
 
-export function VideoSearchField() {
+export function VideoSearchField({
+  initialVideo,
+}: {
+  initialVideo?: { id: string; title: string; thumbnail: string } | null;
+}) {
   const { control, watch, setValue } = useFormContext<ProductFormValues>();
   const currentVideoId = watch('videoId');
 
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<IVideo[]>([]);
-  const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(() => {
+    if (!initialVideo) return null;
+    return {
+      id: initialVideo.id,
+      slug: '',
+      title: initialVideo.title,
+      link: '',
+      shortUrl: '',
+      embedUrl: '',
+      thumbnail: initialVideo.thumbnail,
+      description: '',
+      likeCount: 0,
+      tag: null,
+      type: null,
+      uploadingStatus: null,
+      product: null,
+    };
+  });
   const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const debouncedQuery = useDebounce(query, 300);

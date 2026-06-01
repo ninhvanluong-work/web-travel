@@ -5,6 +5,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import type { ProductFormValues } from '@/lib/validations/product';
 
 const EDITOR_INIT = {
+  base_url: '/tinymce',
+  suffix: '.min',
   height: 280,
   menubar: true,
   statusbar: false,

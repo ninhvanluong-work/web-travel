@@ -1,11 +1,55 @@
+import { Reorder, useDragControls } from 'framer-motion';
 import { Calendar, Plus } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { type ItineraryFormValues, type ProductFormValues } from '@/lib/validations/product';
 
 import { ItineraryFormRow } from '../shared/ItineraryFormRow';
+
+function DraggableItineraryItem({
+  item,
+  index,
+  isOpen,
+  field,
+  onChange,
+  onRemove,
+  onClone,
+  onToggle,
+}: {
+  item: any;
+  index: number;
+  isOpen: boolean;
+  field: ItineraryFormValues;
+  onChange: (index: number, patch: Partial<ItineraryFormValues>) => void;
+  onRemove: (index: number) => void;
+  onClone: (index: number) => void;
+  onToggle: (index: number) => void;
+}) {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={item}
+      dragControls={dragControls}
+      dragListener={false}
+      whileDrag={{ scale: 1.01, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
+      className="rounded-xl"
+    >
+      <ItineraryFormRow
+        value={field}
+        index={index}
+        isOpen={isOpen}
+        dragHandleProps={{ onPointerDown: (e) => dragControls.start(e) }}
+        onChange={onChange}
+        onRemove={onRemove}
+        onClone={onClone}
+        onToggle={onToggle}
+      />
+    </Reorder.Item>
+  );
+}
 
 export function TimeItinerarySection() {
   const { control, setValue } = useFormContext<ProductFormValues>();
@@ -17,9 +61,7 @@ export function TimeItinerarySection() {
   const watchedItineraries = useWatch({ control, name: 'itineraries' }) as ItineraryFormValues[];
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const dragIndex = useRef<number | null>(null);
 
-  // Keep order values in sync with array positions after any mutation
   const fieldIds = fields.map((f: any) => f._id ?? '').join(',');
   useEffect(() => {
     fields.forEach((_, i) => {
@@ -64,17 +106,16 @@ export function TimeItinerarySection() {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
 
-  const handleDragStart = (index: number) => {
-    dragIndex.current = index;
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    const from = dragIndex.current;
-    if (from === null || from === index) return;
-    move(from, index);
-    dragIndex.current = index;
-    setOpenIndex(index);
+  const handleReorder = (newItems: typeof fields) => {
+    const oldIds = fields.map((f: any) => f._id);
+    const newIds = (newItems as typeof fields).map((f: any) => f._id);
+    for (let i = 0; i < newIds.length; i++) {
+      if (newIds[i] !== oldIds[i]) {
+        const from = oldIds.indexOf(newIds[i]);
+        move(from, i);
+        break;
+      }
+    }
   };
 
   return (
@@ -110,30 +151,24 @@ export function TimeItinerarySection() {
             <span className="text-xs">Click to add the first day</span>
           </button>
         ) : (
-          <div className="space-y-2">
+          <Reorder.Group axis="y" values={fields} onReorder={handleReorder} className="space-y-2">
             {fields.map((item, i) => {
               const field = (watchedItineraries?.[i] ?? item) as ItineraryFormValues;
               return (
-                <div
+                <DraggableItineraryItem
                   key={(item as any)._id ?? i}
-                  draggable
-                  onDragStart={() => handleDragStart(i)}
-                  onDragOver={(e) => handleDragOver(e, i)}
-                >
-                  <ItineraryFormRow
-                    value={field}
-                    index={i}
-                    isOpen={openIndex === i}
-                    dragHandleProps={{ onMouseDown: (e) => e.stopPropagation() }}
-                    onChange={handleChange}
-                    onRemove={handleRemove}
-                    onClone={handleClone}
-                    onToggle={handleToggle}
-                  />
-                </div>
+                  item={item}
+                  index={i}
+                  isOpen={openIndex === i}
+                  field={field}
+                  onChange={handleChange}
+                  onRemove={handleRemove}
+                  onClone={handleClone}
+                  onToggle={handleToggle}
+                />
               );
             })}
-          </div>
+          </Reorder.Group>
         )}
       </div>
     </div>
