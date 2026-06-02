@@ -16,9 +16,9 @@ interface Props {
 }
 
 const PRESETS = [
-  { label: 'Hôm nay', getDates: () => ({ from: new Date(), to: new Date() }) },
-  { label: '7 ngày qua', getDates: () => ({ from: subDays(new Date(), 6), to: new Date() }) },
-  { label: '30 ngày qua', getDates: () => ({ from: subDays(new Date(), 29), to: new Date() }) },
+  { label: 'Today', getDates: () => ({ from: new Date(), to: new Date() }) },
+  { label: 'Last 7 days', getDates: () => ({ from: subDays(new Date(), 6), to: new Date() }) },
+  { label: 'Last 30 days', getDates: () => ({ from: subDays(new Date(), 29), to: new Date() }) },
 ];
 
 function toIso(date: Date, isEnd: boolean): string {
@@ -42,7 +42,7 @@ export function DateRangeDropdown({ value, onChange }: Props) {
   }
 
   const label = (() => {
-    if (!value.fromDate && !value.toDate) return 'Chọn ngày...';
+    if (!value.fromDate && !value.toDate) return 'Select date...';
     const from = value.fromDate ? format(new Date(value.fromDate), 'dd/MM/yyyy') : '...';
     const to = value.toDate ? format(new Date(value.toDate), 'dd/MM/yyyy') : '...';
     return `${from} – ${to}`;
@@ -91,7 +91,7 @@ export function DateRangeDropdown({ value, onChange }: Props) {
         </div>
         <div className="border-t border-gray-100 pt-3 space-y-2">
           <div className="space-y-1">
-            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Từ ngày</p>
+            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">From</p>
             <DatePicker
               size="sm"
               value={value.fromDate ? new Date(value.fromDate) : undefined}
@@ -100,7 +100,7 @@ export function DateRangeDropdown({ value, onChange }: Props) {
             />
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Đến ngày</p>
+            <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">To</p>
             <DatePicker
               size="sm"
               value={value.toDate ? new Date(value.toDate) : undefined}

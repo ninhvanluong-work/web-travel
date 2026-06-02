@@ -6,6 +6,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Icons } from '@/assets/icons';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
 import type { NextPageWithLayout } from '@/types';
+import { ROUTE } from '@/types/routes';
 
 import SearchBox from './components/SearchBox';
 
@@ -84,7 +85,7 @@ const HomePage: NextPageWithLayout = () => {
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    router.push(`/search?q=${encodeURIComponent(suggestion)}`);
+    router.push(`${ROUTE.SEARCH}?q=${encodeURIComponent(suggestion)}`);
   };
 
   const toggleMute = () => {

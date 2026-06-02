@@ -1,16 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 
-import { useCreateProduct, useProductById, useUpdateProduct } from '@/api/product';
-import {
-  type ItineraryFormValues,
-  type OptionFormValues,
-  type ProductFormValues,
-  productSchema,
-} from '@/lib/validations/product';
+import { useCreateProduct, useProductById, useUpdateProduct, useUpdateProductStatus } from '@/api/product';
+import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
+import { useAlertStore } from '@/stores/use-alert-store';
 import { ROUTE } from '@/types/routes';
 
 import { useProductDraft } from './use-product-draft';
@@ -21,8 +17,7 @@ const DEFAULT_VALUES: ProductFormValues = {
   description: '',
   destinationId: null,
   supplierId: null,
-  duration: 1,
-  durationType: 'day',
+  tourGuideIds: [],
   highlight: '',
   include: '',
   exclude: '',
@@ -32,14 +27,24 @@ const DEFAULT_VALUES: ProductFormValues = {
   itineraryImage: '',
   images: [],
   videoId: null,
+  shortDescription: null,
+  tags: [],
+  banner: [],
+  elementIds: [],
+  experiences: [],
+  itineraries: [],
+  readBefores: READ_BEFORE_KEY_OPTIONS.map((opt) => ({ key: opt.value, description: '' })),
 };
 
 export function useProductForm(productId?: string) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const isEdit = !!productId;
 
-  const [itineraries, setItineraries] = useState<ItineraryFormValues[]>([]);
-  const [options, setOptions] = useState<OptionFormValues[]>([]);
+  const invalidateList = () => {
+    queryClient.removeQueries({ queryKey: ['/product'] });
+    queryClient.removeQueries({ queryKey: ['/product/detail'] });
+  };
 
   const { data: productData } = useProductById({ variables: { id: productId! }, enabled: isEdit }, undefined);
 
@@ -48,7 +53,7 @@ export function useProductForm(productId?: string) {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const draft = useProductDraft(productId, form, itineraries, options);
+  const draft = useProductDraft(productId, form);
 
   useEffect(() => {
     if (!productData) return;
@@ -58,8 +63,7 @@ export function useProductForm(productId?: string) {
       description: productData.description,
       destinationId: productData.destinationId,
       supplierId: productData.supplierId,
-      duration: productData.duration,
-      durationType: productData.durationType,
+      tourGuideIds: (productData.tourGuides ?? []).map((g) => g.id),
       highlight: productData.highlight,
       include: productData.include,
       exclude: productData.exclude,
@@ -68,41 +72,121 @@ export function useProductForm(productId?: string) {
       thumbnail: productData.thumbnail,
       itineraryImage: productData.itineraryImage,
       images: (productData.images ?? []).map((url) => ({ url })),
-      videoId: (productData as any).videoId ?? null,
+      videoId: productData.heroVideo?.id ?? null,
+      shortDescription: productData.shortDescription ?? null,
+      tags: (productData.tags ?? []).map((t) => ({ id: t.id, name: t.name })),
+      banner: (productData.banner ?? []).map((b) => ({ url: b.url, type: b.type })),
+      elementIds: (productData.elements ?? []).map((e) => e.id),
+      experiences: (productData.experience ?? []).map((e) => ({
+        imageUrl: e.imageUrl,
+        title: e.title,
+        content: e.content,
+      })),
+      itineraries: (productData.itineraries ?? []).map((it) => ({
+        id: it.id,
+        name: it.name,
+        featuredName: it.featuredName ?? '',
+        order: it.order,
+        description: it.description ?? '',
+      })),
+      readBefores: READ_BEFORE_KEY_OPTIONS.map((opt) => {
+        const found = (productData.readBefore ?? []).find((r) => r.key === opt.value);
+        return { key: opt.value, description: found?.description ?? '' };
+      }),
     });
   }, [productData, form]);
+
+  const { addAlert } = useAlertStore.getState();
 
   const createMutation = useCreateProduct({
     onSuccess: () => {
       draft.clearDraftOnSuccess();
-      toast.success('Tạo tour thành công');
+      invalidateList();
+      addAlert({ type: 'success', title: 'Tour created successfully' });
       router.push(ROUTE.ADMIN_PRODUCTS);
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'Có lỗi xảy ra, vui lòng thử lại');
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
     },
   });
 
   const updateMutation = useUpdateProduct({
-    onSuccess: () => {
-      draft.clearDraftOnSuccess();
-      toast.success('Cập nhật tour thành công');
-      router.push(ROUTE.ADMIN_PRODUCTS);
-    },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message ?? 'Có lỗi xảy ra, vui lòng thử lại');
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
+    },
+  });
+
+  const updateStatusMutation = useUpdateProductStatus({
+    onError: (err: any) => {
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Failed to update tour status' });
     },
   });
 
   const onSubmit = (data: ProductFormValues) => {
     if (isEdit) {
-      updateMutation.mutate({ id: productId!, values: data });
+      updateMutation.mutate(
+        { id: productId!, values: data },
+        {
+          onSuccess: () => {
+            draft.clearDraftOnSuccess();
+            invalidateList();
+            addAlert({ type: 'success', title: 'Tour updated successfully' });
+            router.push(ROUTE.ADMIN_PRODUCTS);
+          },
+        }
+      );
     } else {
       createMutation.mutate(data);
     }
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const onPublish = (data: ProductFormValues) => {
+    if (!isEdit) {
+      createMutation.mutate(data);
+      return;
+    }
+    updateMutation.mutate(
+      { id: productId!, values: data },
+      {
+        onSuccess: () =>
+          updateStatusMutation.mutate(
+            { id: productId!, status: 'published' },
+            {
+              onSuccess: () => {
+                draft.clearDraftOnSuccess();
+                invalidateList();
+                addAlert({ type: 'success', title: 'Tour published successfully' });
+                router.push(ROUTE.ADMIN_PRODUCTS);
+              },
+            }
+          ),
+      }
+    );
+  };
 
-  return { form, isEdit, productData, itineraries, setItineraries, options, setOptions, onSubmit, isPending, draft };
+  const handlePublish = form.handleSubmit(onPublish);
+
+  const handleHide = form.handleSubmit((data) => {
+    updateMutation.mutate(
+      { id: productId!, values: data },
+      {
+        onSuccess: () =>
+          updateStatusMutation.mutate(
+            { id: productId!, status: 'hidden' },
+            {
+              onSuccess: () => {
+                draft.clearDraftOnSuccess();
+                invalidateList();
+                addAlert({ type: 'success', title: 'Tour hidden successfully' });
+                router.push(ROUTE.ADMIN_PRODUCTS);
+              },
+            }
+          ),
+      }
+    );
+  });
+
+  const isPending = createMutation.isPending || updateMutation.isPending || updateStatusMutation.isPending;
+
+  return { form, isEdit, productData, onSubmit, onPublish, handlePublish, handleHide, isPending, draft };
 }

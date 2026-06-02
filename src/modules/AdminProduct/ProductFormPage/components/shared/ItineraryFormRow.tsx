@@ -51,7 +51,7 @@ export function ItineraryFormRow({
           className="flex-1 text-left text-sm font-medium text-gray-700 truncate"
           onClick={() => onToggle(index)}
         >
-          {value.name || `Ngày ${value.order}`}
+          {value.name || `Day ${value.order}`}
         </button>
 
         {/* Clone */}
@@ -62,7 +62,7 @@ export function ItineraryFormRow({
           rounded="md"
           className="h-7 w-7 text-gray-400 hover:text-violet-600 hover:bg-violet-50 shrink-0"
           onClick={() => onClone(index)}
-          title="Nhân bản ngày này"
+          title="Duplicate this day"
         >
           <Copy size={12} />
         </Button>
@@ -89,17 +89,17 @@ export function ItineraryFormRow({
       {isOpen && (
         <div className="p-4 space-y-3 bg-gray-50/40">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">Tiêu đề</label>
+            <label className="text-xs font-medium text-gray-600">Title</label>
             <Input
               size="sm"
-              placeholder="VD: Hà Nội → Hạ Long"
+              placeholder="E.g.: Hanoi → Ha Long"
               value={value.name}
               onChange={(e) => set({ name: e.target.value })}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">Hoạt động trong ngày</label>
+            <label className="text-xs font-medium text-gray-600">Daily Activities</label>
             <div className="rounded-lg overflow-hidden border border-input bg-white">
               <Editor
                 tinymceScriptSrc="/tinymce/tinymce.min.js"
@@ -107,6 +107,8 @@ export function ItineraryFormRow({
                 value={value.description ?? ''}
                 onEditorChange={(content) => set({ description: content })}
                 init={{
+                  base_url: '/tinymce',
+                  suffix: '.min',
                   height: 260,
                   menubar: false,
                   statusbar: false,

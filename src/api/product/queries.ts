@@ -7,10 +7,18 @@ import {
   deleteProduct,
   getProductById,
   getProductList,
+  getProductReviews,
   patchProductStatus,
   updateProduct,
+  updateProductStatus,
 } from './requests';
-import type { ApiProductDetail, IProductListParams, IProductListResult } from './types';
+import type {
+  ApiProductDetail,
+  IProductListParams,
+  IProductListResult,
+  IProductReviewParams,
+  IProductReviewResult,
+} from './types';
 
 export const useProductList = createQuery<IProductListResult, IProductListParams>({
   primaryKey: '/product',
@@ -37,6 +45,15 @@ export const usePatchProductStatus = createMutation<
   mutationFn: ({ id, status }) => patchProductStatus(id, status),
 });
 
+export const useUpdateProductStatus = createMutation<ApiProductDetail, { id: string; status: 'published' | 'hidden' }>({
+  mutationFn: ({ id, status }) => updateProductStatus(id, status),
+});
+
 export const useDeleteProduct = createMutation<void, { id: string }>({
   mutationFn: ({ id }) => deleteProduct(id),
+});
+
+export const useProductReviews = createQuery<IProductReviewResult, IProductReviewParams>({
+  primaryKey: '/product/review',
+  queryFn: ({ queryKey: [, { id, pageSize }] }) => getProductReviews(id, pageSize),
 });

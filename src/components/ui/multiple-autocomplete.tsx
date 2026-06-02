@@ -28,9 +28,11 @@ interface Props extends CommandInputProps {
   options?: Option[];
 }
 
+const EMPTY_OPTIONS: Option[] = [];
+
 const MultipleAutoComplete: FCC<Props> = ({
   onEnter,
-  options = [],
+  options = EMPTY_OPTIONS,
   isLoading,
   onChange,
   label,

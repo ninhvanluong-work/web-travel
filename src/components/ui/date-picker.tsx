@@ -2,12 +2,12 @@ import { useClickOutside } from '@mantine/hooks';
 import { format, isValid, parse } from 'date-fns';
 import React from 'react';
 import type { SelectSingleEventHandler } from 'react-day-picker';
-import { toast } from 'sonner';
 
 import { Icons } from '@/assets/icons';
 import usePopover from '@/hooks/usePopover';
 import { isPastDate } from '@/lib/common';
 import { cn } from '@/lib/utils';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import { Calendar, type CalendarProps } from './calendar';
 import { Input, type InputProps } from './input';
@@ -48,7 +48,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       if (disablePast) {
         if (isPastDate(date)) {
           setInputValue('');
-          toast.error('Date value must be in the future');
+          useAlertStore.getState().addAlert({ type: 'error', title: 'Date value must be in the future' });
           onChange(undefined);
           return;
         }

@@ -1,26 +1,28 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 import type { IProduct } from '@/api/product';
 import { useDeleteProduct, usePatchProductStatus } from '@/api/product';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 type ProductStatus = 'draft' | 'published' | 'hidden';
 
 export function useProductListActions(refetch: () => void) {
   const [deleteTarget, setDeleteTarget] = useState<IProduct | null>(null);
 
+  const { addAlert } = useAlertStore.getState();
+
   const patchStatus = usePatchProductStatus({
     onSuccess: () => refetch(),
-    onError: () => toast.error('Cập nhật trạng thái thất bại'),
+    onError: () => addAlert({ type: 'error', title: 'Failed to update status' }),
   });
 
   const deleteMutation = useDeleteProduct({
     onSuccess: () => {
-      toast.success('Đã xóa tour');
+      addAlert({ type: 'success', title: 'Tour deleted' });
       setDeleteTarget(null);
       refetch();
     },
-    onError: () => toast.error('Xóa tour thất bại'),
+    onError: () => addAlert({ type: 'error', title: 'Failed to delete tour' }),
   });
 
   const handleChangeStatus = (product: IProduct, status: ProductStatus) => {

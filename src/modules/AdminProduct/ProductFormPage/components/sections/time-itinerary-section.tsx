@@ -1,38 +1,89 @@
+import { Reorder, useDragControls } from 'framer-motion';
 import { Calendar, Plus } from 'lucide-react';
-import { useRef, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { DURATION_TYPES, type ItineraryFormValues, type ProductFormValues } from '@/lib/validations/product';
+import { type ItineraryFormValues, type ProductFormValues } from '@/lib/validations/product';
 
 import { ItineraryFormRow } from '../shared/ItineraryFormRow';
 
-interface TimeItinerarySectionProps {
-  itineraries: ItineraryFormValues[];
-  onChange: (v: ItineraryFormValues[]) => void;
+function DraggableItineraryItem({
+  item,
+  index,
+  isOpen,
+  field,
+  onChange,
+  onRemove,
+  onClone,
+  onToggle,
+}: {
+  item: any;
+  index: number;
+  isOpen: boolean;
+  field: ItineraryFormValues;
+  onChange: (index: number, patch: Partial<ItineraryFormValues>) => void;
+  onRemove: (index: number) => void;
+  onClone: (index: number) => void;
+  onToggle: (index: number) => void;
+}) {
+  const dragControls = useDragControls();
+
+  return (
+    <Reorder.Item
+      value={item}
+      dragControls={dragControls}
+      dragListener={false}
+      whileDrag={{ scale: 1.01, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
+      className="rounded-xl"
+    >
+      <ItineraryFormRow
+        value={field}
+        index={index}
+        isOpen={isOpen}
+        dragHandleProps={{ onPointerDown: (e) => dragControls.start(e) }}
+        onChange={onChange}
+        onRemove={onRemove}
+        onClone={onClone}
+        onToggle={onToggle}
+      />
+    </Reorder.Item>
+  );
 }
 
-export function TimeItinerarySection({ itineraries, onChange }: TimeItinerarySectionProps) {
-  const { control } = useFormContext<ProductFormValues>();
+export function TimeItinerarySection() {
+  const { control, setValue } = useFormContext<ProductFormValues>();
+  const { fields, append, remove, move, insert } = useFieldArray({
+    control,
+    name: 'itineraries',
+    keyName: '_id' as any,
+  });
+  const watchedItineraries = useWatch({ control, name: 'itineraries' }) as ItineraryFormValues[];
+
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const dragIndex = useRef<number | null>(null);
+
+  const fieldIds = fields.map((f: any) => f._id ?? '').join(',');
+  useEffect(() => {
+    fields.forEach((_, i) => {
+      setValue(`itineraries.${i}.order`, i + 1);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fieldIds]);
 
   const handleAdd = () => {
-    const newIndex = itineraries.length;
-    onChange([...itineraries, { name: '', featuredName: '', order: newIndex + 1, description: '' }]);
+    const newIndex = fields.length;
+    append({ name: `Day ${newIndex + 1}`, featuredName: '', order: newIndex + 1, description: '' });
     setOpenIndex(newIndex);
   };
 
   const handleChange = (index: number, patch: Partial<ItineraryFormValues>) => {
-    onChange(itineraries.map((it, i) => (i === index ? { ...it, ...patch } : it)));
+    (Object.entries(patch) as [keyof ItineraryFormValues, unknown][]).forEach(([key, val]) => {
+      setValue(`itineraries.${index}.${key}`, val as any);
+    });
   };
 
   const handleRemove = (index: number) => {
-    const next = itineraries.filter((_, i) => i !== index).map((it, i) => ({ ...it, order: i + 1 }));
-    onChange(next);
+    remove(index);
     setOpenIndex((prev) => {
       if (prev === null) return null;
       if (prev === index) return null;
@@ -41,12 +92,13 @@ export function TimeItinerarySection({ itineraries, onChange }: TimeItinerarySec
   };
 
   const handleClone = (index: number) => {
-    const clone = { ...itineraries[index], id: undefined };
-    const next = [...itineraries.slice(0, index + 1), clone, ...itineraries.slice(index + 1)].map((it, i) => ({
-      ...it,
-      order: i + 1,
-    }));
-    onChange(next);
+    const current = fields[index] as unknown as ItineraryFormValues;
+    insert(index + 1, {
+      name: current.name,
+      featuredName: current.featuredName,
+      order: index + 2,
+      description: current.description,
+    });
     setOpenIndex(index + 1);
   };
 
@@ -54,70 +106,25 @@ export function TimeItinerarySection({ itineraries, onChange }: TimeItinerarySec
     setOpenIndex((prev) => (prev === index ? null : index));
   };
 
-  // HTML5 drag-to-reorder
-  const handleDragStart = (index: number) => {
-    dragIndex.current = index;
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    const from = dragIndex.current;
-    if (from === null || from === index) return;
-    const reordered = [...itineraries];
-    const [removed] = reordered.splice(from, 1);
-    reordered.splice(index, 0, removed);
-    onChange(reordered.map((it, i) => ({ ...it, order: i + 1 })));
-    dragIndex.current = index;
-    setOpenIndex(index);
+  const handleReorder = (newItems: typeof fields) => {
+    const oldIds = fields.map((f: any) => f._id);
+    const newIds = (newItems as typeof fields).map((f: any) => f._id);
+    for (let i = 0; i < newIds.length; i++) {
+      if (newIds[i] !== oldIds[i]) {
+        const from = oldIds.indexOf(newIds[i]);
+        move(from, i);
+        break;
+      }
+    }
   };
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-2 gap-4">
-        <FormField
-          control={control}
-          name="duration"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Số ngày</FormLabel>
-              <FormControl>
-                <Input type="number" size="sm" min={1} placeholder="VD: 3" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name="durationType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Đơn vị</FormLabel>
-              <FormControl>
-                <Select value={field.value ?? ''} onValueChange={field.onChange}>
-                  <SelectTrigger inputSize="sm" className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DURATION_TYPES.map((t) => (
-                      <SelectItem key={t.value} value={t.value}>
-                        {t.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-            </FormItem>
-          )}
-        />
-      </div>
-
+    <div className="space-y-4">
       <div>
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-medium text-gray-700">
-            Chi tiết lịch trình
-            {itineraries.length > 0 && (
-              <span className="ml-2 text-xs font-normal text-gray-400">{itineraries.length} ngày</span>
-            )}
+            Itinerary Details
+            {fields.length > 0 && <span className="ml-2 text-xs font-normal text-gray-400">{fields.length} days</span>}
           </p>
           <Button
             type="button"
@@ -129,42 +136,39 @@ export function TimeItinerarySection({ itineraries, onChange }: TimeItinerarySec
             onClick={handleAdd}
           >
             <Plus size={12} />
-            Thêm ngày
+            Add Day
           </Button>
         </div>
 
-        {itineraries.length === 0 ? (
+        {fields.length === 0 ? (
           <button
             type="button"
             onClick={handleAdd}
             className="w-full border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center gap-2 text-gray-400 hover:border-violet-300 hover:text-violet-500 hover:bg-violet-50/40 transition-colors"
           >
             <Calendar size={20} className="opacity-50" />
-            <span className="text-sm font-medium">Chưa có lịch trình</span>
-            <span className="text-xs">Nhấn để thêm ngày đầu tiên</span>
+            <span className="text-sm font-medium">No itinerary yet</span>
+            <span className="text-xs">Click to add the first day</span>
           </button>
         ) : (
-          <div className="space-y-2">
-            {itineraries.map((it, i) => (
-              <div
-                key={it.id ?? i}
-                draggable
-                onDragStart={() => handleDragStart(i)}
-                onDragOver={(e) => handleDragOver(e, i)}
-              >
-                <ItineraryFormRow
-                  value={it}
+          <Reorder.Group axis="y" values={fields} onReorder={handleReorder} className="space-y-2">
+            {fields.map((item, i) => {
+              const field = (watchedItineraries?.[i] ?? item) as ItineraryFormValues;
+              return (
+                <DraggableItineraryItem
+                  key={(item as any)._id ?? i}
+                  item={item}
                   index={i}
                   isOpen={openIndex === i}
-                  dragHandleProps={{ onMouseDown: (e) => e.stopPropagation() }}
+                  field={field}
                   onChange={handleChange}
                   onRemove={handleRemove}
                   onClone={handleClone}
                   onToggle={handleToggle}
                 />
-              </div>
-            ))}
-          </div>
+              );
+            })}
+          </Reorder.Group>
         )}
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { request } from '../axios';
 import type { ApiListResponse } from '../types';
 import type {
+  ApiAdminListResponse,
   ApiAdminVideoItem,
   ApiAdminVideoResponse,
   ApiVideoDetailResponse,
@@ -8,7 +9,9 @@ import type {
   ApiVideoListResponse,
   CreateVideoPayload,
   IVideo,
+  IVideoAdminPage,
   IVideoPage,
+  IVideoPageAdmin,
   IVideoVariables,
   IVideoVariablesInfinite,
   UpdateVideoPayload,
@@ -29,6 +32,7 @@ const toVideo = (item: ApiVideoItem): IVideo => ({
   tag: item.tag ?? null,
   type: item.type ?? null,
   uploadingStatus: item.uploadingStatus ?? null,
+  product: item.product ?? null,
 });
 
 // ---------- Defaults ----------
@@ -41,6 +45,64 @@ export interface GetListVideoResult {
   items: IVideo[];
   nextCursor: number | null;
 }
+
+export const getListVideoAdminPaged = async (variables?: {
+  keyword?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<IVideoPageAdmin> => {
+  const { data } = await request<ApiAdminListResponse<ApiVideoItem>>({
+    url: '/video/admin',
+    method: 'GET',
+    params: {
+      page: variables?.page ?? 1,
+      pageSize: variables?.pageSize ?? 10,
+      ...(variables?.keyword && { keyword: variables.keyword }),
+    },
+  });
+  return {
+    items: data.data.items.map(toVideo),
+    totalPages: data.data.pagination.totalPages,
+  };
+};
+
+export const getVideoAdminPage = async (variables?: {
+  keyword?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<IVideoAdminPage> => {
+  const { data } = await request<ApiAdminListResponse<ApiVideoItem>>({
+    url: '/video/admin',
+    method: 'GET',
+    params: {
+      page: variables?.page ?? 1,
+      pageSize: variables?.pageSize ?? 20,
+      ...(variables?.keyword && { keyword: variables.keyword }),
+    },
+  });
+  const { items, pagination } = data.data;
+  return {
+    items: items.map(toVideo),
+    nextPage: pagination.page < pagination.totalPages ? pagination.page + 1 : undefined,
+  };
+};
+
+export const getListVideoAdmin = async (variables?: {
+  keyword?: string;
+  page?: number;
+  pageSize?: number;
+}): Promise<IVideo[]> => {
+  const { data } = await request<ApiListResponse<ApiVideoItem>>({
+    url: '/video/admin',
+    method: 'GET',
+    params: {
+      page: variables?.page ?? 1,
+      pageSize: variables?.pageSize ?? 50,
+      ...(variables?.keyword && { keyword: variables.keyword }),
+    },
+  });
+  return data.data.items.map(toVideo);
+};
 
 export const getListVideo = async (variables?: IVideoVariables): Promise<IVideo[]> => {
   const { data } = await request<ApiListResponse<ApiVideoItem>>({

@@ -40,10 +40,14 @@ next-env.d.ts
 /public/workbox-*.js
 /public/tinymce/
 
-# Claude env secrets
-.claude/.env
-.claude/hooks/.env
+# Claude
+.claude/
 
 /public/tinymce/
 
 /free-nextjs-admin-dashboard-main
+
+# bmad
+_bmad-output/
+bmad/
+_bmad/

@@ -1,6 +1,4 @@
-import type { Icons } from '@/assets/icons';
-
-type BookItemType = 'bestFor' | 'notRecommended' | 'bring' | 'wear' | 'cultural';
+import type { BookItemType } from './types';
 
 export interface MockProduct {
   media: { type: 'image' | 'video'; url: string; poster?: string }[];
@@ -19,11 +17,12 @@ export interface MockProduct {
     languages: string[];
     difficulty: string;
   };
-  highlights: { icon: keyof typeof Icons; title: string; subtitle: string }[];
+  highlights: { image?: string; title: string; subtitle: string }[];
   uniqueSellingPoint: string;
   operator: {
     initials: string;
     name: string;
+    avatar?: string | null;
     rating: number;
     reviewCount: number;
     verified: boolean;
@@ -38,12 +37,11 @@ export interface MockProduct {
     yearsExperience: number;
     toursInArea: number;
     area: string;
-  };
+  } | null;
   itinerary: { step: number; time: string; title: string; description: string }[];
   beforeYouBook: { type: BookItemType; title: string; description: string }[];
-  included: string[];
-  notIncluded: string[];
-  reviews: { quote: string; author: string; country: string; date: string }[];
+  included: string | string[];
+  notIncluded: string | string[];
   originalPrice: number;
   salePrice: number;
   discountPercent: number;
@@ -79,10 +77,10 @@ export const MOCK_PRODUCT: MockProduct = {
     difficulty: 'Moderate',
   },
   highlights: [
-    { icon: 'trekMountain', title: 'Village trekking', subtitle: 'Through 3 Hmong villages' },
-    { icon: 'hearthFire', title: 'Hearth dinner', subtitle: 'Cooked over open fire' },
-    { icon: 'personHome', title: 'Homestay night', subtitle: 'Sleep in a local home' },
-    { icon: 'sunRise', title: 'Sunrise panorama', subtitle: "Sapa's most beautiful moment" },
+    { title: 'Village trekking', subtitle: 'Through 3 Hmong villages' },
+    { title: 'Hearth dinner', subtitle: 'Cooked over open fire' },
+    { title: 'Homestay night', subtitle: 'Sleep in a local home' },
+    { title: 'Sunrise panorama', subtitle: "Sapa's most beautiful moment" },
   ],
   uniqueSellingPoint:
     'The only tour where you sleep in the home of a Hmong elder who has practised traditional weaving for 40 years.',
@@ -171,21 +169,6 @@ export const MOCK_PRODUCT: MockProduct = {
     'All entrance fees',
   ],
   notIncluded: ['Lunch on Day 1', 'Personal travel insurance', 'Tips (appreciated)', 'Fansipan cable car (optional)'],
-  reviews: [
-    {
-      quote:
-        'The homestay was the highlight of our entire Vietnam trip. Minh knew every family in the village by name — it felt nothing like a tour.',
-      author: 'Sophie R.',
-      country: 'France',
-      date: 'April 2026',
-    },
-    {
-      quote: 'Exactly the pace I needed. No rushing, no tourist traps. The hearth dinner alone was worth the price.',
-      author: 'Daniel K.',
-      country: 'Germany',
-      date: 'March 2026',
-    },
-  ],
   originalPrice: 138,
   salePrice: 117,
   discountPercent: 15,

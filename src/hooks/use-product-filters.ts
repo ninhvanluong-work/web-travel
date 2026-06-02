@@ -1,13 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-function useDebounce<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState<T>(value);
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(t);
-  }, [value, delay]);
-  return debounced;
-}
+import { useDebounce } from './use-debounce';
 
 export interface ProductSelectFilters {
   supplierId: string;

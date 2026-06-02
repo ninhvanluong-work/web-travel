@@ -3,6 +3,7 @@ import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 import type { IProduct } from '@/api/product';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,19 +13,20 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { ROUTE } from '@/types/routes';
 
 type ProductStatus = 'draft' | 'published' | 'hidden';
 
 const STATUS_CONFIG: Record<ProductStatus, { label: string; className: string }> = {
-  draft: { label: 'Bản nháp', className: 'bg-amber-50 text-amber-700 ring-amber-200' },
-  published: { label: 'Công khai', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
-  hidden: { label: 'Đã ẩn', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
+  draft: { label: 'Draft', className: 'bg-amber-50 text-amber-700 ring-amber-200' },
+  published: { label: 'Published', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
+  hidden: { label: 'Hidden', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
 };
 
 const STATUS_OPTIONS: { value: ProductStatus; label: string }[] = [
-  { value: 'published', label: 'Công khai' },
-  { value: 'draft', label: 'Bản nháp' },
-  { value: 'hidden', label: 'Ẩn' },
+  { value: 'published', label: 'Publish' },
+  { value: 'draft', label: 'Draft' },
+  { value: 'hidden', label: 'Hide' },
 ];
 
 function StarRating({ point }: { point: number }) {
@@ -91,7 +93,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
           </div>
           <div className="min-w-0">
             <Link
-              href={`/admin/products/${product.id}/edit`}
+              href={ROUTE.ADMIN_PRODUCTS_EDIT(product.id)}
               className="font-semibold text-sm text-gray-900 dark:text-white/90 hover:text-brand-600 transition-colors line-clamp-1 block"
             >
               {product.name}
@@ -146,19 +148,19 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
       <TableCell className="w-14">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center h-11 w-11 rounded-xl text-gray-500 hover:text-brand-600 hover:bg-brand-50 transition-all"
+            <Button
+              variant="ghost"
+              className="h-11 w-11 rounded-xl text-gray-500 hover:text-brand-600 hover:bg-brand-50 p-0"
             >
               <MoreHorizontal size={28} strokeWidth={2.5} />
-            </button>
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-[160px]">
             {/* Edit */}
             <DropdownMenuItem asChild>
-              <Link href={`/admin/products/${product.id}/edit`} className="flex items-center">
+              <Link href={ROUTE.ADMIN_PRODUCTS_EDIT(product.id)} className="flex items-center">
                 <Pencil size={14} className="mr-2" />
-                Chỉnh sửa
+                Edit
               </Link>
             </DropdownMenuItem>
 
@@ -179,7 +181,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
               onSelect={() => onDelete(product)}
             >
               <Trash2 size={14} className="mr-2" />
-              Xóa tour
+              Delete Tour
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

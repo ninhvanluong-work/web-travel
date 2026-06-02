@@ -2,7 +2,6 @@ import type { DefaultOptions } from '@tanstack/react-query';
 import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import React, { memo } from 'react';
-import { Toaster } from 'sonner';
 
 import { ThemeProvider } from '@/components/ThemeProvider';
 import { logger } from '@/lib/logger';
@@ -40,7 +39,6 @@ const Provider: FCC<Props> = ({ children }) => {
           <ReactQueryDevtools />
         </QueryClientProvider>
       </ThemeProvider>
-      <Toaster />
     </>
   );
 };

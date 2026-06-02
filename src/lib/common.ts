@@ -1,6 +1,7 @@
 import { differenceInCalendarDays } from 'date-fns';
 import dayjs from 'dayjs';
-import { toast } from 'sonner';
+
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import { getMutateError } from './getMutateError';
 import { REGEX_EMOJI, REGEX_NO_SPECIAL_CHARACTERS } from './regex';
@@ -40,7 +41,7 @@ export const getSCTime = (time?: any) => {
 };
 
 export const onMutateError = (err: any) => {
-  toast.error(getMutateError(err));
+  useAlertStore.getState().addAlert({ type: 'error', title: getMutateError(err) });
 };
 
 export const sleep = async (time: number) => {

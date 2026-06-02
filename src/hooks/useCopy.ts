@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
+
+import { useAlertStore } from '@/stores/use-alert-store';
 
 type CopyFn = (text?: string) => void; // Return success
 
@@ -13,7 +14,7 @@ export function useCopy(withToast = true): [boolean, CopyFn] {
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       if (withToast) {
-        toast.success('copied');
+        useAlertStore.getState().addAlert({ type: 'success', title: 'Copied' });
       }
       setTimeout(() => {
         setCopied(false);
@@ -31,7 +32,7 @@ export function useCopy(withToast = true): [boolean, CopyFn] {
       textArea.remove();
       setCopied(true);
       if (withToast) {
-        toast.success('copied');
+        useAlertStore.getState().addAlert({ type: 'success', title: 'Copied' });
       }
       setTimeout(() => {
         setCopied(false);

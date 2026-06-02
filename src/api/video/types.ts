@@ -12,6 +12,7 @@ export interface IVideo {
   tag: string | null;
   type: 'hero' | 'normal' | null;
   uploadingStatus: number | null;
+  product: { id: string; slug: string } | null;
 }
 
 // Query variables
@@ -36,6 +37,7 @@ export interface ApiVideoItem {
   uploadingStatus?: number;
   like: number;
   score: number;
+  product?: { id: string; slug: string } | null;
 }
 
 export interface ApiVideoDetailResponse {
@@ -54,6 +56,31 @@ export interface ApiVideoListResponse {
 export interface IVideoPage {
   items: IVideo[];
   nextCursor: number | null;
+}
+
+export interface ApiAdminListResponse<T> {
+  data: {
+    items: T[];
+    pagination: {
+      page: number;
+      pageSize: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+  code: number;
+  message: string;
+  error: string | null;
+}
+
+export interface IVideoPageAdmin {
+  items: IVideo[];
+  totalPages: number;
+}
+
+export interface IVideoAdminPage {
+  items: IVideo[];
+  nextPage: number | undefined;
 }
 
 // Admin-specific types

@@ -21,8 +21,10 @@ interface Props<T extends FieldValues = FieldValues>
   btnProps?: ButtonProps;
 }
 
+const EMPTY_ACCEPT: MIME_TYPE[] = [];
+
 const UploadButtonField = <T extends FieldValues>({
-  accept = [],
+  accept = EMPTY_ACCEPT,
   control,
   name,
   defaultValue,

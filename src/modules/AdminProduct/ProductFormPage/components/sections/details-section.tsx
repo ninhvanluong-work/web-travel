@@ -5,6 +5,8 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import type { ProductFormValues } from '@/lib/validations/product';
 
 const EDITOR_INIT = {
+  base_url: '/tinymce',
+  suffix: '.min',
   height: 280,
   menubar: true,
   statusbar: false,
@@ -54,11 +56,9 @@ const EDITOR_INIT = {
 const DETAIL_FIELDS: Array<{
   name: keyof ProductFormValues;
   label: string;
-  accent: string;
 }> = [
-  { name: 'highlight', label: 'Điểm nổi bật của sản phẩm', accent: 'text-amber-500' },
-  { name: 'include', label: 'Dịch vụ bao gồm', accent: 'text-emerald-500' },
-  { name: 'exclude', label: 'Dịch vụ không bao gồm', accent: 'text-red-500' },
+  { name: 'include', label: 'Services Included' },
+  { name: 'exclude', label: 'Services Not Included' },
 ];
 
 export function DetailsSection() {

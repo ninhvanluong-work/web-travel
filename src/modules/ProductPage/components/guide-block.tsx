@@ -1,3 +1,5 @@
+import { Button } from '@/components/ui/button';
+
 interface GuideBlockProps {
   initials: string;
   name: string;
@@ -24,9 +26,14 @@ export default function GuideBlock({ initials, name, rating, yearsExperience, to
             {yearsExperience} years experience · {toursInArea} tours in {area}
           </p>
         </div>
-        <button className="ml-auto text-[12px] text-[#1A1A18] underline underline-offset-2 decoration-black/20 flex-shrink-0">
+        <Button
+          variant="ghost"
+          size="icon"
+          blur={false}
+          className="ml-auto text-[12px] text-[#1A1A18] underline underline-offset-2 decoration-black/20 flex-shrink-0 hover:bg-transparent"
+        >
           View profile →
-        </button>
+        </Button>
       </div>
     </div>
   );

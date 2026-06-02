@@ -34,14 +34,14 @@ function SortableHeader({
 }) {
   const active = sort?.key === sortKey;
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
       onClick={() => onSort(sortKey)}
-      className="flex items-center gap-1 group hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+      className="flex items-center gap-1 px-0 hover:bg-transparent hover:text-gray-700 dark:hover:text-gray-200"
     >
       {label}
-      <ChevronsUpDown size={12} className={active ? 'text-brand-500' : 'text-gray-400 group-hover:text-gray-500'} />
-    </button>
+      <ChevronsUpDown size={12} className={active ? 'text-brand-500' : 'text-gray-400'} />
+    </Button>
   );
 }
 
@@ -71,17 +71,17 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete }: 
         <TableHeader>
           <TableRow className="bg-slate-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-gray-800">
             <TableHead className={`${thClass} min-w-[220px]`}>
-              <SortableHeader label="Tên tour" sortKey="name" sort={sort} onSort={handleSort} />
+              <SortableHeader label="Tour Name" sortKey="name" sort={sort} onSort={handleSort} />
             </TableHead>
-            <TableHead className={`${thClass} min-w-[160px]`}>Nhà cung cấp</TableHead>
-            <TableHead className={`${thClass} min-w-[120px]`}>Điểm đến</TableHead>
-            <TableHead className={`${thClass} whitespace-nowrap`}>Trạng thái</TableHead>
+            <TableHead className={`${thClass} min-w-[160px]`}>Supplier</TableHead>
+            <TableHead className={`${thClass} min-w-[120px]`}>Destination</TableHead>
+            <TableHead className={`${thClass} whitespace-nowrap`}>Status</TableHead>
             <TableHead className={`${thClass} whitespace-nowrap`}>
-              <SortableHeader label="Giá từ" sortKey="minPrice" sort={sort} onSort={handleSort} />
+              <SortableHeader label="Price from" sortKey="minPrice" sort={sort} onSort={handleSort} />
             </TableHead>
-            <TableHead className={`${thClass} min-w-[120px]`}>Đánh giá</TableHead>
+            <TableHead className={`${thClass} min-w-[120px]`}>Rating</TableHead>
             <TableHead className={`${thClass} whitespace-nowrap`}>
-              <SortableHeader label="Ngày tạo" sortKey="createdAt" sort={sort} onSort={handleSort} />
+              <SortableHeader label="Created" sortKey="createdAt" sort={sort} onSort={handleSort} />
             </TableHead>
             <TableHead className={`${thClass} !w-14`} />
           </TableRow>
@@ -93,8 +93,8 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete }: 
               <td colSpan={8}>
                 <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
                   <Icons.packageIcon size={40} className="opacity-25" />
-                  <p className="text-sm font-medium text-gray-500">Chưa có tour nào</p>
-                  <p className="text-xs text-gray-400">Nhấn nút bên dưới để tạo tour đầu tiên</p>
+                  <p className="text-sm font-medium text-gray-500">No tours yet</p>
+                  <p className="text-xs text-gray-400">Click the button below to create the first tour</p>
                   <Button
                     variant="primary"
                     size="xs"
@@ -104,7 +104,7 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete }: 
                     onClick={() => router.push(ROUTE.ADMIN_PRODUCTS_CREATE)}
                   >
                     <Icons.plusCircle size={14} />
-                    Thêm tour mới
+                    Add New Tour
                   </Button>
                 </div>
               </td>

@@ -1,7 +1,3 @@
-/**
- * Since the backend has no dedicated /supplier or /destination endpoints,
- * we derive unique suppliers & destinations by fetching a large page of products.
- */
 import { createQuery } from 'react-query-kit';
 
 import type { LookupItem } from '@/lib/validations/product';
@@ -41,7 +37,7 @@ async function fetchDestinations(): Promise<LookupItem[]> {
 export const useSupplierList = createQuery<LookupItem[], void>({
   primaryKey: '/product/lookup/suppliers',
   queryFn: () => fetchSuppliers(),
-  staleTime: 5 * 60 * 1000, // 5 min cache
+  staleTime: 5 * 60 * 1000,
 });
 
 export const useDestinationList = createQuery<LookupItem[], void>({

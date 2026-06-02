@@ -1,6 +1,6 @@
 import { Icons } from '@/assets/icons';
 
-type BookItemType = 'bestFor' | 'notRecommended' | 'bring' | 'wear' | 'cultural';
+import type { BookItemType } from '../types';
 
 interface BeforeYouBookItem {
   type: BookItemType;
@@ -13,11 +13,12 @@ interface BeforeYouBookProps {
 }
 
 const TYPE_CONFIG: Record<BookItemType, { icon: keyof typeof Icons; bg: string; color: string }> = {
-  bestFor: { icon: 'personBest', bg: '#E1F5EE', color: '#0F6E56' },
+  passport: { icon: 'paper', bg: '#FFF4E5', color: '#A85E00' },
+  bestFor: { icon: 'checkCircle', bg: '#E1F5EE', color: '#0F6E56' },
   notRecommended: { icon: 'warningCircle', bg: '#FCEBEB', color: '#791F1F' },
   bring: { icon: 'houseBring', bg: '#F1EFE8', color: '#444441' },
   wear: { icon: 'clothingWear', bg: '#F1EFE8', color: '#444441' },
-  cultural: { icon: 'culturalSmile', bg: '#F1EFE8', color: '#444441' },
+  cultural: { icon: 'globe', bg: '#EEF3FC', color: '#2B5CB8' },
 };
 
 export default function BeforeYouBook({ items }: BeforeYouBookProps) {

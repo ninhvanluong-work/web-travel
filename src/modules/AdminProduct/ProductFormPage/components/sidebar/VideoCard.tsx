@@ -1,33 +1,35 @@
-import { Film, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Film, Loader2, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { getListVideo, getVideoById } from '@/api/video/requests';
+import { useInfiniteListVideoAdmin } from '@/api/video';
+import { getVideoById } from '@/api/video/requests';
 import type { IVideo } from '@/api/video/types';
+import { Button } from '@/components/ui/button';
 import { FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useDebounce } from '@/hooks/use-debounce';
 import type { ProductFormValues } from '@/lib/validations/product';
-
-function useDebounce(value: string, delay: number) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(t);
-  }, [value, delay]);
-  return debounced;
-}
 
 export function VideoCard() {
   const { control, watch } = useFormContext<ProductFormValues>();
   const currentVideoId = watch('videoId');
 
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<IVideo[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(null);
-  const [isSearching, setIsSearching] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
   const debouncedQuery = useDebounce(query, 300);
+
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteListVideoAdmin({
+    variables: { keyword: debouncedQuery || undefined, pageSize: 20 },
+    enabled: showDropdown,
+  });
+
+  const results = data?.pages.flatMap((p) => p.items) ?? [];
 
   // Load selected video on edit mode
   useEffect(() => {
@@ -37,16 +39,21 @@ export function VideoCard() {
       .catch(() => null);
   }, [currentVideoId, selectedVideo?.id]);
 
-  // Search videos
+  // Infinite scroll sentinel
   useEffect(() => {
-    setIsSearching(true);
-    getListVideo({ query: debouncedQuery || undefined, pageSize: 10 })
-      .then((data) => {
-        setResults(data);
-        setIsSearching(false);
-      })
-      .catch(() => setIsSearching(false));
-  }, [debouncedQuery]);
+    const sentinel = sentinelRef.current;
+    const container = scrollRef.current;
+    if (!sentinel || !container || !hasNextPage) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !isFetchingNextPage) fetchNextPage();
+      },
+      { root: container, threshold: 0.1 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   return (
     <div className="overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
@@ -63,7 +70,6 @@ export function VideoCard() {
           name="videoId"
           render={({ field }) => (
             <FormItem>
-              {/* Search input */}
               <div className="relative">
                 <Input
                   size="sm"
@@ -77,46 +83,51 @@ export function VideoCard() {
                   onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
                 />
 
-                {/* Dropdown */}
                 {showDropdown && (
-                  <div className="absolute z-20 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg ring-1 ring-black/10 overflow-hidden max-h-48 overflow-y-auto">
-                    {isSearching && (
+                  <div
+                    ref={scrollRef}
+                    className="absolute z-20 top-full left-0 right-0 mt-1 bg-white rounded-xl shadow-lg ring-1 ring-black/10 overflow-y-auto max-h-48"
+                  >
+                    {isLoading && (
                       <div className="flex items-center justify-center py-4">
-                        <div className="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
+                        <Loader2 size={14} className="animate-spin text-gray-300" />
                       </div>
                     )}
-                    {!isSearching && results.length === 0 && (
+                    {!isLoading && results.length === 0 && (
                       <p className="text-xs text-gray-400 text-center py-4">Không có video</p>
                     )}
-                    {!isSearching &&
-                      results.length > 0 &&
-                      results.map((video) => (
-                        <button
-                          key={video.id}
-                          type="button"
-                          className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 transition-colors text-left"
-                          onMouseDown={() => {
-                            field.onChange(video.id);
-                            setSelectedVideo(video);
-                            setQuery('');
-                            setShowDropdown(false);
-                          }}
-                        >
-                          <div className="w-8 h-8 rounded bg-gray-100 overflow-hidden shrink-0">
-                            {video.thumbnail ? (
-                              <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
-                            ) : (
-                              <Film size={14} className="m-auto mt-1.5 text-gray-300" />
-                            )}
-                          </div>
-                          <span className="text-xs text-gray-700 truncate">{video.title}</span>
-                        </button>
-                      ))}
+                    {results.map((video) => (
+                      <button
+                        key={video.id}
+                        type="button"
+                        className="w-full flex items-center gap-2.5 px-3 py-2 hover:bg-gray-50 transition-colors text-left"
+                        onMouseDown={() => {
+                          field.onChange(video.id);
+                          setSelectedVideo(video);
+                          setQuery('');
+                          setShowDropdown(false);
+                        }}
+                      >
+                        <div className="w-8 h-8 rounded bg-gray-100 overflow-hidden shrink-0">
+                          {video.thumbnail ? (
+                            <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <Film size={14} className="m-auto mt-1.5 text-gray-300" />
+                          )}
+                        </div>
+                        <span className="text-xs text-gray-700 truncate">{video.title}</span>
+                      </button>
+                    ))}
+
+                    {hasNextPage && (
+                      <div ref={sentinelRef} className="flex items-center justify-center py-3">
+                        {isFetchingNextPage && <Loader2 size={14} className="animate-spin text-gray-300" />}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
 
-              {/* Selected video preview */}
               {field.value && selectedVideo && (
                 <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-gray-50 ring-1 ring-black/5 mt-2">
                   <div className="w-10 h-10 rounded-lg overflow-hidden bg-gray-100 shrink-0">
@@ -131,16 +142,18 @@ export function VideoCard() {
                     )}
                   </div>
                   <span className="flex-1 text-xs text-gray-700 truncate font-medium">{selectedVideo.title}</span>
-                  <button
-                    type="button"
-                    className="shrink-0 text-gray-400 hover:text-gray-600 transition-colors"
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    rounded="md"
+                    className="shrink-0 h-6 w-6 text-gray-400 hover:text-gray-600 hover:bg-gray-100"
                     onClick={() => {
                       field.onChange(null);
                       setSelectedVideo(null);
                     }}
                   >
                     <X size={14} />
-                  </button>
+                  </Button>
                 </div>
               )}
             </FormItem>

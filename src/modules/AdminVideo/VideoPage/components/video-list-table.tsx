@@ -1,7 +1,7 @@
 import { Film, Search } from 'lucide-react';
-import { toast } from 'sonner';
 
 import { Input } from '@/components/ui/input';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import type { PageSizeOption } from './use-video-list-paged';
 import { PAGE_SIZE_OPTIONS, useVideoListPaged } from './use-video-list-paged';
@@ -12,17 +12,18 @@ interface Props {
 }
 
 export function VideoListTable({ refreshKey }: Props) {
-  const { videos, isLoading, hasNext, page, pageSize, search, setSearch, setPageSize, nextPage, prevPage } =
+  const { videos, isLoading, hasNext, page, totalPages, pageSize, search, setSearch, setPageSize, nextPage, prevPage } =
     useVideoListPaged(refreshKey);
 
   function handleCopyEmbed(embedUrl: string) {
+    const { addAlert } = useAlertStore.getState();
     navigator.clipboard
       .writeText(embedUrl)
       .then(() => {
-        toast.success('Đã copy embed URL');
+        addAlert({ type: 'success', title: 'Đã copy embed URL' });
       })
       .catch(() => {
-        toast.error('Không thể copy');
+        addAlert({ type: 'error', title: 'Không thể copy' });
       });
   }
 
@@ -139,7 +140,9 @@ export function VideoListTable({ refreshKey }: Props) {
         >
           ← Trang trước
         </button>
-        <span className="text-xs text-gray-400">Trang {page}</span>
+        <span className="text-xs text-gray-400">
+          Trang {page} / {totalPages}
+        </span>
         <button
           type="button"
           className="text-xs text-gray-500 hover:text-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors"
