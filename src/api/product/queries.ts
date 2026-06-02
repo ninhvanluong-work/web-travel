@@ -9,8 +9,8 @@ import {
   getProductList,
   getProductReviews,
   patchProductStatus,
-  publishProduct,
   updateProduct,
+  updateProductStatus,
 } from './requests';
 import type {
   ApiProductDetail,
@@ -45,8 +45,8 @@ export const usePatchProductStatus = createMutation<
   mutationFn: ({ id, status }) => patchProductStatus(id, status),
 });
 
-export const usePublishProduct = createMutation<ApiProductDetail, { id: string }>({
-  mutationFn: ({ id }) => publishProduct(id),
+export const useUpdateProductStatus = createMutation<ApiProductDetail, { id: string; status: 'published' | 'hidden' }>({
+  mutationFn: ({ id, status }) => updateProductStatus(id, status),
 });
 
 export const useDeleteProduct = createMutation<void, { id: string }>({

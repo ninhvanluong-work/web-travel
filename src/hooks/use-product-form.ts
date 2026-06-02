@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useCreateProduct, useProductById, usePublishProduct, useUpdateProduct } from '@/api/product';
+import { useCreateProduct, useProductById, useUpdateProduct, useUpdateProductStatus } from '@/api/product';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { ROUTE } from '@/types/routes';
@@ -116,15 +116,9 @@ export function useProductForm(productId?: string) {
     },
   });
 
-  const publishMutation = usePublishProduct({
-    onSuccess: () => {
-      draft.clearDraftOnSuccess();
-      invalidateList();
-      addAlert({ type: 'success', title: 'Tour published successfully' });
-      router.push(ROUTE.ADMIN_PRODUCTS);
-    },
+  const updateStatusMutation = useUpdateProductStatus({
     onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Failed to publish tour' });
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Failed to update tour status' });
     },
   });
 
@@ -153,11 +147,46 @@ export function useProductForm(productId?: string) {
     }
     updateMutation.mutate(
       { id: productId!, values: data },
-      { onSuccess: () => publishMutation.mutate({ id: productId! }) }
+      {
+        onSuccess: () =>
+          updateStatusMutation.mutate(
+            { id: productId!, status: 'published' },
+            {
+              onSuccess: () => {
+                draft.clearDraftOnSuccess();
+                invalidateList();
+                addAlert({ type: 'success', title: 'Tour published successfully' });
+                router.push(ROUTE.ADMIN_PRODUCTS);
+              },
+            }
+          ),
+      }
     );
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending || publishMutation.isPending;
+  const handlePublish = form.handleSubmit(onPublish);
 
-  return { form, isEdit, productData, onSubmit, onPublish, isPending, draft };
+  const handleHide = form.handleSubmit((data) => {
+    updateMutation.mutate(
+      { id: productId!, values: data },
+      {
+        onSuccess: () =>
+          updateStatusMutation.mutate(
+            { id: productId!, status: 'hidden' },
+            {
+              onSuccess: () => {
+                draft.clearDraftOnSuccess();
+                invalidateList();
+                addAlert({ type: 'success', title: 'Tour hidden successfully' });
+                router.push(ROUTE.ADMIN_PRODUCTS);
+              },
+            }
+          ),
+      }
+    );
+  });
+
+  const isPending = createMutation.isPending || updateMutation.isPending || updateStatusMutation.isPending;
+
+  return { form, isEdit, productData, onSubmit, onPublish, handlePublish, handleHide, isPending, draft };
 }

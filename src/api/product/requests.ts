@@ -122,8 +122,8 @@ export async function patchProductStatus(
   return data.data;
 }
 
-export async function publishProduct(id: string): Promise<ApiProductDetail> {
-  const { data } = await request.post<{ data: ApiProductDetail }>(`/product/${id}/publish`);
+export async function updateProductStatus(id: string, status: 'published' | 'hidden'): Promise<ApiProductDetail> {
+  const { data } = await request.post<{ data: ApiProductDetail }>(`/product/${id}/status/${status}`);
   return data.data;
 }
 

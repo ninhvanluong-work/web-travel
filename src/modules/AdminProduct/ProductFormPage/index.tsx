@@ -75,7 +75,8 @@ function SectionCard({ id, label, children }: { id: string; label: string; child
 }
 
 export default function ProductFormPage({ productId }: ProductFormPageProps) {
-  const { form, isEdit, productData, onSubmit, onPublish, isPending, draft } = useProductForm(productId);
+  const { form, isEdit, productData, onSubmit, handlePublish, handleHide, isPending, draft } =
+    useProductForm(productId);
 
   const [showDraftBanner, setShowDraftBanner] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
@@ -89,8 +90,6 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
 
   const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }));
   const handleSaveChanges = form.handleSubmit((data) => onSubmit(data));
-  const handlePublish = form.handleSubmit((data) => onPublish(data));
-  const handleHide = form.handleSubmit((data) => onSubmit({ ...data, status: 'hidden' }));
 
   const sectionHasError = (sectionId: string) => (SECTION_ERROR_FIELDS[sectionId] ?? []).some((f) => !!errors[f]);
 
