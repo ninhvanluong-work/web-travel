@@ -38,7 +38,7 @@ export function useVideoListPaged(refreshKey: number): State & Actions {
 
   useEffect(() => {
     if (refreshKey > 0) refetch();
-  }, [refreshKey]);
+  }, [refreshKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const videos = data?.items ?? [];
   const totalPages = data?.totalPages ?? 1;

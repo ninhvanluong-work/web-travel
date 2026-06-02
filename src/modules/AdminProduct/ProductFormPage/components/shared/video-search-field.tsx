@@ -73,7 +73,7 @@ export function VideoSearchField({
       uploadingStatus: null,
       product: null,
     });
-  }, [initialVideo?.id]);
+  }, [initialVideo?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!currentVideoId || selectedVideo?.id === currentVideoId) return;
