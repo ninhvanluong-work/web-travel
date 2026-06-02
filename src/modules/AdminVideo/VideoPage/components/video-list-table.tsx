@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function VideoListTable({ refreshKey }: Props) {
-  const { videos, isLoading, hasNext, page, pageSize, search, setSearch, setPageSize, nextPage, prevPage } =
+  const { videos, isLoading, hasNext, page, totalPages, pageSize, search, setSearch, setPageSize, nextPage, prevPage } =
     useVideoListPaged(refreshKey);
 
   function handleCopyEmbed(embedUrl: string) {
@@ -140,7 +140,9 @@ export function VideoListTable({ refreshKey }: Props) {
         >
           ← Trang trước
         </button>
-        <span className="text-xs text-gray-400">Trang {page}</span>
+        <span className="text-xs text-gray-400">
+          Trang {page} / {totalPages}
+        </span>
         <button
           type="button"
           className="text-xs text-gray-500 hover:text-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors"

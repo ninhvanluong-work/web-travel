@@ -58,6 +58,31 @@ export interface IVideoPage {
   nextCursor: number | null;
 }
 
+export interface ApiAdminListResponse<T> {
+  data: {
+    items: T[];
+    pagination: {
+      page: number;
+      pageSize: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+  code: number;
+  message: string;
+  error: string | null;
+}
+
+export interface IVideoPageAdmin {
+  items: IVideo[];
+  totalPages: number;
+}
+
+export interface IVideoAdminPage {
+  items: IVideo[];
+  nextPage: number | undefined;
+}
+
 // Admin-specific types
 export interface ApiAdminVideoItem {
   id: string;
