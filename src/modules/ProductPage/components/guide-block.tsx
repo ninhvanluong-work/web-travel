@@ -1,6 +1,10 @@
+import { useRouter } from 'next/router';
+
 import { Button } from '@/components/ui/button';
+import { ROUTE } from '@/types/routes';
 
 interface GuideBlockProps {
+  id?: string;
   initials: string;
   name: string;
   rating: number;
@@ -9,7 +13,16 @@ interface GuideBlockProps {
   area: string;
 }
 
-export default function GuideBlock({ initials, name, rating, yearsExperience, toursInArea, area }: GuideBlockProps) {
+export default function GuideBlock({
+  id,
+  initials,
+  name,
+  rating,
+  yearsExperience,
+  toursInArea,
+  area,
+}: GuideBlockProps) {
+  const router = useRouter();
   return (
     <div className="px-[18px] pb-[22px]">
       <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">Your guide</p>
@@ -31,6 +44,8 @@ export default function GuideBlock({ initials, name, rating, yearsExperience, to
           size="icon"
           blur={false}
           className="ml-auto text-[12px] text-[#1A1A18] underline underline-offset-2 decoration-black/20 flex-shrink-0 hover:bg-transparent"
+          onClick={() => id && router.push(ROUTE.GUIDE_PROFILE_PATH(id))}
+          disabled={!id}
         >
           View profile →
         </Button>
