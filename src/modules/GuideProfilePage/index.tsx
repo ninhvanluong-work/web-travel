@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 
+import { useGuideProfile } from '@/hooks/use-guide-profile';
+
 import ActionBar from './components/action-bar';
 import CareerTimeline from './components/career-timeline';
 import DestinationsChart from './components/destinations-chart';
@@ -12,7 +14,6 @@ import OperatorReviews from './components/operator-reviews';
 import SpecialtyTags from './components/specialty-tags';
 import StatsBlock from './components/stats-block';
 import StorytellingBlock from './components/storytelling-block';
-import { useGuideProfile } from './hooks/use-guide-profile';
 
 const fadeUp = (delay: number) => ({
   initial: { opacity: 0, y: 16 },

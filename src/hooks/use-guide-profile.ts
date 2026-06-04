@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import type { GuideProfileData } from '../data/mock-guide';
-import { MOCK_GUIDE } from '../data/mock-guide';
+import type { GuideProfileData } from '@/modules/GuideProfilePage/data/mock-guide';
+import { MOCK_GUIDE } from '@/modules/GuideProfilePage/data/mock-guide';
 
 export function useGuideProfile(_id: string | undefined) {
   const [isLoading, setIsLoading] = useState(true);
