@@ -5,6 +5,7 @@ export interface GuideProfileData {
   title: string;
   slogan: string;
   coverUrl?: string;
+  avatarUrl?: string;
   bio: string;
   metrics: {
     toursLed: number;
@@ -73,6 +74,7 @@ export const MOCK_GUIDE: GuideProfileData = {
   title: 'Hướng dẫn viên · Hà Nội & vùng cao phía Bắc',
   slogan: '"Mỗi ngọn núi ở Sapa có một câu chuyện. Tôi chỉ mượn lời để kể lại."',
   coverUrl: '/images/sapa_cover.png',
+  avatarUrl: '/images/guide_avatar.jpg',
   bio: 'Bố tôi là người Tày ở Lào Cai, mẹ tôi là người Hà Nội. Tôi lớn lên giữa hai thế giới — phố cổ và rừng núi — và mỗi tour của tôi là một cách để chia sẻ cả hai. Sau bảy năm dẫn khách, tôi vẫn xúc động khi thấy ai đó nhìn ruộng bậc thang lần đầu tiên.',
   metrics: {
     toursLed: 284,
