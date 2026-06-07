@@ -84,6 +84,7 @@ function mapGuide(guide?: ApiTourGuide): MockProduct['guide'] {
     return null;
   }
   return {
+    id: guide.id,
     initials: getInitials(guide.name, 1),
     name: guide.name,
     rating: guide.ratingStar,

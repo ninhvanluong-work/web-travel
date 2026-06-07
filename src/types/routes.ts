@@ -9,6 +9,8 @@ export const ROUTE = {
   ADMIN_PRODUCTS_CREATE: '/admin/products/create',
   ADMIN_PRODUCTS_EDIT: (id: string) => `/admin/products/${id}/edit`,
   ADMIN_VIDEOS: '/admin/videos',
+  GUIDE_PROFILE: '/guide/[id]',
+  GUIDE_PROFILE_PATH: (id: string) => `/guide/${id}`,
 } as const;
 
 export type ROUTE_KEY = keyof typeof ROUTE;

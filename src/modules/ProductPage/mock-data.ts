@@ -31,6 +31,7 @@ export interface MockProduct {
     responseRate: number;
   };
   guide: {
+    id?: string;
     initials: string;
     name: string;
     rating: number;

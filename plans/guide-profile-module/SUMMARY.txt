@@ -1,0 +1,189 @@
+CODEBASE SCOUT REPORT - COMPLETE
+=================================
+
+Scout Date: 2026-06-02
+Working Directory: D:\Remote\web-travel
+Task: Explore codebase structure for Guide Profile page module implementation
+
+FINDINGS SUMMARY
+================
+
+1. EXISTING MODULE STRUCTURE
+   - HomePage (video background + search)
+   - DetailSearchPage (infinite-scroll grid)
+   - VideoDetailPage (snap-scroll feed)
+   - ProductPage (full-featured page)
+   - AdminProduct, AdminVideo (admin pages)
+   - button-page (component showcase)
+
+2. EXISTING GUIDE UI
+   - GuideBlock component at /src/modules/ProductPage/components/guide-block.tsx
+   - Shows: avatar, name, rating, years experience, tours in area
+   - Can be extended for full profile page
+
+3. API LAYER AVAILABLE
+   - Tour guide list API: /src/api/tour-guide/
+   - Models at /src/api/product/types.ts (ApiTourGuide interface)
+   - Pagination support (page-based)
+   - Ready for extension (guide detail endpoint)
+
+4. UI COMPONENT LIBRARY
+   40+ shadcn/ui components available:
+   - Button, Card, Avatar
+   - Skeleton, SkeletonWrapper (for loading states)
+   - Sheet (bottom sheet/dialog)
+   - Tabs, Badge, Carousel
+   - Form, Input, Select
+   - Alert, Dialog, Popover
+   All at /src/components/ui/
+
+5. LAYOUT SYSTEM
+   - MainLayout: max-w-[430px] h-[100dvh] max-h-[932px] (phone frame)
+   - ModuleLayout wrapping
+   - Centered on desktop, mobile-first design
+
+6. DESIGN TOKENS
+   - Typography: h1-h6, body1-body4, caption1-2, button1-3
+   - Colors: neutrals, brand, neon, pink, green, blue, yellow, red
+   - Spacing: custom units (4, 8, 12... 96 = 0.25rem to 6rem)
+   - Font families: DINPro, DIN Pro Cond
+
+7. STATE MANAGEMENT
+   - Zustand stores in /src/stores/
+   - UserStore for auth (tokens, logout)
+   - Selector functions via auto-zustand-selectors-hook
+
+8. API AUTHENTICATION
+   - Axios with auto Bearer token injection
+   - 401 handling with refresh token retry
+   - Zustand integration for token storage
+
+9. VIDEO SUPPORT
+   - BunnyVideoPlayer component for HLS streaming
+   - Adaptive bitrate selection
+   - Play/pause/mute controls
+   - Preload support
+
+10. CUSTOM HOOKS
+    - use-swipe-back (gesture detection)
+    - use-video-detail-feed (feed management)
+    - use-video-preloader (HLS preloading)
+    - use-shared-video (element pool)
+
+KEY FILES IDENTIFIED
+====================
+
+ROUTING:
+  - /src/types/routes.ts (add GUIDE_PROFILE route here)
+
+API LAYER:
+  - /src/api/tour-guide/requests.ts (API call pattern)
+  - /src/api/tour-guide/queries.ts (React Query hook pattern)
+  - /src/api/product/types.ts (ApiTourGuide model)
+  - /src/api/axios.ts (HTTP client)
+
+UI COMPONENTS:
+  - /src/components/ui/button.tsx
+  - /src/components/ui/avatar.tsx
+  - /src/components/ui/card.tsx
+  - /src/components/ui/skeleton.tsx
+  - /src/components/ui/sheet.tsx
+  - 35+ others
+
+LAYOUT:
+  - /src/components/layouts/MainLayout/MainLayout.tsx
+
+MODULES:
+  - /src/modules/ProductPage/index.tsx (complex example)
+  - /src/modules/DetailSearchPage/index.tsx (infinite scroll example)
+  - /src/modules/ProductPage/components/guide-block.tsx (guide UI ref)
+
+STYLING:
+  - /d/Remote/web-travel/tailwind.config.ts
+
+CRITICAL CONSTRAINTS
+====================
+
+1. Phone frame: max-w-[430px] h-[100dvh] max-h-[932px]
+   - All content must fit within
+   - Centered on desktop, fixed mobile viewport
+   - No horizontal scrolling allowed
+
+2. Do NOT modify without permission:
+   - MainLayout dimensions
+   - Scroll behavior (snap-scroll, IntersectionObserver)
+   - Zustand store logic
+   - React Query cache strategy
+   - Video player preload gates
+
+3. Follow existing patterns:
+   - Thin router pattern (page re-exports module)
+   - 4-file API pattern (types, requests, queries, index)
+   - Sub-components in /components/ folder
+   - Use existing UI library (don't duplicate)
+
+IMPLEMENTATION ROADMAP
+======================
+
+Phase 1: Setup
+- Add GUIDE_PROFILE routes to /src/types/routes.ts
+- Create /src/pages/guide/[id].tsx (re-export module)
+- Create /src/modules/GuideProfilePage/index.tsx
+
+Phase 2: API Layer
+- Extend /src/api/tour-guide/ with getGuideDetail(id)
+- Create useGuideDetail(id) query hook
+- Add types if needed
+
+Phase 3: Components
+- Build guide-header.tsx (avatar, name, rating)
+- Build guide-stats.tsx (experience, tours)
+- Build guide-reviews.tsx (review list)
+- Add other sections as needed
+
+Phase 4: Polish
+- Run pnpm lint:fix
+- Run pnpm format:write
+- Run pnpm check-types
+- Test on mobile viewport
+
+REPORTS GENERATED
+=================
+
+1. INDEX.md
+   - Overview and navigation guide
+   - Implementation roadmap
+   - Key findings summary
+
+2. scout-report.md
+   - 12 sections of detailed architecture
+   - Module patterns
+   - API patterns
+   - UI components
+   - Layout system
+   - Critical rules
+
+3. code-snippets.md
+   - Ready-to-use code examples
+   - API patterns with full code
+   - Component usage examples
+   - Pattern templates
+
+4. FILE-REFERENCE.md
+   - All absolute file paths
+   - Reference files organized by category
+   - New files to create
+   - Important notes
+
+Location: /d/Remote/web-travel/plans/guide-profile-module/
+
+NEXT STEPS
+==========
+
+1. Start with /d/Remote/web-travel/plans/guide-profile-module/INDEX.md
+2. Review /d/Remote/web-travel/plans/guide-profile-module/reports/scout-report.md
+3. Reference /d/Remote/web-travel/plans/guide-profile-module/reports/code-snippets.md
+4. Use FILE-REFERENCE.md for absolute file paths
+5. Follow implementation roadmap in Phase order
+6. Refer to existing modules (ProductPage, DetailSearchPage) for patterns
+
