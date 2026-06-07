@@ -1,7 +1,7 @@
-import type { GuideProfileData } from '../data/mock-guide';
+import type { ITourGuideProfile } from '@/api/tour-guide/types';
 
 interface SpecialtyTagsProps {
-  specialties: GuideProfileData['specialties'];
+  specialties: ITourGuideProfile['specialties'];
 }
 
 export default function SpecialtyTags({ specialties }: SpecialtyTagsProps) {
@@ -10,7 +10,11 @@ export default function SpecialtyTags({ specialties }: SpecialtyTagsProps) {
       <p className="text-[14px] font-medium text-neutral-900 mb-3.5">Chuyên môn</p>
       <div className="flex gap-1.5 flex-wrap">
         {specialties.map((s) => (
-          <span key={s.label} className={`text-[12px] px-[11px] py-1.5 rounded-full ${s.bg} ${s.text}`}>
+          <span
+            key={s.label}
+            className="text-[12px] px-[11px] py-1.5 rounded-full"
+            style={{ backgroundColor: s.bg, color: s.text }}
+          >
             {s.label}
           </span>
         ))}

@@ -1,3 +1,7 @@
+import type { ApiTourGuide } from '../tour-guide/types';
+
+export type { ApiTourGuide, ApiTourGuideListResponse } from '../tour-guide/types';
+
 // ── Domain model (list) ───────────────────────────────────────────────────
 export interface IProduct {
   id: string;
@@ -102,28 +106,6 @@ export interface ApiTagListResponse {
 
 export interface ApiTagCreateResponse {
   data: ApiTagItem;
-  code: number;
-  error: string | null;
-  message: string;
-}
-
-export interface ApiTourGuide {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-  name: string;
-  avatar: string | null;
-  ratingCount: number;
-  expYear: number;
-  ratingStar: number;
-}
-
-export interface ApiTourGuideListResponse {
-  data: {
-    items: ApiTourGuide[];
-    pagination: IProductPagination;
-  };
   code: number;
   error: string | null;
   message: string;
