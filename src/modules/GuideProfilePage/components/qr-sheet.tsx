@@ -10,7 +10,7 @@ interface QrSheetProps {
 }
 
 export default function QrSheet({ open, onClose, guideId, guideName }: QrSheetProps) {
-  const profileUrl = `https://vvv.travel/g/${guideId}`;
+  const profileUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/guide/${guideId}`;
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
