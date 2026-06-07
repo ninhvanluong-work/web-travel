@@ -1,6 +1,6 @@
 import 'animate.css';
 
-import { Film, LayoutDashboard, LogOut, Package } from 'lucide-react';
+import { Film, LayoutDashboard, LogOut, Package, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -15,6 +15,7 @@ interface SidebarProps {
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
   { label: 'Sản phẩm', href: ROUTE.ADMIN_PRODUCTS, icon: Package },
+  { label: 'Hướng dẫn viên', href: ROUTE.ADMIN_GUIDES, icon: Users },
   { label: 'Video', href: ROUTE.ADMIN_VIDEOS, icon: Film },
 ];
 

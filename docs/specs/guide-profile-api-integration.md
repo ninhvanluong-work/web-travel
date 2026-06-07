@@ -180,10 +180,10 @@ import type { IProductPagination } from '../product/types';
 export interface ApiTourGuideSupplierReview {
   id: string;
   name: string;
-  point: number;
-  content: string;
-  tourName: string;
   createdAt: string;
+  content: string;
+  point: number;
+  tourName: string;
 }
 
 export interface ApiTourGuideUserRating {
@@ -199,8 +199,8 @@ export interface ApiTourGuideUserReview {
 }
 
 export interface ApiTourGuideCareerPath {
-  role: string;
   company: string;
+  role: string;
   startYear: number;
   tourCount: number;
   description: string;
@@ -224,7 +224,7 @@ export interface ApiTourGuideDetail {
   description: string | null;
   languages: string[];
   experts: string[];
-  supplierReview: ApiTourGuideSupplierReview[];
+  supplierReview: ApiTourGuideSupplierReview[] | null;
   userReview: ApiTourGuideUserReview;
   careerPath: ApiTourGuideCareerPath[];
 }
@@ -239,16 +239,18 @@ export interface ApiTourGuideDetailResponse {
 // ── Raw API response — GET /tour-guide (list) ─────────────────────────────
 // (move từ ../product/types)
 
+// ⚠️ Confirmed từ real curl GET /tour-guide:
+// - List chỉ trả 7 fields (id, createdAt, name, avatar, ratingCount, expYear, ratingValue)
+// - KHÔNG có updatedAt, deletedAt trong list response
+// - Field là ratingValue KHÔNG phải ratingStar
 export interface ApiTourGuide {
   id: string;
   createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
   name: string;
-  avatar: string | null;
+  avatar: string | null; // có thể null
   ratingCount: number;
   expYear: number;
-  ratingStar: number;
+  ratingValue: number; // ⚠️ ratingValue, không phải ratingStar
 }
 
 export interface ApiTourGuideListResponse {

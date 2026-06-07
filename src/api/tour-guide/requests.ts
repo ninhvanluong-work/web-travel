@@ -1,10 +1,17 @@
 import { request } from '../axios';
 import type {
-  ApiTourGuide,
   ApiTourGuideDetail,
   ApiTourGuideDetailResponse,
   ApiTourGuideListResponse,
+  ApiTourGuideReviewResponse,
+  ITourGuide,
+  ITourGuideListParams,
+  ITourGuideListResult,
   ITourGuideProfile,
+  ITourGuideReview,
+  ITourGuideReviewParams,
+  ITourGuideReviewResult,
+  TourGuideFormPayload,
 } from './types';
 
 // ---------- Constants ----------
@@ -72,7 +79,29 @@ const toTourGuideProfile = (api: ApiTourGuideDetail): ITourGuideProfile => ({
   })),
   dispatches: [],
   moments: [],
-  destinations: [],
+  destinations: (api.destinationSummary ?? []).map((d) => ({
+    name: d.destinationName,
+    toursCount: d.productCount,
+    percentage: api.totalProducts > 0 ? Math.round((d.productCount / api.totalProducts) * 100) : 0,
+  })),
+});
+
+const toTourGuide = (item: {
+  id: string;
+  createdAt: string;
+  name: string;
+  avatar: string | null;
+  ratingCount: number;
+  expYear: number;
+  ratingValue: number;
+}): ITourGuide => ({
+  id: item.id,
+  name: item.name,
+  avatar: item.avatar,
+  ratingCount: item.ratingCount,
+  expYear: item.expYear,
+  ratingValue: item.ratingValue,
+  createdAt: item.createdAt,
 });
 
 // ---------- Requests ----------
@@ -88,12 +117,61 @@ export async function getTourGuidePage(page: number): Promise<TourGuidePage> {
   });
   const { items, pagination } = data.data;
   return {
-    items: items.map((x: ApiTourGuide) => ({ id: x.id, name: x.name })),
+    items: items.map((x) => ({ id: x.id, name: x.name })),
     nextPage: pagination.page < pagination.totalPages ? pagination.page + 1 : undefined,
+  };
+}
+
+export async function getTourGuideList(params: ITourGuideListParams): Promise<ITourGuideListResult> {
+  const cleanParams = Object.fromEntries(
+    Object.entries(params).filter(([, v]) => v !== '' && v !== undefined && v !== null)
+  );
+  const { data } = await request.get<ApiTourGuideListResponse>('/tour-guide', { params: cleanParams });
+  return {
+    items: data.data.items.map(toTourGuide),
+    pagination: data.data.pagination,
   };
 }
 
 export async function getTourGuideById(id: string): Promise<ITourGuideProfile> {
   const { data } = await request.get<ApiTourGuideDetailResponse>(`/tour-guide/${id}`);
   return toTourGuideProfile(data.data);
+}
+
+export async function createTourGuide(payload: TourGuideFormPayload): Promise<ApiTourGuideDetail> {
+  const { data } = await request.post<ApiTourGuideDetailResponse>('/tour-guide', payload);
+  return data.data;
+}
+
+export async function updateTourGuide(id: string, payload: TourGuideFormPayload): Promise<ApiTourGuideDetail> {
+  const { data } = await request.put<ApiTourGuideDetailResponse>(`/tour-guide/${id}`, payload);
+  return data.data;
+}
+
+export async function deleteTourGuide(id: string): Promise<void> {
+  await request.delete(`/tour-guide/${id}`);
+}
+
+export async function getTourGuideReviews({
+  id,
+  page = 1,
+  pageSize = 10,
+}: ITourGuideReviewParams): Promise<ITourGuideReviewResult> {
+  const { data } = await request.get<ApiTourGuideReviewResponse>(`/tour-guide/${id}/review`, {
+    params: { page, pageSize },
+  });
+  return {
+    items: data.data.items.map(
+      (r): ITourGuideReview => ({
+        id: r.id,
+        date: formatViDate(r.createdAt),
+        content: r.comment,
+        rating: r.point,
+        images: r.images,
+        authorId: r.user.id,
+        authorName: r.user.name,
+      })
+    ),
+    pagination: data.data.pagination,
+  };
 }

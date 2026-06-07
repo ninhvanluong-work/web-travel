@@ -46,7 +46,7 @@ export default function GuideProfilePage() {
       </motion.div>
 
       <OperatorReviews reviews={data.operatorReviews} />
-      <GuestFeedback feedback={data.guestFeedback} guideName={data.name.split(' ').pop()!} />
+      <GuestFeedback feedback={data.guestFeedback} guideName={data.name.split(' ').pop()!} guideId={data.id} />
       <SpecialtyTags specialties={data.specialties} />
       <MomentsGrid moments={data.moments} />
       <DestinationsChart destinations={data.destinations} guideName={data.name.split(' ').pop()!} />
