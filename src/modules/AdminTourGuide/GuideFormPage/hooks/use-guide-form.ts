@@ -23,7 +23,7 @@ const DEFAULT_VALUES: TourGuideFormValues = {
   careerPath: [],
 };
 
-export function useGuideForm(guideId?: string) {
+export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
   const router = useRouter();
   const queryClient = useQueryClient();
   const isEdit = !!guideId;
@@ -83,6 +83,8 @@ export function useGuideForm(guideId?: string) {
     onSuccess: () => {
       invalidate();
       addAlert({ type: 'success', title: 'Tạo hướng dẫn viên thành công' });
+      form.reset(form.getValues());
+      onAfterSave?.();
       router.push(ROUTE.ADMIN_GUIDES);
     },
     onError: (err: any) => {
@@ -104,6 +106,8 @@ export function useGuideForm(guideId?: string) {
           onSuccess: () => {
             invalidate();
             addAlert({ type: 'success', title: 'Cập nhật thành công' });
+            form.reset(data);
+            onAfterSave?.();
             router.push(ROUTE.ADMIN_GUIDES);
           },
         }

@@ -1,21 +1,11 @@
-import { X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import { useRef } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { getSpecialtyColor } from '@/lib/specialty-colors';
 import type { TourGuideFormValues } from '@/lib/validations/tour-guide';
-
-const SUGGESTIONS = [
-  'Trekking expert',
-  'Food storyteller',
-  'Family-friendly',
-  'Photography support',
-  'Premium private guide',
-  'Cultural tours',
-  'Water sports',
-  'City walking tour',
-];
 
 export function ExpertsSection() {
   const { control, setValue } = useFormContext<TourGuideFormValues>();
@@ -37,66 +27,72 @@ export function ExpertsSection() {
     );
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      addExpert((e.target as HTMLInputElement).value);
-    }
-  };
-
   return (
-    <div className="space-y-4">
-      {/* Current tags */}
-      {experts.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {experts.map((label) => (
-            <span
-              key={label}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700 ring-1 ring-brand-200"
-            >
-              {label}
-              <button
-                type="button"
-                onClick={() => removeExpert(label)}
-                className="hover:text-brand-900 transition-colors"
-              >
-                <X size={12} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
-
-      {/* Input row */}
-      <div className="flex gap-2">
-        <Input ref={inputRef} size="sm" placeholder="Thêm chuyên môn..." onKeyDown={handleKeyDown} className="flex-1" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="xs"
-          rounded="md"
-          blur={false}
-          onClick={() => addExpert(inputRef.current?.value ?? '')}
-          className="h-9 px-4 shrink-0 border border-gray-200"
-        >
-          Add
-        </Button>
+    <div className="space-y-6">
+      {/* Zone 1: Selected tags */}
+      <div className="space-y-2">
+        <label className="section-label-caps">Chuyên môn đã chọn ({experts.length})</label>
+        {experts.length === 0 ? (
+          <div className="py-3 px-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/30 text-center">
+            <p className="text-xs text-slate-400 italic">
+              Chưa chọn chuyên môn nào. Chọn từ gợi ý bên dưới hoặc nhập mới.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2 p-1.5 rounded-xl border border-slate-100 bg-slate-50/20">
+            {experts.map((label) => {
+              const colors = getSpecialtyColor(label);
+              return (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold shadow-theme-xs border transition-all hover:scale-[1.02]"
+                  style={{ backgroundColor: colors.bg, color: colors.text, borderColor: `${colors.text}18` }}
+                >
+                  {label}
+                  <button
+                    type="button"
+                    onClick={() => removeExpert(label)}
+                    className="opacity-60 hover:opacity-100 hover:bg-black/5 rounded-full p-0.5 transition-all"
+                  >
+                    <X size={11} />
+                  </button>
+                </span>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Suggestions */}
-      <div className="space-y-1.5">
-        <p className="text-[11px] text-slate-400 font-medium">Gợi ý:</p>
-        <div className="flex flex-wrap gap-1.5">
-          {SUGGESTIONS.filter((s) => !experts.includes(s)).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => addExpert(s)}
-              className="px-2.5 py-1 rounded-full text-[11px] text-gray-500 border border-dashed border-gray-300 hover:border-brand-400 hover:text-brand-600 transition-colors"
-            >
-              + {s}
-            </button>
-          ))}
+      {/* Zone 2: Input */}
+      <div className="space-y-2">
+        <label className="section-label-caps">Tự nhập chuyên môn mới</label>
+        <div className="flex gap-3 items-center w-full">
+          <div className="flex-1">
+            <Input
+              ref={inputRef}
+              fullWidth
+              placeholder="Ví dụ: Cắm trại qua đêm, Dẫn tour xe máy..."
+              className="h-10 px-[14px] rounded-xl border-slate-200 shadow-theme-xs focus-visible:ring-brand-500/10"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addExpert(e.currentTarget.value);
+                }
+              }}
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={() => addExpert(inputRef.current?.value ?? '')}
+            variant="primary"
+            size="xs"
+            rounded="md"
+            blur={false}
+            className="h-10 px-5 rounded-xl bg-brand-500 hover:bg-brand-600 border-0 flex items-center gap-1 shrink-0 shadow-theme-xs font-semibold text-xs"
+          >
+            <Plus size={14} />
+            Thêm
+          </Button>
         </div>
       </div>
     </div>

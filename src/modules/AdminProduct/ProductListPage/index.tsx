@@ -194,23 +194,33 @@ export default function ProductListPage() {
             </button>
 
             <div className="flex items-center gap-1.5">
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                const p = i + 1;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPage(p)}
-                    className={`inline-flex items-center justify-center h-10 w-10 rounded-lg text-sm font-semibold transition-all ${
-                      p === page
-                        ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
+              {(() => {
+                const maxButtons = 5;
+                let startPage = Math.max(1, page - Math.floor(maxButtons / 2));
+                const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+                if (endPage - startPage + 1 < maxButtons) {
+                  startPage = Math.max(1, endPage - maxButtons + 1);
+                }
+
+                return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                  const p = startPage + i;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPage(p)}
+                      className={`inline-flex items-center justify-center h-10 w-10 rounded-lg text-sm font-semibold transition-all ${
+                        p === page
+                          ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20'
+                          : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  );
+                });
+              })()}
             </div>
 
             <button

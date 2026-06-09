@@ -8,10 +8,11 @@ interface GuideFormHeaderProps {
   isEdit: boolean;
   guideId?: string;
   isPending: boolean;
+  isDirty: boolean;
   onSave: () => void;
 }
 
-export function GuideFormHeader({ isEdit, guideId, isPending, onSave }: GuideFormHeaderProps) {
+export function GuideFormHeader({ isEdit, guideId, isPending, isDirty, onSave }: GuideFormHeaderProps) {
   const router = useRouter();
 
   return (
@@ -29,8 +30,11 @@ export function GuideFormHeader({ isEdit, guideId, isPending, onSave }: GuideFor
         </Button>
         <div className="min-w-0 flex items-center gap-3">
           <h1 className="text-lg font-bold text-slate-800 dark:text-white/90 truncate leading-tight">
-            {isEdit ? 'Edit Guide' : 'Add New Guide'}
+            {isEdit ? 'Chỉnh sửa hướng dẫn viên' : 'Thêm hướng dẫn viên mới'}
           </h1>
+          {isDirty && (
+            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" title="Có thay đổi chưa lưu" />
+          )}
           {isEdit && guideId && (
             <a
               href={ROUTE.GUIDE_PROFILE_PATH(guideId)}
@@ -39,7 +43,7 @@ export function GuideFormHeader({ isEdit, guideId, isPending, onSave }: GuideFor
               className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-brand-500 transition-colors shrink-0"
             >
               <ExternalLink size={12} />
-              View page
+              Xem trang
             </a>
           )}
         </div>
@@ -56,7 +60,7 @@ export function GuideFormHeader({ isEdit, guideId, isPending, onSave }: GuideFor
           onClick={onSave}
           className="px-5 h-9 bg-brand-500 hover:bg-brand-600 border-0 shadow-theme-xs"
         >
-          {isEdit ? 'Save Changes' : 'Create Guide'}
+          {isEdit ? 'Lưu thay đổi' : 'Tạo hướng dẫn viên'}
         </Button>
       </div>
     </div>

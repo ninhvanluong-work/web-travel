@@ -101,8 +101,11 @@ export function GuideTableRow({ guide, onDelete }: Props) {
         <StarRating value={guide.ratingValue} />
       </TableCell>
 
-      {/* Tours led */}
-      <TableCell className="py-4 text-sm text-gray-700">{guide.ratingCount}</TableCell>
+      {/* Reviews */}
+      <TableCell className="py-4">
+        <span className="text-sm text-gray-700">{guide.ratingCount}</span>
+        <span className="text-xs text-gray-400 ml-1">nhận xét</span>
+      </TableCell>
 
       {/* Created at */}
       <TableCell className="py-4 text-xs text-gray-500 whitespace-nowrap">
@@ -124,7 +127,7 @@ export function GuideTableRow({ guide, onDelete }: Props) {
             <DropdownMenuItem asChild>
               <Link href={ROUTE.ADMIN_GUIDES_EDIT(guide.id)} className="flex items-center">
                 <Pencil size={14} className="mr-2" />
-                Edit
+                Chỉnh sửa
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -133,7 +136,7 @@ export function GuideTableRow({ guide, onDelete }: Props) {
               onSelect={() => onDelete(guide)}
             >
               <Trash2 size={14} className="mr-2" />
-              Delete
+              Xóa
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

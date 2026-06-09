@@ -22,5 +22,5 @@ export function useGuideListActions(refetch: () => void) {
     deleteMutation.mutate({ id: deleteTarget.id });
   };
 
-  return { deleteTarget, setDeleteTarget, handleDeleteConfirm };
+  return { deleteTarget, setDeleteTarget, handleDeleteConfirm, isDeleting: deleteMutation.isPending };
 }

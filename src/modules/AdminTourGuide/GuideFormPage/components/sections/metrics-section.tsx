@@ -31,7 +31,7 @@ export function MetricsSection() {
         name="expYear"
         render={({ field }) => (
           <FormItem className="space-y-1.5">
-            <FormLabel className="text-[13px] text-slate-500 font-medium">Số năm kinh nghiệm</FormLabel>
+            <FormLabel className="admin-form-label">Số năm kinh nghiệm</FormLabel>
             <FormControl>
               <Input
                 size="sm"
@@ -55,7 +55,7 @@ export function MetricsSection() {
 
       {/* languages */}
       <div className="space-y-2">
-        <p className="text-[13px] text-slate-500 font-medium">
+        <p className="admin-form-label">
           Ngôn ngữ <span className="text-red-500">*</span>
         </p>
         <div className="flex flex-wrap gap-2">

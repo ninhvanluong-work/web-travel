@@ -13,7 +13,7 @@ export function BioSection() {
       name="description"
       render={({ field }) => (
         <FormItem className="space-y-1.5">
-          <FormLabel className="text-[13px] text-slate-500 font-medium">Bio / Description</FormLabel>
+          <FormLabel className="admin-form-label">Bio / Description</FormLabel>
           <FormControl>
             <TextArea
               placeholder="Giới thiệu về hướng dẫn viên..."
