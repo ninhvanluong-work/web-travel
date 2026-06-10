@@ -12,7 +12,7 @@ interface GuestFeedbackProps {
 
 export default function GuestFeedback({ feedback, guideName, guideId }: GuestFeedbackProps) {
   const { data: reviewData } = useTourGuideReviews({
-    variables: { id: guideId, page: 1, pageSize: 10 },
+    variables: { id: guideId, page: 1, pageSize: 2 },
     enabled: !!guideId,
   });
 
@@ -34,6 +34,8 @@ export default function GuestFeedback({ feedback, guideName, guideId }: GuestFee
         <FeaturedReviews
           reviews={reviewData?.items ?? []}
           totalReviews={reviewData?.pagination.total ?? feedback.totalReviews}
+          guideId={guideId}
+          guideName={guideName}
         />
       </div>
     </>

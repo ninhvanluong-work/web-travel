@@ -114,10 +114,11 @@ export interface ApiTourGuideReviewItem {
   comment: string;
   point: number;
   images: string[] | null;
+  videos: string[] | null;
   user: {
     id: string;
     name: string;
-  };
+  } | null;
 }
 
 export interface ApiTourGuideReviewResponse {
@@ -142,7 +143,8 @@ export interface ITourGuideReview {
   date: string;
   content: string;
   rating: number;
-  images: string[] | null;
+  images: string[];
+  videos: string[];
   authorId: string;
   authorName: string;
 }

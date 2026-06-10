@@ -20,6 +20,11 @@ import type {
   TourGuideFormPayload,
 } from './types';
 
+export interface ITourGuideReviewsInfiniteVariables {
+  id: string;
+  pageSize?: number;
+}
+
 export const useTourGuideListInfinite = createInfiniteQuery<TourGuidePage, void, Error, number>({
   primaryKey: '/tour-guide',
   queryFn: ({ pageParam = 1 }) => getTourGuidePage(pageParam as number),
@@ -54,5 +59,19 @@ export const useDeleteTourGuide = createMutation<void, { id: string }>({
 export const useTourGuideReviews = createQuery<ITourGuideReviewResult, ITourGuideReviewParams>({
   primaryKey: '/tour-guide/reviews',
   queryFn: ({ queryKey: [, variables] }) => getTourGuideReviews(variables!),
+  staleTime: 2 * 60 * 1000,
+});
+
+export const useTourGuideReviewsInfinite = createInfiniteQuery<
+  ITourGuideReviewResult,
+  ITourGuideReviewsInfiniteVariables,
+  Error,
+  number
+>({
+  primaryKey: '/tour-guide/reviews-infinite',
+  queryFn: ({ queryKey: [, { id, pageSize = 5 }], pageParam = 1 }) =>
+    getTourGuideReviews({ id, page: pageParam as number, pageSize }),
+  getNextPageParam: (lastPage) =>
+    lastPage.pagination.page < lastPage.pagination.totalPages ? lastPage.pagination.page + 1 : undefined,
   staleTime: 2 * 60 * 1000,
 });

@@ -1,0 +1,157 @@
+import { useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+
+import { ScrollArea } from '@/components/ui/scrollArea';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
+import { TextArea } from '@/components/ui/textarea';
+import { env } from '@/lib/const';
+import { useAlertStore } from '@/stores/use-alert-store';
+import { API_ROUTE } from '@/types/routes';
+
+import RatingCriteriaPanel, { buildDefaultCriteria, CRITERIA } from './rating-criteria-panel';
+import type { MediaQueueItem } from './rating-media-upload';
+import RatingMediaUpload from './rating-media-upload';
+import RatingStarInput from './rating-star-input';
+
+interface RatingSheetProps {
+  open: boolean;
+  onClose: () => void;
+  guideId: string;
+  guideName: string;
+}
+
+export default function RatingSheet({ open, onClose, guideId, guideName }: RatingSheetProps) {
+  const [rating, setRating] = useState<number | null>(null);
+  const [comment, setComment] = useState('');
+  const [criteria, setCriteria] = useState(buildDefaultCriteria);
+  const [mediaItems, setMediaItems] = useState<MediaQueueItem[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+
+  const queryClient = useQueryClient();
+  const isUploading = mediaItems.some((it) => it.status === 'uploading');
+  const isDisabled = submitting || isUploading;
+
+  function handleCriteriaChange(key: string, value: number) {
+    setCriteria((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleSubmit() {
+    if (isDisabled) return;
+    setSubmitting(true);
+
+    const payload = {
+      comment,
+      point: rating ?? 0,
+      images: mediaItems.filter((it) => it.mediaType === 'image' && it.url).map((it) => it.url!),
+      videos: mediaItems.filter((it) => it.mediaType === 'video' && it.url).map((it) => it.url!),
+      tourGuideSubRatings: CRITERIA.map((c) => ({ key: c.key, name: c.name, value: criteria[c.key] })),
+    };
+
+    try {
+      const res = await fetch(`${env.API_URL}${API_ROUTE.REVIEW_TOUR_GUIDE(guideId)}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['/tour-guide/reviews'] }),
+        queryClient.invalidateQueries({ queryKey: ['/tour-guide/reviews-infinite'] }),
+        queryClient.invalidateQueries({ queryKey: ['/tour-guide/detail'] }),
+      ]);
+      useAlertStore.getState().addAlert({ type: 'success', title: 'Đánh giá đã được gửi!' });
+      handleClose();
+    } catch {
+      useAlertStore.getState().addAlert({ type: 'error', title: 'Gửi đánh giá thất bại, vui lòng thử lại.' });
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function handleClose() {
+    onClose();
+    setTimeout(() => {
+      setRating(null);
+      setComment('');
+      setCriteria(buildDefaultCriteria());
+      setMediaItems([]);
+    }, 350);
+  }
+
+  return (
+    <Sheet open={open} onOpenChange={(v) => !v && handleClose()}>
+      <SheetContent
+        side="bottom"
+        className="rounded-t-2xl p-0 flex flex-col max-h-[800px]"
+        style={{
+          left: 'max(0px, calc(50% - 215px))',
+          right: 'max(0px, calc(50% - 215px))',
+        }}
+      >
+        {/* Drag handle — sits in the same top area as the default close button */}
+        <div className="relative h-10 flex items-center justify-center shrink-0">
+          <div className="w-10 h-1 rounded-full bg-slate-200" />
+        </div>
+
+        {/* Header */}
+        <div className="px-5 pb-3 shrink-0">
+          <SheetTitle className="text-[15px] font-semibold text-neutral-black leading-snug">
+            Đánh giá Hướng dẫn viên
+          </SheetTitle>
+          <p className="text-[12px] text-slate-400 mt-0.5">Chia sẻ trải nghiệm của bạn về tour cùng {guideName}</p>
+        </div>
+
+        {/* Scrollable form body */}
+        <ScrollArea className="flex-1 px-5 pb-2">
+          <div className="space-y-5">
+            <RatingStarInput value={rating} onChange={setRating} />
+
+            {/* Comment */}
+            <div className="space-y-1.5">
+              <p className="text-[13px] font-medium text-neutral-black">
+                Bạn nghĩ gì về chuyến đi và hướng dẫn viên này?
+              </p>
+              <div className="relative">
+                <TextArea
+                  fullWidth
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                  placeholder="Chia sẻ trải nghiệm chi tiết của bạn về hành trình..."
+                  rows={4}
+                  className="resize-none text-[13px] pb-6"
+                />
+                <span className="absolute bottom-2 right-3 text-[10px] text-slate-400 pointer-events-none">
+                  {comment.length} / 500
+                </span>
+              </div>
+            </div>
+
+            <RatingCriteriaPanel values={criteria} onChange={handleCriteriaChange} />
+
+            {/* Media upload */}
+            <div className="space-y-1.5">
+              <p className="text-[13px] font-medium text-neutral-black">
+                Hình ảnh & Video <span className="text-slate-400 font-normal text-[12px]">(Tùy chọn)</span>
+              </p>
+              <RatingMediaUpload onChange={setMediaItems} />
+            </div>
+          </div>
+        </ScrollArea>
+
+        {/* Submit */}
+        <div className="px-5 py-4 border-t border-slate-100 shrink-0">
+          <motion.button
+            type="button"
+            whileTap={!isDisabled ? { scale: 0.97 } : undefined}
+            onClick={handleSubmit}
+            disabled={isDisabled}
+            className="w-full py-3 rounded-xl bg-neutral-black text-white text-[14px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitting ? 'Đang gửi...' : 'Gửi đánh giá'}
+          </motion.button>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}

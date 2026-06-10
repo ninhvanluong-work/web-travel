@@ -5,6 +5,7 @@ import { useAlertStore } from '@/stores/use-alert-store';
 
 import type { GuideProfileData } from '../data/mock-guide';
 import QrSheet from './qr-sheet';
+import RatingSheet from './rating-sheet';
 
 interface ActionBarProps {
   guide: Pick<GuideProfileData, 'id' | 'name'>;
@@ -12,6 +13,7 @@ interface ActionBarProps {
 
 export default function ActionBar({ guide }: ActionBarProps) {
   const [qrOpen, setQrOpen] = useState(false);
+  const [ratingOpen, setRatingOpen] = useState(false);
 
   const handleShare = async () => {
     const url = `https://vvv.travel/g/${guide.id}`;
@@ -42,6 +44,15 @@ export default function ActionBar({ guide }: ActionBarProps) {
           className="flex-1 bg-neutral-black text-white py-3 rounded-md text-[13px] font-medium"
         >
           Đặt tour với {guide.name.split(' ').pop()}
+        </motion.button>
+
+        <motion.button
+          whileTap={{ scale: 0.96 }}
+          transition={{ duration: 0.1 }}
+          onClick={() => setRatingOpen(true)}
+          className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap"
+        >
+          Rate me
         </motion.button>
 
         <motion.button
@@ -85,6 +96,7 @@ export default function ActionBar({ guide }: ActionBarProps) {
       </div>
 
       <QrSheet open={qrOpen} onClose={() => setQrOpen(false)} guideId={guide.id} guideName={guide.name} />
+      <RatingSheet open={ratingOpen} onClose={() => setRatingOpen(false)} guideId={guide.id} guideName={guide.name} />
     </>
   );
 }

@@ -167,9 +167,10 @@ export async function getTourGuideReviews({
         date: formatViDate(r.createdAt),
         content: r.comment,
         rating: r.point,
-        images: r.images,
-        authorId: r.user.id,
-        authorName: r.user.name,
+        images: (r.images ?? []).filter((u) => u.startsWith('http')),
+        videos: (r.videos ?? []).filter((u) => u.startsWith('http')),
+        authorId: r.user?.id ?? '',
+        authorName: r.user?.name ?? 'Ẩn danh',
       })
     ),
     pagination: data.data.pagination,

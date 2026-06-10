@@ -90,7 +90,8 @@
         "indent": "off",
         "@typescript-eslint/indent": "off",
         "jsx-a11y/alt-text": "off",
-        "import/no-extraneous-dependencies": "off"
+        "import/no-extraneous-dependencies": "off",
+        "no-void": ["error", { "allowAsStatement": true }]
       }
     }
   ],
