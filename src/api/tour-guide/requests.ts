@@ -3,10 +3,15 @@ import type {
   ApiTourGuideDetail,
   ApiTourGuideDetailResponse,
   ApiTourGuideListResponse,
+  ApiTourGuideMoment,
+  ApiTourGuideMomentsResponse,
   ApiTourGuideReviewResponse,
   ITourGuide,
   ITourGuideListParams,
   ITourGuideListResult,
+  ITourGuideMoment,
+  ITourGuideMomentsParams,
+  ITourGuideMomentsResult,
   ITourGuideProfile,
   ITourGuideReview,
   ITourGuideReviewParams,
@@ -25,6 +30,12 @@ const SPECIALTY_PALETTE = [
 ] as const;
 
 // ---------- Helpers ----------
+
+function formatDuration(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
 
 function formatViDate(iso: string): string {
   const d = new Date(iso);
@@ -150,6 +161,28 @@ export async function updateTourGuide(id: string, payload: TourGuideFormPayload)
 
 export async function deleteTourGuide(id: string): Promise<void> {
   await request.delete(`/tour-guide/${id}`);
+}
+
+const toTourGuideMoment = (api: ApiTourGuideMoment): ITourGuideMoment => ({
+  id: api.id,
+  title: api.description || api.name,
+  thumbnail: api.thumbnail ?? null,
+  duration: formatDuration(api.duration),
+  embedUrl: api.embedUrl,
+});
+
+export async function getTourGuideMoments({
+  id,
+  page = 1,
+  pageSize = 10,
+}: ITourGuideMomentsParams): Promise<ITourGuideMomentsResult> {
+  const { data } = await request.get<ApiTourGuideMomentsResponse>(`/tour-guide/${id}/moment`, {
+    params: { page, pageSize },
+  });
+  return {
+    items: data.data.items.map(toTourGuideMoment),
+    pagination: data.data.pagination,
+  };
 }
 
 export async function getTourGuideReviews({

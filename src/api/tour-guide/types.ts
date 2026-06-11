@@ -216,6 +216,56 @@ export interface TourGuideFormPayload {
   }>;
 }
 
+// ── Moments ───────────────────────────────────────────────────────────────
+
+export interface ApiTourGuideMoment {
+  id: string;
+  name: string;
+  description: string | null;
+  thumbnail: string | null;
+  duration: number;
+  embedUrl: string;
+}
+
+export interface ApiTourGuideMomentsResponse {
+  data: {
+    items: ApiTourGuideMoment[];
+    pagination: {
+      page: number;
+      pageSize: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+  code: number;
+  message: string;
+  error: string | null;
+}
+
+export interface ITourGuideMoment {
+  id: string;
+  title: string;
+  thumbnail: string | null;
+  duration: string;
+  embedUrl: string;
+}
+
+export interface ITourGuideMomentsResult {
+  items: ITourGuideMoment[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+export interface ITourGuideMomentsParams {
+  id: string;
+  page?: number;
+  pageSize?: number;
+}
+
 // ── Domain model — profile (mapped from detail API) ───────────────────────
 
 export interface ITourGuideProfile {

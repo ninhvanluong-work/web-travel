@@ -5,6 +5,7 @@ import {
   deleteTourGuide,
   getTourGuideById,
   getTourGuideList,
+  getTourGuideMoments,
   getTourGuidePage,
   getTourGuideReviews,
   type TourGuidePage,
@@ -14,6 +15,8 @@ import type {
   ApiTourGuideDetail,
   ITourGuideListParams,
   ITourGuideListResult,
+  ITourGuideMomentsParams,
+  ITourGuideMomentsResult,
   ITourGuideProfile,
   ITourGuideReviewParams,
   ITourGuideReviewResult,
@@ -59,6 +62,30 @@ export const useDeleteTourGuide = createMutation<void, { id: string }>({
 export const useTourGuideReviews = createQuery<ITourGuideReviewResult, ITourGuideReviewParams>({
   primaryKey: '/tour-guide/reviews',
   queryFn: ({ queryKey: [, variables] }) => getTourGuideReviews(variables!),
+  staleTime: 2 * 60 * 1000,
+});
+
+export interface ITourGuideMomentsInfiniteVariables {
+  id: string;
+}
+
+export const useTourGuideMoments = createQuery<ITourGuideMomentsResult, ITourGuideMomentsParams>({
+  primaryKey: '/tour-guide/moments',
+  queryFn: ({ queryKey: [, variables] }) => getTourGuideMoments(variables!),
+  staleTime: 2 * 60 * 1000,
+});
+
+export const useTourGuideMomentsInfinite = createInfiniteQuery<
+  ITourGuideMomentsResult,
+  ITourGuideMomentsInfiniteVariables,
+  Error,
+  number
+>({
+  primaryKey: '/tour-guide/moments-infinite',
+  queryFn: ({ queryKey: [, { id }], pageParam = 1 }) =>
+    getTourGuideMoments({ id, page: pageParam as number, pageSize: 10 }),
+  getNextPageParam: (lastPage) =>
+    lastPage.pagination.page < lastPage.pagination.totalPages ? lastPage.pagination.page + 1 : undefined,
   staleTime: 2 * 60 * 1000,
 });
 
