@@ -32,9 +32,7 @@ export default function RatingCriteriaPanel({ values, onChange }: RatingCriteria
               <button key={val} type="button" onClick={() => onChange(c.key, val)}>
                 <Star
                   size={14}
-                  className={
-                    val <= values[c.key] ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
-                  }
+                  className={val <= values[c.key] ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'}
                 />
               </button>
             ))}

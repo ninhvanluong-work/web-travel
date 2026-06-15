@@ -43,7 +43,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
 
     const result = tourGuideReviewSchema.safeParse({ point: rating ?? 0, comment });
     if (!result.success) {
-      const fieldErrors = result.error.flatten().fieldErrors;
+      const { fieldErrors } = result.error.flatten();
       setErrors({
         point: fieldErrors.point?.[0],
         comment: fieldErrors.comment?.[0],
@@ -124,7 +124,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
                 value={rating}
                 onChange={(v) => {
                   setRating(v);
-                  if (errors.point) setErrors((e) => ({ ...e, point: undefined }));
+                  if (errors.point) setErrors((prev) => ({ ...prev, point: undefined }));
                 }}
               />
               {errors.point && <p className="text-[11px] text-red-500">{errors.point}</p>}
@@ -143,11 +143,13 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
                   value={comment}
                   onChange={(e) => {
                     setComment(e.target.value.slice(0, 500));
-                    if (errors.comment) setErrors((e) => ({ ...e, comment: undefined }));
+                    if (errors.comment) setErrors((prev) => ({ ...prev, comment: undefined }));
                   }}
                   placeholder="Chia sẻ trải nghiệm chi tiết của bạn về hành trình..."
                   rows={4}
-                  className={`resize-none text-[13px] pb-6 ${errors.comment ? 'border-red-400 focus:border-red-400' : ''}`}
+                  className={`resize-none text-[13px] pb-6 ${
+                    errors.comment ? 'border-red-400 focus:border-red-400' : ''
+                  }`}
                 />
                 <span className="absolute bottom-2 right-3 text-[10px] text-slate-400 pointer-events-none">
                   {comment.length} / 500

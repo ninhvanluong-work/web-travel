@@ -21,4 +21,7 @@ export type ROUTE_KEY = keyof typeof ROUTE;
 export const API_ROUTE = {
   UPLOAD_VIDEO: '/upload/video',
   REVIEW_TOUR_GUIDE: (guideId: string) => `/review/tour-guide/${guideId}`,
+  TOUR_GUIDE_REVIEWS: '/tour-guide/reviews',
+  TOUR_GUIDE_REVIEWS_INFINITE: '/tour-guide/reviews-infinite',
+  TOUR_GUIDE_DETAIL: '/tour-guide/detail',
 } as const;

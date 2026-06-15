@@ -111,7 +111,6 @@ function ReviewMediaGrid({ images, videos }: { images: string[]; videos: string[
   );
 }
 
-
 function ReviewCard({ review, className }: { review: ITourGuideReview; className?: string }) {
   return (
     <div className={`border-l-2 border-neutral-black pl-3.5 ${className ?? ''}`}>
