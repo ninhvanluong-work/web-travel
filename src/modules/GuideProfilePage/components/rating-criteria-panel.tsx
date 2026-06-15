@@ -1,6 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, Star } from 'lucide-react';
-import { useState } from 'react';
+import { Star } from 'lucide-react';
 
 export const CRITERIA = [
   { key: 'storytelling', name: 'Storytelling' },
@@ -24,52 +22,25 @@ interface RatingCriteriaPanelProps {
 }
 
 export default function RatingCriteriaPanel({ values, onChange }: RatingCriteriaPanelProps) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className="space-y-2">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1 text-[12px] text-brand-500 font-medium"
-      >
-        <span>Đánh giá chi tiết (Không bắt buộc)</span>
-        <motion.span animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
-          <ChevronDown size={14} />
-        </motion.span>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.22, ease: 'easeInOut' }}
-            className="overflow-hidden"
-          >
-            <div className="grid grid-cols-2 gap-x-4 gap-y-3 pt-1">
-              {CRITERIA.map((c) => (
-                <div key={c.key} className="space-y-1">
-                  <p className="text-[11px] text-slate-500 font-medium">{c.name}</p>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((val) => (
-                      <button key={val} type="button" onClick={() => onChange(c.key, val)}>
-                        <Star
-                          size={14}
-                          className={
-                            val <= values[c.key] ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
-                          }
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+      {CRITERIA.map((c) => (
+        <div key={c.key} className="space-y-1">
+          <p className="text-[11px] text-slate-500 font-medium">{c.name}</p>
+          <div className="flex gap-1">
+            {[1, 2, 3, 4, 5].map((val) => (
+              <button key={val} type="button" onClick={() => onChange(c.key, val)}>
+                <Star
+                  size={14}
+                  className={
+                    val <= values[c.key] ? 'fill-amber-400 text-amber-400' : 'fill-slate-200 text-slate-200'
+                  }
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

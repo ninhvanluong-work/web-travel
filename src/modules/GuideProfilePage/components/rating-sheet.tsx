@@ -6,6 +6,7 @@ import { ScrollArea } from '@/components/ui/scrollArea';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { TextArea } from '@/components/ui/textarea';
 import { env } from '@/lib/const';
+import { tourGuideReviewSchema } from '@/lib/validations/review';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { API_ROUTE } from '@/types/routes';
 
@@ -27,6 +28,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
   const [criteria, setCriteria] = useState(buildDefaultCriteria);
   const [mediaItems, setMediaItems] = useState<MediaQueueItem[]>([]);
   const [submitting, setSubmitting] = useState(false);
+  const [errors, setErrors] = useState<{ point?: string; comment?: string }>({});
 
   const queryClient = useQueryClient();
   const isUploading = mediaItems.some((it) => it.status === 'uploading');
@@ -38,6 +40,17 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
 
   async function handleSubmit() {
     if (isDisabled) return;
+
+    const result = tourGuideReviewSchema.safeParse({ point: rating ?? 0, comment });
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      setErrors({
+        point: fieldErrors.point?.[0],
+        comment: fieldErrors.comment?.[0],
+      });
+      return;
+    }
+    setErrors({});
     setSubmitting(true);
 
     const payload = {
@@ -76,6 +89,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
       setComment('');
       setCriteria(buildDefaultCriteria());
       setMediaItems([]);
+      setErrors({});
     }, 350);
   }
 
@@ -105,29 +119,42 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
         {/* Scrollable form body */}
         <ScrollArea className="flex-1 px-5 pb-2">
           <div className="space-y-5">
-            <RatingStarInput value={rating} onChange={setRating} />
+            <div className="space-y-1">
+              <RatingStarInput
+                value={rating}
+                onChange={(v) => {
+                  setRating(v);
+                  if (errors.point) setErrors((e) => ({ ...e, point: undefined }));
+                }}
+              />
+              {errors.point && <p className="text-[11px] text-red-500">{errors.point}</p>}
+            </div>
+
+            <RatingCriteriaPanel values={criteria} onChange={handleCriteriaChange} />
 
             {/* Comment */}
             <div className="space-y-1.5">
               <p className="text-[13px] font-medium text-neutral-black">
-                Bạn nghĩ gì về chuyến đi và hướng dẫn viên này?
+                Bạn nghĩ gì về chuyến đi và hướng dẫn viên này? <span className="text-red-500">*</span>
               </p>
               <div className="relative">
                 <TextArea
                   fullWidth
                   value={comment}
-                  onChange={(e) => setComment(e.target.value.slice(0, 500))}
+                  onChange={(e) => {
+                    setComment(e.target.value.slice(0, 500));
+                    if (errors.comment) setErrors((e) => ({ ...e, comment: undefined }));
+                  }}
                   placeholder="Chia sẻ trải nghiệm chi tiết của bạn về hành trình..."
                   rows={4}
-                  className="resize-none text-[13px] pb-6"
+                  className={`resize-none text-[13px] pb-6 ${errors.comment ? 'border-red-400 focus:border-red-400' : ''}`}
                 />
                 <span className="absolute bottom-2 right-3 text-[10px] text-slate-400 pointer-events-none">
                   {comment.length} / 500
                 </span>
               </div>
+              {errors.comment && <p className="text-[11px] text-red-500">{errors.comment}</p>}
             </div>
-
-            <RatingCriteriaPanel values={criteria} onChange={handleCriteriaChange} />
 
             {/* Media upload */}
             <div className="space-y-1.5">

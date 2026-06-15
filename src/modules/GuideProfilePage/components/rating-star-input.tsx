@@ -30,7 +30,9 @@ export default function RatingStarInput({ value, onChange }: RatingStarInputProp
 
   return (
     <div className="space-y-2">
-      <p className="text-[13px] font-medium text-neutral-black">Đánh giá tổng quan</p>
+      <p className="text-[13px] font-medium text-neutral-black">
+        Đánh giá tổng quan <span className="text-red-500">*</span>
+      </p>
 
       <div ref={scope} className="flex gap-2" onMouseLeave={() => setHoverRating(null)}>
         {[1, 2, 3, 4, 5].map((i) => (

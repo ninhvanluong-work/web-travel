@@ -15,12 +15,12 @@ interface FeaturedReviewsProps {
   guideName: string;
 }
 
-const MAX_VISIBLE = 4;
+const MAX_VISIBLE = 5;
 
 type MediaItem = { type: 'image' | 'video'; url: string };
 
 function ReviewMediaGrid({ images, videos }: { images: string[]; videos: string[] }) {
-  const [viewer, setViewer] = useState<MediaItem | null>(null);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   const allMedia: MediaItem[] = [
     ...images.map((url) => ({ type: 'image' as const, url })),
@@ -32,6 +32,11 @@ function ReviewMediaGrid({ images, videos }: { images: string[]; videos: string[
   const visible = allMedia.slice(0, MAX_VISIBLE);
   const overflow = allMedia.length - MAX_VISIBLE;
 
+  const handlePrev = () => setActiveIndex((i) => (i !== null && i > 0 ? i - 1 : i));
+  const handleNext = () => setActiveIndex((i) => (i !== null && i < allMedia.length - 1 ? i + 1 : i));
+
+  const current = activeIndex !== null ? allMedia[activeIndex] : null;
+
   return (
     <>
       <div className="grid grid-cols-4 gap-1.5 mt-2 mb-2">
@@ -42,7 +47,7 @@ function ReviewMediaGrid({ images, videos }: { images: string[]; videos: string[
               key={idx}
               type="button"
               className="relative aspect-square rounded-lg overflow-hidden bg-neutral-100"
-              onClick={() => setViewer(isOverflowCell ? null : item)}
+              onClick={() => setActiveIndex(idx)}
             >
               {item.type === 'image' ? (
                 <Image src={item.url} alt="" fill className="object-cover" sizes="25vw" />
@@ -65,20 +70,47 @@ function ReviewMediaGrid({ images, videos }: { images: string[]; videos: string[
         })}
       </div>
 
-      <Dialog open={!!viewer} onOpenChange={(open) => !open && setViewer(null)}>
+      <Dialog open={activeIndex !== null} onOpenChange={(open) => !open && setActiveIndex(null)}>
         <DialogContent className="p-0 bg-black border-0 max-w-[400px] w-full overflow-hidden">
-          {viewer?.type === 'image' && (
+          {/* Media */}
+          {current?.type === 'image' && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={viewer.url} alt="" className="w-full h-auto max-h-[80vh] object-contain" />
+            <img src={current.url} alt="" className="w-full h-auto max-h-[80vh] object-contain" />
           )}
-          {viewer?.type === 'video' && (
-            <iframe src={viewer.url} className="w-full aspect-video" allow="autoplay; fullscreen" allowFullScreen />
+          {current?.type === 'video' && (
+            <iframe src={current.url} className="w-full aspect-video" allow="autoplay; fullscreen" allowFullScreen />
+          )}
+
+          {/* Navigation */}
+          {allMedia.length > 1 && (
+            <div className="absolute inset-x-0 bottom-0 flex items-center justify-between px-3 py-2 bg-black/40">
+              <button
+                type="button"
+                onClick={handlePrev}
+                disabled={activeIndex === 0}
+                className="text-white text-[18px] px-2 disabled:opacity-30"
+              >
+                ‹
+              </button>
+              <span className="text-white text-[11px]">
+                {(activeIndex ?? 0) + 1} / {allMedia.length}
+              </span>
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={activeIndex === allMedia.length - 1}
+                className="text-white text-[18px] px-2 disabled:opacity-30"
+              >
+                ›
+              </button>
+            </div>
           )}
         </DialogContent>
       </Dialog>
     </>
   );
 }
+
 
 function ReviewCard({ review, className }: { review: ITourGuideReview; className?: string }) {
   return (
