@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -30,6 +31,7 @@ function saveSuggestions(list: string[]) {
 
 export function ExpertsSection() {
   const { control, setValue } = useFormContext<TourGuideFormValues>();
+  const { t } = useTranslation('adminPage');
   const rawExperts = useWatch({ control, name: 'experts' });
   const experts = useMemo(() => (rawExperts ?? []) as string[], [rawExperts]);
 
@@ -77,12 +79,10 @@ export function ExpertsSection() {
     <div className="space-y-6">
       {/* Zone 1: Chips đã chọn */}
       <div className="space-y-2">
-        <label className="section-label-caps">Chuyên môn đã chọn ({experts.length})</label>
+        <label className="section-label-caps">{t('selectedExperts', { count: experts.length })}</label>
         {experts.length === 0 ? (
           <div className="py-3 px-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/30 text-center">
-            <p className="text-xs text-slate-400 italic">
-              Chưa chọn chuyên môn nào. Chọn từ gợi ý bên dưới hoặc nhập mới.
-            </p>
+            <p className="text-xs text-slate-400 italic">{t('noExpertsSelected')}</p>
           </div>
         ) : (
           <div className="flex flex-wrap gap-2 p-1.5 rounded-xl border border-slate-100 bg-slate-50/20">
@@ -121,7 +121,7 @@ export function ExpertsSection() {
 
       {/* Zone 2: Input + nút Thêm (giữ nguyên bố cục gốc, thêm dropdown gợi ý) */}
       <div className="space-y-2">
-        <label className="section-label-caps">Tự nhập chuyên môn mới</label>
+        <label className="section-label-caps">{t('enterNewExpert')}</label>
         <div className="flex gap-3 items-center w-full">
           <div className="flex-1">
             <ExpertSearchDropdown
@@ -134,7 +134,7 @@ export function ExpertsSection() {
             >
               <input
                 ref={inputRef}
-                placeholder="Ví dụ: Cắm trại qua đêm, Dẫn tour xe máy..."
+                placeholder={t('expertPlaceholder')}
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -163,7 +163,7 @@ export function ExpertsSection() {
             className="h-10 px-5 rounded-xl bg-brand-500 hover:bg-brand-600 border-0 flex items-center gap-1 shrink-0 shadow-theme-xs font-semibold text-xs"
           >
             <Plus size={14} />
-            Thêm
+            {t('add')}
           </Button>
         </div>
       </div>

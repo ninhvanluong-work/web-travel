@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -24,6 +25,7 @@ const DEFAULT_VALUES: TourGuideFormValues = {
 };
 
 export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
+  const { t } = useTranslation('adminPage');
   const router = useRouter();
   const queryClient = useQueryClient();
   const isEdit = !!guideId;
@@ -82,19 +84,19 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
   const createMutation = useCreateTourGuide({
     onSuccess: () => {
       invalidate();
-      addAlert({ type: 'success', title: 'Tạo hướng dẫn viên thành công' });
+      addAlert({ type: 'success', title: t('createSuccess') });
       form.reset(form.getValues());
       onAfterSave?.();
       router.push(ROUTE.ADMIN_GUIDES);
     },
     onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Có lỗi xảy ra' });
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
     },
   });
 
   const updateMutation = useUpdateTourGuide({
     onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Có lỗi xảy ra' });
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
     },
   });
 
@@ -105,7 +107,7 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
         {
           onSuccess: () => {
             invalidate();
-            addAlert({ type: 'success', title: 'Cập nhật thành công' });
+            addAlert({ type: 'success', title: t('updateSuccess') });
             form.reset(data);
             onAfterSave?.();
             router.push(ROUTE.ADMIN_GUIDES);

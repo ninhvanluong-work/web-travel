@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
 import { useDestinationList, useSupplierList } from '@/api/product/lookup';
@@ -9,6 +10,7 @@ import type { ProductFormValues } from '@/lib/validations/product';
 
 export function TourMetadataSelects() {
   const { control } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
 
   const { data: destinations = [] } = useDestinationList();
   const { data: suppliers = [] } = useSupplierList();
@@ -25,14 +27,14 @@ export function TourMetadataSelects() {
         name="destinationId"
         render={({ field }) => (
           <FormItem className="space-y-1.5">
-            <FormLabel className="text-[13px] text-slate-500 font-medium">Destination</FormLabel>
+            <FormLabel className="text-[13px] text-slate-500 font-medium">{t('destinationLabel')}</FormLabel>
             <Select onValueChange={field.onChange} value={field.value ?? undefined}>
               <FormControl>
                 <SelectTrigger
                   inputSize="sm"
                   className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
                 >
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder={t('selectCategory')} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -53,14 +55,14 @@ export function TourMetadataSelects() {
         name="supplierId"
         render={({ field }) => (
           <FormItem className="space-y-1.5">
-            <FormLabel className="text-[13px] text-slate-500 font-medium">Supplier</FormLabel>
+            <FormLabel className="text-[13px] text-slate-500 font-medium">{t('supplierLabel')}</FormLabel>
             <Select onValueChange={field.onChange} value={field.value ?? undefined}>
               <FormControl>
                 <SelectTrigger
                   inputSize="sm"
                   className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
                 >
-                  <SelectValue placeholder="Select supplier" />
+                  <SelectValue placeholder={t('selectSupplier')} />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
@@ -81,13 +83,13 @@ export function TourMetadataSelects() {
         name="tourGuideIds"
         render={({ field }) => (
           <FormItem className="space-y-1.5">
-            <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Guide</FormLabel>
+            <FormLabel className="text-[13px] text-slate-500 font-medium">{t('tourGuideLabel')}</FormLabel>
             <FormControl>
               <SelectWithSearch
-                placeholder="Select tour guide"
+                placeholder={t('selectTourGuide')}
                 value={field.value?.[0] ?? ''}
                 onValueChange={(v) => field.onChange(v ? [v] : [])}
-                data={[{ label: 'None', value: '' }, ...tourGuideOptions]}
+                data={[{ label: t('none'), value: '' }, ...tourGuideOptions]}
                 onScrollToBottom={() => {
                   if (hasNextPage) fetchNextPage();
                 }}

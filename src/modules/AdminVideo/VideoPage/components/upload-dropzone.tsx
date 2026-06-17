@@ -1,4 +1,5 @@
 import { Film } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import type { RefObject } from 'react';
 
 import type { UploadState } from './upload-types';
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export function UploadDropzone({ uploadState, fileInputRef, onDrop, onFileChange }: Props) {
+  const { t } = useTranslation('adminPage');
+
   function handleDrop(e: React.DragEvent) {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -54,8 +57,8 @@ export function UploadDropzone({ uploadState, fileInputRef, onDrop, onFileChange
       ) : (
         <div className="space-y-1">
           <Film size={24} className="mx-auto text-gray-300" />
-          <p className="text-sm text-gray-500">Kéo thả file vào đây</p>
-          <p className="text-xs text-gray-400">hoặc nhấn để chọn file .mp4 (tối đa 500 MB)</p>
+          <p className="text-sm text-gray-500">{t('dragDropPrompt')}</p>
+          <p className="text-xs text-gray-400">{t('orSelectFile')}</p>
         </div>
       )}
     </div>

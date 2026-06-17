@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { Icons } from '@/assets/icons';
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const SearchInput = ({ value, onChange, onSubmit, onFocus }: Props) => {
+  const { t } = useTranslation('searchPage');
   const router = useRouter();
 
   return (
@@ -24,7 +26,7 @@ const SearchInput = ({ value, onChange, onSubmit, onFocus }: Props) => {
         blur={false}
         className="flex-shrink-0 p-[7px]"
         onClick={() => router.back()}
-        aria-label="Quay lại"
+        aria-label={t('backButton')}
       >
         <Icons.chevronLeft className="h-[22px] w-[22px]" />
       </Button>
@@ -38,7 +40,7 @@ const SearchInput = ({ value, onChange, onSubmit, onFocus }: Props) => {
       >
         <Input
           className="rounded-full pl-5 h-[2.5rem] text-[13px] font-dinpro tracking-[0.01em] bg-neutral-100 border-transparent text-neutral-900 placeholder:text-neutral-400 focus-visible:bg-white focus-visible:border-neutral-200 focus-visible:ring-2 focus-visible:ring-main/20 transition-all duration-200 shadow-none w-full"
-          placeholder="Tìm kiếm video..."
+          placeholder={t('searchPlaceholder')}
           variant="filled"
           inputMode="search"
           enterKeyHint="search"
@@ -49,7 +51,7 @@ const SearchInput = ({ value, onChange, onSubmit, onFocus }: Props) => {
             <button
               type="submit"
               className="p-1 text-neutral-400 hover:text-neutral-900 transition-colors"
-              aria-label="Tìm kiếm"
+              aria-label={t('searchButton')}
             >
               <Icons.search className="w-[18px] h-[18px]" strokeWidth={2.5} />
             </button>
@@ -63,7 +65,7 @@ const SearchInput = ({ value, onChange, onSubmit, onFocus }: Props) => {
         rounded="full"
         blur={false}
         className="flex-shrink-0 p-[7px]"
-        aria-label="Tuỳ chọn"
+        aria-label={t('options')}
       >
         <Icons.dots className="h-[22px] w-[22px]" />
       </Button>

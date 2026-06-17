@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import type { GuideProfileData } from '../data/mock-guide';
 
 interface DispatchListProps {
@@ -5,12 +7,10 @@ interface DispatchListProps {
 }
 
 export default function DispatchList({ dispatches }: DispatchListProps) {
+  const { t } = useTranslation('guidePage');
+
   if (dispatches.length === 0) {
-    return (
-      <p className="text-caption2 text-neutral-400 italic text-center py-3 mt-2">
-        Chưa có lệnh điều tour được xác nhận
-      </p>
-    );
+    return <p className="text-caption2 text-neutral-400 italic text-center py-3 mt-2">{t('noDispatches')}</p>;
   }
 
   return (
@@ -33,7 +33,7 @@ export default function DispatchList({ dispatches }: DispatchListProps) {
               d.status === 'completed' ? 'bg-[#E1F5EE] text-[#085041]' : 'bg-[#FFF3D9] text-[#633806]'
             }`}
           >
-            {d.status === 'completed' ? 'Hoàn thành' : 'Sắp tới'}
+            {d.status === 'completed' ? t('statusCompleted') : t('statusUpcoming')}
           </span>
         </div>
       ))}

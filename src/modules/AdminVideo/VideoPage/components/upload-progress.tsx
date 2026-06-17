@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import type { UploadState } from './upload-types';
 import { formatBytes } from './upload-types';
 
@@ -6,11 +8,13 @@ interface Props {
 }
 
 export function UploadProgress({ uploadState }: Props) {
+  const { t } = useTranslation('adminPage');
+
   if (uploadState.status === 'preparing') {
     return (
       <div className="flex items-center gap-2 text-xs text-gray-500">
         <div className="w-3.5 h-3.5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
-        Đang khởi tạo...
+        {t('initializing')}
       </div>
     );
   }
@@ -19,7 +23,7 @@ export function UploadProgress({ uploadState }: Props) {
     return (
       <div className="flex items-center gap-2 text-xs text-gray-500">
         <div className="w-3.5 h-3.5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-        Đang lưu thông tin...
+        {t('saving')}
       </div>
     );
   }
@@ -29,7 +33,7 @@ export function UploadProgress({ uploadState }: Props) {
     return (
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>{isPaused ? 'Đã tạm dừng' : `${uploadState.progress}%`}</span>
+          <span>{isPaused ? t('paused') : `${uploadState.progress}%`}</span>
           {uploadState.status === 'uploading' && uploadState.bytesTotal > 0 && (
             <span>
               {formatBytes(uploadState.bytesUploaded)} / {formatBytes(uploadState.bytesTotal)}

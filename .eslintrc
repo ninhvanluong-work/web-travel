@@ -12,7 +12,8 @@
         "singleQuote": true,
         "endOfLine": "auto"
       }
-    ]
+    ],
+    "import/extensions": "off"
   },
   "overrides": [
     // Configuration for TypeScript files
@@ -91,6 +92,7 @@
         "@typescript-eslint/indent": "off",
         "jsx-a11y/alt-text": "off",
         "import/no-extraneous-dependencies": "off",
+        "import/extensions": "off",
         "no-void": ["error", { "allowAsStatement": true }]
       }
     }

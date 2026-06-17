@@ -1,4 +1,5 @@
 import { Loader2, Upload, Video } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import * as tus from 'tus-js-client';
 
@@ -33,6 +34,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
   const [uploadState, setUploadState] = useState<BannerUploadState>({ status: 'idle' });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const tusRef = useRef<tus.Upload | null>(null);
+  const { t } = useTranslation('adminPage');
 
   useEffect(() => {
     return () => {
@@ -42,11 +44,11 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
 
   async function handleFile(file: File) {
     if (!BANNER_ALLOWED_TYPES.includes(file.type)) {
-      setUploadState({ status: 'error', message: 'Only MP4, MOV supported' });
+      setUploadState({ status: 'error', message: t('onlyMp4MovSupported') });
       return;
     }
     if (file.size > BANNER_MAX_SIZE) {
-      setUploadState({ status: 'error', message: 'File too large (max 100 MB)' });
+      setUploadState({ status: 'error', message: t('fileTooLarge100MB') });
       return;
     }
 
@@ -91,7 +93,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
             onChange(`https://player.mediadelivery.net/embed/${libraryId}/${bunnyVideoId}`);
             setUploadState({ status: 'idle' });
           } catch {
-            setUploadState({ status: 'error', message: 'Failed to save, please try again.' });
+            setUploadState({ status: 'error', message: t('saveFailed') });
           }
         },
         onError(err) {
@@ -105,7 +107,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
     } catch (err) {
       setUploadState({
         status: 'error',
-        message: err instanceof Error ? err.message : 'An error occurred, please try again.',
+        message: err instanceof Error ? err.message : t('genericError'),
       });
     }
   }
@@ -117,12 +119,12 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
 
   const getUploadStatusMessage = () => {
     if (uploadState.status === 'uploading') {
-      return `Uploading... ${uploadState.progress}%`;
+      return `${t('uploading')} ${uploadState.progress}%`;
     }
     if (uploadState.status === 'processing') {
-      return 'Processing...';
+      return t('processing');
     }
-    return 'Initializing...';
+    return t('initializing');
   };
 
   const renderDropzone = () => {
@@ -161,7 +163,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
       >
         <Video size={28} className="text-slate-600 group-hover:text-brand-400 transition-colors" />
         <p className="text-[12px] font-medium text-slate-400 group-hover:text-brand-300 transition-colors">
-          Click to select video
+          {t('clickToSelectVideo')}
         </p>
       </div>
     );
@@ -179,7 +181,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
         <p className="text-[11px] text-red-500">
           {uploadState.message}{' '}
           <button type="button" className="underline" onClick={() => setUploadState({ status: 'idle' })}>
-            Try again
+            {t('retry')}
           </button>
         </p>
       )}
@@ -194,7 +196,7 @@ export function BannerVideoUpload({ value, onChange }: { value: string; onChange
         className="w-full gap-2 h-9 text-[13px] bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-medium shadow-sm"
       >
         <Upload size={14} className="text-slate-400" />
-        {value ? 'Upload another file' : 'Upload file'}
+        {value ? t('uploadAnother') : t('startUpload')}
       </Button>
 
       <input

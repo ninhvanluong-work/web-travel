@@ -1,7 +1,6 @@
-'use client';
-
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
@@ -194,6 +193,7 @@ function MomentCard({ moment, onClick }: { moment: ITourGuideMoment; onClick: (m
 // ── MomentsGrid ────────────────────────────────────────────────────────────
 
 export default function MomentsGrid({ guideId }: MomentsGridProps) {
+  const { t } = useTranslation('guidePage');
   const [sheetOpen, setSheetOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState<ITourGuideMoment | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -241,7 +241,7 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
   if (isLoading) {
     return (
       <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-        <p className="text-[14px] font-medium text-neutral-900 mb-3">Khoảnh khắc từ tour</p>
+        <p className="text-[14px] font-medium text-neutral-900 mb-3">{t('momentsFromTour')}</p>
         <div className="grid grid-cols-2 gap-2">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="aspect-[9/14] rounded-lg" />
@@ -254,8 +254,8 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
   if (displayedMoments.length === 0) {
     return (
       <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-        <p className="text-[14px] font-medium text-neutral-900 mb-2">Khoảnh khắc từ tour</p>
-        <p className="text-caption2 text-neutral-400 italic text-center py-6">Chưa có khoảnh khắc nào được đăng tải</p>
+        <p className="text-[14px] font-medium text-neutral-900 mb-2">{t('momentsFromTour')}</p>
+        <p className="text-caption2 text-neutral-400 italic text-center py-6">{t('noMomentsYet')}</p>
       </div>
     );
   }
@@ -264,8 +264,8 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
     <>
       <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
         <div className="flex justify-between items-baseline mb-3">
-          <p className="text-[14px] font-medium text-neutral-900">Khoảnh khắc từ tour</p>
-          <span className="text-[12px] text-neutral-500">{totalMoments} clips</span>
+          <p className="text-[14px] font-medium text-neutral-900">{t('momentsFromTour')}</p>
+          <span className="text-[12px] text-neutral-500">{t('clips', { count: totalMoments })}</span>
         </div>
 
         <div className="grid grid-cols-2 gap-2">
@@ -282,7 +282,7 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
             className="mt-3 text-[12px] text-neutral-500 py-[9px] rounded-md"
             onClick={() => setSheetOpen(true)}
           >
-            Xem tất cả khoảnh khắc
+            {t('viewAllMoments')}
           </Button>
         )}
       </div>
@@ -291,7 +291,7 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
         <SheetContent side="bottom" className="h-[80dvh] p-0 rounded-t-2xl flex flex-col max-w-[430px] mx-auto">
           <SheetHeader className="px-4 pt-4 pb-2 flex-shrink-0">
             <SheetTitle className="text-[14px] font-medium text-neutral-900">
-              Khoảnh khắc từ tour · {totalMoments} clips
+              {t('clipsCount', { count: totalMoments })}
             </SheetTitle>
           </SheetHeader>
           <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 pb-4">

@@ -1,5 +1,6 @@
 import { Reorder } from 'framer-motion';
 import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ type CareerEntry = TourGuideFormValues['careerPath'][number];
 
 export function CareerSection() {
   const { control } = useFormContext<TourGuideFormValues>();
+  const { t } = useTranslation('adminPage');
   const { fields, append, remove, replace } = useFieldArray({ control, name: 'careerPath' });
 
   const handleReorder = (reordered: typeof fields) => {
@@ -29,7 +31,7 @@ export function CareerSection() {
     <div className="space-y-4">
       {fields.length === 0 ? (
         <div className="py-8 text-center border border-dashed border-slate-200 rounded-2xl bg-slate-50/20">
-          <p className="text-sm text-slate-400 italic">Chưa có thông tin sự nghiệp. Bấm nút dưới để thêm.</p>
+          <p className="text-sm text-slate-400 italic">{t('noCareerEntries')}</p>
         </div>
       ) : (
         <Reorder.Group axis="y" values={fields} onReorder={handleReorder} className="space-y-4">
@@ -45,7 +47,7 @@ export function CareerSection() {
                 <div className="flex items-center gap-2 cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 transition-colors">
                   <GripVertical size={15} />
                   <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    Vị trí #{index + 1}
+                    {t('careerPosition', { index: index + 1 })}
                   </span>
                 </div>
                 <button
@@ -64,9 +66,9 @@ export function CareerSection() {
                   name={`careerPath.${index}.role`}
                   render={({ field: f }) => (
                     <FormItem className="col-span-2 space-y-1.5">
-                      <FormLabel className="admin-form-label">Chức danh *</FormLabel>
+                      <FormLabel className="admin-form-label">{t('roleLabel')}</FormLabel>
                       <FormControl>
-                        <Input size="sm" fullWidth placeholder="Ví dụ: Hướng dẫn viên chính" {...f} />
+                        <Input size="sm" fullWidth placeholder={t('rolePlaceholder')} {...f} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -78,9 +80,9 @@ export function CareerSection() {
                   name={`careerPath.${index}.company`}
                   render={({ field: f }) => (
                     <FormItem className="col-span-2 space-y-1.5">
-                      <FormLabel className="admin-form-label">Công ty *</FormLabel>
+                      <FormLabel className="admin-form-label">{t('companyLabel')}</FormLabel>
                       <FormControl>
-                        <Input size="sm" fullWidth placeholder="Ví dụ: Công ty Du lịch ABC" {...f} />
+                        <Input size="sm" fullWidth placeholder={t('companyPlaceholder')} {...f} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -92,7 +94,7 @@ export function CareerSection() {
                   name={`careerPath.${index}.startYear`}
                   render={({ field: f }) => (
                     <FormItem className="col-span-1 space-y-1.5">
-                      <FormLabel className="admin-form-label">Năm bắt đầu</FormLabel>
+                      <FormLabel className="admin-form-label">{t('startYearLabel')}</FormLabel>
                       <FormControl>
                         <Input
                           size="sm"
@@ -112,7 +114,7 @@ export function CareerSection() {
                   name={`careerPath.${index}.tourCount`}
                   render={({ field: f }) => (
                     <FormItem className="col-span-1 space-y-1.5">
-                      <FormLabel className="admin-form-label">Số tours</FormLabel>
+                      <FormLabel className="admin-form-label">{t('tourCountLabel')}</FormLabel>
                       <FormControl>
                         <Input size="sm" fullWidth type="number" placeholder="0" {...f} />
                       </FormControl>
@@ -126,12 +128,12 @@ export function CareerSection() {
                   name={`careerPath.${index}.description`}
                   render={({ field: f }) => (
                     <FormItem className="col-span-2 space-y-1.5">
-                      <FormLabel className="admin-form-label">Mô tả ngắn</FormLabel>
+                      <FormLabel className="admin-form-label">{t('shortDescLabel')}</FormLabel>
                       <FormControl>
                         <Input
                           size="sm"
                           fullWidth
-                          placeholder="Ví dụ: Dẫn tour trekking leo núi..."
+                          placeholder={t('shortDescPlaceholder')}
                           {...f}
                           value={f.value ?? ''}
                         />
@@ -158,7 +160,7 @@ export function CareerSection() {
         }
       >
         <Plus size={14} />
-        Thêm kinh nghiệm sự nghiệp
+        {t('addCareerEntry')}
       </Button>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { ScrollArea } from '@/components/ui/scrollArea';
@@ -23,6 +24,7 @@ interface RatingSheetProps {
 }
 
 export default function RatingSheet({ open, onClose, guideId, guideName }: RatingSheetProps) {
+  const { t } = useTranslation('guidePage');
   const [rating, setRating] = useState<number | null>(null);
   const [comment, setComment] = useState('');
   const [criteria, setCriteria] = useState(buildDefaultCriteria);
@@ -73,10 +75,10 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
         queryClient.invalidateQueries({ queryKey: ['/tour-guide/reviews-infinite'] }),
         queryClient.invalidateQueries({ queryKey: ['/tour-guide/detail'] }),
       ]);
-      useAlertStore.getState().addAlert({ type: 'success', title: 'Đánh giá đã được gửi!' });
+      useAlertStore.getState().addAlert({ type: 'success', title: t('ratingSheet.successAlert') });
       handleClose();
     } catch {
-      useAlertStore.getState().addAlert({ type: 'error', title: 'Gửi đánh giá thất bại, vui lòng thử lại.' });
+      useAlertStore.getState().addAlert({ type: 'error', title: t('ratingSheet.errorAlert') });
     } finally {
       setSubmitting(false);
     }
@@ -111,9 +113,9 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
         {/* Header */}
         <div className="px-5 pb-3 shrink-0">
           <SheetTitle className="text-[15px] font-semibold text-neutral-black leading-snug">
-            Đánh giá Hướng dẫn viên
+            {t('ratingSheet.title')}
           </SheetTitle>
-          <p className="text-[12px] text-slate-400 mt-0.5">Chia sẻ trải nghiệm của bạn về tour cùng {guideName}</p>
+          <p className="text-[12px] text-slate-400 mt-0.5">{t('ratingSheet.subtitle', { name: guideName })}</p>
         </div>
 
         {/* Scrollable form body */}
@@ -135,7 +137,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
             {/* Comment */}
             <div className="space-y-1.5">
               <p className="text-[13px] font-medium text-neutral-black">
-                Bạn nghĩ gì về chuyến đi và hướng dẫn viên này? <span className="text-red-500">*</span>
+                {t('ratingSheet.yourThoughts')} <span className="text-red-500">*</span>
               </p>
               <div className="relative">
                 <TextArea
@@ -145,7 +147,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
                     setComment(e.target.value.slice(0, 500));
                     if (errors.comment) setErrors((prev) => ({ ...prev, comment: undefined }));
                   }}
-                  placeholder="Chia sẻ trải nghiệm chi tiết của bạn về hành trình..."
+                  placeholder={t('ratingSheet.thoughtsPlaceholder')}
                   rows={4}
                   className={`resize-none text-[13px] pb-6 ${
                     errors.comment ? 'border-red-400 focus:border-red-400' : ''
@@ -161,7 +163,8 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
             {/* Media upload */}
             <div className="space-y-1.5">
               <p className="text-[13px] font-medium text-neutral-black">
-                Hình ảnh & Video <span className="text-slate-400 font-normal text-[12px]">(Tùy chọn)</span>
+                {t('ratingSheet.media')}{' '}
+                <span className="text-slate-400 font-normal text-[12px]">{t('ratingSheet.mediaOptional')}</span>
               </p>
               <RatingMediaUpload onChange={setMediaItems} />
             </div>
@@ -177,7 +180,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
             disabled={isDisabled}
             className="w-full py-3 rounded-xl bg-neutral-black text-white text-[14px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? 'Đang gửi...' : 'Gửi đánh giá'}
+            {submitting ? t('ratingSheet.submitting') : t('ratingSheet.submit')}
           </motion.button>
         </div>
       </SheetContent>

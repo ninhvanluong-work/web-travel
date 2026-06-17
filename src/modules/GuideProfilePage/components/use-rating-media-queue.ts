@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as tus from 'tus-js-client';
 
@@ -30,6 +31,7 @@ function toPublic(list: InternalMediaItem[]): MediaQueueItem[] {
 }
 
 export function useRatingMediaQueue(onChange: (items: MediaQueueItem[]) => void) {
+  const { t } = useTranslation('guidePage');
   const [items, setItems] = useState<InternalMediaItem[]>([]);
   const itemsRef = useRef(items);
 
@@ -59,7 +61,7 @@ export function useRatingMediaQueue(onChange: (items: MediaQueueItem[]) => void)
       const url = await uploadImage(item.file);
       updateItem(item.id, { status: 'done', progress: 100, url });
     } catch {
-      updateItem(item.id, { status: 'error', error: 'Upload thất bại' });
+      updateItem(item.id, { status: 'error', error: t('ratingSheet.uploadFailed') });
     }
   }
 
@@ -102,7 +104,7 @@ export function useRatingMediaQueue(onChange: (items: MediaQueueItem[]) => void)
             const url = `https://player.mediadelivery.net/embed/${libraryId}/${bunnyVideoId}`;
             updateItem(item.id, { status: 'done', progress: 100, url });
           } catch {
-            updateItem(item.id, { status: 'error', error: 'Lưu video thất bại, thử lại' });
+            updateItem(item.id, { status: 'error', error: t('ratingSheet.saveVideoFailed') });
           }
         },
         onError(err) {
@@ -115,7 +117,7 @@ export function useRatingMediaQueue(onChange: (items: MediaQueueItem[]) => void)
     } catch (err) {
       updateItem(item.id, {
         status: 'error',
-        error: err instanceof Error ? err.message : 'Upload thất bại',
+        error: err instanceof Error ? err.message : t('ratingSheet.uploadFailed'),
       });
     }
   }
@@ -127,7 +129,7 @@ export function useRatingMediaQueue(onChange: (items: MediaQueueItem[]) => void)
     const toAdd: InternalMediaItem[] = [];
     files.slice(0, canAdd).forEach((file) => {
       if (file.size > MAX_SIZE) {
-        useAlertStore.getState().addAlert({ type: 'warning', title: 'Dung lượng tệp vượt quá 10MB' });
+        useAlertStore.getState().addAlert({ type: 'warning', title: t('ratingSheet.fileTooLarge') });
         return;
       }
       const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;

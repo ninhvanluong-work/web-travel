@@ -5,7 +5,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import type { Session } from 'inspector';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import type { ReactNode } from 'react';
+import { appWithTranslation } from 'next-i18next';
+import type { ComponentType, ReactNode } from 'react';
 
 import { fontSans, fontSerif } from '@/assets/fonts';
 import { MainLayout, ModuleLayout } from '@/components/layouts';
@@ -62,4 +63,4 @@ const MyApp = (props: AppPropsWithLayout) => {
   );
 };
 
-export default MyApp;
+export default appWithTranslation(MyApp) as ComponentType<any>;

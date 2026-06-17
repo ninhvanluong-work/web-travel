@@ -1,4 +1,5 @@
 import { Loader2, Trash2 } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import type { ITourGuide } from '@/api/tour-guide/types';
 import {
@@ -20,6 +21,7 @@ interface DeleteConfirmDialogProps {
 }
 
 export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }: DeleteConfirmDialogProps) {
+  const { t } = useTranslation('adminPage');
   return (
     <AlertDialog
       open={!!target}
@@ -29,9 +31,11 @@ export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }:
     >
       <AlertDialogContent className="rounded-2xl border-slate-100 shadow-2xl max-w-md dark:border-gray-800/80">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-slate-800 dark:text-white/90 font-bold">Xác nhận xóa</AlertDialogTitle>
+          <AlertDialogTitle className="text-slate-800 dark:text-white/90 font-bold">
+            {t('confirmDeleteTitle')}
+          </AlertDialogTitle>
           <AlertDialogDescription className="text-slate-500 dark:text-gray-400">
-            Bạn có chắc chắn muốn xóa hướng dẫn viên &quot;{target?.name}&quot;? Hành động này không thể hoàn tác.
+            {t('confirmDeleteMessage', { name: target?.name })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex flex-row justify-end gap-3 sm:space-x-0 mt-2">
@@ -40,7 +44,7 @@ export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }:
             onClick={onCancel}
             disabled={isDeleting}
           >
-            Hủy
+            {t('cancel')}
           </AlertDialogCancel>
           <Button
             disabled={isDeleting}
@@ -53,7 +57,7 @@ export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }:
             ) : (
               <Trash2 size={14} className="mr-1.5" />
             )}
-            {isDeleting ? 'Đang xóa...' : 'Xóa hướng dẫn viên'}
+            {isDeleting ? t('deleting') : t('deleteGuide')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

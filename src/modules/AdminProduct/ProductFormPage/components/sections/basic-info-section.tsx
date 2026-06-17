@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -18,6 +19,7 @@ export function BasicInfoSection({
   heroVideo?: { id: string; name: string; thumbnail: string } | null;
 }) {
   const { control, setValue } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
   const nameValue = useWatch({ control, name: 'name' });
 
   useEffect(() => {
@@ -36,9 +38,9 @@ export function BasicInfoSection({
             name="name"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Name</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">{t('tourNameLabel')}</FormLabel>
                 <FormControl>
-                  <Input size="sm" placeholder="Enter product name" {...field} />
+                  <Input size="sm" placeholder={t('tourNamePlaceholder')} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -52,11 +54,11 @@ export function BasicInfoSection({
             name="slug"
             render={({ field }) => (
               <FormItem className="space-y-1.5">
-                <FormLabel className="text-[13px] text-slate-500 font-medium">URL Path</FormLabel>
+                <FormLabel className="text-[13px] text-slate-500 font-medium">{t('urlPathLabel')}</FormLabel>
                 <FormControl>
                   <Input
                     size="sm"
-                    placeholder="product-slug"
+                    placeholder={t('urlPathPlaceholder')}
                     {...field}
                     className="bg-slate-50/50 text-slate-500 border-slate-200"
                   />
@@ -78,7 +80,7 @@ export function BasicInfoSection({
           name="minPrice"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Starting Price</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">{t('startingPriceLabel')}</FormLabel>
               <FormControl>
                 <PriceInput value={field.value ?? 0} onChange={field.onChange} />
               </FormControl>
@@ -98,10 +100,10 @@ export function BasicInfoSection({
           name="shortDescription"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Short Description</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">{t('shortDescLabel')}</FormLabel>
               <FormControl>
                 <TextArea
-                  placeholder="Enter short description of the tour..."
+                  placeholder={t('shortDescPlaceholder')}
                   className="min-h-[100px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs"
                   maxLength={500}
                   rows={3}
@@ -122,10 +124,10 @@ export function BasicInfoSection({
           name="highlight"
           render={({ field }) => (
             <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">Highlights</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">{t('highlightsLabel')}</FormLabel>
               <FormControl>
                 <TextArea
-                  placeholder="Describe the tour highlights..."
+                  placeholder={t('highlightsPlaceholder')}
                   className="min-h-[100px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs italic font-medium text-slate-700"
                   rows={3}
                   {...field}

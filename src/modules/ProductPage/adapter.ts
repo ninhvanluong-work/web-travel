@@ -109,7 +109,7 @@ function mapOperator(supplier: ApiSupplier | null): MockProduct['operator'] {
   };
 }
 
-function mapElements(elements: ApiElementItem[]): MockProduct['quickFacts'] {
+function mapElements(elements: ApiElementItem[], t: (key: string, options?: any) => string): MockProduct['quickFacts'] {
   const byKey = elements.reduce<Record<string, string>>((acc, el) => {
     if (el.isActive) acc[el.key] = el.name;
     return acc;
@@ -122,11 +122,11 @@ function mapElements(elements: ApiElementItem[]): MockProduct['quickFacts'] {
     const parts: string[] = [];
     if (dayVal) {
       const d = parseInt(dayVal, 10);
-      parts.push(`${d} ${d === 1 ? 'day' : 'days'}`);
+      parts.push(t('dayUnit', { count: d }));
     }
     if (nightVal) {
       const n = parseInt(nightVal, 10);
-      parts.push(`${n} ${n === 1 ? 'night' : 'nights'}`);
+      parts.push(t('nightUnit', { count: n }));
     }
     duration = parts.join(', ');
   }
@@ -137,7 +137,7 @@ function mapElements(elements: ApiElementItem[]): MockProduct['quickFacts'] {
 
   let groupSize = byKey.groupSize ?? '—';
   if (groupSize !== '—' && /^\d+$/.test(groupSize)) {
-    groupSize = `Up to ${groupSize} people`;
+    groupSize = t('upToPeople', { count: parseInt(groupSize, 10) });
   }
 
   const languages = byKey.language
@@ -172,7 +172,7 @@ function mapMedia(banner: ApiBannerItem[], thumbnail: string | null): MockProduc
 
 // ── Main adapter ──────────────────────────────────────────────────────────
 
-export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
+export function mapApiToProductPage(data: ApiProductDetail, t: (key: string, options?: any) => string): MockProduct {
   const price = parseFloat(data.minPrice) || 0;
 
   return {
@@ -180,7 +180,7 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     media: mapMedia(data.banner ?? [], data.thumbnail),
 
     // ── Header ────────────────────────────────────────────────────────────
-    tags: (data.tags ?? []).map((t) => t.name),
+    tags: (data.tags ?? []).map((tag) => tag.name),
     name: data.name,
     shortDescription: data.shortDescription ?? data.description ?? '',
     rating: data.reviewPoint ?? 0,
@@ -191,7 +191,7 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     cancellationDeadlineHours: 24,
 
     // ── Quick Facts ───────────────────────────────────────────────────────
-    quickFacts: mapElements(data.elements ?? []),
+    quickFacts: mapElements(data.elements ?? [], t),
 
     // ── Highlights ────────────────────────────────────────────────────────
     highlights: mapExperience(data.experience ?? []),
@@ -220,6 +220,6 @@ export function mapApiToProductPage(data: ApiProductDetail): MockProduct {
     salePrice: price > 0 ? price : 117,
     discountPercent: 15,
     currency: '$',
-    priceUnit: 'person',
+    priceUnit: t('personUnit'),
   };
 }

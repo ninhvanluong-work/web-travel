@@ -1,4 +1,5 @@
 import { Editor } from '@tinymce/tinymce-react';
+import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -55,25 +56,26 @@ const EDITOR_INIT = {
 
 const DETAIL_FIELDS: Array<{
   name: keyof ProductFormValues;
-  label: string;
+  labelKey: string;
 }> = [
-  { name: 'include', label: 'Services Included' },
-  { name: 'exclude', label: 'Services Not Included' },
+  { name: 'include', labelKey: 'servicesIncluded' },
+  { name: 'exclude', labelKey: 'servicesNotIncluded' },
 ];
 
 export function DetailsSection() {
   const { control } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
 
   return (
     <div className="space-y-5">
-      {DETAIL_FIELDS.map(({ name, label }) => (
+      {DETAIL_FIELDS.map(({ name, labelKey }) => (
         <FormField
           key={name}
           control={control}
           name={name}
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-[13px] text-slate-500 font-medium">{label}</FormLabel>
+              <FormLabel className="text-[13px] text-slate-500 font-medium">{t(labelKey)}</FormLabel>
               <FormControl>
                 <div className="rounded-lg overflow-hidden border border-input">
                   <Editor

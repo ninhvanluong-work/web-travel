@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 
 import type { IProduct } from '@/api/product';
 import { Button } from '@/components/ui/button';
@@ -17,16 +18,16 @@ import { ROUTE } from '@/types/routes';
 
 type ProductStatus = 'draft' | 'published' | 'hidden';
 
-const STATUS_CONFIG: Record<ProductStatus, { label: string; className: string }> = {
-  draft: { label: 'Draft', className: 'bg-amber-50 text-amber-700 ring-amber-200' },
-  published: { label: 'Published', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
-  hidden: { label: 'Hidden', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
+const STATUS_CONFIG: Record<ProductStatus, { labelKey: string; className: string }> = {
+  draft: { labelKey: 'statusDraft', className: 'bg-amber-50 text-amber-700 ring-amber-200' },
+  published: { labelKey: 'statusPublished', className: 'bg-emerald-50 text-emerald-700 ring-emerald-200' },
+  hidden: { labelKey: 'statusHidden', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
 };
 
-const STATUS_OPTIONS: { value: ProductStatus; label: string }[] = [
-  { value: 'published', label: 'Publish' },
-  { value: 'draft', label: 'Draft' },
-  { value: 'hidden', label: 'Hide' },
+const STATUS_OPTIONS: { value: ProductStatus; labelKey: string }[] = [
+  { value: 'published', labelKey: 'actionPublish' },
+  { value: 'draft', labelKey: 'actionDraft' },
+  { value: 'hidden', labelKey: 'actionHide' },
 ];
 
 function StarRating({ point }: { point: number }) {
@@ -76,6 +77,7 @@ interface Props {
 }
 
 export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
+  const { t } = useTranslation('adminPage');
   const statusCfg = STATUS_CONFIG[product.status as ProductStatus] ?? STATUS_CONFIG.draft;
 
   return (
@@ -125,7 +127,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
             statusCfg.className
           )}
         >
-          {statusCfg.label}
+          {t(statusCfg.labelKey)}
         </span>
       </TableCell>
 
@@ -160,7 +162,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
             <DropdownMenuItem asChild>
               <Link href={ROUTE.ADMIN_PRODUCTS_EDIT(product.id)} className="flex items-center">
                 <Pencil size={14} className="mr-2" />
-                Edit
+                {t('edit')}
               </Link>
             </DropdownMenuItem>
 
@@ -169,7 +171,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
             {/* Status change options */}
             {STATUS_OPTIONS.filter((o) => o.value !== product.status).map((opt) => (
               <DropdownMenuItem key={opt.value} onSelect={() => onChangeStatus(product, opt.value)}>
-                {opt.label}
+                {t(opt.labelKey)}
               </DropdownMenuItem>
             ))}
 
@@ -181,7 +183,7 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
               onSelect={() => onDelete(product)}
             >
               <Trash2 size={14} className="mr-2" />
-              Delete Tour
+              {t('deleteTour')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

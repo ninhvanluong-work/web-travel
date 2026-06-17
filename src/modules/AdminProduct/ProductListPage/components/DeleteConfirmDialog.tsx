@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import type { IProduct } from '@/api/product';
 import {
   AlertDialog,
@@ -17,6 +19,8 @@ interface DeleteConfirmDialogProps {
 }
 
 export function DeleteConfirmDialog({ target, onConfirm, onCancel }: DeleteConfirmDialogProps) {
+  const { t } = useTranslation('adminPage');
+
   return (
     <AlertDialog
       open={!!target}
@@ -26,15 +30,13 @@ export function DeleteConfirmDialog({ target, onConfirm, onCancel }: DeleteConfi
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirm Delete</AlertDialogTitle>
-          <AlertDialogDescription>
-            Are you sure you want to delete &quot;{target?.name}&quot;? This action cannot be undone.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{t('confirmDeleteTitle')}</AlertDialogTitle>
+          <AlertDialogDescription>{t('confirmDeleteTourMessage', { name: target?.name })}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={onCancel}>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} className="bg-red-600 text-white hover:bg-red-700">
-            Delete Product
+            {t('deleteProduct')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

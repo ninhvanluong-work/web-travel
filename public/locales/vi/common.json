@@ -1,0 +1,11 @@
+{
+  "loading": "Đang tải...",
+  "retry": "Thử lại",
+  "share": "Chia sẻ",
+  "back": "Quay lại",
+  "options": "Tùy chọn",
+  "linkCopied": "Đã sao chép liên kết",
+  "copyFailed": "Không thể sao chép liên kết",
+  "required": "Trường này là bắt buộc",
+  "invalidEmail": "Email không hợp lệ"
+}

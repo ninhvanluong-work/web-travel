@@ -1,14 +1,7 @@
 import { AnimatePresence, motion, useAnimate } from 'framer-motion';
 import { Star } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
-
-const RATING_LABELS: Record<number, string> = {
-  1: 'Rất không hài lòng',
-  2: 'Không hài lòng',
-  3: 'Bình thường',
-  4: 'Hài lòng',
-  5: 'Rất tuyệt vời!',
-};
 
 interface RatingStarInputProps {
   value: number | null;
@@ -16,6 +9,7 @@ interface RatingStarInputProps {
 }
 
 export default function RatingStarInput({ value, onChange }: RatingStarInputProps) {
+  const { t } = useTranslation('guidePage');
   const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [scope, animate] = useAnimate();
 
@@ -31,7 +25,7 @@ export default function RatingStarInput({ value, onChange }: RatingStarInputProp
   return (
     <div className="space-y-2">
       <p className="text-[13px] font-medium text-neutral-black">
-        Đánh giá tổng quan <span className="text-red-500">*</span>
+        {t('ratingSheet.overallRating')} <span className="text-red-500">*</span>
       </p>
 
       <div ref={scope} className="flex gap-2" onMouseLeave={() => setHoverRating(null)}>
@@ -65,7 +59,7 @@ export default function RatingStarInput({ value, onChange }: RatingStarInputProp
             transition={{ duration: 0.15 }}
             className="text-[12px] text-amber-500 font-medium"
           >
-            {RATING_LABELS[display]}
+            {t(`ratingLabels.${display}`)}
           </motion.p>
         )}
       </AnimatePresence>

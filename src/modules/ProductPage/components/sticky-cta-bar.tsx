@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import { Button } from '@/components/ui/button';
 
 interface StickyCTABarProps {
@@ -15,6 +17,7 @@ export default function StickyCTABar({
   currency,
   priceUnit,
 }: StickyCTABarProps) {
+  const { t } = useTranslation('productPage');
   const symbol = currency;
   const formatPrice = (n: number) =>
     symbol === '₫' ? `${symbol}${n.toLocaleString('vi-VN')}` : `${symbol}${n.toLocaleString('en-US')}`;
@@ -45,7 +48,7 @@ export default function StickyCTABar({
           blur={false}
           className="bg-[#0F6E56] text-white px-[22px] py-[13px] text-[14px] font-medium h-auto"
         >
-          Book now
+          {t('bookNow')}
         </Button>
       </div>
     </div>

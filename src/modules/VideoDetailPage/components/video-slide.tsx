@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React, { forwardRef, memo, useImperativeHandle, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -28,6 +29,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   { video, muted, onVisible, onMutedChange, onGateOpen, autoLoad = false, forcePause = false }: Props,
   ref
 ) {
+  const { t } = useTranslation('videoDetail');
   const router = useRouter();
   const playerRef = useRef<BunnyPlayerHandle>(null);
 
@@ -132,7 +134,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
       {forcePause && isInView && (
         <button
           className="absolute inset-0 z-30 flex items-center justify-center"
-          aria-label="Phát video"
+          aria-label={t('playVideo')}
           onClick={() => {
             unlockVideoPool();
             playerRef.current?.unmute();
@@ -178,7 +180,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
           blur={false}
           className="flex-col gap-[5px] h-auto p-[7px]"
           onClick={toggleLike}
-          aria-label={liked ? 'Bỏ thích' : 'Thích'}
+          aria-label={liked ? t('unlike') : t('like')}
         >
           <Icons.thumbsUp
             key={likeAnimKey}
@@ -207,7 +209,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
               playerRef.current?.unmute();
             }
           }}
-          aria-label={muted ? 'Bật âm thanh' : 'Tắt âm thanh'}
+          aria-label={muted ? t('unmuteAudio') : t('muteAudio')}
         >
           {muted ? (
             <Icons.volumeXFill className="w-[22px] h-[22px] text-white" />

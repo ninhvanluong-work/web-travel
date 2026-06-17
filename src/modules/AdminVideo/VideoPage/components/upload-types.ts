@@ -22,9 +22,9 @@ export type UploadState =
 
 export const BUSY_STATUSES = new Set(['preparing', 'uploading', 'paused', 'processing']);
 
-export function validateVideoFile(file: File): string | null {
-  if (!ALLOWED_VIDEO_TYPES.includes(file.type)) return 'Chỉ chấp nhận file .mp4';
-  if (file.size > MAX_VIDEO_SIZE_BYTES) return 'File quá lớn (tối đa 500 MB)';
+export function validateVideoFile(file: File, t: (key: string) => string): string | null {
+  if (!ALLOWED_VIDEO_TYPES.includes(file.type)) return t('invalidFileType');
+  if (file.size > MAX_VIDEO_SIZE_BYTES) return t('fileTooLarge');
   return null;
 }
 

@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { Input } from '@/components/ui/input';
@@ -14,6 +15,7 @@ interface SearchBoxProps {
 
 const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
   ({ autoFocus, variant = 'transparent', onSearchClick }, ref) => {
+    const { t } = useTranslation('homePage');
     const router = useRouter();
     const [searchValue, setSearchValue] = React.useState('');
 
@@ -38,7 +40,7 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
           ref={ref}
           id="searchBox"
           type="search"
-          placeholder="Search..."
+          placeholder={t('searchPlaceholder')}
           fullWidth
           prefix={
             <Search

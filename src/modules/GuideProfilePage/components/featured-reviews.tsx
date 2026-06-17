@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTourGuideReviewsInfinite } from '@/api/tour-guide/queries';
@@ -126,6 +127,7 @@ function ReviewCard({ review, className }: { review: ITourGuideReview; className
 }
 
 export default function FeaturedReviews({ reviews, totalReviews, guideId }: FeaturedReviewsProps) {
+  const { t } = useTranslation('guidePage');
   const [expanded, setExpanded] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -165,7 +167,7 @@ export default function FeaturedReviews({ reviews, totalReviews, guideId }: Feat
           className="mt-1 text-[12px] text-neutral-500 py-[9px] rounded-md"
           onClick={() => setExpanded(true)}
         >
-          Xem tất cả {totalReviews} đánh giá khách
+          {t('seeAllReviews', { count: totalReviews })}
         </Button>
       </div>
     );
@@ -178,7 +180,7 @@ export default function FeaturedReviews({ reviews, totalReviews, guideId }: Feat
           <ReviewCard key={r.id} review={r} className={idx < expandedReviews.length - 1 ? 'mb-5' : 'mb-4'} />
         ))}
         <div ref={sentinelRef} className="h-2" />
-        {isFetchingNextPage && <p className="text-center text-[12px] text-neutral-400 py-3">Đang tải thêm...</p>}
+        {isFetchingNextPage && <p className="text-center text-[12px] text-neutral-400 py-3">{t('loadingMore')}</p>}
         <Button
           variant="ghost"
           fullWidth
@@ -186,7 +188,7 @@ export default function FeaturedReviews({ reviews, totalReviews, guideId }: Feat
           className="mt-1 text-[12px] text-neutral-500 py-[9px] rounded-md"
           onClick={() => setExpanded(false)}
         >
-          Thu gọn
+          {t('collapse')}
         </Button>
       </div>
     </div>

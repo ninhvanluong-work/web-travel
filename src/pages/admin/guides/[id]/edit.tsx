@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import type { ReactNode } from 'react';
 
 import { AdminLayout } from '@/components/layouts/AdminLayout';
@@ -14,3 +15,11 @@ const AdminGuidesEditPage: NextPageWithLayout = () => {
 AdminGuidesEditPage.getLayout = (page: ReactNode) => <AdminLayout>{page}</AdminLayout>;
 
 export default AdminGuidesEditPage;
+
+export async function getServerSideProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['common', 'adminPage'])),
+    },
+  };
+}

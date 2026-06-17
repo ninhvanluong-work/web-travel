@@ -1,5 +1,6 @@
 import { Reorder, useDragControls } from 'framer-motion';
 import { ImageIcon, Menu, Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
@@ -26,6 +27,7 @@ function DraggableExperienceItem({
   onDragEnd: () => void;
 }) {
   const { control } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
   const dragControls = useDragControls();
 
   return (
@@ -65,12 +67,12 @@ function DraggableExperienceItem({
               render={({ field }) => (
                 <FormItem className="space-y-1.5">
                   <FormLabel className="text-[12px] text-slate-500 font-bold uppercase tracking-wider">
-                    Experience Title
+                    {t('experienceTitle')}
                   </FormLabel>
                   <FormControl>
                     <Input
                       size="default"
-                      placeholder="e.g. Explore a mysterious cave..."
+                      placeholder={t('experienceTitlePlaceholder')}
                       {...field}
                       className="text-[14px] font-medium bg-slate-50/80 border-slate-200 hover:bg-white focus:bg-white focus:border-brand-400 transition-all shadow-sm h-11"
                     />
@@ -86,12 +88,12 @@ function DraggableExperienceItem({
               render={({ field }) => (
                 <FormItem className="space-y-1.5">
                   <FormLabel className="text-[12px] text-slate-500 font-bold uppercase tracking-wider">
-                    Detailed Description
+                    {t('experienceDesc')}
                   </FormLabel>
                   <FormControl>
                     <textarea
                       rows={3}
-                      placeholder="Briefly describe what travelers will experience..."
+                      placeholder={t('experienceDescPlaceholder')}
                       className="w-full resize-none rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-[14px] text-slate-700 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-brand-400 focus:ring-4 focus:ring-brand-500/10 transition-all shadow-sm leading-relaxed"
                       {...field}
                       value={field.value ?? ''}
@@ -118,6 +120,7 @@ function DraggableExperienceItem({
 
 export function ExperiencesSection() {
   const { control } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
   const { fields, append, remove, move } = useFieldArray({ control, name: 'experiences' });
   const [displayOrder, setDisplayOrder] = useState<FieldItem[]>([]);
 
@@ -148,7 +151,7 @@ export function ExperiencesSection() {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-2">
-        <span className="text-[13px] font-medium text-slate-600">Experiences</span>
+        <span className="text-[13px] font-medium text-slate-600">{t('secExperiences')}</span>
         <span className="text-[11px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
           {fields.length}/{MAX_EXPERIENCES}
         </span>
@@ -157,8 +160,8 @@ export function ExperiencesSection() {
       {fields.length === 0 && (
         <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
           <ImageIcon size={32} className="text-slate-300 mb-3" />
-          <p className="text-[14px] font-medium text-slate-600">No experiences yet</p>
-          <p className="text-[13px] text-slate-400 mt-1 mb-4">Click the button below to add highlighted experiences</p>
+          <p className="text-[14px] font-medium text-slate-600">{t('noExperiences')}</p>
+          <p className="text-[13px] text-slate-400 mt-1 mb-4">{t('clickToAddExperiences')}</p>
         </div>
       )}
 
@@ -188,7 +191,7 @@ export function ExperiencesSection() {
           className="gap-2 h-10 px-4 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-sm transition-colors rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus size={16} className="text-brand-500" />
-          Add Experience
+          {t('addExperience')}
         </Button>
       </div>
     </div>

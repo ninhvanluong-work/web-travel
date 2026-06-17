@@ -1,5 +1,6 @@
 import { Briefcase, Sparkles, User } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 
 import {
@@ -27,15 +28,15 @@ interface GuideFormPageProps {
 }
 
 const NAV_SECTIONS = [
-  { id: 'section-basic', label: 'Thông tin cơ bản', icon: User, description: 'Thông tin cơ bản hiển thị trên profile' },
-  { id: 'section-experts', label: 'Chuyên môn', icon: Sparkles, description: 'Lĩnh vực chuyên môn nổi bật' },
+  { id: 'section-basic', labelKey: 'basicInfo', icon: User, descKey: 'basicInfoDesc' },
+  { id: 'section-experts', labelKey: 'expertise', icon: Sparkles, descKey: 'expertiseDesc' },
   {
     id: 'section-career',
-    label: 'Sự nghiệp',
+    labelKey: 'career',
     icon: Briefcase,
-    description: 'Hành trình sự nghiệp — mới nhất đến cũ nhất',
+    descKey: 'careerDesc',
   },
-];
+] as const;
 
 const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
 
@@ -71,6 +72,7 @@ function SectionCard({
 }
 
 export default function GuideFormPage({ guideId }: GuideFormPageProps) {
+  const { t } = useTranslation('adminPage');
   const router = useRouter();
   const [pendingPath, setPendingPath] = useState<string | null>(null);
   const bypassGuardRef = useRef(false);
@@ -120,7 +122,7 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
           <div className="flex gap-8 items-start w-full">
             {/* Scroll-spy nav */}
             <div className="hidden lg:flex flex-col gap-0.5 sticky top-[130px] w-40 shrink-0 pt-4">
-              {NAV_SECTIONS.map(({ id, label, icon: Icon }) => (
+              {NAV_SECTIONS.map(({ id, labelKey, icon: Icon }) => (
                 <button
                   key={id}
                   type="button"
@@ -132,7 +134,7 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
                   }`}
                 >
                   <Icon size={13} className="shrink-0" />
-                  <span className="flex-1 text-left">{label}</span>
+                  <span className="flex-1 text-left">{t(labelKey)}</span>
                   {sectionHasError(id) && (
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
                   )}
@@ -142,8 +144,8 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
 
             {/* Main content */}
             <div className="flex-1 min-w-0 py-4 space-y-4">
-              {NAV_SECTIONS.map(({ id, label, description }) => (
-                <SectionCard key={id} id={id} label={label} description={description}>
+              {NAV_SECTIONS.map(({ id, labelKey, descKey }) => (
+                <SectionCard key={id} id={id} label={t(labelKey)} description={t(descKey)}>
                   {id === 'section-basic' && <BasicInfoSection />}
                   {id === 'section-experts' && <ExpertsSection />}
                   {id === 'section-career' && <CareerSection />}
@@ -164,10 +166,10 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
         <AlertDialogContent className="rounded-2xl border-slate-100 shadow-2xl max-w-md dark:border-gray-800/80">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-slate-800 dark:text-white/90 font-bold">
-              Có thay đổi chưa lưu
+              {t('unsavedChangesTitle')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-slate-500 dark:text-gray-400">
-              Bạn có thay đổi chưa lưu. Rời trang sẽ mất toàn bộ dữ liệu đã nhập.
+              {t('unsavedChangesDesc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex flex-row justify-end gap-3 sm:space-x-0 mt-2">
@@ -175,7 +177,7 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
               className="mt-0 h-10 px-5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-800 transition-all font-semibold text-sm active:scale-95 dark:border-gray-800 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 shrink-0"
               onClick={() => setPendingPath(null)}
             >
-              Ở lại
+              {t('stayOnPage')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="h-10 px-5 rounded-xl bg-rose-600 text-white hover:bg-rose-700 hover:text-white transition-all font-semibold text-sm shadow-sm active:scale-95 active:bg-rose-700 border-0 shrink-0"
@@ -187,7 +189,7 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
                 }
               }}
             >
-              Rời trang
+              {t('leavePage')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

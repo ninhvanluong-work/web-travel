@@ -3,6 +3,7 @@ import 'animate.css';
 import { Film, LayoutDashboard, LogOut, Package, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import Logo from '@/components/ui/logo-dashboard';
 import { cn } from '@/lib/utils';
@@ -13,14 +14,15 @@ interface SidebarProps {
 }
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
-  { label: 'Sản phẩm', href: ROUTE.ADMIN_PRODUCTS, icon: Package },
-  { label: 'Hướng dẫn viên', href: ROUTE.ADMIN_GUIDES, icon: Users },
-  { label: 'Video', href: ROUTE.ADMIN_VIDEOS, icon: Film },
+  { labelKey: 'dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
+  { labelKey: 'products', href: ROUTE.ADMIN_PRODUCTS, icon: Package },
+  { labelKey: 'guides', href: ROUTE.ADMIN_GUIDES, icon: Users },
+  { labelKey: 'videos', href: ROUTE.ADMIN_VIDEOS, icon: Film },
 ];
 
 function Sidebar({ isCollapsed }: SidebarProps) {
   const router = useRouter();
+  const { t } = useTranslation('adminPage');
 
   return (
     <aside
@@ -61,7 +63,7 @@ function Sidebar({ isCollapsed }: SidebarProps) {
                         : 'inline-block'
                     )}
                   >
-                    {item.label}
+                    {t(item.labelKey)}
                   </span>
                 </Link>
               </li>
@@ -82,7 +84,7 @@ function Sidebar({ isCollapsed }: SidebarProps) {
                 : 'inline-block'
             )}
           >
-            Logout
+            {t('logout')}
           </span>
         </button>
       </div>

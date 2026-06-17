@@ -8,10 +8,12 @@ const withReactSvg = require('next-react-svg')({
   include: path.resolve(__dirname, 'src/assets/svg'),
   titleProp: false,
 });
+const { i18n } = require('./next-i18next.config');
 
 const nextConfig = {
   // reactStrictMode: true,
   swcMinify: true,
+  i18n,
   images: {
     domains: [],
     remotePatterns: [

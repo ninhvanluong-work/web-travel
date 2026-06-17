@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 
 import type { ITourGuide } from '@/api/tour-guide/types';
 import { Button } from '@/components/ui/button';
@@ -58,6 +59,7 @@ interface Props {
 }
 
 export function GuideTableRow({ guide, onDelete }: Props) {
+  const { t } = useTranslation('adminPage');
   return (
     <TableRow className="hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors border-b border-gray-100 dark:border-gray-800 last:border-0">
       {/* Guide */}
@@ -92,7 +94,7 @@ export function GuideTableRow({ guide, onDelete }: Props) {
       {/* Exp */}
       <TableCell className="py-4">
         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-blue-200">
-          {guide.expYear} năm
+          {t('yearsOfExp', { count: guide.expYear })}
         </span>
       </TableCell>
 
@@ -104,7 +106,7 @@ export function GuideTableRow({ guide, onDelete }: Props) {
       {/* Reviews */}
       <TableCell className="py-4">
         <span className="text-sm text-gray-700">{guide.ratingCount}</span>
-        <span className="text-xs text-gray-400 ml-1">nhận xét</span>
+        <span className="text-xs text-gray-400 ml-1">{t('reviewsCount')}</span>
       </TableCell>
 
       {/* Created at */}
@@ -127,7 +129,7 @@ export function GuideTableRow({ guide, onDelete }: Props) {
             <DropdownMenuItem asChild>
               <Link href={ROUTE.ADMIN_GUIDES_EDIT(guide.id)} className="flex items-center">
                 <Pencil size={14} className="mr-2" />
-                Chỉnh sửa
+                {t('edit')}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -136,7 +138,7 @@ export function GuideTableRow({ guide, onDelete }: Props) {
               onSelect={() => onDelete(guide)}
             >
               <Trash2 size={14} className="mr-2" />
-              Xóa
+              {t('delete')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

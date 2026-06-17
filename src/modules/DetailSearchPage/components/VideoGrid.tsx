@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import type { IVideo, IVideoPage } from '@/api/video';
@@ -32,6 +33,7 @@ const VideoGrid = ({
   hasScrolled,
   onFetchMore,
 }: Props) => {
+  const { t } = useTranslation('searchPage');
   const router = useRouter();
   const setList = useVideoListStore.use.setList();
   const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
@@ -108,7 +110,7 @@ const VideoGrid = ({
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3 text-center">
         <Icons.videoOff className="w-10 h-10 text-neutral-300" />
-        <p className="text-neutral-400 text-sm font-dinpro">Không tìm thấy video</p>
+        <p className="text-neutral-400 text-sm font-dinpro">{t('noResults')}</p>
       </div>
     );
   }
@@ -142,7 +144,7 @@ const VideoGrid = ({
       )}
 
       {!hasNextPage && !isLoading && videos.length > 0 && (
-        <p className="text-center text-gray-400 text-sm py-6 font-dinpro">No more videos found</p>
+        <p className="text-center text-gray-400 text-sm py-6 font-dinpro">{t('noMoreVideos')}</p>
       )}
     </>
   );

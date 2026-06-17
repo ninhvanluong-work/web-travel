@@ -1,4 +1,5 @@
 import { Loader2, Plus, Tag } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef } from 'react';
 
 import { useCreateTag, useTagSearchInfinite } from '@/api/tag';
@@ -27,6 +28,7 @@ export function TagSearchDropdown({
 }: TagSearchDropdownProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation('adminPage');
 
   const {
     data: searchData,
@@ -42,8 +44,8 @@ export function TagSearchDropdown({
   const { mutateAsync: createTagMutation, isPending: isCreating } = useCreateTag();
 
   const searchResults = (searchData?.pages ?? []).flatMap((p) => p.items);
-  const filtered = searchResults.filter((t) => !selectedIds.includes(t.id));
-  const exactMatch = searchResults.some((t) => t.name.toLowerCase() === debouncedQuery.trim().toLowerCase());
+  const filtered = searchResults.filter((tag) => !selectedIds.includes(tag.id));
+  const exactMatch = searchResults.some((tag) => tag.name.toLowerCase() === debouncedQuery.trim().toLowerCase());
   const showCreate = debouncedQuery.trim() && !exactMatch && !isLoading;
 
   // Sentinel observes relative to the scroll container (not viewport)
@@ -82,7 +84,7 @@ export function TagSearchDropdown({
         {/* Header */}
         <div className="px-4 pt-3 pb-2 border-b border-slate-50 bg-slate-50/30">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            {debouncedQuery ? `Results for "${debouncedQuery}"` : 'All Tags'}
+            {debouncedQuery ? t('resultsFor', { query: debouncedQuery }) : t('allTags')}
           </p>
         </div>
 
@@ -91,13 +93,13 @@ export function TagSearchDropdown({
           {isLoading && (
             <div className="flex items-center justify-center gap-2 py-8">
               <Loader2 size={16} className="animate-spin text-slate-400" />
-              <span className="text-[13px] text-slate-400 font-medium">Loading tags...</span>
+              <span className="text-[13px] text-slate-400 font-medium">{t('loadingTags')}</span>
             </div>
           )}
 
           {!isLoading && filtered.length === 0 && !showCreate && (
             <div className="py-8 text-center">
-              <p className="text-[13px] text-slate-400">No tags found</p>
+              <p className="text-[13px] text-slate-400">{t('noTagsFound')}</p>
             </div>
           )}
 
@@ -146,7 +148,7 @@ export function TagSearchDropdown({
                 <Plus size={14} aria-hidden="true" className="text-brand-500 shrink-0" />
               )}
               <span className="text-[13px] text-brand-600 font-semibold">
-                {isCreating ? 'Creating...' : `Create "${debouncedQuery.trim()}"`}
+                {isCreating ? t('creatingTag') : t('createTagLabel', { query: debouncedQuery.trim() })}
               </span>
             </button>
           </div>

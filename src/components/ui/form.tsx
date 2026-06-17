@@ -1,5 +1,6 @@
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
+import { useTranslation } from 'next-i18next';
 import * as React from 'react';
 import type { ControllerProps, FieldPath, FieldValues, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { Controller, FormProvider, useFormContext } from 'react-hook-form';
@@ -131,6 +132,7 @@ FormDescription.displayName = 'FormDescription';
 
 const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, children, ...props }, ref) => {
+    const { t } = useTranslation();
     const { error, formMessageId } = useFormField();
     const body = error ? String(error?.message) : children;
 
@@ -140,7 +142,7 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
 
     return (
       <p ref={ref} id={formMessageId} className={cn('text-destructive text-sm font-medium', className)} {...props}>
-        {body}
+        {typeof body === 'string' ? t(body) : body}
       </p>
     );
   }

@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import { Icons } from '@/assets/icons';
 
 interface QuickFactsGridProps {
@@ -29,16 +31,18 @@ export default function QuickFactsGrid({
   languages,
   difficulty,
 }: QuickFactsGridProps) {
+  const { t } = useTranslation('productPage');
+
   return (
     <div className="px-[18px] pb-[22px]">
       <div className="bg-[#F1EFE8] rounded-[14px] p-[14px_16px]">
         <div className="grid grid-cols-2 gap-x-[18px] gap-y-3">
-          <FactCell icon={Icons.clock} label="Duration" value={duration} />
-          <FactCell icon={Icons.location} label="Departs from" value={departurePoint} />
-          <FactCell icon={Icons.personPickup} label="Pickup / dropoff" value={pickupTime} />
-          <FactCell icon={Icons.groupPeople} label="Group size" value={groupSize} />
-          <FactCell icon={Icons.globe} label="Languages" value={languages.join(' · ')} />
-          <FactCell icon={Icons.mountain} label="Difficulty" value={difficulty} />
+          <FactCell icon={Icons.clock} label={t('durationLabel')} value={duration} />
+          <FactCell icon={Icons.location} label={t('departsFromLabel')} value={departurePoint} />
+          <FactCell icon={Icons.personPickup} label={t('pickupDropoffLabel')} value={pickupTime} />
+          <FactCell icon={Icons.groupPeople} label={t('groupSizeLabel')} value={groupSize} />
+          <FactCell icon={Icons.globe} label={t('languagesLabel')} value={languages.join(' · ')} />
+          <FactCell icon={Icons.mountain} label={t('difficultyLabel')} value={difficulty} />
         </div>
       </div>
     </div>

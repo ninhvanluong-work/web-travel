@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import { Button } from '@/components/ui/button';
 
 import type { GuideProfileData } from '../data/mock-guide';
@@ -7,6 +9,7 @@ interface StatsBlockProps {
 }
 
 export default function StatsBlock({ metrics }: StatsBlockProps) {
+  const { t } = useTranslation('guidePage');
   return (
     <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
       <div className="grid grid-cols-3 text-center">
@@ -14,21 +17,21 @@ export default function StatsBlock({ metrics }: StatsBlockProps) {
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
             {metrics.toursLed}
           </p>
-          <p className="text-caption2 text-neutral-500 mt-1.5">tour đã dẫn</p>
+          <p className="text-caption2 text-neutral-500 mt-1.5">{t('toursLed')}</p>
         </div>
 
         <div className="border-x border-neutral-200">
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
             {metrics.yearsOfExperience}
-            <span className="text-[14px] text-neutral-500 font-normal"> năm</span>
+            <span className="text-[14px] text-neutral-500 font-normal"> {t('years')}</span>
           </p>
-          <p className="text-caption2 text-neutral-500 mt-1.5">trong nghề</p>
+          <p className="text-caption2 text-neutral-500 mt-1.5">{t('inCareer')}</p>
         </div>
 
         <div>
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
             {metrics.languages.length}
-            <span className="text-[14px] text-neutral-500 font-normal"> ngôn ngữ</span>
+            <span className="text-[14px] text-neutral-500 font-normal"> {t('languages')}</span>
           </p>
           <p className="text-caption2 text-neutral-500 mt-1.5">{metrics.languages.join(' · ')}</p>
         </div>
@@ -48,7 +51,7 @@ export default function StatsBlock({ metrics }: StatsBlockProps) {
             strokeLinecap="round"
           />
         </svg>
-        Xem lệnh điều tour cho từng booking
+        {t('dispatchTours')}
       </Button>
     </div>
   );

@@ -1,5 +1,6 @@
 import { ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
 import { ROUTE } from '@/types/routes';
@@ -14,6 +15,7 @@ interface GuideFormHeaderProps {
 
 export function GuideFormHeader({ isEdit, guideId, isPending, isDirty, onSave }: GuideFormHeaderProps) {
   const router = useRouter();
+  const { t } = useTranslation('adminPage');
 
   return (
     <div className="sticky top-[72px] z-30 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between gap-4 shadow-theme-sm">
@@ -30,10 +32,13 @@ export function GuideFormHeader({ isEdit, guideId, isPending, isDirty, onSave }:
         </Button>
         <div className="min-w-0 flex items-center gap-3">
           <h1 className="text-lg font-bold text-slate-800 dark:text-white/90 truncate leading-tight">
-            {isEdit ? 'Chỉnh sửa hướng dẫn viên' : 'Thêm hướng dẫn viên mới'}
+            {isEdit ? t('editGuide') : t('addGuideNew')}
           </h1>
           {isDirty && (
-            <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0" title="Có thay đổi chưa lưu" />
+            <span
+              className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0"
+              title={t('unsavedChangesTitle')}
+            />
           )}
           {isEdit && guideId && (
             <a
@@ -43,7 +48,7 @@ export function GuideFormHeader({ isEdit, guideId, isPending, isDirty, onSave }:
               className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-brand-500 transition-colors shrink-0"
             >
               <ExternalLink size={12} />
-              Xem trang
+              {t('viewPage')}
             </a>
           )}
         </div>
@@ -60,7 +65,7 @@ export function GuideFormHeader({ isEdit, guideId, isPending, isDirty, onSave }:
           onClick={onSave}
           className="px-5 h-9 bg-brand-500 hover:bg-brand-600 border-0 shadow-theme-xs"
         >
-          {isEdit ? 'Lưu thay đổi' : 'Tạo hướng dẫn viên'}
+          {isEdit ? t('saveChanges') : t('createGuide')}
         </Button>
       </div>
     </div>

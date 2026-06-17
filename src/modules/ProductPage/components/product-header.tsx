@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import { Icons } from '@/assets/icons';
 
 interface ProductHeaderProps {
@@ -9,6 +11,8 @@ interface ProductHeaderProps {
 }
 
 export default function ProductHeader({ tags, name, shortDescription, rating, reviewCount }: ProductHeaderProps) {
+  const { t } = useTranslation('productPage');
+
   return (
     <div className="px-[18px] pt-1 pb-4">
       <div className="flex gap-1.5 mb-3 flex-wrap">
@@ -40,7 +44,7 @@ export default function ProductHeader({ tags, name, shortDescription, rating, re
         </div>
         <span className="text-[12px] text-[#888884]">·</span>
         <a href="#reviews" className="text-[13px] text-[#1A1A18] underline underline-offset-[3px] decoration-black/20">
-          {reviewCount} reviews
+          {t('reviewsCount', { count: reviewCount })}
         </a>
       </div>
     </div>

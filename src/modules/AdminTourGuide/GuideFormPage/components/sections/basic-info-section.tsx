@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -10,6 +11,7 @@ import { LanguageSelector } from './language-selector';
 
 export function BasicInfoSection() {
   const { control } = useFormContext<TourGuideFormValues>();
+  const { t } = useTranslation('adminPage');
 
   return (
     <div className="grid grid-cols-2 gap-5">
@@ -20,10 +22,10 @@ export function BasicInfoSection() {
         render={({ field }) => (
           <FormItem className="space-y-1.5">
             <FormLabel className="admin-form-label">
-              Tên hướng dẫn viên <span className="text-red-500">*</span>
+              {t('guideName')} <span className="text-red-500">*</span>
             </FormLabel>
             <FormControl>
-              <Input size="sm" fullWidth placeholder="Nguyễn Văn A" {...field} />
+              <Input size="sm" fullWidth placeholder={t('guideNamePlaceholder')} {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -40,7 +42,7 @@ export function BasicInfoSection() {
               <Input
                 size="sm"
                 fullWidth
-                placeholder="Hướng dẫn viên · Hà Nội & vùng cao phía Bắc"
+                placeholder={t('guideSummaryPlaceholder')}
                 {...field}
                 value={field.value ?? ''}
               />
@@ -60,7 +62,7 @@ export function BasicInfoSection() {
               <Input
                 size="sm"
                 fullWidth
-                placeholder="Mỗi ngọn núi có một câu chuyện..."
+                placeholder={t('guideQuotePlaceholder')}
                 {...field}
                 value={field.value ?? ''}
               />
@@ -75,7 +77,7 @@ export function BasicInfoSection() {
         name="expYear"
         render={({ field }) => (
           <FormItem className="space-y-1.5">
-            <FormLabel className="admin-form-label">Số năm kinh nghiệm</FormLabel>
+            <FormLabel className="admin-form-label">{t('yearsOfExpLabel')}</FormLabel>
             <FormControl>
               <Input
                 size="sm"
@@ -108,10 +110,10 @@ export function BasicInfoSection() {
         name="description"
         render={({ field }) => (
           <FormItem className="col-span-2 space-y-1.5">
-            <FormLabel className="admin-form-label">Giới thiệu bản thân</FormLabel>
+            <FormLabel className="admin-form-label">{t('aboutMe')}</FormLabel>
             <FormControl>
               <TextArea
-                placeholder="Giới thiệu về hướng dẫn viên..."
+                placeholder={t('aboutMePlaceholder')}
                 className="min-h-[120px] resize-none bg-slate-50/20 border-slate-200 focus-visible:bg-white transition-colors rounded-xl shadow-theme-xs"
                 rows={5}
                 {...field}
@@ -133,7 +135,7 @@ export function BasicInfoSection() {
           name="avatar"
           render={({ field }) => (
             <FormItem className="space-y-1.5 shrink-0">
-              <FormLabel className="admin-form-label">Ảnh đại diện (Avatar)</FormLabel>
+              <FormLabel className="admin-form-label">{t('avatarLabel')}</FormLabel>
               <FormControl>
                 <ExperienceImageUpload
                   value={field.value}
@@ -153,7 +155,7 @@ export function BasicInfoSection() {
           name="coverImg"
           render={({ field }) => (
             <FormItem className="flex-1 space-y-1.5">
-              <FormLabel className="admin-form-label">Ảnh bìa</FormLabel>
+              <FormLabel className="admin-form-label">{t('coverImgLabel')}</FormLabel>
               <FormControl>
                 <ExperienceImageUpload
                   value={field.value}

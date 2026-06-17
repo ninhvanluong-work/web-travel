@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { FormField, FormMessage } from '@/components/ui/form';
@@ -18,6 +19,7 @@ const LANGUAGE_OPTIONS = [
 
 export function LanguageSelector() {
   const { control, setValue } = useFormContext<TourGuideFormValues>();
+  const { t } = useTranslation('adminPage');
   const languages = (useWatch({ control, name: 'languages' }) ?? []) as string[];
 
   const toggle = (code: string) => {
@@ -28,7 +30,7 @@ export function LanguageSelector() {
   return (
     <div className="col-span-2 space-y-2">
       <p className="admin-form-label">
-        Ngôn ngữ <span className="text-red-500">*</span>
+        {t('languagesLabel')} <span className="text-red-500">*</span>
       </p>
       <div className="flex flex-wrap gap-2">
         {LANGUAGE_OPTIONS.map((lang) => (

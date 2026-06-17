@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import type { GuideProfileData } from '../data/mock-guide';
 
 interface CareerTimelineProps {
@@ -5,9 +7,10 @@ interface CareerTimelineProps {
 }
 
 export default function CareerTimeline({ timeline }: CareerTimelineProps) {
+  const { t } = useTranslation('guidePage');
   return (
     <div className="py-[22px] px-[18px] bg-white">
-      <p className="text-[14px] font-medium text-neutral-900 mb-4">Hành trình nghề nghiệp</p>
+      <p className="text-[14px] font-medium text-neutral-900 mb-4">{t('careerJourney')}</p>
 
       <div className="relative pl-[18px]">
         <div className="absolute left-1 top-1.5 bottom-1.5 w-px bg-neutral-200" />

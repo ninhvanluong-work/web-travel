@@ -1,0 +1,11 @@
+{
+  "loading": "Loading...",
+  "retry": "Retry",
+  "share": "Share",
+  "back": "Go back",
+  "options": "Options",
+  "linkCopied": "Link copied",
+  "copyFailed": "Could not copy link",
+  "required": "This field is required",
+  "invalidEmail": "Invalid email address"
+}

@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import { Icons } from '@/assets/icons';
 
 import type { BookItemType } from '../types';
@@ -22,10 +24,12 @@ const TYPE_CONFIG: Record<BookItemType, { icon: keyof typeof Icons; bg: string; 
 };
 
 export default function BeforeYouBook({ items }: BeforeYouBookProps) {
+  const { t } = useTranslation('productPage');
+
   return (
     <div className="bg-[#F8F6F0] px-[18px] py-6 border-t border-black/[0.08]">
-      <p className="text-base font-medium">Read before you book</p>
-      <p className="text-[12px] text-[#888884] mt-0.5">To make your trip as smooth as possible</p>
+      <p className="text-base font-medium">{t('readBeforeYouBook')}</p>
+      <p className="text-[12px] text-[#888884] mt-0.5">{t('tripSmoothExplanation')}</p>
 
       <div className="mt-4 flex flex-col gap-3">
         {items.map((item, i) => {

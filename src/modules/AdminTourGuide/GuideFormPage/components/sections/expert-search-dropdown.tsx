@@ -1,4 +1,5 @@
 import { Check, Plus, Sparkles } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
 import { getSpecialtyColor } from '@/lib/specialty-colors';
@@ -22,6 +23,7 @@ export function ExpertSearchDropdown({
   onAdd,
   children,
 }: ExpertSearchDropdownProps) {
+  const { t } = useTranslation('adminPage');
   const trimmed = query.trim();
 
   // Hiện tất cả, lọc theo query nếu có
@@ -46,7 +48,7 @@ export function ExpertSearchDropdown({
         {/* Header */}
         <div className="px-4 pt-3 pb-2 border-b border-slate-50 bg-slate-50/30">
           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            {trimmed ? `Gợi ý cho "${trimmed}"` : 'Chọn nhanh từ danh sách'}
+            {trimmed ? t('suggestionsFor', { query: trimmed }) : t('quickSelect')}
           </p>
         </div>
 
@@ -56,14 +58,14 @@ export function ExpertSearchDropdown({
           {suggestions.length === 0 && (
             <div className="py-8 text-center px-4">
               <Sparkles size={20} className="mx-auto mb-2 text-slate-200" />
-              <p className="text-[12px] text-slate-400">Chưa có chuyên môn nào. Nhập để tạo mới.</p>
+              <p className="text-[12px] text-slate-400">{t('noExpertsPrompt')}</p>
             </div>
           )}
 
           {/* Không khớp query */}
           {isEmpty && suggestions.length > 0 && (
             <div className="py-6 text-center">
-              <p className="text-[13px] text-slate-400">Không tìm thấy gợi ý</p>
+              <p className="text-[13px] text-slate-400">{t('noSuggestionsFound')}</p>
             </div>
           )}
 
@@ -111,7 +113,9 @@ export function ExpertSearchDropdown({
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-50 text-left transition-all duration-150"
             >
               <Plus size={14} aria-hidden="true" className="text-brand-500 shrink-0" />
-              <span className="text-[13px] text-brand-600 font-semibold">Tạo mới &ldquo;{trimmed}&rdquo;</span>
+              <span className="text-[13px] text-brand-600 font-semibold">
+                {t('createNewExpert', { name: trimmed })}
+              </span>
             </button>
           </div>
         )}

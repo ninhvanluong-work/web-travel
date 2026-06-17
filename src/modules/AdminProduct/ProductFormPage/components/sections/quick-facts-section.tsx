@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -17,6 +18,7 @@ interface RowState {
 
 export function QuickFactsSection() {
   const { setValue } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
   const selectedIds = (useWatch<ProductFormValues, 'elementIds'>({ name: 'elementIds' }) ?? []) as string[];
 
   const { data: allElements = [] } = useElementList({ variables: {} });
@@ -76,8 +78,8 @@ export function QuickFactsSection() {
     <div className="space-y-4">
       {rows.length === 0 && (
         <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50">
-          <p className="text-[14px] font-medium text-slate-600">No configuration set</p>
-          <p className="text-[13px] text-slate-400 mt-1">Click the button below to add quick facts for this tour</p>
+          <p className="text-[14px] font-medium text-slate-600">{t('noConfig')}</p>
+          <p className="text-[13px] text-slate-400 mt-1">{t('clickToAddQuickFacts')}</p>
         </div>
       )}
 
@@ -95,7 +97,7 @@ export function QuickFactsSection() {
                   inputSize="sm"
                   className="w-[150px] shrink-0 bg-slate-50/50 border-slate-200 hover:bg-white transition-colors"
                 >
-                  <SelectValue placeholder="Select type..." />
+                  <SelectValue placeholder={t('selectType')} />
                 </SelectTrigger>
                 <SelectContent>
                   {ELEMENT_KEY_OPTIONS.filter((opt) => availableKeys.has(opt.value)).map((opt) => (
@@ -104,7 +106,7 @@ export function QuickFactsSection() {
                       value={opt.value}
                       disabled={usedKeys.includes(opt.value) && opt.value !== row.key}
                     >
-                      {opt.label}
+                      {t(`element_key_${opt.value}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -142,7 +144,7 @@ export function QuickFactsSection() {
         className="gap-2 h-9 px-4 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 shadow-theme-xs transition-colors rounded-lg font-medium text-[13px]"
       >
         <Plus size={14} className="text-brand-500" />
-        Add fact
+        {t('addFact')}
       </Button>
     </div>
   );

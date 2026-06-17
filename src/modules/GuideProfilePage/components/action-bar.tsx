@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { useAlertStore } from '@/stores/use-alert-store';
@@ -12,6 +13,7 @@ interface ActionBarProps {
 }
 
 export default function ActionBar({ guide }: ActionBarProps) {
+  const { t } = useTranslation('guidePage');
   const [qrOpen, setQrOpen] = useState(false);
   const [ratingOpen, setRatingOpen] = useState(false);
 
@@ -28,9 +30,9 @@ export default function ActionBar({ guide }: ActionBarProps) {
         if (navigator.clipboard) {
           await navigator.clipboard.writeText(url);
         }
-        useAlertStore.getState().addAlert({ type: 'success', title: 'Đã sao chép liên kết' });
+        useAlertStore.getState().addAlert({ type: 'success', title: t('actionBar.shareCopied') });
       } catch {
-        useAlertStore.getState().addAlert({ type: 'error', title: 'Không thể sao chép liên kết' });
+        useAlertStore.getState().addAlert({ type: 'error', title: t('actionBar.shareFailed') });
       }
     }
   };
@@ -43,7 +45,7 @@ export default function ActionBar({ guide }: ActionBarProps) {
           transition={{ duration: 0.1 }}
           className="flex-1 bg-neutral-black text-white py-3 rounded-md text-[13px] font-medium"
         >
-          Đặt tour với {guide.name.split(' ').pop()}
+          {t('bookTour', { name: guide.name.split(' ').pop() })}
         </motion.button>
 
         <motion.button
@@ -52,7 +54,7 @@ export default function ActionBar({ guide }: ActionBarProps) {
           onClick={() => setRatingOpen(true)}
           className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap"
         >
-          Rate me
+          {t('rateMe')}
         </motion.button>
 
         <motion.button

@@ -1,4 +1,5 @@
 import { ImageIcon, RotateCcw, VideoIcon, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useRef } from 'react';
 
 import { Spinner } from '@/components/ui/spinner';
@@ -13,6 +14,7 @@ interface RatingMediaUploadProps {
 }
 
 export default function RatingMediaUpload({ onChange }: RatingMediaUploadProps) {
+  const { t } = useTranslation('guidePage');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { items, canAddMore, addFiles, removeItem, retryItem } = useRatingMediaQueue(onChange);
 
@@ -75,7 +77,7 @@ export default function RatingMediaUpload({ onChange }: RatingMediaUploadProps) 
             <ImageIcon size={16} />
             <VideoIcon size={16} />
           </div>
-          <span className="text-[11px]">Thêm ảnh hoặc video ({items.length}/5)</span>
+          <span className="text-[11px]">{t('ratingSheet.addMedia', { count: items.length })}</span>
         </button>
       )}
 

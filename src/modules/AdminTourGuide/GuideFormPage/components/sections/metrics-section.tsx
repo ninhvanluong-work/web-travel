@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -9,6 +10,7 @@ const LANGUAGE_OPTIONS = ['VI', 'EN', 'FR', 'JP', 'KO', 'DE', 'ES', 'IT', 'ZH'];
 
 export function MetricsSection() {
   const { control, setValue } = useFormContext<TourGuideFormValues>();
+  const { t } = useTranslation('adminPage');
   const languages = useWatch({ control, name: 'languages' }) ?? [];
 
   const toggleLanguage = (lang: string) => {
@@ -31,7 +33,7 @@ export function MetricsSection() {
         name="expYear"
         render={({ field }) => (
           <FormItem className="space-y-1.5">
-            <FormLabel className="admin-form-label">Số năm kinh nghiệm</FormLabel>
+            <FormLabel className="admin-form-label">{t('yearsOfExpLabel')}</FormLabel>
             <FormControl>
               <Input
                 size="sm"
@@ -56,7 +58,7 @@ export function MetricsSection() {
       {/* languages */}
       <div className="space-y-2">
         <p className="admin-form-label">
-          Ngôn ngữ <span className="text-red-500">*</span>
+          {t('languagesLabel')} <span className="text-red-500">*</span>
         </p>
         <div className="flex flex-wrap gap-2">
           {LANGUAGE_OPTIONS.map((lang) => (

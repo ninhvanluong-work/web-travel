@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 
@@ -23,9 +25,11 @@ export default function OperatorBlock({
   toursOffered,
   responseRate,
 }: OperatorBlockProps) {
+  const { t } = useTranslation('productPage');
+
   return (
     <div className="px-[18px] pb-[22px]">
-      <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">Hosted by</p>
+      <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">{t('hostedBy')}</p>
       <div className="border border-black/[0.08] rounded-[14px] overflow-hidden">
         {/* Header */}
         <div className="p-4 flex items-center gap-3">
@@ -38,8 +42,8 @@ export default function OperatorBlock({
               <Icons.star className="w-3 h-3 text-[#0F6E56]" />
             </div>
             <p className="text-[11px] text-[#888884]">
-              <span className="font-medium text-[#1A1A18]">{rating}</span> · {reviewCount.toLocaleString()} reviews ·
-              Verified operator
+              <span className="font-medium text-[#1A1A18]">{rating}</span> · {t('reviewsCount', { count: reviewCount })}{' '}
+              ·{t('verifiedOperator')}
             </p>
           </div>
         </div>
@@ -47,16 +51,16 @@ export default function OperatorBlock({
         {/* Stats footer */}
         <div className="bg-[#F8F6F0] grid grid-cols-3 divide-x divide-black/[0.08] border-t border-black/[0.08]">
           <div className="py-3 px-2 text-center">
-            <p className="text-[13px] font-medium">{yearsOnPlatform} yrs</p>
-            <p className="text-[10px] text-[#888884] mt-0.5">on platform</p>
+            <p className="text-[13px] font-medium">{t('yearsOnPlatform', { count: yearsOnPlatform })}</p>
+            <p className="text-[10px] text-[#888884] mt-0.5">{t('onPlatform')}</p>
           </div>
           <div className="py-3 px-2 text-center">
             <p className="text-[13px] font-medium">{toursOffered}</p>
-            <p className="text-[10px] text-[#888884] mt-0.5">tours offered</p>
+            <p className="text-[10px] text-[#888884] mt-0.5">{t('toursOffered', { count: toursOffered })}</p>
           </div>
           <div className="py-3 px-2 text-center">
             <p className="text-[13px] font-medium">{responseRate}%</p>
-            <p className="text-[10px] text-[#888884] mt-0.5">response rate</p>
+            <p className="text-[10px] text-[#888884] mt-0.5">{t('responseRate')}</p>
           </div>
         </div>
 
@@ -68,7 +72,7 @@ export default function OperatorBlock({
           blur={false}
           className="w-full py-3 text-center text-[13px] border-t border-black/[0.08] hover:bg-[#F8F6F0] h-auto font-normal active:scale-95"
         >
-          View operator profile →
+          {t('viewOperatorProfile')}
         </Button>
       </div>
     </div>

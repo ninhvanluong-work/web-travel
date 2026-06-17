@@ -1,4 +1,5 @@
 import { MessageSquare } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import type { ITourGuide } from '@/api/tour-guide/types';
 import { Icons } from '@/assets/icons';
@@ -17,6 +18,7 @@ const thClass =
   '!text-[11px] !font-semibold !uppercase !tracking-wide !text-gray-500 dark:!text-gray-400 !px-5 !py-3.5 !h-auto';
 
 export function GuideTable({ guides, isLoading, isFetching, onDelete }: GuideTableProps) {
+  const { t } = useTranslation('adminPage');
   return (
     <div
       className={`overflow-x-auto transition-opacity duration-200 ${
@@ -26,16 +28,16 @@ export function GuideTable({ guides, isLoading, isFetching, onDelete }: GuideTab
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-gray-800">
-            <TableHead className={`${thClass} min-w-[220px]`}>Hướng dẫn viên</TableHead>
-            <TableHead className={`${thClass} whitespace-nowrap`}>Exp (năm)</TableHead>
-            <TableHead className={`${thClass} min-w-[140px]`}>Đánh giá</TableHead>
+            <TableHead className={`${thClass} min-w-[220px]`}>{t('guide')}</TableHead>
+            <TableHead className={`${thClass} whitespace-nowrap`}>{t('expYears')}</TableHead>
+            <TableHead className={`${thClass} min-w-[140px]`}>{t('rating')}</TableHead>
             <TableHead className={`${thClass} whitespace-nowrap`}>
               <span className="inline-flex items-center gap-1">
                 <MessageSquare size={12} />
-                Nhận xét
+                {t('reviews')}
               </span>
             </TableHead>
-            <TableHead className={`${thClass} whitespace-nowrap`}>Ngày tạo</TableHead>
+            <TableHead className={`${thClass} whitespace-nowrap`}>{t('createdAt')}</TableHead>
             <TableHead className={`${thClass} !w-14`} />
           </TableRow>
         </TableHeader>
@@ -46,7 +48,7 @@ export function GuideTable({ guides, isLoading, isFetching, onDelete }: GuideTab
               <td colSpan={6}>
                 <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
                   <Icons.user size={40} className="opacity-25" />
-                  <p className="text-sm font-medium text-gray-500">Chưa có hướng dẫn viên nào</p>
+                  <p className="text-sm font-medium text-gray-500">{t('noGuidesYet')}</p>
                 </div>
               </td>
             </TableRow>

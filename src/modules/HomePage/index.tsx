@@ -1,6 +1,7 @@
 import 'animate.css';
 
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
@@ -11,6 +12,7 @@ import { ROUTE } from '@/types/routes';
 import SearchBox from './components/SearchBox';
 
 const HomePage: NextPageWithLayout = () => {
+  const { t } = useTranslation('homePage');
   const router = useRouter();
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -178,7 +180,7 @@ const HomePage: NextPageWithLayout = () => {
           e.stopPropagation();
           toggleMute();
         }}
-        aria-label={isMuted ? 'Bật âm thanh' : 'Tắt âm thanh'}
+        aria-label={isMuted ? t('unmuteAudio') : t('muteAudio')}
       >
         {isMuted ? <Icons.volumeX size={24} /> : <Icons.volume2 size={24} />}
       </button>
