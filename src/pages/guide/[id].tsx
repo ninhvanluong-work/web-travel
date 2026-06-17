@@ -10,7 +10,7 @@ export default GuidePage;
 export async function getServerSideProps({ locale }: { locale: string }) {
   return {
     props: {
-      ...(await serverSideTranslations(locale, ['common', 'guidePage'])),
+      ...(await serverSideTranslations(locale, ['common', 'guidePage', 'adminPage'])),
     },
   };
 }

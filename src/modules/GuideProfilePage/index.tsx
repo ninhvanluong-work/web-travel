@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useRef } from 'react';
 
 import { useGuideProfile } from '@/hooks/use-guide-profile';
+import { useUserStore } from '@/stores/UserStore';
 
 import ActionBar from './components/action-bar';
 import CareerTimeline from './components/career-timeline';
@@ -29,6 +30,8 @@ export default function GuideProfilePage() {
   const touchStartY = useRef(0);
 
   const { data, isLoading } = useGuideProfile(id);
+  const user = useUserStore.use.user();
+  const isOwner = user?.role === 'guide' && !!id && user?.tourGuideId === id;
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -54,7 +57,7 @@ export default function GuideProfilePage() {
         <HeroBanner guide={data} />
       </motion.div>
       <motion.div {...fadeUp(0.08)}>
-        <ActionBar guide={data} />
+        <ActionBar guide={data} isOwner={isOwner} />
       </motion.div>
       <motion.div {...fadeUp(0.16)}>
         <StorytellingBlock bio={data.bio} />

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { env } from '@/lib/const';
 
 import { request } from '../axios';
+import { MOCK_GUIDE_ACCOUNTS, MOCK_GUIDE_FALLBACK } from './mock-guides';
 import type {
   IChangePassword,
   ICourse,
@@ -17,6 +18,28 @@ import type {
 } from './types';
 
 export const loginRequest = async (params: ILoginParams): Promise<ILoginResponse> => {
+  const emailLower = params.email.toLowerCase();
+  const mockGuide = MOCK_GUIDE_ACCOUNTS[emailLower];
+
+  if (mockGuide || emailLower.includes('guide')) {
+    const guide = mockGuide ?? MOCK_GUIDE_FALLBACK;
+    return {
+      accessToken: 'mock-guide-access-token',
+      refreshToken: 'mock-guide-refresh-token',
+      user: {
+        id: `mock-${emailLower}`,
+        uuid: `mock-uuid-${emailLower}`,
+        email: params.email,
+        firstName: guide.firstName,
+        lastName: guide.lastName,
+        company: 'VVV Travel',
+        emailVerifiedAt: new Date().toISOString(),
+        role: 'guide',
+        tourGuideId: guide.tourGuideId,
+      },
+    };
+  }
+
   const { data } = await request({
     url: '/authentication/log-in',
     method: 'POST',

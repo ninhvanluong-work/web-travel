@@ -37,7 +37,11 @@ export default function SignInPage() {
     login(values, {
       onSuccess: (data) => {
         setStore(data);
-        router.push(ROUTE.HOME);
+        if (data.user.role === 'guide' && data.user.tourGuideId) {
+          router.push(`/guide/${data.user.tourGuideId}`);
+        } else {
+          router.push(ROUTE.HOME);
+        }
       },
       onError: (err: unknown) => {
         const status = (err as { response?: { status?: number } })?.response?.status;

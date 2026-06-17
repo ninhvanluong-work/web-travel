@@ -61,5 +61,25 @@
   "noDispatches": "No confirmed dispatch orders yet",
   "statusCompleted": "Completed",
   "statusUpcoming": "Upcoming",
-  "bookNow": "Book now"
+  "bookNow": "Book now",
+  "editProfile": "Edit Profile",
+  "editProfileSheet": {
+    "title": "Edit Profile",
+    "draftRecoveryTitle": "Continue editing from your previous draft?",
+    "draftRestore": "Restore",
+    "draftDiscard": "Discard",
+    "cardMyProfile": "My Profile",
+    "cardExpertise": "Expertise & Skills",
+    "cardCareer": "Career Timeline",
+    "coverImage": "Cover image",
+    "fieldName": "Full name",
+    "fieldTitle": "Subtitle / Title",
+    "fieldSlogan": "Slogan",
+    "fieldSloganPlaceholder": "Your personal slogan...",
+    "fieldExpYear": "Years of experience",
+    "fieldLanguages": "Languages",
+    "fieldBio": "About me",
+    "fieldBioPlaceholder": "Share a bit about your journey and passion...",
+    "saveChanges": "Save changes"
+  }
 }

@@ -1,4 +1,5 @@
 import { request } from '../axios';
+import { mergeWithLocalStorage } from './mock-adapter';
 import type {
   ApiTourGuideDetail,
   ApiTourGuideDetailResponse,
@@ -146,7 +147,7 @@ export async function getTourGuideList(params: ITourGuideListParams): Promise<IT
 
 export async function getTourGuideById(id: string): Promise<ITourGuideProfile> {
   const { data } = await request.get<ApiTourGuideDetailResponse>(`/tour-guide/${id}`);
-  return toTourGuideProfile(data.data);
+  return mergeWithLocalStorage(id, toTourGuideProfile(data.data));
 }
 
 export async function createTourGuide(payload: TourGuideFormPayload): Promise<ApiTourGuideDetail> {

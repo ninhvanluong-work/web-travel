@@ -32,6 +32,8 @@ export interface IUser {
   lastName: string;
   company: string;
   emailVerifiedAt: string;
+  role?: 'guide' | 'user';
+  tourGuideId?: string;
 }
 export interface IForgotPassword {
   email: string;

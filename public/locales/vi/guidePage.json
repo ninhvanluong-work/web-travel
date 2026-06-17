@@ -61,5 +61,25 @@
   "noDispatches": "Chưa có lệnh điều tour được xác nhận",
   "statusCompleted": "Hoàn thành",
   "statusUpcoming": "Sắp tới",
-  "bookNow": "Đặt tour"
+  "bookNow": "Đặt tour",
+  "editProfile": "Chỉnh sửa hồ sơ",
+  "editProfileSheet": {
+    "title": "Chỉnh sửa thông tin",
+    "draftRecoveryTitle": "Bạn có muốn tiếp tục chỉnh sửa từ bản nháp trước đó?",
+    "draftRestore": "Đồng ý",
+    "draftDiscard": "Bỏ qua",
+    "cardMyProfile": "Hồ sơ cá nhân",
+    "cardExpertise": "Chuyên môn & Kỹ năng",
+    "cardCareer": "Lịch sử sự nghiệp",
+    "coverImage": "Ảnh bìa",
+    "fieldName": "Họ và tên",
+    "fieldTitle": "Subtitle / Title",
+    "fieldSlogan": "Slogan",
+    "fieldSloganPlaceholder": "Câu slogan của bạn...",
+    "fieldExpYear": "Số năm kinh nghiệm",
+    "fieldLanguages": "Ngôn ngữ",
+    "fieldBio": "Giới thiệu bản thân",
+    "fieldBioPlaceholder": "Chia sẻ đôi điều về hành trình và đam mê của bạn...",
+    "saveChanges": "Lưu thay đổi"
+  }
 }

@@ -2,20 +2,23 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
+import type { ITourGuideProfile } from '@/api/tour-guide/types';
 import { useAlertStore } from '@/stores/use-alert-store';
 
-import type { GuideProfileData } from '../data/mock-guide';
+import EditProfileSheet from './edit-profile-sheet';
 import QrSheet from './qr-sheet';
 import RatingSheet from './rating-sheet';
 
 interface ActionBarProps {
-  guide: Pick<GuideProfileData, 'id' | 'name'>;
+  guide: Pick<ITourGuideProfile, 'id' | 'name'>;
+  isOwner: boolean;
 }
 
-export default function ActionBar({ guide }: ActionBarProps) {
+export default function ActionBar({ guide, isOwner }: ActionBarProps) {
   const { t } = useTranslation('guidePage');
   const [qrOpen, setQrOpen] = useState(false);
   const [ratingOpen, setRatingOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   const handleShare = async () => {
     const url = `https://vvv.travel/g/${guide.id}`;
@@ -48,14 +51,25 @@ export default function ActionBar({ guide }: ActionBarProps) {
           {t('bookTour', { name: guide.name.split(' ').pop() })}
         </motion.button>
 
-        <motion.button
-          whileTap={{ scale: 0.96 }}
-          transition={{ duration: 0.1 }}
-          onClick={() => setRatingOpen(true)}
-          className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap"
-        >
-          {t('rateMe')}
-        </motion.button>
+        {isOwner ? (
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.1 }}
+            onClick={() => setEditOpen(true)}
+            className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap"
+          >
+            {t('editProfile')}
+          </motion.button>
+        ) : (
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.1 }}
+            onClick={() => setRatingOpen(true)}
+            className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap"
+          >
+            {t('rateMe')}
+          </motion.button>
+        )}
 
         <motion.button
           whileHover={{ rotate: 5 }}
@@ -99,6 +113,7 @@ export default function ActionBar({ guide }: ActionBarProps) {
 
       <QrSheet open={qrOpen} onClose={() => setQrOpen(false)} guideId={guide.id} guideName={guide.name} />
       <RatingSheet open={ratingOpen} onClose={() => setRatingOpen(false)} guideId={guide.id} guideName={guide.name} />
+      <EditProfileSheet open={editOpen} onClose={() => setEditOpen(false)} guideId={guide.id} guideName={guide.name} />
     </>
   );
 }
