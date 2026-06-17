@@ -107,7 +107,20 @@ export const changePasswordSchema = z.object({
     .refine((v) => REGEX_PASSWORD.test(v), 'Password too week'),
 });
 
+export const signUpSchema = z.object({
+  firstName: z.string().min(1, 'First name is required').max(50, 'First name is too long'),
+  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name is too long'),
+  email: z.string().min(1, 'Email is required').email('Please enter a valid email'),
+  password: z
+    .string()
+    .min(8, 'Password must be at least 8 characters')
+    .max(100)
+    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/, 'Password must contain uppercase, lowercase, and a number'),
+  agreeTerms: z.boolean().refine((v) => v === true, 'You must agree to the terms'),
+});
+
 export type LoginSchema = z.infer<typeof loginSchema>;
+export type SignUpSchema = z.infer<typeof signUpSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ForgotSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetSchema = z.infer<typeof resetPassSchema>;

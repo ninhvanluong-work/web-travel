@@ -3,7 +3,30 @@ import { extendTailwindMerge } from 'tailwind-merge';
 
 const twMerge = extendTailwindMerge({
   classGroups: {
-    'font-size': ['text-xxs'],
+    'font-size': [
+      'text-xxs',
+      'text-d1',
+      'text-d2',
+      'text-d3',
+      'text-h1',
+      'text-h2',
+      'text-h3',
+      'text-h4',
+      'text-h5',
+      'text-h6',
+      'text-caption1',
+      'text-caption2',
+      'text-body1',
+      'text-body2',
+      'text-body3',
+      'text-body4',
+      'text-overline1',
+      'text-overline2',
+      'text-overline3',
+      'text-button1',
+      'text-button2',
+      'text-button3',
+    ],
   },
 });
 

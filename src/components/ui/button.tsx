@@ -27,6 +27,10 @@ const buttonVariants = cva(
         overlay: 'bg-black/55 text-white/80',
         /** Fully transparent — like button in TikTok slide */
         transparent: 'bg-transparent text-white',
+        /** Solid dark CTA — auth pages sign in/up */
+        dark: 'bg-neutral-black text-white hover:opacity-90',
+        /** Outline on white — OAuth provider buttons */
+        outline: 'bg-neutral-grad-3 border border-neutral-200 text-neutral-800 hover:bg-neutral-100/60',
       },
       rounded: {
         default: 'rounded-sm',
