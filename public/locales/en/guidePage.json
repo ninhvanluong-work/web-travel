@@ -60,5 +60,6 @@
   "clips_one": "{{count}} clip",
   "noDispatches": "No confirmed dispatch orders yet",
   "statusCompleted": "Completed",
-  "statusUpcoming": "Upcoming"
+  "statusUpcoming": "Upcoming",
+  "bookNow": "Book now"
 }

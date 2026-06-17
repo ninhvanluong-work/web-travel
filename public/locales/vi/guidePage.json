@@ -60,5 +60,6 @@
   "clips_one": "{{count}} clip",
   "noDispatches": "Chưa có lệnh điều tour được xác nhận",
   "statusCompleted": "Hoàn thành",
-  "statusUpcoming": "Sắp tới"
+  "statusUpcoming": "Sắp tới",
+  "bookNow": "Đặt tour"
 }
