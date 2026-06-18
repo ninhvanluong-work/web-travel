@@ -1,200 +1,29 @@
-import { X } from 'lucide-react';
-import Image from 'next/image';
+import { Pencil } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
-import type { BunnyPlayerHandle } from '@/components/BunnyVideoPlayer';
-import BunnyVideoPlayer from '@/components/BunnyVideoPlayer';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogClose, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { unlockVideoPool } from '@/hooks/use-shared-video';
 
+import ManageMomentsSheet from './manage-moments-sheet';
+import { MomentCard } from './moments-grid-card';
+import { VideoPopup } from './moments-grid-video-popup';
+
 interface MomentsGridProps {
   guideId: string;
+  isOwner?: boolean;
 }
 
-// ── VideoPopup ─────────────────────────────────────────────────────────────
-// Uses BunnyVideoPlayer (native <video>) instead of iframe so that:
-//   - pointer events are not swallowed by a cross-origin frame
-//   - tap-to-pause works natively
-//   - swipe-right follows the same pattern as useSwipeBack (pointer events,
-//     resistance damping, velocity/threshold check)
-
-function VideoPopup({ moment, onClose }: { moment: ITourGuideMoment; onClose: () => void }) {
-  const playerRef = useRef<BunnyPlayerHandle>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [playing, setPlaying] = useState(false);
-
-  // swipe-right state (mirrors useSwipeBack internals)
-  const startX = useRef(0);
-  const startY = useRef(0);
-  const startTime = useRef(0);
-  const dragging = useRef(false);
-  const rafId = useRef<number | null>(null);
-
-  useEffect(() => {
-    const player = playerRef.current;
-    player?.play().then(() => setPlaying(true));
-    return () => {
-      player?.pause();
-    };
-  }, []);
-
-  const handleTap = () => {
-    if (dragging.current) return;
-    if (playing) {
-      playerRef.current?.pause();
-      setPlaying(false);
-    } else {
-      playerRef.current?.play().then(() => setPlaying(true));
-    }
-  };
-
-  const applyTransform = (deltaX: number) => {
-    if (!containerRef.current) return;
-    containerRef.current.style.transform = `translateX(${deltaX * 0.85}px)`;
-  };
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    startX.current = e.clientX;
-    startY.current = e.clientY;
-    startTime.current = Date.now();
-    dragging.current = false;
-    if (containerRef.current) {
-      containerRef.current.style.transition = 'none';
-      containerRef.current.style.willChange = 'transform';
-    }
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    const deltaX = e.clientX - startX.current;
-    const deltaY = Math.abs(e.clientY - startY.current);
-    if (deltaX <= 0 || deltaY > deltaX) return;
-    dragging.current = true;
-    if (rafId.current !== null) cancelAnimationFrame(rafId.current);
-    rafId.current = requestAnimationFrame(() => applyTransform(deltaX));
-  };
-
-  const onPointerUp = (e: React.PointerEvent) => {
-    if (rafId.current !== null) {
-      cancelAnimationFrame(rafId.current);
-      rafId.current = null;
-    }
-    if (!dragging.current) return;
-    dragging.current = false;
-
-    const deltaX = e.clientX - startX.current;
-    const elapsed = Date.now() - startTime.current;
-    const velocity = deltaX / elapsed;
-
-    if (deltaX / window.innerWidth >= 0.25 || velocity >= 0.3) {
-      if (containerRef.current) {
-        containerRef.current.style.transition = 'transform 0.2s ease-out';
-        containerRef.current.style.transform = `translateX(${window.innerWidth}px)`;
-      }
-      setTimeout(onClose, 200);
-      return;
-    }
-
-    if (containerRef.current) {
-      containerRef.current.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      containerRef.current.style.transform = 'translateX(0)';
-      containerRef.current.style.willChange = 'auto';
-    }
-  };
-
-  const onPointerCancel = () => {
-    dragging.current = false;
-    if (containerRef.current) {
-      containerRef.current.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
-      containerRef.current.style.transform = 'translateX(0)';
-    }
-  };
-
-  return (
-    <div
-      ref={containerRef}
-      className="relative w-full aspect-[9/16] bg-black"
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerCancel}
-    >
-      <BunnyVideoPlayer
-        ref={playerRef}
-        embedUrl={moment.embedUrl}
-        muted={false}
-        className="absolute inset-0 w-full h-full"
-      />
-
-      {/* Full-area tap zone for play/pause */}
-      <div className="absolute inset-0 z-10" onClick={handleTap} />
-
-      {/* Close button — larger than the default DialogContent X */}
-      <DialogClose asChild>
-        <Button variant="glass" size="icon" rounded="full" blur={false} className="absolute right-3 top-3 z-30 p-2">
-          <X className="h-5 w-5" />
-        </Button>
-      </DialogClose>
-
-      {/* Pause indicator */}
-      {!playing && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
-          <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center">
-            <svg width="22" height="22" viewBox="0 0 12 12">
-              <path d="M3 2L10 6L3 10Z" fill="white" />
-            </svg>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── MomentCard ─────────────────────────────────────────────────────────────
-
-function MomentCard({ moment, onClick }: { moment: ITourGuideMoment; onClick: (m: ITourGuideMoment) => void }) {
-  return (
-    <button
-      type="button"
-      onClick={() => onClick(moment)}
-      className="aspect-[9/14] rounded-lg relative overflow-hidden w-full bg-neutral-800 group"
-    >
-      {moment.thumbnail && (
-        <Image
-          src={moment.thumbnail}
-          alt={moment.title}
-          fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          sizes="50vw"
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/[0.92] flex items-center justify-center transition-transform duration-200 group-hover:scale-110">
-        <svg width="13" height="13" viewBox="0 0 12 12">
-          <path d="M3 2L10 6L3 10Z" fill="black" />
-        </svg>
-      </div>
-      <div className="absolute bottom-2 left-2.5 right-2.5">
-        <p className="text-[12px] text-white mb-0.5 italic" style={{ fontFamily: 'var(--font-serif)' }}>
-          {moment.title}
-        </p>
-        <p className="text-[10px] text-white/80">{moment.duration}</p>
-      </div>
-    </button>
-  );
-}
-
-// ── MomentsGrid ────────────────────────────────────────────────────────────
-
-export default function MomentsGrid({ guideId }: MomentsGridProps) {
+export default function MomentsGrid({ guideId, isOwner }: MomentsGridProps) {
   const { t } = useTranslation('guidePage');
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [manageMomentsOpen, setManageMomentsOpen] = useState(false);
   const [activeVideo, setActiveVideo] = useState<ITourGuideMoment | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -253,10 +82,25 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
 
   if (displayedMoments.length === 0) {
     return (
-      <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-        <p className="text-[14px] font-medium text-neutral-900 mb-2">{t('momentsFromTour')}</p>
-        <p className="text-caption2 text-neutral-400 italic text-center py-6">{t('noMomentsYet')}</p>
-      </div>
+      <>
+        <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
+          <div className="flex items-center gap-2 mb-2">
+            <p className="text-[14px] font-medium text-neutral-900">{t('momentsFromTour')}</p>
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() => setManageMomentsOpen(true)}
+                className="flex items-center gap-1 text-[12px] font-medium text-brand-500 hover:text-brand-600 transition-colors"
+              >
+                <Pencil size={12} />
+                {t('manageMomentsSheet.manage')}
+              </button>
+            )}
+          </div>
+          <p className="text-caption2 text-neutral-400 italic text-center py-6">{t('noMomentsYet')}</p>
+        </div>
+        <ManageMomentsSheet open={manageMomentsOpen} onClose={() => setManageMomentsOpen(false)} guideId={guideId} />
+      </>
     );
   }
 
@@ -264,7 +108,19 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
     <>
       <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
         <div className="flex justify-between items-baseline mb-3">
-          <p className="text-[14px] font-medium text-neutral-900">{t('momentsFromTour')}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-[14px] font-medium text-neutral-900">{t('momentsFromTour')}</p>
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() => setManageMomentsOpen(true)}
+                className="flex items-center gap-1 text-[12px] font-medium text-brand-500 hover:text-brand-600 transition-colors"
+              >
+                <Pencil size={12} />
+                {t('manageMomentsSheet.manage')}
+              </button>
+            )}
+          </div>
           <span className="text-[12px] text-neutral-500">{t('clips', { count: totalMoments })}</span>
         </div>
 
@@ -316,6 +172,8 @@ export default function MomentsGrid({ guideId }: MomentsGridProps) {
           {activeVideo && <VideoPopup key={activeVideo.id} moment={activeVideo} onClose={() => setActiveVideo(null)} />}
         </DialogContent>
       </Dialog>
+
+      <ManageMomentsSheet open={manageMomentsOpen} onClose={() => setManageMomentsOpen(false)} guideId={guideId} />
     </>
   );
 }

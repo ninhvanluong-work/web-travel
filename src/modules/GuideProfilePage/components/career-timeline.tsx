@@ -24,7 +24,7 @@ export default function CareerTimeline({ timeline }: CareerTimelineProps) {
             />
             <p className="text-[13px] font-medium text-neutral-900 mb-0.5">{item.companyName}</p>
             <p className="text-[11px] text-neutral-500 mb-1">
-              {item.role} · {item.period}
+              {item.role} · {item.period.replace(/nay/gi, t('editProfileSheet.present', { defaultValue: 'nay' }))}
             </p>
             <p className="text-[12px] text-neutral-500">{item.description}</p>
           </div>

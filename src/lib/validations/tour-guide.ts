@@ -1,22 +1,24 @@
 import { z } from 'zod';
 
 export const careerPathSchema = z.object({
-  role: z.string().min(1, 'Nhập chức danh'),
-  company: z.string().min(1, 'Nhập tên công ty'),
+  role: z.string().min(1, 'Role is required'),
+  company: z.string().min(1, 'Company is required'),
   startYear: z.coerce.number().min(1990).max(new Date().getFullYear()),
+  endYear: z.coerce.number().min(1990).max(new Date().getFullYear()).optional().nullable(),
+  isCurrent: z.boolean().optional().default(false),
   tourCount: z.coerce.number().min(0),
   description: z.string().optional().default(''),
 });
 
 export const tourGuideSchema = z.object({
-  name: z.string().min(1, 'Tên không được để trống'),
+  name: z.string().min(1, 'Name is required'),
   avatar: z.string().optional().nullable(),
   coverImg: z.string().optional().nullable(),
   quote: z.string().optional().nullable(),
   summary: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   expYear: z.coerce.number().min(0).max(50),
-  languages: z.array(z.string()).min(1, 'Chọn ít nhất 1 ngôn ngữ'),
+  languages: z.array(z.string()).min(1, 'Select at least 1 language'),
   experts: z.array(z.string()),
   careerPath: z.array(careerPathSchema),
 });

@@ -6,6 +6,7 @@ import type { ITourGuideProfile } from '@/api/tour-guide/types';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 import EditProfileSheet from './edit-profile-sheet';
+import ManageMomentsSheet from './manage-moments-sheet';
 import QrSheet from './qr-sheet';
 import RatingSheet from './rating-sheet';
 
@@ -19,6 +20,7 @@ export default function ActionBar({ guide, isOwner }: ActionBarProps) {
   const [qrOpen, setQrOpen] = useState(false);
   const [ratingOpen, setRatingOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [manageMomentsOpen, setManageMomentsOpen] = useState(false);
 
   const handleShare = async () => {
     const url = `https://vvv.travel/g/${guide.id}`;
@@ -113,7 +115,17 @@ export default function ActionBar({ guide, isOwner }: ActionBarProps) {
 
       <QrSheet open={qrOpen} onClose={() => setQrOpen(false)} guideId={guide.id} guideName={guide.name} />
       <RatingSheet open={ratingOpen} onClose={() => setRatingOpen(false)} guideId={guide.id} guideName={guide.name} />
-      <EditProfileSheet open={editOpen} onClose={() => setEditOpen(false)} guideId={guide.id} guideName={guide.name} />
+      <EditProfileSheet
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        guideId={guide.id}
+        guideName={guide.name}
+        onOpenManageMoments={() => {
+          setEditOpen(false);
+          setManageMomentsOpen(true);
+        }}
+      />
+      <ManageMomentsSheet open={manageMomentsOpen} onClose={() => setManageMomentsOpen(false)} guideId={guide.id} />
     </>
   );
 }

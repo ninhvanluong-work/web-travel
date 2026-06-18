@@ -69,7 +69,7 @@ export default function GuideProfilePage() {
       <OperatorReviews reviews={data.operatorReviews} />
       <GuestFeedback feedback={data.guestFeedback} guideName={data.name.split(' ').pop()!} guideId={data.id} />
       <SpecialtyTags specialties={data.specialties} />
-      <MomentsGrid guideId={data.id} />
+      <MomentsGrid guideId={data.id} isOwner={isOwner} />
       <DestinationsChart destinations={data.destinations} guideName={data.name.split(' ').pop()!} />
       <CareerTimeline timeline={data.careerTimeline} />
       <div className="h-8" />

@@ -156,7 +156,15 @@ export function CareerSection() {
         blur={false}
         className="w-full h-10 border-dashed border-slate-300 dark:border-gray-800 text-slate-500 hover:border-brand-500 hover:text-brand-600 rounded-xl hover:bg-brand-50/10 transition-all text-xs font-semibold gap-1.5"
         onClick={() =>
-          append({ role: '', company: '', startYear: new Date().getFullYear(), tourCount: 0, description: '' })
+          append({
+            role: '',
+            company: '',
+            startYear: new Date().getFullYear(),
+            endYear: null,
+            isCurrent: false,
+            tourCount: 0,
+            description: '',
+          })
         }
       >
         <Plus size={14} />

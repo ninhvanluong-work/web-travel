@@ -11,12 +11,18 @@ export function ExperienceImageUpload({
   aspectRatio,
   shape = 'rectangle',
   hideUrlInput = false,
+  changeLabel = 'Thay đổi ảnh',
+  uploadLabel = 'Tải ảnh lên',
+  uploadingLabel = 'Đang tải lên...',
 }: {
   value: string | null | undefined;
   onChange: (url: string) => void;
   aspectRatio?: string;
   shape?: 'rectangle' | 'circle';
   hideUrlInput?: boolean;
+  changeLabel?: string;
+  uploadLabel?: string;
+  uploadingLabel?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -49,13 +55,13 @@ export function ExperienceImageUpload({
             <img src={value} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
               <ImageIcon size={20} className="text-white" />
-              <span className="text-[11px] font-medium text-white">Thay đổi ảnh</span>
+              <span className="text-[11px] font-medium text-white">{changeLabel}</span>
             </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-slate-400 group-hover:text-brand-500 transition-colors">
             {uploading ? <Loader2 size={24} className="animate-spin text-brand-500" /> : <ImageIcon size={24} />}
-            <span className="text-[12px] font-medium">{uploading ? 'Đang tải lên...' : 'Tải ảnh lên'}</span>
+            <span className="text-[12px] font-medium">{uploading ? uploadingLabel : uploadLabel}</span>
           </div>
         )}
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
