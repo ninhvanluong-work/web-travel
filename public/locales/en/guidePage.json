@@ -111,11 +111,24 @@
     "captionPlaceholder": "Describe this moment... (max 150 chars)",
     "tourLabel": "Linked tour",
     "tourPlaceholder": "Select a destination",
-    "uploadVideo": "Tap to upload video (MP4 / WebM, max 50 MB)",
+    "uploadVideo": "Tap to upload video (MP4 / WebM, max 500 MB)",
+    "nameLabel": "Moment name",
+    "namePlaceholder": "Name this moment...",
+    "nameRequired": "Name is required",
     "uploading": "Uploading… {{progress}}%",
-    "fileTooLarge": "File exceeds 50 MB limit",
+    "preparing": "Preparing upload…",
+    "uploadComplete": "Upload complete",
+    "uploadFailed": "Upload failed, please try again",
+    "saveFailed": "Failed to save moment, please try again",
+    "fileTooLarge": "File exceeds 500 MB limit",
     "invalidFormat": "Only MP4 or WebM files are supported",
     "save": "Save moment",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "retrySave": "Retry saving",
+    "editMomentTitle": "Edit moment",
+    "editMoment": "Edit moment",
+    "editFailed": "Failed to update moment, please try again",
+    "editSuccess": "Moment updated successfully!"
   }
 }

@@ -221,10 +221,43 @@ export interface TourGuideFormPayload {
 export interface ApiTourGuideMoment {
   id: string;
   name: string;
-  description: string | null;
-  thumbnail: string | null;
-  duration: number;
+  slug: string;
+  url: string | null;
   embedUrl: string;
+  shortUrl: string | null;
+  thumbnail: string | null;
+  description: string | null;
+  tag: string | null;
+  like: number;
+  type: 'normal' | 'hero';
+  duration: number;
+}
+
+export interface ApiCreateMomentPayload {
+  name: string;
+  guid: string;
+  thumbnail: string;
+  description?: string;
+  tourGuideId: string;
+}
+
+export interface ApiUpdateMomentPayload {
+  name: string;
+  guid: string;
+  url?: string;
+  thumbnail?: string;
+  description?: string;
+  type?: 'normal' | 'hero';
+  productId?: string;
+  tourGuideId: string;
+  embedding?: string;
+}
+
+export interface ApiCreateMomentResponse {
+  data: ApiTourGuideMoment;
+  code: number;
+  message: string;
+  error: string | null;
 }
 
 export interface ApiTourGuideMomentsResponse {
@@ -248,6 +281,8 @@ export interface ITourGuideMoment {
   thumbnail: string | null;
   duration: string;
   embedUrl: string;
+  name: string;
+  description?: string;
 }
 
 export interface ITourGuideMomentsResult {

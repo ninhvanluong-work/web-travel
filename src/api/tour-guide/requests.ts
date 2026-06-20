@@ -1,12 +1,15 @@
 import { request } from '../axios';
 import { mergeWithLocalStorage } from './mock-adapter';
 import type {
+  ApiCreateMomentPayload,
+  ApiCreateMomentResponse,
   ApiTourGuideDetail,
   ApiTourGuideDetailResponse,
   ApiTourGuideListResponse,
   ApiTourGuideMoment,
   ApiTourGuideMomentsResponse,
   ApiTourGuideReviewResponse,
+  ApiUpdateMomentPayload,
   ITourGuide,
   ITourGuideListParams,
   ITourGuideListResult,
@@ -170,6 +173,8 @@ const toTourGuideMoment = (api: ApiTourGuideMoment): ITourGuideMoment => ({
   thumbnail: api.thumbnail ?? null,
   duration: formatDuration(api.duration),
   embedUrl: api.embedUrl,
+  name: api.name,
+  description: api.description ?? undefined,
 });
 
 export async function getTourGuideMoments({
@@ -184,6 +189,27 @@ export async function getTourGuideMoments({
     items: data.data.items.map(toTourGuideMoment),
     pagination: data.data.pagination,
   };
+}
+
+export async function createTourGuideMoment(
+  guideId: string,
+  payload: ApiCreateMomentPayload
+): Promise<ApiTourGuideMoment> {
+  const { data } = await request.post<ApiCreateMomentResponse>(`/tour-guide/${guideId}/moment`, payload);
+  return data.data;
+}
+
+export async function updateTourGuideMoment(
+  guideId: string,
+  momentId: string,
+  payload: ApiUpdateMomentPayload
+): Promise<ApiTourGuideMoment> {
+  const { data } = await request.put<ApiCreateMomentResponse>(`/tour-guide/${guideId}/moment/${momentId}`, payload);
+  return data.data;
+}
+
+export async function deleteTourGuideMoment(guideId: string, momentId: string): Promise<void> {
+  await request.delete(`/tour-guide/${guideId}/moment/${momentId}`);
 }
 
 export async function getTourGuideReviews({

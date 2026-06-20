@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Trash2, Undo2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, Undo2 } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useTourGuideById, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
+import { useDeleteTourGuideMoment, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
@@ -13,7 +13,15 @@ import { AddMomentSheet } from './manage-moments-add-sheet';
 
 // ── Moment manage card ─────────────────────────────────────────────────────
 
-function MomentManageCard({ moment, onDelete }: { moment: ITourGuideMoment; onDelete: (id: string) => void }) {
+function MomentManageCard({
+  moment,
+  onDelete,
+  onEdit,
+}: {
+  moment: ITourGuideMoment;
+  onDelete: (id: string) => void;
+  onEdit: (moment: ITourGuideMoment) => void;
+}) {
   return (
     <div className="relative aspect-[9/14] rounded-xl overflow-hidden bg-neutral-800 group">
       {moment.thumbnail && (
@@ -26,13 +34,22 @@ function MomentManageCard({ moment, onDelete }: { moment: ITourGuideMoment; onDe
         </p>
         <p className="text-[10px] text-white/70">{moment.duration}</p>
       </div>
-      <button
-        type="button"
-        onClick={() => onDelete(moment.id)}
-        className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-rose-600"
-      >
-        <Trash2 size={13} className="text-white" />
-      </button>
+      <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          type="button"
+          onClick={() => onEdit(moment)}
+          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-brand-500 transition-colors"
+        >
+          <Pencil size={13} className="text-white" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(moment.id)}
+          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-rose-600 transition-colors"
+        >
+          <Trash2 size={13} className="text-white" />
+        </button>
+      </div>
     </div>
   );
 }
@@ -50,10 +67,11 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [undoItem, setUndoItem] = useState<{ id: string; timeoutId: ReturnType<typeof setTimeout> } | null>(null);
   const [addOpen, setAddOpen] = useState(false);
+  const [editMoment, setEditMoment] = useState<ITourGuideMoment | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const pendingDeletionsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
-  const { data: profile } = useTourGuideById({ variables: { id: guideId } });
-  const destinations = profile?.destinations.map((d) => d.name) ?? [];
+  const { mutate: deleteMoment } = useDeleteTourGuideMoment();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useTourGuideMomentsInfinite({
     variables: { id: guideId },
@@ -62,23 +80,57 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
 
   const allMoments = (data?.pages.flatMap((p) => p.items) ?? []).filter((m) => !deletedIds.has(m.id));
 
+  const commitPendingDeletions = useCallback(() => {
+    pendingDeletionsRef.current.forEach((timeoutId, id) => {
+      clearTimeout(timeoutId);
+      deleteMoment({ guideId, momentId: id });
+    });
+    pendingDeletionsRef.current.clear();
+    setUndoItem(null);
+  }, [guideId, deleteMoment]);
+
+  // Handle deletions when sheet is closed
+  useEffect(() => {
+    if (!open) {
+      commitPendingDeletions();
+    }
+  }, [open, commitPendingDeletions]);
+
+  // Handle deletions on unmount
+  useEffect(() => {
+    return () => {
+      commitPendingDeletions();
+    };
+  }, [commitPendingDeletions]);
+
   const handleDelete = useCallback(
     (id: string) => {
-      if (undoItem) clearTimeout(undoItem.timeoutId);
+      if (undoItem) {
+        clearTimeout(undoItem.timeoutId);
+        pendingDeletionsRef.current.delete(undoItem.id);
+        deleteMoment({ guideId, momentId: undoItem.id });
+        setUndoItem(null);
+      }
       setDeletedIds((prev) => {
         const next = new Set(prev);
         next.add(id);
         return next;
       });
-      const timeoutId = setTimeout(() => setUndoItem(null), 5000);
+      const timeoutId = setTimeout(() => {
+        pendingDeletionsRef.current.delete(id);
+        deleteMoment({ guideId, momentId: id });
+        setUndoItem(null);
+      }, 5000);
+      pendingDeletionsRef.current.set(id, timeoutId);
       setUndoItem({ id, timeoutId });
     },
-    [undoItem]
+    [undoItem, guideId, deleteMoment]
   );
 
   const handleUndo = useCallback(() => {
     if (!undoItem) return;
     clearTimeout(undoItem.timeoutId);
+    pendingDeletionsRef.current.delete(undoItem.id);
     setDeletedIds((prev) => {
       const next = new Set(prev);
       next.delete(undoItem.id);
@@ -146,7 +198,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.18 }}
                     >
-                      <MomentManageCard moment={m} onDelete={handleDelete} />
+                      <MomentManageCard moment={m} onDelete={handleDelete} onEdit={setEditMoment} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -196,7 +248,15 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
         </SheetContent>
       </Sheet>
 
-      <AddMomentSheet open={addOpen} onClose={() => setAddOpen(false)} destinations={destinations} />
+      <AddMomentSheet
+        open={addOpen || !!editMoment}
+        onClose={() => {
+          setAddOpen(false);
+          setEditMoment(null);
+        }}
+        guideId={guideId}
+        editMoment={editMoment ?? undefined}
+      />
     </>
   );
 }

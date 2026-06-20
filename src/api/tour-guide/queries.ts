@@ -2,7 +2,9 @@ import { createInfiniteQuery, createMutation, createQuery } from 'react-query-ki
 
 import {
   createTourGuide,
+  createTourGuideMoment,
   deleteTourGuide,
+  deleteTourGuideMoment,
   getTourGuideById,
   getTourGuideList,
   getTourGuideMoments,
@@ -10,9 +12,13 @@ import {
   getTourGuideReviews,
   type TourGuidePage,
   updateTourGuide,
+  updateTourGuideMoment,
 } from './requests';
 import type {
+  ApiCreateMomentPayload,
   ApiTourGuideDetail,
+  ApiTourGuideMoment,
+  ApiUpdateMomentPayload,
   ITourGuideListParams,
   ITourGuideListResult,
   ITourGuideMomentsParams,
@@ -87,6 +93,34 @@ export const useTourGuideMomentsInfinite = createInfiniteQuery<
   getNextPageParam: (lastPage) =>
     lastPage.pagination.page < lastPage.pagination.totalPages ? lastPage.pagination.page + 1 : undefined,
   staleTime: 2 * 60 * 1000,
+});
+
+export interface ICreateMomentVariables {
+  guideId: string;
+  payload: ApiCreateMomentPayload;
+}
+
+export const useCreateTourGuideMoment = createMutation<ApiTourGuideMoment, ICreateMomentVariables>({
+  mutationFn: ({ guideId, payload }) => createTourGuideMoment(guideId, payload),
+});
+
+export interface IUpdateMomentVariables {
+  guideId: string;
+  momentId: string;
+  payload: ApiUpdateMomentPayload;
+}
+
+export const useUpdateTourGuideMoment = createMutation<ApiTourGuideMoment, IUpdateMomentVariables>({
+  mutationFn: ({ guideId, momentId, payload }) => updateTourGuideMoment(guideId, momentId, payload),
+});
+
+export interface IDeleteMomentVariables {
+  guideId: string;
+  momentId: string;
+}
+
+export const useDeleteTourGuideMoment = createMutation<void, IDeleteMomentVariables>({
+  mutationFn: ({ guideId, momentId }) => deleteTourGuideMoment(guideId, momentId),
 });
 
 export const useTourGuideReviewsInfinite = createInfiniteQuery<
