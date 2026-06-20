@@ -44,8 +44,8 @@ function MomentManageCard({
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
 
       {/* Play button overlay */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/[0.9] flex items-center justify-center transition-transform duration-200 group-hover:scale-110 shadow-md">
-        <svg width="10" height="10" viewBox="0 0 12 12">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/[0.92] flex items-center justify-center transition-transform duration-200 group-hover:scale-110 shadow-md">
+        <svg width="14" height="14" viewBox="0 0 12 12">
           <path d="M3 2L10 6L3 10Z" fill="black" />
         </svg>
       </div>
