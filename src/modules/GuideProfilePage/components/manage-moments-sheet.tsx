@@ -6,10 +6,13 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useDeleteTourGuideMoment, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
+import { unlockVideoPool } from '@/hooks/use-shared-video';
 
 import { AddMomentSheet } from './manage-moments-add-sheet';
+import { VideoPopup } from './moments-grid-video-popup';
 
 // ── Moment manage card ─────────────────────────────────────────────────────
 
@@ -17,24 +20,46 @@ function MomentManageCard({
   moment,
   onDelete,
   onEdit,
+  onClick,
 }: {
   moment: ITourGuideMoment;
   onDelete: (id: string) => void;
   onEdit: (moment: ITourGuideMoment) => void;
+  onClick: (moment: ITourGuideMoment) => void;
 }) {
   return (
-    <div className="relative aspect-[9/14] rounded-xl overflow-hidden bg-neutral-800 group">
+    <div
+      onClick={() => onClick(moment)}
+      className="relative aspect-[9/14] rounded-xl overflow-hidden bg-neutral-800 group cursor-pointer"
+    >
       {moment.thumbnail && (
-        <Image src={moment.thumbnail} alt={moment.title} fill className="object-cover" sizes="45vw" />
+        <Image
+          src={moment.thumbnail}
+          alt={moment.title}
+          fill
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          sizes="45vw"
+        />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />
+
+      {/* Play button overlay */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/[0.9] flex items-center justify-center transition-transform duration-200 group-hover:scale-110 shadow-md">
+        <svg width="10" height="10" viewBox="0 0 12 12">
+          <path d="M3 2L10 6L3 10Z" fill="black" />
+        </svg>
+      </div>
+
       <div className="absolute bottom-2 left-2 right-8">
         <p className="text-[11px] text-white truncate italic" style={{ fontFamily: 'var(--font-serif)' }}>
           {moment.title}
         </p>
         <p className="text-[10px] text-white/70">{moment.duration}</p>
       </div>
-      <div className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div
+        className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           type="button"
           onClick={() => onEdit(moment)}
@@ -68,6 +93,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
   const [undoItem, setUndoItem] = useState<{ id: string; timeoutId: ReturnType<typeof setTimeout> } | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [editMoment, setEditMoment] = useState<ITourGuideMoment | null>(null);
+  const [activeVideo, setActiveVideo] = useState<ITourGuideMoment | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const pendingDeletionsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
@@ -79,6 +105,11 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
   });
 
   const allMoments = (data?.pages.flatMap((p) => p.items) ?? []).filter((m) => !deletedIds.has(m.id));
+
+  const openVideo = (m: ITourGuideMoment) => {
+    unlockVideoPool();
+    setActiveVideo(m);
+  };
 
   const commitPendingDeletions = useCallback(() => {
     pendingDeletionsRef.current.forEach((timeoutId, id) => {
@@ -198,7 +229,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.18 }}
                     >
-                      <MomentManageCard moment={m} onDelete={handleDelete} onEdit={setEditMoment} />
+                      <MomentManageCard moment={m} onDelete={handleDelete} onEdit={setEditMoment} onClick={openVideo} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -257,6 +288,12 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
         guideId={guideId}
         editMoment={editMoment ?? undefined}
       />
+
+      <Dialog open={!!activeVideo} onOpenChange={(isOpen) => !isOpen && setActiveVideo(null)}>
+        <DialogContent className="p-0 bg-black border-0 max-w-[380px] w-full overflow-visible z-[110]">
+          {activeVideo && <VideoPopup key={activeVideo.id} moment={activeVideo} onClose={() => setActiveVideo(null)} />}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
