@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { Pencil, Plus, Trash2, Undo2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, Undo2, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDeleteTourGuideMoment, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { unlockVideoPool } from '@/hooks/use-shared-video';
 
@@ -185,6 +185,26 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
     [hasNextPage, isFetchingNextPage, fetchNextPage]
   );
 
+  // Touch handlers to swipe down to close on mobile
+  const touchStartY = useRef(0);
+  const touchCurrentY = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    touchCurrentY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchCurrentY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    const deltaY = touchCurrentY.current - touchStartY.current;
+    if (deltaY > 80) {
+      onClose();
+    }
+  };
+
   return (
     <>
       <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
@@ -196,15 +216,32 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
             right: 'max(0px, calc(50% - 215px))',
           }}
         >
-          <div className="relative h-6 flex items-center justify-center shrink-0">
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="relative h-6 flex items-center justify-center shrink-0 cursor-ns-resize"
+          >
             <div className="w-12 h-1.5 rounded-full bg-slate-200" />
           </div>
 
-          <SheetHeader className="px-6 pb-4 border-b border-slate-100 shrink-0">
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="px-6 pb-4 border-b border-slate-100 shrink-0 flex flex-row items-center justify-between select-none cursor-ns-resize"
+          >
             <SheetTitle className="text-[15px] font-semibold text-neutral-black">
               {t('manageMomentsSheet.title')}
             </SheetTitle>
-          </SheetHeader>
+            <button
+              type="button"
+              onClick={onClose}
+              className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-full hover:bg-slate-100 flex items-center justify-center active:scale-95"
+            >
+              <X size={18} />
+            </button>
+          </div>
 
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 scrollbar-hide">
             {isLoading && (

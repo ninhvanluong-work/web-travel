@@ -1,6 +1,6 @@
-import { Info, Loader2 } from 'lucide-react';
+import { Info, Loader2, X } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import {
   AlertDialog,
@@ -54,24 +54,54 @@ export default function EditProfileSheet({
     onSubmit,
   } = useEditProfileForm({ open, guideId, onClose });
 
+  // Touch handlers to swipe down to close on mobile
+  const touchStartY = useRef(0);
+  const touchCurrentY = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    touchCurrentY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchCurrentY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    const deltaY = touchCurrentY.current - touchStartY.current;
+    if (deltaY > 80) {
+      handleClose();
+    }
+  };
+
   return (
     <>
       <Sheet open={open} onOpenChange={(v) => !v && handleClose()}>
         <SheetContent
           side="bottom"
-          className="rounded-t-3xl p-0 flex flex-col max-h-[85vh] bg-[#F8FAFC] border-t border-slate-200/80 shadow-2xl transition-all duration-300"
+          className="rounded-t-3xl p-0 flex flex-col h-[80dvh] bg-[#F8FAFC] border-t border-slate-200/80 shadow-2xl"
           style={{
             left: 'max(0px, calc(50% - 215px))',
             right: 'max(0px, calc(50% - 215px))',
           }}
         >
           {/* Drag handle */}
-          <div className="relative h-6 flex items-center justify-center shrink-0">
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="relative h-6 flex items-center justify-center shrink-0 cursor-ns-resize"
+          >
             <div className="w-12 h-1.5 rounded-full bg-slate-200" />
           </div>
 
           {/* Header */}
-          <div className="sticky top-0 z-10 px-6 pb-2 shrink-0 bg-[#F8FAFC]">
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="sticky top-0 z-10 px-6 pb-2 shrink-0 bg-[#F8FAFC] select-none cursor-ns-resize"
+          >
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 bg-[#F8FAFC]">
               <div>
                 <SheetTitle className="text-[15px] font-semibold text-neutral-black leading-snug">
@@ -81,6 +111,13 @@ export default function EditProfileSheet({
                   {cardId} · {guideName}
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={handleClose}
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-full hover:bg-slate-100 flex items-center justify-center active:scale-95"
+              >
+                <X size={18} />
+              </button>
             </div>
           </div>
 

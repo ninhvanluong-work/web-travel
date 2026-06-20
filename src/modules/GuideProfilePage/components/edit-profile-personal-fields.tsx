@@ -50,7 +50,7 @@ export function EditProfilePersonalFields() {
                 <ExperienceImageUpload
                   value={field.value}
                   onChange={field.onChange}
-                  aspectRatio="w-full aspect-[21/9] max-h-[80px]"
+                  aspectRatio="w-full h-20"
                   hideUrlInput={true}
                   changeLabel={t('editProfileSheet.changeCoverLabel', { ns: 'guidePage' })}
                   uploadLabel={t('editProfileSheet.uploadCoverLabel', { ns: 'guidePage' })}

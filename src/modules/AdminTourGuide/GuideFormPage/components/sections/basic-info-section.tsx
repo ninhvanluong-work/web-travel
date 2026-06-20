@@ -160,7 +160,7 @@ export function BasicInfoSection() {
                 <ExperienceImageUpload
                   value={field.value}
                   onChange={field.onChange}
-                  aspectRatio="w-full aspect-[21/9] max-h-[160px]"
+                  aspectRatio="w-full h-[120px]"
                   hideUrlInput={true}
                 />
               </FormControl>
