@@ -139,8 +139,9 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
   useEffect(() => {
     if (!open) {
       commitPendingDeletions();
+      invalidateMoments();
     }
-  }, [open, commitPendingDeletions]);
+  }, [open, commitPendingDeletions, invalidateMoments]);
 
   // Handle deletions on unmount
   useEffect(() => {
