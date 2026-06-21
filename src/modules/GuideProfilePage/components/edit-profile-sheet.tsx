@@ -15,9 +15,9 @@ import {
 import { FormWrapper } from '@/components/ui/form';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { useEditProfileForm } from '@/hooks/use-edit-profile-form';
 import { useAlertStore } from '@/stores/use-alert-store';
 
-import { useEditProfileForm } from '../hooks/use-edit-profile-form';
 import { MobileCareerSection } from './edit-profile-career-section';
 import { EditProfilePersonalFields } from './edit-profile-personal-fields';
 import { EditProfileTabBar } from './edit-profile-tab-bar';
