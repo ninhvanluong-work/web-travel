@@ -21,8 +21,7 @@ export default function DestinationsChart({ destinations, guideName }: Destinati
 
   return (
     <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-      <p className="text-[14px] font-medium text-neutral-900 mb-1">{t('tourDestinations', { name: guideName })}</p>
-      <p className="text-[11px] text-neutral-500 mb-3.5">{t('destinationsSortBy')}</p>
+      <p className="text-[14px] font-medium text-neutral-900 mb-3.5">{t('tourDestinations', { name: guideName })}</p>
 
       <div className="flex flex-col gap-3">
         {destinations.map((d) => (

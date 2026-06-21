@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { Upload, Video } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
@@ -7,7 +7,7 @@ import * as tus from 'tus-js-client';
 
 import { useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import { createTourGuideMoment, updateTourGuideMoment } from '@/api/tour-guide/requests';
-import type { ITourGuideMoment } from '@/api/tour-guide/types';
+import type { ITourGuideMoment, ITourGuideMomentsResult } from '@/api/tour-guide/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -95,26 +95,87 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
     setErrorPhase(null);
     try {
       if (editMoment) {
-        await updateTourGuideMoment(guideId, editMoment.id, {
+        const updated = await updateTourGuideMoment(guideId, editMoment.id, {
           name: savedName,
           guid: videoId,
           thumbnail: '',
           description: savedCaption || undefined,
           tourGuideId: guideId,
         });
-        await queryClient.invalidateQueries({ queryKey: useTourGuideMomentsInfinite.getKey() });
-        await queryClient.invalidateQueries({ queryKey: useTourGuideMoments.getKey() });
+        const updatedMoment: ITourGuideMoment = {
+          id: editMoment.id,
+          title: updated.description || updated.name,
+          thumbnail: updated.thumbnail ?? editMoment.thumbnail,
+          duration: editMoment.duration,
+          embedUrl: updated.embedUrl || editMoment.embedUrl,
+          name: updated.name,
+          description: updated.description ?? undefined,
+        };
+        queryClient.setQueriesData<ITourGuideMomentsResult>({ queryKey: useTourGuideMoments.getKey() }, (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: old.items.map((m) => (m.id === editMoment.id ? updatedMoment : m)),
+          };
+        });
+        queryClient.setQueriesData<InfiniteData<ITourGuideMomentsResult>>(
+          { queryKey: useTourGuideMomentsInfinite.getKey() },
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                items: page.items.map((m) => (m.id === editMoment.id ? updatedMoment : m)),
+              })),
+            };
+          }
+        );
         useAlertStore.getState().addAlert({ type: 'success', title: t('manageMomentsSheet.editSuccess') });
+        handleClose();
       } else {
-        await createTourGuideMoment(guideId, {
+        const created = await createTourGuideMoment(guideId, {
           name: savedName,
           guid: videoId,
           thumbnail: '',
           description: savedCaption || undefined,
           tourGuideId: guideId,
         });
-        await queryClient.invalidateQueries({ queryKey: useTourGuideMomentsInfinite.getKey() });
-        await queryClient.invalidateQueries({ queryKey: useTourGuideMoments.getKey() });
+        const newMoment: ITourGuideMoment = {
+          id: created.id,
+          title: created.description || created.name,
+          thumbnail: created.thumbnail ?? null,
+          duration: '0:00',
+          embedUrl: created.embedUrl,
+          name: created.name,
+          description: created.description ?? undefined,
+        };
+        queryClient.setQueriesData<ITourGuideMomentsResult>({ queryKey: useTourGuideMoments.getKey() }, (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            items: [newMoment, ...old.items],
+            pagination: { ...old.pagination, total: old.pagination.total + 1 },
+          };
+        });
+        queryClient.setQueriesData<InfiniteData<ITourGuideMomentsResult>>(
+          { queryKey: useTourGuideMomentsInfinite.getKey() },
+          (old) => {
+            if (!old || !old.pages.length) return old;
+            const [firstPage, ...rest] = old.pages;
+            return {
+              ...old,
+              pages: [
+                {
+                  ...firstPage,
+                  items: [newMoment, ...firstPage.items],
+                  pagination: { ...firstPage.pagination, total: firstPage.pagination.total + 1 },
+                },
+                ...rest,
+              ],
+            };
+          }
+        );
         useAlertStore.getState().addAlert({ type: 'success', title: t('manageMomentsSheet.addMoment') });
       }
       handleClose();

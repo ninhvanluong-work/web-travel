@@ -3,13 +3,13 @@
   "rateMe": "Rate me",
   "qrScan": "Scan to view guide profile",
   "dispatchTours": "View dispatch orders per booking",
-  "toursLed": "tours led",
+  "toursLed": "Tours led",
   "yearsExp": "years of experience",
   "years": "years",
   "inCareer": "in career",
   "languages": "languages",
   "whyThisJob": "Why I do this",
-  "specialties": "Specialties",
+  "specialties": "Expertise",
   "tourDestinations": "Places {{name}} guides tours",
   "destinationsSortBy": "sorted by number of tours led",
   "careerJourney": "Career journey",
@@ -129,6 +129,9 @@
     "editMomentTitle": "Edit moment",
     "editMoment": "Edit moment",
     "editFailed": "Failed to update moment, please try again",
-    "editSuccess": "Moment updated successfully!"
+    "editSuccess": "Moment updated successfully!",
+    "deleteConfirmTitle": "Delete this moment?",
+    "deleteConfirmDesc": "This action cannot be undone.",
+    "deleteConfirm": "Delete"
   }
 }

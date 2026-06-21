@@ -129,6 +129,9 @@
     "editMomentTitle": "Chỉnh sửa khoảnh khắc",
     "editMoment": "Sửa khoảnh khắc",
     "editFailed": "Cập nhật khoảnh khắc thất bại, vui lòng thử lại",
-    "editSuccess": "Cập nhật khoảnh khắc thành công!"
+    "editSuccess": "Cập nhật khoảnh khắc thành công!",
+    "deleteConfirmTitle": "Xóa khoảnh khắc này?",
+    "deleteConfirmDesc": "Hành động này không thể hoàn tác.",
+    "deleteConfirm": "Xóa"
   }
 }

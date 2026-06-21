@@ -1,12 +1,17 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { type InfiniteData, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Pencil, Plus, Trash2, Undo2, X } from 'lucide-react';
+import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
-import { useDeleteTourGuideMoment, useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
-import type { ITourGuideMoment } from '@/api/tour-guide/types';
+import {
+  type IDeleteMomentVariables,
+  useDeleteTourGuideMoment,
+  useTourGuideMoments,
+  useTourGuideMomentsInfinite,
+} from '@/api/tour-guide/queries';
+import type { ITourGuideMoment, ITourGuideMomentsResult } from '@/api/tour-guide/types';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -98,13 +103,11 @@ interface ManageMomentsSheetProps {
 export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMomentsSheetProps) {
   const { t } = useTranslation('guidePage');
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
-  const [undoItem, setUndoItem] = useState<{ id: string; timeoutId: ReturnType<typeof setTimeout> } | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [editMoment, setEditMoment] = useState<ITourGuideMoment | null>(null);
   const [activeVideo, setActiveVideo] = useState<ITourGuideMoment | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pendingDeletionsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const queryClient = useQueryClient();
   const { mutate: deleteMoment } = useDeleteTourGuideMoment();
@@ -126,65 +129,46 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
     queryClient.invalidateQueries({ queryKey: useTourGuideMomentsInfinite.getKey() });
   }, [queryClient]);
 
-  const commitPendingDeletions = useCallback(() => {
-    pendingDeletionsRef.current.forEach((timeoutId, id) => {
-      clearTimeout(timeoutId);
-      deleteMoment({ guideId, momentId: id }, { onSuccess: invalidateMoments });
-    });
-    pendingDeletionsRef.current.clear();
-    setUndoItem(null);
-  }, [guideId, deleteMoment, invalidateMoments]);
-
-  // Handle deletions when sheet is closed
-  useEffect(() => {
-    if (!open) {
-      commitPendingDeletions();
+  const onDeleteSuccess = useCallback(
+    (_: unknown, vars: IDeleteMomentVariables) => {
+      queryClient.setQueriesData<ITourGuideMomentsResult>({ queryKey: useTourGuideMoments.getKey() }, (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          items: old.items.filter((m) => m.id !== vars.momentId),
+          pagination: { ...old.pagination, total: Math.max(0, old.pagination.total - 1) },
+        };
+      });
+      queryClient.setQueriesData<InfiniteData<ITourGuideMomentsResult>>(
+        { queryKey: useTourGuideMomentsInfinite.getKey() },
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page) => ({
+              ...page,
+              items: page.items.filter((m) => m.id !== vars.momentId),
+              pagination: { ...page.pagination, total: Math.max(0, page.pagination.total - 1) },
+            })),
+          };
+        }
+      );
       invalidateMoments();
-    }
-  }, [open, commitPendingDeletions, invalidateMoments]);
-
-  // Handle deletions on unmount
-  useEffect(() => {
-    return () => {
-      commitPendingDeletions();
-    };
-  }, [commitPendingDeletions]);
+    },
+    [queryClient, invalidateMoments]
+  );
 
   const handleDelete = useCallback(
     (id: string) => {
-      if (undoItem) {
-        clearTimeout(undoItem.timeoutId);
-        pendingDeletionsRef.current.delete(undoItem.id);
-        deleteMoment({ guideId, momentId: undoItem.id }, { onSuccess: invalidateMoments });
-        setUndoItem(null);
-      }
       setDeletedIds((prev) => {
         const next = new Set(prev);
         next.add(id);
         return next;
       });
-      const timeoutId = setTimeout(() => {
-        pendingDeletionsRef.current.delete(id);
-        deleteMoment({ guideId, momentId: id }, { onSuccess: invalidateMoments });
-        setUndoItem(null);
-      }, 5000);
-      pendingDeletionsRef.current.set(id, timeoutId);
-      setUndoItem({ id, timeoutId });
+      deleteMoment({ guideId, momentId: id }, { onSuccess: onDeleteSuccess });
     },
-    [undoItem, guideId, deleteMoment, invalidateMoments]
+    [guideId, deleteMoment, onDeleteSuccess]
   );
-
-  const handleUndo = useCallback(() => {
-    if (!undoItem) return;
-    clearTimeout(undoItem.timeoutId);
-    pendingDeletionsRef.current.delete(undoItem.id);
-    setDeletedIds((prev) => {
-      const next = new Set(prev);
-      next.delete(undoItem.id);
-      return next;
-    });
-    setUndoItem(null);
-  }, [undoItem]);
 
   // Infinite scroll sentinel
   const observerRef = useCallback(
@@ -295,28 +279,6 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
                 <Spinner size="1.25rem" className="text-neutral-400" />
               </div>
             )}
-
-            <AnimatePresence>
-              {undoItem && (
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 8 }}
-                  transition={{ duration: 0.18 }}
-                  className="sticky bottom-4 mt-4 flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-neutral-black/90 text-white shadow-lg"
-                >
-                  <span className="text-[12px] font-medium">{t('manageMomentsSheet.momentDeleted')}</span>
-                  <button
-                    type="button"
-                    onClick={handleUndo}
-                    className="flex items-center gap-1 text-[12px] font-bold text-brand-300 hover:text-brand-200 transition-colors shrink-0"
-                  >
-                    <Undo2 size={13} />
-                    {t('manageMomentsSheet.undo')}
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
           <div className="sticky bottom-0 z-10 px-6 py-4 border-t border-slate-100 bg-white/90 backdrop-blur-md shrink-0">
@@ -358,8 +320,8 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
               {t('manageMomentsSheet.deleteConfirmDesc', { defaultValue: 'This action cannot be undone.' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex gap-3 sm:gap-3">
-            <AlertDialogCancel className="flex-1 m-0">
+          <AlertDialogFooter className="flex-row gap-3 sm:space-x-0">
+            <AlertDialogCancel className="flex-1 m-0 h-11">
               {t('manageMomentsSheet.cancel', { defaultValue: 'Cancel' })}
             </AlertDialogCancel>
             <AlertDialogAction
@@ -367,7 +329,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
                 if (confirmId) handleDelete(confirmId);
                 setConfirmId(null);
               }}
-              className="flex-1 bg-rose-600 hover:bg-rose-700 text-white focus-visible:ring-rose-600"
+              className="flex-1 h-11 bg-rose-600 hover:bg-rose-700 text-white focus-visible:ring-rose-600"
             >
               {t('manageMomentsSheet.deleteConfirm', { defaultValue: 'Delete' })}
             </AlertDialogAction>
