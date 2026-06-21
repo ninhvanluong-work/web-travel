@@ -35,6 +35,54 @@ Dựa vào phương pháp luận BMad:
 
 - **Hành vi:** Thay vì kiểm tra điều kiện cứng nhắc rồi gọi `router.back()` ngay lập tức, UI toàn trang sẽ bị kéo lùi mượt mà theo ngón tay người dùng từ trái sang phải, tạo độ phản hồi trực tiếp (direct manipulation).
 
+### 3.5. Animated Data Counters (Stats Block)
+
+- **Hành vi:** Các con số thống kê (số chuyến đi, số lượt review) sẽ chạy hiệu ứng đếm (count up) từ 0 đến giá trị thực tế khi khối thông tin này lọt vào khung hình (viewport).
+- **Implementation:** Kết hợp `framer-motion` (`useInView` & `animate`) để tạo cảm giác data đang "sống".
+
+### 3.6. Staggered Fade-In (Moments Grid & Timeline)
+
+- **Hành vi:** Thay vì hiển thị đồng loạt, các item trong lưới Moments hoặc các mốc thời gian sẽ lần lượt hiện ra (staggered fade-up) khi cuộn tới.
+- **Implementation:** Áp dụng variant với `staggerChildren` để các phần tử con trượt lên theo thứ tự (delay = index \* 0.05s).
+
+### 3.7. Smooth Expand (Storytelling & Guest Reviews Block)
+
+- **Hành vi:** Khi mở rộng nội dung (VD: bấm "...Read more" ở phần Bio, hoặc "See all guest reviews" ở phần Đánh giá), khung chứa nội dung mới sẽ trượt mở ra một cách mượt mà (animate height) thay vì nhảy cóc (jump layout/giật cục) ngay lập tức.
+- **Implementation:** Sử dụng thành phần `AnimatePresence` và `motion.div` của `framer-motion` với thuộc tính `animate={{ height: "auto" }}` và `initial={{ height: 0, opacity: 0 }}`. Khi nội dung đã mở, có thể hiện nút "Show less" (Thu gọn) để cuộn ngược lại.
+
+### 3.8. Tối ưu Action Bar cho màn hình cực nhỏ (Responsive & Micro-layout)
+
+**Vấn đề hiện tại:** Như trong ảnh chụp màn hình, khi bề ngang hẹp (mobile nhỏ), nút "Book a tour with CườngNGuyen" bị bẻ thành 2 dòng làm nút bị phình to ra, trong khi các nút bên cạnh (Edit Profile, QR, Share) đang chiếm nhiều diện tích ngang.
+
+**Giải pháp 1: Thu nhỏ chữ & Truncate thông minh (Giữ nguyên layout)**
+
+- **Adaptive Text Size:** Giảm `font-size` của nút Book xuống `text-[11px]` hoặc `text-[12px]` trên các màn hẹp (`max-sm`).
+- **Partial Truncate:** Thay vì cắt toàn bộ chữ, ta bọc tên vào một thẻ span riêng biệt có giới hạn chiều rộng: `<span>Book a tour with</span> <span class="truncate max-w-[60px] inline-block align-bottom">CườngNGuyen</span>`. Nhờ đó chữ không bị xuống dòng.
+- **Icon-only cho nút phụ:** Nút "Edit Profile" có thể chỉ hiển thị icon ✏️ (Pencil) thay vì hiện cả cụm chữ trên màn hình nhỏ.
+
+**Giải pháp 2: Tái cấu trúc lại luồng UX (Cách tiếp cận BMad - Analogical từ Airbnb/Tinder)**
+Đây là giải pháp đột phá hơn:
+
+- **Di dời nút phụ (Share, QR):** Đưa 2 nút này lên góc trên cùng bên phải của `HeroBanner` (nằm đè lên ảnh bìa, màu trắng trong suốt `bg-white/20 backdrop-blur`). Đây là vị trí chuẩn mực của các app hiện tại.
+- **Sticky Bottom CTA (Thanh hành động dưới đáy):** Gỡ hoàn toàn Action Bar ở dưới HeroBanner. Thay vào đó, tạo một thanh cố định dưới cùng màn hình (fixed bottom).
+  - _Bên trái:_ Avatar thu nhỏ của Guide kèm Rating hoặc Giá (nếu có).
+  - _Bên phải:_ Nút "Book" bự chảng. Điều này giúp thao tác "chốt đơn" luôn nằm gọn trong ngón cái của User bất kể họ cuộn tới đâu.
+
+### 3.9. Cân bằng Layout cho Stats Block (Nhiều ngôn ngữ)
+
+**Vấn đề hiện tại:** Khối thống kê (Stats Block) chia làm 3 cột. Khi số lượng ngôn ngữ (languages) được chọn quá nhiều (VD: 9 ngôn ngữ: VI - EN - KO - FR - JP...), phần text này bị rớt xuống nhiều dòng, làm cột thứ 3 dài thòng xuống và phá vỡ sự cân đối (balance) của toàn bộ khối.
+
+**Giải pháp đề xuất:**
+
+- **Giải pháp 1 (Rút gọn & Hiển thị thêm):** Chỉ hiển thị tối đa 2-3 ngôn ngữ đầu tiên và cộng thêm số lượng còn lại. Ví dụ: `VI - EN - KO (+6)`. Khi user bấm vào cột này, một popup/toast nhỏ sẽ hiện lên danh sách đầy đủ.
+- **Giải pháp 2 (CSS Line Clamp):** Bắt buộc cắt chữ ở dòng thứ 2 (dùng `line-clamp-2`) hoặc dòng thứ 1 (`truncate`) để chiều cao cột ngôn ngữ luôn tương đương với 2 cột còn lại.
+- **Giải pháp 3 (Đưa ra khỏi Stats Block):** Nếu ngôn ngữ là thông tin quan trọng và có thể rất dài, không nên ép nó vào khối 3 cột này. Có thể biến nó thành một phần "Tags" riêng biệt nằm bên dưới (giống như Specialty Tags).
+
+### 3.10. Scroll-spy Career Timeline (Trục thời gian tương tác)
+
+- **Hành vi:** Dọc theo khối Timeline (quá trình làm việc) sẽ có một trục thời gian mờ. Khi người dùng cuộn chuột xuống đến đâu, một thanh màu (highlight) sẽ trượt theo tỷ lệ tương ứng, làm sáng bừng các điểm mốc (milestone) khi đi qua chúng.
+- **Implementation:** Sử dụng hook `useScroll` của `framer-motion` kết hợp với `useTransform` để nội suy (interpolate) chiều cao của thanh line sáng dựa trên vị trí cuộn của người dùng.
+
 ## 4. Thứ tự ưu tiên triển khai
 
 1. Cập nhật `active:scale` (Tactile Buttons) cho các file trong `src/modules/GuideProfilePage/components/`.

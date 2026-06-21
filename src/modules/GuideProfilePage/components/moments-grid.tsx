@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { Pencil } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
@@ -124,11 +125,25 @@ export default function MomentsGrid({ guideId, isOwner }: MomentsGridProps) {
           <span className="text-[12px] text-neutral-500">{t('clips', { count: totalMoments })}</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2">
+        <motion.div
+          className="grid grid-cols-2 gap-2"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.05 } } }}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+        >
           {displayedMoments.map((m) => (
-            <MomentCard key={m.id} moment={m} onClick={openVideo} />
+            <motion.div
+              key={m.id}
+              variants={{
+                hidden: { opacity: 0, y: 12 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+              }}
+            >
+              <MomentCard moment={m} onClick={openVideo} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {totalMoments > 4 && (
           <Button

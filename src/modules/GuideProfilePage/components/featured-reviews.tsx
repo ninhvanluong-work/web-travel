@@ -1,5 +1,6 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
@@ -154,43 +155,44 @@ export default function FeaturedReviews({ reviews, totalReviews, guideId }: Feat
     return () => observer.disconnect();
   }, [expanded, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  if (!expanded) {
-    return (
-      <div>
-        {reviews.map((r, idx) => (
-          <ReviewCard key={r.id} review={r} className={idx < reviews.length - 1 ? 'mb-5' : 'mb-4'} />
-        ))}
-        <Button
-          variant="ghost"
-          fullWidth
-          blur={false}
-          className="mt-1 text-[12px] text-neutral-500 py-[9px] rounded-md"
-          onClick={() => setExpanded(true)}
-        >
-          {t('seeAllReviews', { count: totalReviews })}
-        </Button>
-      </div>
-    );
-  }
-
   return (
-    <div ref={scrollContainerRef} className="max-h-[420px] overflow-y-auto pr-1">
-      <div className="py-1">
-        {expandedReviews.map((r, idx) => (
-          <ReviewCard key={r.id} review={r} className={idx < expandedReviews.length - 1 ? 'mb-5' : 'mb-4'} />
-        ))}
-        <div ref={sentinelRef} className="h-2" />
-        {isFetchingNextPage && <p className="text-center text-[12px] text-neutral-400 py-3">{t('loadingMore')}</p>}
-        <Button
-          variant="ghost"
-          fullWidth
-          blur={false}
-          className="mt-1 text-[12px] text-neutral-500 py-[9px] rounded-md"
-          onClick={() => setExpanded(false)}
-        >
-          {t('collapse')}
-        </Button>
-      </div>
+    <div>
+      {reviews.map((r, idx) => (
+        <ReviewCard key={r.id} review={r} className={idx < reviews.length - 1 ? 'mb-5' : 'mb-4'} />
+      ))}
+
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="expanded-reviews"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.35, ease: 'easeInOut' }}
+            className="overflow-hidden"
+          >
+            <div ref={scrollContainerRef} className="max-h-[420px] overflow-y-auto pr-1 py-1">
+              {expandedReviews.map((r, idx) => (
+                <ReviewCard key={r.id} review={r} className={idx < expandedReviews.length - 1 ? 'mb-5' : 'mb-4'} />
+              ))}
+              <div ref={sentinelRef} className="h-2" />
+              {isFetchingNextPage && (
+                <p className="text-center text-[12px] text-neutral-400 py-3">{t('loadingMore')}</p>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <Button
+        variant="ghost"
+        fullWidth
+        blur={false}
+        className="mt-1 text-[12px] text-neutral-500 py-[9px] rounded-md"
+        onClick={() => setExpanded((v) => !v)}
+      >
+        {expanded ? t('collapse') : t('seeAllReviews', { count: totalReviews })}
+      </Button>
     </div>
   );
 }

@@ -1,11 +1,38 @@
+import { animate, useInView } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
+import { useEffect, useRef } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import type { GuideProfileData } from '../data/mock-guide';
 
 interface StatsBlockProps {
   metrics: GuideProfileData['metrics'];
+}
+
+function AnimatedNumber({ value, className }: { value: number; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-20px' });
+
+  useEffect(() => {
+    if (!inView || !ref.current) return undefined;
+    const el = ref.current;
+    const controls = animate(0, value, {
+      duration: 1,
+      ease: 'easeOut',
+      onUpdate: (v) => {
+        el.textContent = String(Math.round(v));
+      },
+    });
+    return () => controls.stop();
+  }, [inView, value]);
+
+  return (
+    <span ref={ref} className={className}>
+      0
+    </span>
+  );
 }
 
 export default function StatsBlock({ metrics }: StatsBlockProps) {
@@ -15,25 +42,40 @@ export default function StatsBlock({ metrics }: StatsBlockProps) {
       <div className="grid grid-cols-3 text-center">
         <div>
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
-            {metrics.toursLed}
+            <AnimatedNumber value={metrics.toursLed} />
           </p>
           <p className="text-caption2 text-neutral-500 mt-1.5">{t('toursLed')}</p>
         </div>
 
         <div className="border-x border-neutral-200">
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
-            {metrics.yearsOfExperience}
+            <AnimatedNumber value={metrics.yearsOfExperience} />
             <span className="text-[14px] text-neutral-500 font-normal"> {t('years')}</span>
           </p>
           <p className="text-caption2 text-neutral-500 mt-1.5">{t('inCareer')}</p>
         </div>
 
-        <div>
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            if (metrics.languages.length > 3) {
+              useAlertStore.getState().addAlert({
+                type: 'info',
+                title: t('languages'),
+                description: metrics.languages.join(' · '),
+              });
+            }
+          }}
+        >
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
-            {metrics.languages.length}
+            <AnimatedNumber value={metrics.languages.length} />
             <span className="text-[14px] text-neutral-500 font-normal"> {t('languages')}</span>
           </p>
-          <p className="text-caption2 text-neutral-500 mt-1.5">{metrics.languages.join(' · ')}</p>
+          <p className="text-caption2 text-neutral-500 mt-1.5">
+            {metrics.languages.length > 3
+              ? `${metrics.languages.slice(0, 3).join(' · ')} (+${metrics.languages.length - 3})`
+              : metrics.languages.join(' · ')}
+          </p>
         </div>
       </div>
 
