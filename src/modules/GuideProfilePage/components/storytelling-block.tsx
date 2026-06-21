@@ -37,25 +37,23 @@ export default function StorytellingBlock({ bio }: StorytellingBlockProps) {
       >
         <p
           ref={textRef}
-          className="text-[16px] text-neutral-900 leading-[1.65] font-normal"
+          className={`text-[16px] text-neutral-900 leading-[1.65] font-normal ${!expanded ? 'line-clamp-4' : ''}`}
           style={{ fontFamily: 'var(--font-serif)' }}
         >
           {bio}
         </p>
-
-        {needsTruncation && !expanded && (
-          <div className="absolute bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-white to-transparent flex items-end">
-            <button
-              type="button"
-              onClick={() => setExpanded(true)}
-              className="text-[14px] text-neutral-500 font-normal pl-0"
-              style={{ fontFamily: 'var(--font-serif)' }}
-            >
-              ...{t('readMore', { defaultValue: 'Read more' })}
-            </button>
-          </div>
-        )}
       </motion.div>
+
+      {needsTruncation && !expanded && (
+        <Button
+          variant="ghost"
+          blur={false}
+          className="mt-1 text-[12px] text-neutral-500 py-[9px] px-0 underline underline-offset-2"
+          onClick={() => setExpanded(true)}
+        >
+          {t('readMore', { defaultValue: 'Read more' })}
+        </Button>
+      )}
 
       {needsTruncation && expanded && (
         <Button
