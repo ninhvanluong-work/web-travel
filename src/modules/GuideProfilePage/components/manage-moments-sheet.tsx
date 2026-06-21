@@ -7,6 +7,16 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useDeleteTourGuideMoment, useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
@@ -89,6 +99,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
   const { t } = useTranslation('guidePage');
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [undoItem, setUndoItem] = useState<{ id: string; timeoutId: ReturnType<typeof setTimeout> } | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [editMoment, setEditMoment] = useState<ITourGuideMoment | null>(null);
   const [activeVideo, setActiveVideo] = useState<ITourGuideMoment | null>(null);
@@ -270,7 +281,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={{ duration: 0.18 }}
                     >
-                      <MomentManageCard moment={m} onDelete={handleDelete} onEdit={setEditMoment} onClick={openVideo} />
+                      <MomentManageCard moment={m} onDelete={setConfirmId} onEdit={setEditMoment} onClick={openVideo} />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -335,6 +346,33 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
           {activeVideo && <VideoPopup key={activeVideo.id} moment={activeVideo} onClose={() => setActiveVideo(null)} />}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={!!confirmId} onOpenChange={(v) => !v && setConfirmId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t('manageMomentsSheet.deleteConfirmTitle', { defaultValue: 'Delete this moment?' })}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('manageMomentsSheet.deleteConfirmDesc', { defaultValue: 'This action cannot be undone.' })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex gap-3 sm:gap-3">
+            <AlertDialogCancel className="flex-1 m-0">
+              {t('manageMomentsSheet.cancel', { defaultValue: 'Cancel' })}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (confirmId) handleDelete(confirmId);
+                setConfirmId(null);
+              }}
+              className="flex-1 bg-rose-600 hover:bg-rose-700 text-white focus-visible:ring-rose-600"
+            >
+              {t('manageMomentsSheet.deleteConfirm', { defaultValue: 'Delete' })}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
