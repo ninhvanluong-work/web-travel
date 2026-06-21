@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { ChevronDown, ChevronRight, ChevronUp, Trash2 } from 'lucide-react';
+import { ChevronRight, Trash2 } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
@@ -12,24 +12,11 @@ import { type TourGuideFormValues } from '@/lib/validations/tour-guide';
 interface CareerEntryProps {
   index: number;
   isExpanded: boolean;
-  isFirst: boolean;
-  isLast: boolean;
   onToggle: () => void;
-  onMoveUp: () => void;
-  onMoveDown: () => void;
   onRemove: () => void;
 }
 
-export function CareerEntry({
-  index,
-  isExpanded,
-  isFirst,
-  isLast,
-  onToggle,
-  onMoveUp,
-  onMoveDown,
-  onRemove,
-}: CareerEntryProps) {
+export function CareerEntry({ index, isExpanded, onToggle, onRemove }: CareerEntryProps) {
   const form = useFormContext<TourGuideFormValues>();
   const { t } = useTranslation(['adminPage', 'guidePage']);
 
@@ -78,41 +65,6 @@ export function CareerEntry({
             )}
           </div>
         </button>
-
-        <div className="flex items-center gap-0.5 shrink-0">
-          <Button
-            variant="icon"
-            size="icon"
-            rounded="md"
-            blur={false}
-            onClick={onMoveUp}
-            disabled={isFirst}
-            className="p-1 disabled:opacity-30"
-          >
-            <ChevronUp size={14} />
-          </Button>
-          <Button
-            variant="icon"
-            size="icon"
-            rounded="md"
-            blur={false}
-            onClick={onMoveDown}
-            disabled={isLast}
-            className="p-1 disabled:opacity-30"
-          >
-            <ChevronDown size={14} />
-          </Button>
-          <Button
-            variant="icon"
-            size="icon"
-            rounded="md"
-            blur={false}
-            onClick={onRemove}
-            className="p-1 hover:text-rose-600"
-          >
-            <Trash2 size={13} />
-          </Button>
-        </div>
       </div>
 
       {/* Expanded fields */}
@@ -131,7 +83,7 @@ export function CareerEntry({
                 control={form.control}
                 name={`careerPath.${index}.role`}
                 render={({ field: f }) => (
-                  <FormItem className="col-span-3 space-y-1">
+                  <FormItem className="col-span-6 space-y-1">
                     <FormLabel className="admin-form-label">
                       {t('roleLabel')} <span className="text-red-500">*</span>
                     </FormLabel>
@@ -146,7 +98,7 @@ export function CareerEntry({
                 control={form.control}
                 name={`careerPath.${index}.company`}
                 render={({ field: f }) => (
-                  <FormItem className="col-span-3 space-y-1">
+                  <FormItem className="col-span-6 space-y-1">
                     <FormLabel className="admin-form-label">
                       {t('companyLabel')} <span className="text-red-500">*</span>
                     </FormLabel>
@@ -234,6 +186,20 @@ export function CareerEntry({
                   </FormItem>
                 )}
               />
+
+              <div className="col-span-6 mt-1">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  blur={false}
+                  rounded="md"
+                  onClick={onRemove}
+                  className="w-full text-rose-500 hover:text-rose-600 hover:bg-rose-50 text-xs font-semibold py-2.5 justify-center"
+                >
+                  <Trash2 size={13} className="mr-1.5" />
+                  {t('editProfileSheet.removePosition', { ns: 'guidePage', defaultValue: 'Remove this position' })}
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}

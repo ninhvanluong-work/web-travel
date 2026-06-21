@@ -1,25 +1,29 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Undo2 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { type TourGuideFormValues } from '@/lib/validations/tour-guide';
 
 import { CareerEntry } from './edit-profile-career-entry';
 
-interface UndoEntry {
-  item: TourGuideFormValues['careerPath'][number];
-  originalIndex: number;
-  timeoutId: ReturnType<typeof setTimeout>;
-}
-
 export function MobileCareerSection() {
   const form = useFormContext<TourGuideFormValues>();
   const { t } = useTranslation(['adminPage', 'guidePage']);
-  const { fields, append, remove, insert, replace } = useFieldArray({ control: form.control, name: 'careerPath' });
+  const { fields, append, remove, replace } = useFieldArray({ control: form.control, name: 'careerPath' });
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
 
   const { errors, submitCount } = form.formState;
   useEffect(() => {
@@ -29,47 +33,27 @@ export function MobileCareerSection() {
     if (firstErrorIndex >= 0) setExpandedIndex(firstErrorIndex);
   }, [submitCount, errors.careerPath]);
 
-  const move = useCallback(
-    (from: number, to: number) => {
-      if (to < 0 || to >= fields.length) return;
-      const reordered = [...fields];
-      const [item] = reordered.splice(from, 1);
-      reordered.splice(to, 0, item);
-      replace(
-        reordered.map(({ role, company, startYear, endYear, tourCount, description }) => ({
-          role,
-          company,
-          startYear,
-          endYear,
-          tourCount,
-          description,
-        }))
-      );
-      setExpandedIndex(to);
-    },
-    [fields, replace]
-  );
+  const confirmRemove = useCallback(() => {
+    if (itemToDelete === null) return;
+    const index = itemToDelete;
 
-  const handleRemove = useCallback(
-    (index: number) => {
-      const snapshot = { ...form.getValues(`careerPath.${index}`) };
-      if (undoEntry) clearTimeout(undoEntry.timeoutId);
-      remove(index);
-      if (expandedIndex === index) setExpandedIndex(null);
-      else if (expandedIndex !== null && expandedIndex > index) setExpandedIndex(expandedIndex - 1);
-      const timeoutId = setTimeout(() => setUndoEntry(null), 5000);
-      setUndoEntry({ item: snapshot, originalIndex: index, timeoutId });
-    },
-    [form, remove, expandedIndex, undoEntry]
-  );
+    remove(index);
 
-  const handleUndo = useCallback(() => {
-    if (!undoEntry) return;
-    clearTimeout(undoEntry.timeoutId);
-    insert(undoEntry.originalIndex, undoEntry.item);
-    setExpandedIndex(undoEntry.originalIndex);
-    setUndoEntry(null);
-  }, [undoEntry, insert]);
+    // Delay the forced cleanup until AFTER React completes unmounting
+    // This prevents react-hook-form from resurrecting the unmounted input values
+    setTimeout(() => {
+      const currentVals = form.getValues('careerPath') || [];
+      const cleaned = currentVals.filter((_, i) => i !== index);
+      form.setValue('careerPath', cleaned, { shouldValidate: true, shouldDirty: true });
+      form.clearErrors(`careerPath.${index}`);
+      form.clearErrors('careerPath');
+    }, 50);
+
+    if (expandedIndex === index) setExpandedIndex(null);
+    else if (expandedIndex !== null && expandedIndex > index) setExpandedIndex(expandedIndex - 1);
+
+    setItemToDelete(null);
+  }, [itemToDelete, remove, form, expandedIndex]);
 
   return (
     <div className="space-y-3">
@@ -85,38 +69,10 @@ export function MobileCareerSection() {
             key={field.id}
             index={index}
             isExpanded={expandedIndex === index}
-            isFirst={index === 0}
-            isLast={index === fields.length - 1}
             onToggle={() => setExpandedIndex(expandedIndex === index ? null : index)}
-            onMoveUp={() => move(index, index - 1)}
-            onMoveDown={() => move(index, index + 1)}
-            onRemove={() => handleRemove(index)}
+            onRemove={() => setItemToDelete(index)}
           />
         ))}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {undoEntry && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.18 }}
-            className="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-neutral-black/90 text-white shadow-lg"
-          >
-            <span className="text-[12px] font-medium">
-              {t('editProfileSheet.careerDeletedToast', { ns: 'guidePage' })}
-            </span>
-            <button
-              type="button"
-              onClick={handleUndo}
-              className="flex items-center gap-1 text-[12px] font-medium text-brand-300 hover:text-brand-200 transition-colors shrink-0"
-            >
-              <Undo2 size={13} />
-              {t('editProfileSheet.undo', { ns: 'guidePage' })}
-            </button>
-          </motion.div>
-        )}
       </AnimatePresence>
 
       <button
@@ -136,6 +92,26 @@ export function MobileCareerSection() {
         <Plus size={13} />
         {t('addCareerEntry')}
       </button>
+
+      <AlertDialog open={itemToDelete !== null} onOpenChange={(open) => !open && setItemToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this position?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Are you sure you want to remove this career position from your profile?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex gap-3 sm:gap-3">
+            <AlertDialogCancel className="flex-1 m-0">{t('cancel', { ns: 'adminPage' })}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmRemove}
+              className="flex-1 bg-rose-600 hover:bg-rose-700 text-white focus-visible:ring-rose-600"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

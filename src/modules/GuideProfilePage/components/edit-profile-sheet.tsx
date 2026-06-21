@@ -15,6 +15,7 @@ import {
 import { FormWrapper } from '@/components/ui/form';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import { useEditProfileForm } from '../hooks/use-edit-profile-form';
 import { MobileCareerSection } from './edit-profile-career-section';
@@ -54,6 +55,27 @@ export default function EditProfileSheet({
     confirmDiscard,
     onSubmit,
   } = useEditProfileForm({ open, guideId, onClose });
+
+  const onError = (errors: any) => {
+    // Remove the original onError display line and replace with the cleaner version, or just restore it
+    useAlertStore.getState().addAlert({
+      type: 'error',
+      title: t('genericError', { ns: 'adminPage' }),
+      description: t('editProfileSheet.validationError', {
+        ns: 'guidePage',
+        defaultValue: 'Please check the required fields.',
+      }),
+    });
+
+    if (errors.name || errors.avatar || errors.languages || errors.expYear) {
+      setActiveTab('profile');
+    } else if (errors.experts) {
+      setActiveTab('expertise');
+    } else if (errors.careerPath) {
+      setActiveTab('career');
+      // The auto-expand logic is already inside MobileCareerSection via useEffect listening to formState
+    }
+  };
 
   // Touch handlers to swipe down to close on mobile
   const touchStartY = useRef(0);
@@ -149,7 +171,12 @@ export default function EditProfileSheet({
           )}
 
           {/* Form body with Tabs */}
-          <FormWrapper form={form} onSubmit={onSubmit} className="flex-1 flex flex-col overflow-hidden min-h-0">
+          <FormWrapper
+            form={form}
+            onSubmit={onSubmit}
+            onError={onError}
+            className="flex-1 flex flex-col overflow-hidden min-h-0"
+          >
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
@@ -159,6 +186,8 @@ export default function EditProfileSheet({
 
               <TabsContent
                 value="profile"
+                forceMount={true}
+                hidden={activeTab !== 'profile'}
                 className="flex-1 overflow-y-auto px-6 py-4 overscroll-contain scrollbar-hide min-h-0 mt-0"
               >
                 <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
@@ -168,6 +197,8 @@ export default function EditProfileSheet({
 
               <TabsContent
                 value="expertise"
+                forceMount={true}
+                hidden={activeTab !== 'expertise'}
                 className="flex-1 overflow-y-auto px-6 py-4 overscroll-contain scrollbar-hide min-h-0 mt-0"
               >
                 <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
@@ -177,6 +208,8 @@ export default function EditProfileSheet({
 
               <TabsContent
                 value="career"
+                forceMount={true}
+                hidden={activeTab !== 'career'}
                 className="flex-1 overflow-y-auto px-6 py-4 overscroll-contain scrollbar-hide min-h-0 mt-0 space-y-4"
               >
                 <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
