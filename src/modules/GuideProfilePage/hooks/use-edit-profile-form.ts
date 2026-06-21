@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { saveProfileToLocalStorage } from '@/api/tour-guide/mock-adapter';
-import { useTourGuideById } from '@/api/tour-guide/queries';
+import { useTourGuideById, useTourGuideMoments } from '@/api/tour-guide/queries';
 import type { ITourGuideProfile } from '@/api/tour-guide/types';
 import { getSpecialtyColor } from '@/lib/specialty-colors';
 import { type TourGuideFormValues, tourGuideSchema } from '@/lib/validations/tour-guide';
@@ -14,13 +14,9 @@ import { useUserStore } from '@/stores/UserStore';
 
 const draftKey = (id: string) => `guide_profile_draft_${id}`;
 
-function getPeriodLabel(
-  item: { startYear: number; endYear?: number | null; isCurrent?: boolean },
-  presentLabel: string
-) {
-  if (item.isCurrent) return `${item.startYear} – ${presentLabel}`;
-  if (item.endYear) return `${item.startYear} – ${item.endYear}`;
-  return `${item.startYear}`;
+function getPeriodLabel(item: { startYear: number; endYear?: number | null }, presentLabel: string) {
+  if (!item.endYear) return `${item.startYear} – ${presentLabel}`;
+  return `${item.startYear} – ${item.endYear}`;
 }
 
 interface UseEditProfileFormOptions {
@@ -37,6 +33,11 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
   const [showDiscardConfirm, setShowDiscardConfirm] = useState(false);
 
   const { data: profile } = useTourGuideById({ variables: { id: guideId } });
+  const { data: momentsData } = useTourGuideMoments({
+    variables: { id: guideId, pageSize: 1 },
+    enabled: open && !!guideId,
+  });
+  const momentsCount = momentsData?.pagination.total ?? 0;
   const userStore = useUserStore();
   const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -77,9 +78,8 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
           const startYear = years && years[0] ? parseInt(years[0], 10) : new Date().getFullYear();
           const hasSecondYear = years && years[1];
           const endYear = hasSecondYear ? parseInt(years[1], 10) : null;
-          const isCurrent = c.isCurrent || /nay|present/i.test(c.period) || (!hasSecondYear && c.period.includes('–'));
 
-          return { company: c.companyName, role: c.role, startYear, endYear, isCurrent, tourCount, description: desc };
+          return { company: c.companyName, role: c.role, startYear, endYear, tourCount, description: desc };
         }),
       });
       setHasDraft(!!localStorage.getItem(draftKey(guideId)));
@@ -128,6 +128,7 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
   };
 
   const confirmDiscard = () => {
+    localStorage.removeItem(draftKey(guideId));
     setShowDiscardConfirm(false);
     onClose();
   };
@@ -159,7 +160,7 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
           role: item.role,
           period: getPeriodLabel(item, t('editProfileSheet.present', { ns: 'guidePage' })),
           description: `${item.tourCount} tours · ${item.description}`,
-          isCurrent: item.isCurrent,
+          isCurrent: !item.endYear,
         })),
       };
 
@@ -198,6 +199,7 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
     showDiscardConfirm,
     setShowDiscardConfirm,
     cardId: profile?.cardId ?? '',
+    momentsCount,
     restoreDraft,
     discardDraft,
     handleClose,

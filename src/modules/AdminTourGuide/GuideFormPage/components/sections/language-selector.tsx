@@ -42,7 +42,7 @@ export function LanguageSelector() {
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all',
               languages.includes(lang.code)
-                ? 'bg-brand-500 text-white border-brand-500 shadow-sm'
+                ? 'bg-brand-50 text-brand-700 border-brand-500 shadow-sm'
                 : 'bg-white text-gray-600 border-gray-200 hover:border-brand-300 hover:bg-brand-50/30'
             )}
           >

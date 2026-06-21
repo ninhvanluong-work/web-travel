@@ -1,5 +1,6 @@
 import type * as LabelPrimitive from '@radix-ui/react-label';
 import { Slot } from '@radix-ui/react-slot';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import * as React from 'react';
 import type { ControllerProps, FieldPath, FieldValues, SubmitHandler, UseFormReturn } from 'react-hook-form';
@@ -131,19 +132,27 @@ const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttribu
 FormDescription.displayName = 'FormDescription';
 
 const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, children }, _ref) => {
     const { t } = useTranslation();
     const { error, formMessageId } = useFormField();
     const body = error ? String(error?.message) : children;
 
-    if (!body) {
-      return null;
-    }
-
     return (
-      <p ref={ref} id={formMessageId} className={cn('text-destructive text-sm font-medium', className)} {...props}>
-        {typeof body === 'string' ? t(body) : body}
-      </p>
+      <AnimatePresence initial={false}>
+        {body ? (
+          <motion.p
+            key="msg"
+            id={formMessageId}
+            initial={{ height: 0, opacity: 0, marginTop: 0 }}
+            animate={{ height: 'auto', opacity: 1, marginTop: '0.25rem' }}
+            exit={{ height: 0, opacity: 0, marginTop: 0 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className={cn('text-destructive text-sm font-medium overflow-hidden', className)}
+          >
+            {typeof body === 'string' ? t(body) : body}
+          </motion.p>
+        ) : null}
+      </AnimatePresence>
     );
   }
 );

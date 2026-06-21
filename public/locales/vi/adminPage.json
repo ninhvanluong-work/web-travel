@@ -99,6 +99,7 @@
   "noExpertsSelected": "Chưa chọn chuyên môn nào. Chọn từ gợi ý bên dưới hoặc nhập mới.",
   "enterNewExpert": "Tự nhập chuyên môn mới",
   "expertPlaceholder": "Ví dụ: Cắm trại qua đêm, Dẫn tour xe máy...",
+  "expertInputHint": "Nhấn Enter hoặc , để thêm",
   "add": "Thêm",
   "suggestionsFor": "Gợi ý cho \"{{query}}\"",
   "quickSelect": "Chọn nhanh từ danh sách",

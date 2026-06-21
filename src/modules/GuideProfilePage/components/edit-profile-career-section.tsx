@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Plus, Undo2 } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { type TourGuideFormValues } from '@/lib/validations/tour-guide';
@@ -21,6 +21,14 @@ export function MobileCareerSection() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null);
 
+  const { errors, submitCount } = form.formState;
+  useEffect(() => {
+    if (submitCount === 0 || !errors.careerPath) return;
+    const careerErrors = errors.careerPath as (Record<string, unknown> | undefined)[];
+    const firstErrorIndex = careerErrors.findIndex((e) => e !== undefined);
+    if (firstErrorIndex >= 0) setExpandedIndex(firstErrorIndex);
+  }, [submitCount, errors.careerPath]);
+
   const move = useCallback(
     (from: number, to: number) => {
       if (to < 0 || to >= fields.length) return;
@@ -28,12 +36,11 @@ export function MobileCareerSection() {
       const [item] = reordered.splice(from, 1);
       reordered.splice(to, 0, item);
       replace(
-        reordered.map(({ role, company, startYear, endYear, isCurrent, tourCount, description }) => ({
+        reordered.map(({ role, company, startYear, endYear, tourCount, description }) => ({
           role,
           company,
           startYear,
           endYear,
-          isCurrent,
           tourCount,
           description,
         }))
@@ -120,7 +127,6 @@ export function MobileCareerSection() {
             company: '',
             startYear: new Date().getFullYear(),
             endYear: null,
-            isCurrent: false,
             tourCount: 0,
             description: '',
           })

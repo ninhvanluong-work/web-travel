@@ -15,12 +15,12 @@ import {
 import { FormWrapper } from '@/components/ui/form';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
-import { ExpertsSection } from '@/modules/AdminTourGuide/GuideFormPage/components/sections/experts-section';
 
 import { useEditProfileForm } from '../hooks/use-edit-profile-form';
 import { MobileCareerSection } from './edit-profile-career-section';
 import { EditProfilePersonalFields } from './edit-profile-personal-fields';
 import { EditProfileTabBar } from './edit-profile-tab-bar';
+import { MobileExpertsSection } from './mobile-experts-section';
 
 interface EditProfileSheetProps {
   open: boolean;
@@ -47,6 +47,7 @@ export default function EditProfileSheet({
     showDiscardConfirm,
     setShowDiscardConfirm,
     cardId,
+    momentsCount,
     restoreDraft,
     discardDraft,
     handleClose,
@@ -170,7 +171,7 @@ export default function EditProfileSheet({
                 className="flex-1 overflow-y-auto px-6 py-4 overscroll-contain scrollbar-hide min-h-0 mt-0"
               >
                 <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                  <ExpertsSection />
+                  <MobileExpertsSection />
                 </div>
               </TabsContent>
 
@@ -196,7 +197,7 @@ export default function EditProfileSheet({
                         {t('editProfileSheet.momentsCardTitle', { ns: 'guidePage' })}
                       </p>
                       <p className="text-[12px] font-semibold text-slate-700 pl-2">
-                        {t('editProfileSheet.momentsCardLink', { ns: 'guidePage', count: 0 })}
+                        {t('editProfileSheet.momentsCardLink', { ns: 'guidePage', count: momentsCount })}
                       </p>
                     </div>
                     <span className="text-slate-400 text-[18px] shrink-0 ml-3">›</span>
@@ -211,7 +212,9 @@ export default function EditProfileSheet({
                 type="button"
                 onClick={handleClose}
                 disabled={saving}
-                className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-bold hover:bg-slate-50 transition-all active:scale-[0.98] disabled:opacity-50"
+                className={`flex-1 py-3 rounded-xl border border-slate-200 text-slate-700 text-[13px] font-bold hover:bg-slate-50 transition-all active:scale-[0.98] ${
+                  saving ? 'opacity-30 pointer-events-none' : 'opacity-100'
+                }`}
               >
                 {t('cancel', { ns: 'adminPage' })}
               </button>
@@ -242,9 +245,12 @@ export default function EditProfileSheet({
               {t('editProfileSheet.discardChangesDesc', { ns: 'guidePage' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('cancel', { ns: 'adminPage' })}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDiscard}>
+          <AlertDialogFooter className="flex gap-3 sm:gap-3">
+            <AlertDialogCancel className="flex-1 m-0">{t('cancel', { ns: 'adminPage' })}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDiscard}
+              className="flex-1 bg-rose-600 hover:bg-rose-700 text-white focus-visible:ring-rose-600"
+            >
               {t('editProfileSheet.discardConfirm', { ns: 'guidePage' })}
             </AlertDialogAction>
           </AlertDialogFooter>

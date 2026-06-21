@@ -161,7 +161,6 @@ export function CareerSection() {
             company: '',
             startYear: new Date().getFullYear(),
             endYear: null,
-            isCurrent: false,
             tourCount: 0,
             description: '',
           })
