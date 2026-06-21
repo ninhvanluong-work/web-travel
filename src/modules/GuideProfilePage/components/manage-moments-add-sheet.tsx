@@ -5,6 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import * as tus from 'tus-js-client';
 
+import { useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import { createTourGuideMoment, updateTourGuideMoment } from '@/api/tour-guide/requests';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
 import { Button } from '@/components/ui/button';
@@ -101,8 +102,8 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
           description: savedCaption || undefined,
           tourGuideId: guideId,
         });
-        await queryClient.invalidateQueries({ queryKey: ['/tour-guide/moments-infinite'] });
-        await queryClient.invalidateQueries({ queryKey: ['/tour-guide/moments'] });
+        await queryClient.invalidateQueries({ queryKey: useTourGuideMomentsInfinite.getKey() });
+        await queryClient.invalidateQueries({ queryKey: useTourGuideMoments.getKey() });
         useAlertStore.getState().addAlert({ type: 'success', title: t('manageMomentsSheet.editSuccess') });
       } else {
         await createTourGuideMoment(guideId, {
@@ -112,8 +113,8 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
           description: savedCaption || undefined,
           tourGuideId: guideId,
         });
-        await queryClient.invalidateQueries({ queryKey: ['/tour-guide/moments-infinite'] });
-        await queryClient.invalidateQueries({ queryKey: ['/tour-guide/moments'] });
+        await queryClient.invalidateQueries({ queryKey: useTourGuideMomentsInfinite.getKey() });
+        await queryClient.invalidateQueries({ queryKey: useTourGuideMoments.getKey() });
         useAlertStore.getState().addAlert({ type: 'success', title: t('manageMomentsSheet.addMoment') });
       }
       handleClose();

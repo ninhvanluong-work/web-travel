@@ -1,10 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Pencil, Plus, Trash2, Undo2, X } from 'lucide-react';
 import Image from 'next/image';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useDeleteTourGuideMoment, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
+import { useDeleteTourGuideMoment, useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
@@ -56,21 +57,18 @@ function MomentManageCard({
         </p>
         <p className="text-[10px] text-white/70">{moment.duration}</p>
       </div>
-      <div
-        className="absolute top-2 right-2 flex flex-col gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity z-10"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
         <button
           type="button"
           onClick={() => onEdit(moment)}
-          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-brand-500 transition-colors"
+          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center active:bg-brand-500 transition-colors"
         >
           <Pencil size={13} className="text-white" />
         </button>
         <button
           type="button"
           onClick={() => onDelete(moment.id)}
-          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center hover:bg-rose-600 transition-colors"
+          className="w-7 h-7 rounded-full bg-black/60 backdrop-blur-sm flex items-center justify-center active:bg-rose-600 transition-colors"
         >
           <Trash2 size={13} className="text-white" />
         </button>
@@ -97,6 +95,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
   const scrollRef = useRef<HTMLDivElement>(null);
   const pendingDeletionsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
+  const queryClient = useQueryClient();
   const { mutate: deleteMoment } = useDeleteTourGuideMoment();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useTourGuideMomentsInfinite({
@@ -111,14 +110,19 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
     setActiveVideo(m);
   };
 
+  const invalidateMoments = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: useTourGuideMoments.getKey() });
+    queryClient.invalidateQueries({ queryKey: useTourGuideMomentsInfinite.getKey() });
+  }, [queryClient]);
+
   const commitPendingDeletions = useCallback(() => {
     pendingDeletionsRef.current.forEach((timeoutId, id) => {
       clearTimeout(timeoutId);
-      deleteMoment({ guideId, momentId: id });
+      deleteMoment({ guideId, momentId: id }, { onSuccess: invalidateMoments });
     });
     pendingDeletionsRef.current.clear();
     setUndoItem(null);
-  }, [guideId, deleteMoment]);
+  }, [guideId, deleteMoment, invalidateMoments]);
 
   // Handle deletions when sheet is closed
   useEffect(() => {
@@ -139,7 +143,7 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
       if (undoItem) {
         clearTimeout(undoItem.timeoutId);
         pendingDeletionsRef.current.delete(undoItem.id);
-        deleteMoment({ guideId, momentId: undoItem.id });
+        deleteMoment({ guideId, momentId: undoItem.id }, { onSuccess: invalidateMoments });
         setUndoItem(null);
       }
       setDeletedIds((prev) => {
@@ -149,13 +153,13 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
       });
       const timeoutId = setTimeout(() => {
         pendingDeletionsRef.current.delete(id);
-        deleteMoment({ guideId, momentId: id });
+        deleteMoment({ guideId, momentId: id }, { onSuccess: invalidateMoments });
         setUndoItem(null);
       }, 5000);
       pendingDeletionsRef.current.set(id, timeoutId);
       setUndoItem({ id, timeoutId });
     },
-    [undoItem, guideId, deleteMoment]
+    [undoItem, guideId, deleteMoment, invalidateMoments]
   );
 
   const handleUndo = useCallback(() => {

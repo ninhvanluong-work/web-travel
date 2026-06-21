@@ -164,11 +164,8 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
         })),
       };
 
-      queryClient.setQueryData(useTourGuideById.getKey({ id: guideId }), (old: ITourGuideProfile | undefined) =>
-        old ? { ...old, ...patch } : old
-      );
-
       saveProfileToLocalStorage(guideId, patch);
+      await queryClient.invalidateQueries({ queryKey: useTourGuideById.getKey({ id: guideId }) });
 
       if (userStore.user?.tourGuideId === guideId) {
         userStore.setStore({
