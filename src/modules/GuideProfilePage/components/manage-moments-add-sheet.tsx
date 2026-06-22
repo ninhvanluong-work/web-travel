@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import * as tus from 'tus-js-client';
 
 import { useTourGuideMoments, useTourGuideMomentsInfinite } from '@/api/tour-guide/queries';
-import { createTourGuideMoment, updateTourGuideMoment } from '@/api/tour-guide/requests';
+import { createTourGuideMoment, toTourGuideMoment, updateTourGuideMoment } from '@/api/tour-guide/requests';
 import type { ITourGuideMoment, ITourGuideMomentsResult } from '@/api/tour-guide/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -97,20 +97,9 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
       if (editMoment) {
         const updated = await updateTourGuideMoment(guideId, editMoment.id, {
           name: savedName,
-          guid: videoId,
-          thumbnail: '',
           description: savedCaption || undefined,
-          tourGuideId: guideId,
         });
-        const updatedMoment: ITourGuideMoment = {
-          id: editMoment.id,
-          title: updated.description || updated.name,
-          thumbnail: updated.thumbnail ?? editMoment.thumbnail,
-          duration: editMoment.duration,
-          embedUrl: updated.embedUrl || editMoment.embedUrl,
-          name: updated.name,
-          description: updated.description ?? undefined,
-        };
+        const updatedMoment: ITourGuideMoment = toTourGuideMoment(updated);
         queryClient.setQueriesData<ITourGuideMomentsResult>({ queryKey: useTourGuideMoments.getKey() }, (old) => {
           if (!old) return old;
           return {
@@ -141,15 +130,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
           description: savedCaption || undefined,
           tourGuideId: guideId,
         });
-        const newMoment: ITourGuideMoment = {
-          id: created.id,
-          title: created.description || created.name,
-          thumbnail: created.thumbnail ?? null,
-          duration: '0:00',
-          embedUrl: created.embedUrl,
-          name: created.name,
-          description: created.description ?? undefined,
-        };
+        const newMoment: ITourGuideMoment = toTourGuideMoment(created);
         queryClient.setQueriesData<ITourGuideMomentsResult>({ queryKey: useTourGuideMoments.getKey() }, (old) => {
           if (!old) return old;
           return {
@@ -299,6 +280,29 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
   const isSaveDisabled = phase === 'idle' || isBusy;
 
   const renderUploadContent = () => {
+    if (editMoment) {
+      return (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 px-4 text-center bg-brand-500/[0.03]">
+          {editMoment.thumbnail ? (
+            <Image
+              src={editMoment.thumbnail}
+              alt={editMoment.title}
+              fill
+              className="object-cover opacity-60"
+              sizes="45vw"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-neutral-800" />
+          )}
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 text-white">
+            <Video size={24} className="text-white" />
+            <p className="text-[12px] font-semibold truncate w-full">{editMoment.name || editMoment.title}</p>
+          </div>
+        </div>
+      );
+    }
+
     if (isBusy) {
       return (
         <div className="absolute inset-0 bg-neutral-black/70 flex flex-col items-center justify-center gap-2">
@@ -332,32 +336,6 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
               ? t('manageMomentsSheet.uploadFailed')
               : t('manageMomentsSheet.uploadVideo').split('(')[0].trim()}
           </p>
-        </div>
-      );
-    }
-
-    if (phase === 'done' && !file && editMoment) {
-      return (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 px-4 text-center bg-brand-500/[0.03]">
-          {editMoment.thumbnail ? (
-            <Image
-              src={editMoment.thumbnail}
-              alt={editMoment.title}
-              fill
-              className="object-cover opacity-60"
-              sizes="45vw"
-            />
-          ) : (
-            <div className="absolute inset-0 bg-neutral-800" />
-          )}
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative z-10 flex flex-col items-center justify-center gap-1.5 text-white">
-            <Video size={24} className="text-white" />
-            <p className="text-[12px] font-semibold truncate w-full">{editMoment.name || editMoment.title}</p>
-            <p className="text-[11px] text-white/80">
-              {t('manageMomentsSheet.uploadVideo').split('(')[0].trim()} (Thay đổi)
-            </p>
-          </div>
         </div>
       );
     }
@@ -417,7 +395,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
           {/* Video upload area */}
           <div
             onClick={() => {
-              if (isBusy) return;
+              if (editMoment || isBusy) return;
               if (phase !== 'idle') {
                 tusRef.current?.abort();
                 bunnyVideoIdRef.current = null;
@@ -426,7 +404,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
               fileInputRef.current?.click();
             }}
             className={`relative w-full aspect-video rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-2 overflow-hidden transition-colors ${
-              isBusy
+              editMoment || isBusy
                 ? 'cursor-default border-slate-200 bg-slate-900'
                 : 'cursor-pointer hover:border-brand-400 bg-slate-50 border-slate-200'
             } ${phase === 'selected' || phase === 'done' ? 'border-brand-400 bg-brand-50/10' : ''} ${

@@ -243,14 +243,7 @@ export interface ApiCreateMomentPayload {
 
 export interface ApiUpdateMomentPayload {
   name: string;
-  guid: string;
-  url?: string;
-  thumbnail?: string;
   description?: string;
-  type?: 'normal' | 'hero';
-  productId?: string;
-  tourGuideId: string;
-  embedding?: string;
 }
 
 export interface ApiCreateMomentResponse {

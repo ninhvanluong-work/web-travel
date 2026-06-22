@@ -68,9 +68,12 @@ function MomentManageCard({
 
       <div className="absolute bottom-2 left-2 right-8">
         <p className="text-[11px] text-white truncate italic" style={{ fontFamily: 'var(--font-serif)' }}>
-          {moment.title}
+          &quot;{moment.name}&quot;
         </p>
-        <p className="text-[10px] text-white/70">{moment.duration}</p>
+        <p className="text-[10px] text-white/70">
+          {moment.description ? `${moment.description} - ` : ''}
+          {moment.duration}
+        </p>
       </div>
       <div className="absolute top-2 right-2 flex flex-col gap-1.5 z-10" onClick={(e) => e.stopPropagation()}>
         <button

@@ -31,9 +31,12 @@ export function MomentCard({ moment, onClick }: MomentCardProps) {
       </div>
       <div className="absolute bottom-2 left-2.5 right-2.5">
         <p className="text-[12px] text-white mb-0.5 italic" style={{ fontFamily: 'var(--font-serif)' }}>
-          {moment.title}
+          &quot;{moment.name}&quot;
         </p>
-        <p className="text-[10px] text-white/80">{moment.duration}</p>
+        <p className="text-[10px] text-white/80">
+          {moment.description ? `${moment.description} - ` : ''}
+          {moment.duration}
+        </p>
       </div>
     </button>
   );

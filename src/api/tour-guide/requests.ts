@@ -1,3 +1,5 @@
+import { extractThumbnailUrl } from '@/lib/bunny';
+
 import { request } from '../axios';
 import { mergeWithLocalStorage } from './mock-adapter';
 import type {
@@ -167,10 +169,10 @@ export async function deleteTourGuide(id: string): Promise<void> {
   await request.delete(`/tour-guide/${id}`);
 }
 
-const toTourGuideMoment = (api: ApiTourGuideMoment): ITourGuideMoment => ({
+export const toTourGuideMoment = (api: ApiTourGuideMoment): ITourGuideMoment => ({
   id: api.id,
   title: api.description || api.name,
-  thumbnail: api.thumbnail ?? null,
+  thumbnail: api.thumbnail || extractThumbnailUrl(api.embedUrl),
   duration: formatDuration(api.duration),
   embedUrl: api.embedUrl,
   name: api.name,

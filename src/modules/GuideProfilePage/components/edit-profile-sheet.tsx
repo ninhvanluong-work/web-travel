@@ -215,32 +215,11 @@ export default function EditProfileSheet({
                 <div className="bg-white rounded-3xl border border-slate-100 p-5 space-y-4 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
                   <MobileCareerSection />
                 </div>
-
-                {onOpenManageMoments && (
-                  <button
-                    type="button"
-                    onClick={onOpenManageMoments}
-                    className="w-full bg-white rounded-3xl border border-slate-100 p-5 shadow-[0_8px_30px_rgb(0,0,0,0.02)] flex items-center justify-between text-left hover:bg-slate-50/60 transition-colors active:scale-[0.99] mb-4"
-                  >
-                    <div>
-                      <p
-                        className="text-[10px] font-semibold text-brand-500 uppercase border-l-2 border-brand-500 pl-2 mb-1"
-                        style={{ letterSpacing: '0.5px' }}
-                      >
-                        {t('editProfileSheet.momentsCardTitle', { ns: 'guidePage' })}
-                      </p>
-                      <p className="text-[12px] font-semibold text-slate-700 pl-2">
-                        {t('editProfileSheet.momentsCardLink', { ns: 'guidePage', count: momentsCount })}
-                      </p>
-                    </div>
-                    <span className="text-slate-400 text-[18px] shrink-0 ml-3">›</span>
-                  </button>
-                )}
               </TabsContent>
             </Tabs>
 
             {/* Footer */}
-            <div className="sticky bottom-0 z-10 px-6 py-4.5 border-t border-slate-100 bg-white/90 backdrop-blur-md flex gap-3 shrink-0 shadow-[0_-8px_30px_rgb(0,0,0,0.02)]">
+            <div className="sticky bottom-0 z-10 px-6 pt-4 pb-8 bg-[#F8FAFC] flex gap-3 shrink-0">
               <button
                 type="button"
                 onClick={handleClose}
