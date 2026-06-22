@@ -5,9 +5,3 @@ export function extractM3u8Url(embedUrl: string): string {
   const videoGuid = parts[parts.length - 1].split('?')[0];
   return `https://${BUNNY_CDN_DOMAIN}/${videoGuid}/playlist.m3u8`;
 }
-
-export function extractThumbnailUrl(embedUrl: string): string {
-  const parts = embedUrl.split('/');
-  const videoGuid = parts[parts.length - 1].split('?')[0];
-  return `https://${BUNNY_CDN_DOMAIN}/${videoGuid}/thumbnail.jpg`;
-}

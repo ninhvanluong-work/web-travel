@@ -43,18 +43,21 @@ function MomentManageCard({
   onEdit: (moment: ITourGuideMoment) => void;
   onClick: (moment: ITourGuideMoment) => void;
 }) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <div
       onClick={() => onClick(moment)}
       className="relative aspect-[9/14] rounded-xl overflow-hidden bg-neutral-800 group cursor-pointer"
     >
-      {moment.thumbnail && (
+      {moment.thumbnail && !imageError && (
         <Image
           src={moment.thumbnail}
           alt={moment.title}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="45vw"
+          onError={() => setImageError(true)}
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />

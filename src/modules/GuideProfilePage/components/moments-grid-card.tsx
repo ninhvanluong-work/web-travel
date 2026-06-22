@@ -1,4 +1,7 @@
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 
 import type { ITourGuideMoment } from '@/api/tour-guide/types';
 
@@ -8,19 +11,22 @@ interface MomentCardProps {
 }
 
 export function MomentCard({ moment, onClick }: MomentCardProps) {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <button
       type="button"
       onClick={() => onClick(moment)}
       className="aspect-[9/14] rounded-lg relative overflow-hidden w-full bg-neutral-800 group"
     >
-      {moment.thumbnail && (
+      {moment.thumbnail && !imageError && (
         <Image
           src={moment.thumbnail}
           alt={moment.title}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           sizes="50vw"
+          onError={() => setImageError(true)}
         />
       )}
       <div className="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent" />

@@ -233,7 +233,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
     e.target.value = '';
     if (!selected) return;
 
-    if (selected.size > 500 * 1024 * 1024) {
+    if (selected.size > 50 * 1024 * 1024) {
       useAlertStore.getState().addAlert({ type: 'error', title: t('manageMomentsSheet.fileTooLarge') });
       return;
     }
