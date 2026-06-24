@@ -7,5 +7,8 @@
   "linkCopied": "Link copied",
   "copyFailed": "Could not copy link",
   "required": "This field is required",
-  "invalidEmail": "Invalid email address"
+  "invalidEmail": "Invalid email address",
+  "tourGuideFab": {
+    "label": "Manage Tour Guide Profile"
+  }
 }

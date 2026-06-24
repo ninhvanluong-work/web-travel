@@ -57,14 +57,29 @@ export default function EditProfileSheet({
   } = useEditProfileForm({ open, guideId, onClose });
 
   const onError = (errors: any) => {
-    // Remove the original onError display line and replace with the cleaner version, or just restore it
+    // Extract first error message recursively
+    const getFirstError = (obj: any): string | null => {
+      if (!obj) return null;
+      return Object.keys(obj).reduce<string | null>((found, key) => {
+        if (found) return found;
+        if (obj[key]?.message) return obj[key].message;
+        if (typeof obj[key] === 'object') return getFirstError(obj[key]);
+        return null;
+      }, null);
+    };
+
+    const firstErrorMsg = getFirstError(errors);
+
     useAlertStore.getState().addAlert({
       type: 'error',
       title: t('genericError', { ns: 'adminPage' }),
-      description: t('editProfileSheet.validationError', {
-        ns: 'guidePage',
-        defaultValue: 'Please check the required fields.',
-      }),
+      description:
+        firstErrorMsg ||
+        t('editProfileSheet.validationError', {
+          ns: 'guidePage',
+          defaultValue: 'Please check the required fields.',
+        }),
+      duration: 4000,
     });
 
     if (errors.name || errors.avatar || errors.languages || errors.expYear) {

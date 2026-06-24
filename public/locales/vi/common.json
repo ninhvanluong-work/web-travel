@@ -7,5 +7,8 @@
   "linkCopied": "Đã sao chép liên kết",
   "copyFailed": "Không thể sao chép liên kết",
   "required": "Trường này là bắt buộc",
-  "invalidEmail": "Email không hợp lệ"
+  "invalidEmail": "Email không hợp lệ",
+  "tourGuideFab": {
+    "label": "Quản lý Tour Guide Profile"
+  }
 }
