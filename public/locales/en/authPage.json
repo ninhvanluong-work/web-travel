@@ -38,6 +38,10 @@
     "twitterButton": "Sign up with X",
     "haveAccount": "Already have an account?",
     "signInLink": "Sign In",
+    "isTourGuideLabel": "I am a Tour Guide",
+    "isTourGuideDescription": "Register as a tour guide to manage your profile and tours",
+    "successTitle": "Registration successful",
+    "successMessage": "Your account has been created. Please sign in.",
     "errorEmailTaken": "This email is already registered.",
     "errorGeneric": "Could not create account. Please try again."
   },

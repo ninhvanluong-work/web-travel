@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Icons } from '@/assets/icons';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
 import type { NextPageWithLayout } from '@/types';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import SearchBox from './components/SearchBox';
 

@@ -38,6 +38,10 @@
     "twitterButton": "Đăng ký với X",
     "haveAccount": "Đã có tài khoản?",
     "signInLink": "Đăng nhập",
+    "isTourGuideLabel": "Tôi là Tour Guide",
+    "isTourGuideDescription": "Đăng ký làm hướng dẫn viên để quản lý hồ sơ và tour của bạn",
+    "successTitle": "Đăng ký thành công",
+    "successMessage": "Tài khoản đã được tạo. Vui lòng đăng nhập.",
     "errorEmailTaken": "Email này đã được đăng ký.",
     "errorGeneric": "Không thể tạo tài khoản. Vui lòng thử lại."
   },

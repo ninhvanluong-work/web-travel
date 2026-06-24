@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { forgotPasswordSchema, type ForgotSchema } from '@/lib/validations/auth';
 import { AuthHeader } from '@/modules/auth-shared/auth-header';
 import { useAlertStore } from '@/stores/use-alert-store';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation('authPage');

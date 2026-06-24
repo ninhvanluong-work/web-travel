@@ -9,7 +9,7 @@ import { useCreateTourGuide, useTourGuideById, useUpdateTourGuide } from '@/api/
 import type { TourGuideFormPayload } from '@/api/tour-guide/types';
 import { type TourGuideFormValues, tourGuideSchema } from '@/lib/validations/tour-guide';
 import { useAlertStore } from '@/stores/use-alert-store';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 const DEFAULT_VALUES: TourGuideFormValues = {
   name: '',

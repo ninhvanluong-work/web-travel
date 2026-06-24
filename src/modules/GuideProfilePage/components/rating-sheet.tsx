@@ -9,7 +9,7 @@ import { TextArea } from '@/components/ui/textarea';
 import { env } from '@/lib/const';
 import { tourGuideReviewSchema } from '@/lib/validations/review';
 import { useAlertStore } from '@/stores/use-alert-store';
-import { API_ROUTE } from '@/types/routes';
+import { API_ROUTE } from '@/types';
 
 import RatingCriteriaPanel, { buildDefaultCriteria, CRITERIA } from './rating-criteria-panel';
 import type { MediaQueueItem } from './rating-media-upload';

@@ -45,7 +45,8 @@ const handleError = async (error: any) => {
   const originalRequest = error.config!;
   const data = error?.response?.data as any;
 
-  if (data?.statusCode === 401 && !originalRequest?._retry) {
+  const isAuthEndpoint = originalRequest?.url?.startsWith('/auth/');
+  if (data?.statusCode === 401 && !originalRequest?._retry && !isAuthEndpoint) {
     originalRequest._retry = true;
     const token = await onRefreshToken();
     axios.defaults.headers.Authorization = `Bearer ${token}`;

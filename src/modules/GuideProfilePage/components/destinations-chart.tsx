@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import type { GuideProfileData } from '../data/mock-guide';
 

@@ -5,7 +5,7 @@ import React from 'react';
 
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 interface SearchBoxProps {
   autoFocus?: boolean;

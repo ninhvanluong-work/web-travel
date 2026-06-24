@@ -8,7 +8,7 @@ import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/ui/stat-card';
 import { useDebounce } from '@/hooks/use-debounce';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { GuideTable } from './components/GuideTable';

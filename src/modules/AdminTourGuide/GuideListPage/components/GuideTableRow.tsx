@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 const AVATAR_COLORS = [
   'bg-blue-500',

@@ -6,7 +6,7 @@ import { uploadImage } from '@/api/upload';
 import { createVideo } from '@/api/video/requests';
 import { env } from '@/lib/const';
 import { useAlertStore } from '@/stores/use-alert-store';
-import { API_ROUTE } from '@/types/routes';
+import { API_ROUTE } from '@/types';
 
 const MAX_FILES = 5;
 const MAX_SIZE = 10 * 1024 * 1024;

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { IVideo } from '@/api/video';
 import { useInfiniteListVideo, useVideoBySlug } from '@/api/video';
 import { useVideoListStore } from '@/stores';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 const PREFETCH_OFFSET = 2;
 

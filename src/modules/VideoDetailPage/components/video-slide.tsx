@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { unlockVideoPool } from '@/hooks/use-shared-video';
 import { useInView } from '@/hooks/useInview';
 import { useVideoSlideLike } from '@/hooks/useVideoSlideLike';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 interface Props {
   video: IVideo;

@@ -6,7 +6,7 @@ import type { IVideo, IVideoPage } from '@/api/video';
 import { Icons } from '@/assets/icons';
 import { useInView } from '@/hooks/useInview';
 import { useVideoListStore } from '@/stores';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import VideoCard from './VideoCard';
 

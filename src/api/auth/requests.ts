@@ -3,11 +3,11 @@ import axios from 'axios';
 import { env } from '@/lib/const';
 
 import { request } from '../axios';
-import { MOCK_GUIDE_ACCOUNTS, MOCK_GUIDE_FALLBACK } from './mock-guides';
 import type {
   IChangePassword,
   ICourse,
   IForgotPassword,
+  ILoginApiResponse,
   ILoginParams,
   ILoginResponse,
   IProfile,
@@ -18,35 +18,24 @@ import type {
 } from './types';
 
 export const loginRequest = async (params: ILoginParams): Promise<ILoginResponse> => {
-  const emailLower = params.email.toLowerCase();
-  const mockGuide = MOCK_GUIDE_ACCOUNTS[emailLower];
-
-  if (mockGuide || emailLower.includes('guide')) {
-    const guide = mockGuide ?? MOCK_GUIDE_FALLBACK;
-    return {
-      accessToken: 'mock-guide-access-token',
-      refreshToken: 'mock-guide-refresh-token',
-      user: {
-        id: `mock-${emailLower}`,
-        uuid: `mock-uuid-${emailLower}`,
-        email: params.email,
-        firstName: guide.firstName,
-        lastName: guide.lastName,
-        company: 'VVV Travel',
-        emailVerifiedAt: new Date().toISOString(),
-        role: 'guide',
-        tourGuideId: guide.tourGuideId,
-      },
-    };
-  }
-
-  const { data } = await request({
-    url: '/authentication/log-in',
+  const { data: res }: { data: ILoginApiResponse } = await request({
+    url: '/auth/login',
     method: 'POST',
     data: params,
   });
 
-  return data;
+  const { token, refreshToken, user } = res.data;
+
+  // TODO: remove when API returns role and tourGuideId
+  return {
+    accessToken: token,
+    refreshToken,
+    user: {
+      ...user,
+      role: user.role ?? 'tour_guide',
+      tourGuideId: user.tourGuideId ?? '991ad4ab-f45d-48ee-9d97-2020256d24b3',
+    },
+  };
 };
 
 export const logoutRequest = async (): Promise<boolean> => {
@@ -69,7 +58,7 @@ export const refetchTokenRequest = async (): Promise<ILoginResponse> => {
 
 export const registerRequest = async (params: IRegisterParams): Promise<IRegisterResponse> => {
   const { data } = await request({
-    url: '/authentication/register',
+    url: '/auth/register',
     method: 'POST',
     data: params,
   });

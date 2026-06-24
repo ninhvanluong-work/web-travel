@@ -13,11 +13,9 @@ export interface ILoginResponse {
 
 // Register
 export interface IRegisterParams {
-  firstName: string;
-  lastName: string;
-  company: string;
   email: string;
   password: string;
+  isTourGuide?: boolean;
 }
 
 export interface IRegisterResponse extends ILoginResponse {}
@@ -26,14 +24,26 @@ export interface IRefreshTokenResponse extends ILoginResponse {}
 
 export interface IUser {
   id: string;
-  uuid: string;
+  uuid?: string;
   email: string;
-  firstName: string;
-  lastName: string;
-  company: string;
-  emailVerifiedAt: string;
-  role?: 'guide' | 'user';
+  name?: string | null;
+  firstName?: string;
+  lastName?: string;
+  company?: string;
+  emailVerifiedAt?: string;
+  role?: 'guide' | 'tour_guide' | 'user';
   tourGuideId?: string;
+}
+
+export interface ILoginApiResponse {
+  data: {
+    token: string;
+    refreshToken: string;
+    user: IUser;
+  };
+  code: number;
+  message: string;
+  error: string | null;
 }
 export interface IForgotPassword {
   email: string;

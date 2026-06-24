@@ -63,8 +63,13 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z.string().nonempty(validationMessages.required('Email')).email(validationMessages.invalid('Email')),
-  password: z.string().nonempty(),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .max(255)
+    .email('Please enter a valid email address')
+    .transform((v) => v.trim()),
+  password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().default(false).optional(),
 });
 
@@ -108,15 +113,22 @@ export const changePasswordSchema = z.object({
 });
 
 export const signUpSchema = z.object({
-  firstName: z.string().min(1, 'First name is required').max(50, 'First name is too long'),
-  lastName: z.string().min(1, 'Last name is required').max(50, 'Last name is too long'),
-  email: z.string().min(1, 'Email is required').email('Please enter a valid email'),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .max(255)
+    .email('Please enter a valid email address')
+    .transform((v) => v.trim().toLowerCase()),
   password: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
+    .min(1, 'Password is required')
+    .min(6, 'Password must be at least 6 characters')
     .max(100)
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/, 'Password must contain uppercase, lowercase, and a number'),
-  agreeTerms: z.boolean().refine((v) => v === true, 'You must agree to the terms'),
+    .refine(
+      (v) => REGEX_PASSWORD.test(v),
+      'Password must contain at least 1 uppercase, 1 lowercase, and 1 number or special character'
+    ),
+  isTourGuide: z.boolean().default(false),
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;

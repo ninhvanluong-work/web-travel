@@ -31,7 +31,7 @@ export default function GuideProfilePage() {
 
   const { data, isLoading } = useGuideProfile(id);
   const user = useUserStore.use.user();
-  const isOwner = user?.role === 'guide' && !!id && user?.tourGuideId === id;
+  const isOwner = (user?.role === 'guide' || user?.role === 'tour_guide') && !!id && user?.tourGuideId === id;
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;

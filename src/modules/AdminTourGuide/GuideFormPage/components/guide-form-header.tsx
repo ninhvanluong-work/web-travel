@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 interface GuideFormHeaderProps {
   isEdit: boolean;

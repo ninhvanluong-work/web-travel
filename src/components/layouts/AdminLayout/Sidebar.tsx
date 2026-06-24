@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next';
 
 import Logo from '@/components/ui/logo-dashboard';
 import { cn } from '@/lib/utils';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 interface SidebarProps {
   isCollapsed?: boolean;

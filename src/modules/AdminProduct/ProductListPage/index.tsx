@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { StatCard } from '@/components/ui/stat-card';
 import { useProductFilters } from '@/hooks/use-product-filters';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ProductFilterBar } from './components/ProductFilterBar';

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useInfiniteListVideo } from '@/api/video';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
 import type { NextPageWithLayout } from '@/types';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import SearchInput from './components/SearchInput';
 import VideoGrid from './components/VideoGrid';

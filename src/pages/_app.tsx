@@ -11,6 +11,7 @@ import type { ComponentType, ReactNode } from 'react';
 import { fontSans, fontSerif } from '@/assets/fonts';
 import { MainLayout, ModuleLayout } from '@/components/layouts';
 import { GlobalAlertProvider } from '@/components/ui/Alert/global-alert-provider';
+import { TourGuideFAB } from '@/components/ui/TourGuideFAB/tour-guide-fab';
 import { siteConfig } from '@/config/site';
 import Provider from '@/lib/Provider';
 import type { NextPageWithLayout } from '@/types';
@@ -56,6 +57,7 @@ const MyApp = (props: AppPropsWithLayout) => {
       <div>
         <Provider>
           <GlobalAlertProvider />
+          <TourGuideFAB />
           <ModuleLayout>{getLayout(<Component {...pageProps} />)}</ModuleLayout>
         </Provider>
       </div>
