@@ -53,28 +53,30 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto scrollbar-hide bg-white font-dinpro">
+    <div className="h-full overflow-y-auto scrollbar-hide bg-[#F3F4F6] font-dinpro">
       <AuthHeader backHref={ROUTE.HOME} />
 
       <motion.div variants={containerVariants} initial="hidden" animate="visible" className="px-[30px] pb-10">
-        <motion.div variants={itemVariants} className="mb-8">
-          <h1 className="text-[28px] font-bold tracking-[-0.8px] text-neutral-black leading-tight font-dinpro">
+        <motion.div variants={itemVariants} className="mb-6 text-center">
+          <h1 className="text-[28px] font-bold tracking-[-0.8px] text-[#010F1C] leading-tight font-dinpro">
             {t('signIn.title')}
           </h1>
-          <p className="text-body3 text-neutral-500 mt-2 leading-relaxed font-dinpro">{t('signIn.subtitle')}</p>
+          <p className="text-body3 text-[#646464] mt-2 leading-relaxed font-dinpro">{t('signIn.subtitle')}</p>
         </motion.div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-2">
-          <motion.div variants={itemVariants} className="mb-4">
-            <label className="block text-body4 font-semibold text-neutral-700 mb-2 tracking-[0.2px] font-dinpro">
-              {t('signIn.emailLabel')}
-            </label>
+          <motion.div variants={itemVariants} className="mb-5">
             <motion.div animate={errors.email ? 'shake' : ''} variants={shakeVariants}>
               <Input
                 {...register('email')}
                 type="email"
                 placeholder={t('signIn.emailPlaceholder')}
-                className="bg-neutral-100/50 border-neutral-200 placeholder:text-neutral-400"
+                className="!bg-white rounded-full border-0 placeholder:text-[#939393] shadow-sm text-[#010F1C] [&:-webkit-autofill]:shadow-[inset_0_0_0_9999px_white]"
+                prefix={
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#374151] ml-1">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path>
+                  </svg>
+                }
                 fullWidth
                 disabled={isLoading}
               />
@@ -93,16 +95,18 @@ export default function SignInPage() {
             </AnimatePresence>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="mb-3">
-            <label className="block text-body4 font-semibold text-neutral-700 mb-2 tracking-[0.2px] font-dinpro">
-              {t('signIn.passwordLabel')}
-            </label>
+          <motion.div variants={itemVariants} className="mb-5">
             <motion.div animate={errors.password ? 'shake' : ''} variants={shakeVariants}>
               <Input
                 {...register('password')}
                 type="password"
                 placeholder={t('signIn.passwordPlaceholder')}
-                className="bg-neutral-100/50 border-neutral-200 placeholder:text-neutral-400"
+                className="!bg-white rounded-full border-0 placeholder:text-[#939393] shadow-sm text-[#010F1C] [&:-webkit-autofill]:shadow-[inset_0_0_0_9999px_white]"
+                prefix={
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#374151] ml-1">
+                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"></path>
+                  </svg>
+                }
                 fullWidth
                 disabled={isLoading}
               />
@@ -121,7 +125,7 @@ export default function SignInPage() {
             </AnimatePresence>
           </motion.div>
 
-          <motion.div variants={itemVariants} className="flex items-center py-3 mb-4">
+          <motion.div variants={itemVariants} className="flex items-center justify-between py-1 mb-6">
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <Controller
                 name="rememberMe"
@@ -136,8 +140,15 @@ export default function SignInPage() {
                   />
                 )}
               />
-              <span className="text-body4 text-neutral-600 font-dinpro">{t('signIn.keepLoggedIn')}</span>
+              <span className="text-body4 text-[#646464] font-dinpro">{t('signIn.keepLoggedIn')}</span>
             </label>
+            <Link
+              href="#"
+              className="text-body4 font-semibold text-[#646464] font-dinpro hover:text-[#3BB77E] transition-colors"
+            >
+              {/* Fallback to 'Forgot Password' if translation is missing */}
+              {t('signIn.forgotPassword', 'Forgot Password')}
+            </Link>
           </motion.div>
 
           <motion.div variants={itemVariants} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
@@ -149,7 +160,7 @@ export default function SignInPage() {
               blur={false}
               loading={isLoading}
               disabled={isLoading}
-              className="h-14 rounded-xl bg-neutral-black text-white text-button1 font-semibold tracking-[0.3px] shadow-sm font-dinpro"
+              className="h-14 rounded-full bg-[#3BB77E] hover:opacity-90 transition-opacity text-white text-button1 font-semibold tracking-[0.3px] shadow-sm font-dinpro"
             >
               {t('signIn.submitButton')}
             </Button>
@@ -157,10 +168,10 @@ export default function SignInPage() {
         </form>
 
         <motion.div variants={itemVariants} className="flex items-center justify-center gap-1.5 mt-7">
-          <span className="text-body3 text-neutral-500 font-dinpro">{t('signIn.noAccount')}</span>
+          <span className="text-body3 text-[#646464] font-dinpro">{t('signIn.noAccount')}</span>
           <Link
             href={ROUTE.SIGN_UP}
-            className="text-body3 font-bold text-neutral-black font-dinpro hover:opacity-70 transition-opacity"
+            className="text-body3 font-bold text-[#3BB77E] font-dinpro hover:opacity-70 transition-opacity"
           >
             {t('signIn.signUpLink')}
           </Link>

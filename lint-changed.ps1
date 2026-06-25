@@ -26,7 +26,7 @@ $allFiles | ForEach-Object { Write-Host "  $_" -ForegroundColor Gray }
 Write-Host
 
 Write-Host '[1/2] Dang chay Prettier --write...' -ForegroundColor Green
-$allFiles | ForEach-Object { & pnpm prettier --write $_ --cache --log-level warn }
+$allFiles | ForEach-Object { & pnpm prettier --write $_ --cache --loglevel warn }
 
 Write-Host
 Write-Host '[2/2] Dang chay ESLint --fix...' -ForegroundColor Green
