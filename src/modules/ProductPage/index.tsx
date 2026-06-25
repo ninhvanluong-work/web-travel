@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import { useProductById, useProductReviews } from '@/api/product';
 import { Icons } from '@/assets/icons';
@@ -52,6 +53,7 @@ const fadeInUp = {
 
 export default function ProductPage() {
   const router = useRouter();
+  const { t } = useTranslation('productPage');
   const productId = router.query.id as string | undefined;
 
   const { data, isLoading, isError, refetch } = useProductById({
@@ -72,8 +74,8 @@ export default function ProductPage() {
           <Icons.close className="w-5 h-5 text-red-500" />
         </div>
         <div className="text-center">
-          <p className="text-[15px] font-medium text-gray-800">Failed to load tour</p>
-          <p className="text-[13px] text-gray-500 mt-1">Please try again</p>
+          <p className="text-[15px] font-medium text-gray-800">{t('failedToLoadTour')}</p>
+          <p className="text-[13px] text-gray-500 mt-1">{t('pleaseTryAgain')}</p>
         </div>
         <Button
           variant="ghost"
@@ -82,13 +84,13 @@ export default function ProductPage() {
           className="bg-[#0F6E56] text-white px-6 h-auto py-2.5 text-[14px]"
           onClick={() => refetch()}
         >
-          Try again
+          {t('tryAgain')}
         </Button>
       </div>
     );
   }
 
-  const p = mapApiToProductPage(data);
+  const p = mapApiToProductPage(data, t);
 
   return (
     <div className="flex flex-col h-full bg-white font-dinpro">
@@ -113,8 +115,8 @@ export default function ProductPage() {
               <Icons.check className="w-[18px] h-[18px] text-white" />
             </div>
             <div>
-              <p className="text-[13px] font-medium text-[#04342C]">Free cancellation up to 24h before</p>
-              <p className="text-[11px] text-[#085041]">Full refund if your plans change</p>
+              <p className="text-[13px] font-medium text-[#04342C]">{t('freeCancellation')}</p>
+              <p className="text-[11px] text-[#085041]">{t('fullRefund')}</p>
             </div>
           </div>
         </motion.div>
@@ -135,7 +137,7 @@ export default function ProductPage() {
               <Icons.star className="w-[14px] h-[14px] text-[#0F6E56] flex-shrink-0 mt-[2px]" />
               <div>
                 <p className="text-[11px] uppercase tracking-wide text-[#0F6E56] font-medium mb-1">
-                  What makes this different
+                  {t('whatMakesThisDifferent')}
                 </p>
                 <p
                   className="text-[15px] leading-[1.55]"

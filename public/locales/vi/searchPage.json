@@ -1,0 +1,11 @@
+{
+  "searchPlaceholder": "Tìm kiếm video...",
+  "searchButton": "Tìm kiếm",
+  "backButton": "Quay lại",
+  "options": "Tuỳ chọn",
+  "noResults": "Không tìm thấy video",
+  "noMoreVideos": "Không còn video nào",
+  "loadingMore": "Đang tải thêm...",
+  "muteAudio": "Tắt âm thanh",
+  "unmuteAudio": "Bật âm thanh"
+}

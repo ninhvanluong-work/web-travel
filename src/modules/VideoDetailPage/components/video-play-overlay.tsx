@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { Icons } from '@/assets/icons';
@@ -8,6 +9,7 @@ interface VideoPlayOverlayProps {
 }
 
 function VideoPlayOverlay({ visible, onPlay }: VideoPlayOverlayProps) {
+  const { t } = useTranslation('videoDetail');
   return (
     <div
       className={`absolute inset-0 z-10 flex items-center justify-center bg-black/40 transition-opacity duration-300 ${
@@ -16,7 +18,7 @@ function VideoPlayOverlay({ visible, onPlay }: VideoPlayOverlayProps) {
     >
       <button
         onClick={onPlay}
-        aria-label="Phát video"
+        aria-label={t('playVideo')}
         className="flex items-center justify-center w-[60px] h-[60px] text-white drop-shadow-lg animate-pulse"
       >
         <Icons.playSolid className="w-full h-full" />

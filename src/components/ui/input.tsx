@@ -23,8 +23,8 @@ export const inputVariants = cva(
         filled: 'bg-background',
       },
       size: {
-        sm: 'h-11 px-3 py-2 text-sm rounded-lg file:text-sm file:font-medium',
-        default: 'h-14 px-3 text-sm rounded-lg file:text-sm file:font-medium',
+        sm: 'h-11 px-[14px] py-[8px] text-sm rounded-lg file:text-sm file:font-medium',
+        default: 'h-14 px-[16px] py-[10px] text-sm rounded-lg file:text-sm file:font-medium',
       },
     },
     defaultVariants: {

@@ -7,6 +7,7 @@ import type {
   IChangePassword,
   ICourse,
   IForgotPassword,
+  ILoginApiResponse,
   ILoginParams,
   ILoginResponse,
   IProfile,
@@ -17,13 +18,15 @@ import type {
 } from './types';
 
 export const loginRequest = async (params: ILoginParams): Promise<ILoginResponse> => {
-  const { data } = await request({
-    url: '/authentication/log-in',
+  const { data: res }: { data: ILoginApiResponse } = await request({
+    url: '/auth/login',
     method: 'POST',
     data: params,
   });
 
-  return data;
+  const { token, refreshToken, user } = res.data;
+
+  return { accessToken: token, refreshToken, user };
 };
 
 export const logoutRequest = async (): Promise<boolean> => {
@@ -46,7 +49,7 @@ export const refetchTokenRequest = async (): Promise<ILoginResponse> => {
 
 export const registerRequest = async (params: IRegisterParams): Promise<IRegisterResponse> => {
   const { data } = await request({
-    url: '/authentication/register',
+    url: '/auth/register',
     method: 'POST',
     data: params,
   });

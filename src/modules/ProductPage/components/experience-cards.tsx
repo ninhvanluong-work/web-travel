@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 interface Highlight {
   image?: string;
   title: string;
@@ -22,11 +24,14 @@ const MOCK_IMAGES = [
 ];
 
 export default function ExperienceCards({ highlights }: ExperienceCardsProps) {
+  const { t } = useTranslation('productPage');
   const items = highlights.slice(0, 10);
 
   return (
     <div className="bg-[#F8F6F0] px-[18px] py-5">
-      <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">What you&apos;ll experience</p>
+      <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">
+        {t('whatYouWillExperience')}
+      </p>
       <div className={`grid gap-2.5 ${items.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
         {items.map((h, i) => {
           const imgSrc = h.image ?? MOCK_IMAGES[i % MOCK_IMAGES.length];

@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Check, Loader2, Plus, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useRef, useState } from 'react';
 
 import { useCreateElement } from '@/api/element';
@@ -30,6 +31,7 @@ export function ElementCombobox({
 }: ElementComboboxProps) {
   const queryClient = useQueryClient();
   const { mutateAsync: createEl, isPending: isCreating } = useCreateElement();
+  const { t } = useTranslation('adminPage');
 
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
@@ -86,10 +88,10 @@ export function ElementCombobox({
       onChange(rowKey, newEl.id);
       setQuery('');
       setOpen(false);
-      useAlertStore.getState().addAlert({ type: 'success', title: `Created element "${newEl.name}" successfully` });
+      useAlertStore.getState().addAlert({ type: 'success', title: t('createdElementSuccess', { name: newEl.name }) });
     } catch (err: unknown) {
       const axiosMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      const msg = axiosMsg ?? (err instanceof Error ? err.message : 'Failed to create element');
+      const msg = axiosMsg ?? (err instanceof Error ? err.message : t('createElementFailed'));
       useAlertStore.getState().addAlert({ type: 'error', title: msg });
     }
   }
@@ -120,7 +122,7 @@ export function ElementCombobox({
         size="sm"
         fullWidth
         value={displayValue}
-        placeholder={elementKey ? 'Search or create...' : 'Select type first...'}
+        placeholder={elementKey ? t('searchOrCreate') : t('selectTypeFirst')}
         disabled={!elementKey}
         suffix={clearSuffix}
         onChange={(e) => {
@@ -135,7 +137,7 @@ export function ElementCombobox({
         <div className="absolute z-50 top-full left-0 right-0 min-w-[280px] mt-1 bg-white rounded-xl shadow-theme-lg border border-gray-200 p-1 max-h-56 overflow-y-auto">
           {filtered.length === 0 && !showCreate && (
             <p className="py-4 text-center text-sm text-gray-400">
-              {elementKey ? 'No results' : 'Select a type first'}
+              {elementKey ? t('noResults') : t('selectTypeFirstPrompt')}
             </p>
           )}
 
@@ -179,7 +181,7 @@ export function ElementCombobox({
                   <Plus size={13} className="shrink-0" />
                 )}
                 <span className="text-[13px] font-semibold">
-                  {isCreating ? 'Creating...' : `Create "${query.trim()}"`}
+                  {isCreating ? t('creating') : t('createElementLabel', { name: query.trim() })}
                 </span>
               </Button>
             </div>

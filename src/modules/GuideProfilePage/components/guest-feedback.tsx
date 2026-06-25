@@ -1,3 +1,7 @@
+import { useTranslation } from 'next-i18next';
+
+import { useTourGuideReviews } from '@/api/tour-guide/queries';
+
 import type { GuideProfileData } from '../data/mock-guide';
 import CriteriaBar from './criteria-bar';
 import FeaturedReviews from './featured-reviews';
@@ -5,15 +9,22 @@ import FeaturedReviews from './featured-reviews';
 interface GuestFeedbackProps {
   feedback: GuideProfileData['guestFeedback'];
   guideName: string;
+  guideId: string;
 }
 
-export default function GuestFeedback({ feedback, guideName }: GuestFeedbackProps) {
+export default function GuestFeedback({ feedback, guideName, guideId }: GuestFeedbackProps) {
+  const { t } = useTranslation('guidePage');
+  const { data: reviewData } = useTourGuideReviews({
+    variables: { id: guideId, page: 1, pageSize: 2 },
+    enabled: !!guideId,
+  });
+
   return (
     <>
       <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-        <p className="text-[14px] font-medium text-neutral-900 mb-1">Khách nói gì về {guideName}</p>
+        <p className="text-[14px] font-medium text-neutral-900 mb-1">{t('guestSays', { name: guideName })}</p>
         <p className="text-[12px] text-neutral-500 mb-4">
-          {feedback.totalReviews} đánh giá · trung bình {feedback.averageRating.toFixed(2)}
+          {t('reviews', { count: feedback.totalReviews, avg: feedback.averageRating.toFixed(2) })}
         </p>
         <div className="flex flex-col gap-[10px]">
           {feedback.criteria.map((c) => (
@@ -23,7 +34,12 @@ export default function GuestFeedback({ feedback, guideName }: GuestFeedbackProp
       </div>
 
       <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-        <FeaturedReviews reviews={feedback.featuredReviews} totalReviews={feedback.totalReviews} />
+        <FeaturedReviews
+          reviews={reviewData?.items ?? []}
+          totalReviews={reviewData?.pagination.total ?? feedback.totalReviews}
+          guideId={guideId}
+          guideName={guideName}
+        />
       </div>
     </>
   );

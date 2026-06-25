@@ -1,7 +1,9 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
+import { useRef } from 'react';
 
 import { useGuideProfile } from '@/hooks/use-guide-profile';
+import { useUserStore } from '@/stores/UserStore';
 
 import ActionBar from './components/action-bar';
 import CareerTimeline from './components/career-timeline';
@@ -24,19 +26,38 @@ const fadeUp = (delay: number) => ({
 export default function GuideProfilePage() {
   const router = useRouter();
   const id = router.query.id as string | undefined;
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
 
   const { data, isLoading } = useGuideProfile(id);
+  const user = useUserStore.use.user();
+  const isOwner = (user?.role === 'guide' || user?.role === 'tour_guide') && !!id && user?.tourGuideId === id;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    const dy = Math.abs(e.changedTouches[0].clientY - touchStartY.current);
+    if (dx > 80 && dx > dy * 1.5) router.back();
+  };
 
   if (isLoading) return <GuideProfileSkeleton />;
   if (!data) return null;
 
   return (
-    <div className="bg-[#F3F3F7] h-full overflow-y-auto scrollbar-hide font-dinpro">
+    <div
+      className="bg-[#F3F3F7] h-full overflow-y-auto scrollbar-hide font-dinpro"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <motion.div {...fadeUp(0)}>
         <HeroBanner guide={data} />
       </motion.div>
       <motion.div {...fadeUp(0.08)}>
-        <ActionBar guide={data} />
+        <ActionBar guide={data} isOwner={isOwner} />
       </motion.div>
       <motion.div {...fadeUp(0.16)}>
         <StorytellingBlock bio={data.bio} />
@@ -46,9 +67,9 @@ export default function GuideProfilePage() {
       </motion.div>
 
       <OperatorReviews reviews={data.operatorReviews} />
-      <GuestFeedback feedback={data.guestFeedback} guideName={data.name.split(' ').pop()!} />
+      <GuestFeedback feedback={data.guestFeedback} guideName={data.name.split(' ').pop()!} guideId={data.id} />
       <SpecialtyTags specialties={data.specialties} />
-      <MomentsGrid moments={data.moments} />
+      <MomentsGrid guideId={data.id} isOwner={isOwner} />
       <DestinationsChart destinations={data.destinations} guideName={data.name.split(' ').pop()!} />
       <CareerTimeline timeline={data.careerTimeline} />
       <div className="h-8" />

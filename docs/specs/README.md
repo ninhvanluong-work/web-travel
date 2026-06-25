@@ -136,6 +136,14 @@ docs/specs/
 
 ---
 
+## 👤 guide-profile/
+
+| File                                               | Tính năng                                           | Status |
+| -------------------------------------------------- | --------------------------------------------------- | ------ |
+| [moments-grid.md](./guide-profile/moments-grid.md) | Khoảnh khắc Tour Guide (Moments Grid & Video Popup) | 📝     |
+
+---
+
 ## Superseded Chain
 
 ```

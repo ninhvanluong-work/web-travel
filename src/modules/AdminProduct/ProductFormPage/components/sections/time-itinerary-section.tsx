@@ -1,5 +1,6 @@
 import { Reorder, useDragControls } from 'framer-motion';
 import { Calendar, Plus } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
@@ -53,6 +54,7 @@ function DraggableItineraryItem({
 
 export function TimeItinerarySection() {
   const { control, setValue } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
   const { fields, append, remove, move, insert } = useFieldArray({
     control,
     name: 'itineraries',
@@ -72,7 +74,7 @@ export function TimeItinerarySection() {
 
   const handleAdd = () => {
     const newIndex = fields.length;
-    append({ name: `Day ${newIndex + 1}`, featuredName: '', order: newIndex + 1, description: '' });
+    append({ name: `${t('day')} ${newIndex + 1}`, featuredName: '', order: newIndex + 1, description: '' });
     setOpenIndex(newIndex);
   };
 
@@ -123,8 +125,10 @@ export function TimeItinerarySection() {
       <div>
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-medium text-gray-700">
-            Itinerary Details
-            {fields.length > 0 && <span className="ml-2 text-xs font-normal text-gray-400">{fields.length} days</span>}
+            {t('itineraryDetails')}
+            {fields.length > 0 && (
+              <span className="ml-2 text-xs font-normal text-gray-400">{t('daysCount', { count: fields.length })}</span>
+            )}
           </p>
           <Button
             type="button"
@@ -136,7 +140,7 @@ export function TimeItinerarySection() {
             onClick={handleAdd}
           >
             <Plus size={12} />
-            Add Day
+            {t('addDay')}
           </Button>
         </div>
 
@@ -147,8 +151,8 @@ export function TimeItinerarySection() {
             className="w-full border-2 border-dashed border-gray-200 rounded-xl p-6 flex flex-col items-center gap-2 text-gray-400 hover:border-violet-300 hover:text-violet-500 hover:bg-violet-50/40 transition-colors"
           >
             <Calendar size={20} className="opacity-50" />
-            <span className="text-sm font-medium">No itinerary yet</span>
-            <span className="text-xs">Click to add the first day</span>
+            <span className="text-sm font-medium">{t('noItinerary')}</span>
+            <span className="text-xs">{t('clickToAddItinerary')}</span>
           </button>
         ) : (
           <Reorder.Group axis="y" values={fields} onReorder={handleReorder} className="space-y-2">

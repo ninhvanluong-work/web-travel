@@ -1,4 +1,5 @@
 import { ImageIcon, Loader2 } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useRef, useState } from 'react';
 
 import { uploadImage } from '@/api/upload';
@@ -6,6 +7,7 @@ import { uploadImage } from '@/api/upload';
 export function BannerImageUpload({ value, onChange }: { value: string; onChange: (url: string) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const { t } = useTranslation('adminPage');
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -36,7 +38,7 @@ export function BannerImageUpload({ value, onChange }: { value: string; onChange
             )}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-[2px]">
               <span className="text-white text-[13px] font-medium px-4 py-2 bg-black/40 rounded-lg border border-white/20 shadow-lg">
-                Change image
+                {t('changeImage')}
               </span>
             </div>
           </>
@@ -49,9 +51,9 @@ export function BannerImageUpload({ value, onChange }: { value: string; onChange
             )}
             <div>
               <p className="text-[13px] font-semibold text-slate-600 group-hover:text-brand-600">
-                {uploading ? 'Uploading...' : 'Click to upload image'}
+                {uploading ? t('uploading') : t('clickToUploadImage')}
               </p>
-              <p className="text-[11px] text-slate-400 mt-1">Supports JPG, PNG, WEBP</p>
+              <p className="text-[11px] text-slate-400 mt-1">{t('supportsImages')}</p>
             </div>
           </div>
         )}

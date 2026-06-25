@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -11,6 +12,7 @@ import { useVideoPreloader } from '@/hooks/use-video-preloader';
 import VideoSlide, { type VideoSlideHandle } from './components/video-slide';
 
 const VideoDetailPage = () => {
+  const { t } = useTranslation('videoDetail');
   const router = useRouter();
   const { slug } = router.query;
   const currentSlug = typeof slug === 'string' ? slug : '';
@@ -61,7 +63,7 @@ const VideoDetailPage = () => {
       <div className="flex h-dvh w-full items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
-          <p className="text-white/50 text-xs font-dinpro tracking-wider uppercase">Đang tải</p>
+          <p className="text-white/50 text-xs font-dinpro tracking-wider uppercase">{t('loading')}</p>
         </div>
       </div>
     );
@@ -83,7 +85,7 @@ const VideoDetailPage = () => {
         className="absolute left-[14px] z-50 p-[9px]"
         style={{ top: 'calc(14px + env(safe-area-inset-top, 0px))' }}
         onClick={() => router.back()}
-        aria-label="Quay lại"
+        aria-label={t('back')}
       >
         <Icons.chevronLeft className="w-[20px] h-[20px]" />
       </Button>

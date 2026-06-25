@@ -5,11 +5,13 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import type { Session } from 'inspector';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import type { ReactNode } from 'react';
+import { appWithTranslation } from 'next-i18next';
+import type { ComponentType, ReactNode } from 'react';
 
 import { fontSans, fontSerif } from '@/assets/fonts';
 import { MainLayout, ModuleLayout } from '@/components/layouts';
 import { GlobalAlertProvider } from '@/components/ui/Alert/global-alert-provider';
+import { TourGuideFAB } from '@/components/ui/TourGuideFAB/tour-guide-fab';
 import { siteConfig } from '@/config/site';
 import Provider from '@/lib/Provider';
 import type { NextPageWithLayout } from '@/types';
@@ -55,6 +57,7 @@ const MyApp = (props: AppPropsWithLayout) => {
       <div>
         <Provider>
           <GlobalAlertProvider />
+          <TourGuideFAB />
           <ModuleLayout>{getLayout(<Component {...pageProps} />)}</ModuleLayout>
         </Provider>
       </div>
@@ -62,4 +65,4 @@ const MyApp = (props: AppPropsWithLayout) => {
   );
 };
 
-export default MyApp;
+export default appWithTranslation(MyApp) as ComponentType<any>;

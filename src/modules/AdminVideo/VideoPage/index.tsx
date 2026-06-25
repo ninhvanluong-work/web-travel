@@ -1,16 +1,18 @@
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { VideoListTable } from './components/video-list-table';
 import { VideoUploadCard } from './components/video-upload-card';
 
 export default function AdminVideoPage() {
+  const { t } = useTranslation('adminPage');
   const [refreshKey, setRefreshKey] = useState(0);
 
   return (
     <div className="flex flex-col min-h-full bg-slate-50">
       <div className="px-6 py-4 bg-white border-b border-gray-100 shadow-sm">
-        <h1 className="text-base font-bold text-gray-900">Quản lý Video</h1>
-        <p className="text-xs text-gray-400 mt-0.5">Upload và quản lý video tour</p>
+        <h1 className="text-base font-bold text-gray-900">{t('title')}</h1>
+        <p className="text-xs text-gray-400 mt-0.5">{t('subtitle')}</p>
       </div>
 
       <div className="flex-1 p-6">

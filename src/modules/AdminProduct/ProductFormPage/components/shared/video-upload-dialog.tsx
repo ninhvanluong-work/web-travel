@@ -1,5 +1,6 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Upload, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import type { ApiAdminVideoItem } from '@/api/video/types';
 import { Dialog, DialogOverlay, DialogPortal } from '@/components/ui/dialog';
@@ -19,6 +20,7 @@ interface VideoUploadDialogProps {
 }
 
 export function VideoUploadDialog({ open, onOpenChange, onUploadSuccess }: VideoUploadDialogProps) {
+  const { t } = useTranslation('adminPage');
   const {
     uploadState,
     setUploadState,
@@ -73,8 +75,8 @@ export function VideoUploadDialog({ open, onOpenChange, onUploadSuccess }: Video
                 <Upload size={13} className="text-rose-500" />
               </span>
               <div>
-                <p className="text-sm font-semibold text-gray-800 leading-tight">Upload New Video</p>
-                <p className="text-[10px] text-gray-400 leading-tight mt-0.5">Chỉ nhận file .mp4 · tối đa 500 MB</p>
+                <p className="text-sm font-semibold text-gray-800 leading-tight">{t('videoUploadNewTitle')}</p>
+                <p className="text-[10px] text-gray-400 leading-tight mt-0.5">{t('videoUploadLimitDesc')}</p>
               </div>
             </div>
             <button
@@ -92,11 +94,11 @@ export function VideoUploadDialog({ open, onOpenChange, onUploadSuccess }: Video
             {/* Tên video — full width vì quan trọng nhất */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-gray-600">
-                Tên video <span className="text-rose-500">*</span>
+                {t('videoNameLabel')} <span className="text-rose-500">*</span>
               </label>
               <Input
                 size="sm"
-                placeholder="VD: Du lịch Hà Giang 2025"
+                placeholder={t('videoNamePlaceholder')}
                 value={form.name}
                 onChange={(e) => {
                   setForm((f) => ({ ...f, name: e.target.value }));
@@ -104,17 +106,17 @@ export function VideoUploadDialog({ open, onOpenChange, onUploadSuccess }: Video
                 }}
                 disabled={isBusy}
               />
-              {nameError && <p className="text-xs text-rose-500">{nameError}</p>}
+              {nameError && <p className="text-xs text-rose-500">{t('nameRequired')}</p>}
             </div>
 
             {/* Mô tả + Tag — cùng hàng, tiết kiệm chiều cao */}
             <div className="grid grid-cols-[1fr_160px] gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-600">Mô tả</label>
+                <label className="text-xs font-medium text-gray-600">{t('descriptionLabel')}</label>
                 <TextArea
                   className="text-sm rounded-xl resize-none"
                   rows={2}
-                  placeholder="Mô tả ngắn về video..."
+                  placeholder={t('descriptionPlaceholder')}
                   value={form.description}
                   onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                     setForm((f) => ({ ...f, description: e.target.value }))
@@ -123,10 +125,10 @@ export function VideoUploadDialog({ open, onOpenChange, onUploadSuccess }: Video
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-medium text-gray-600">Tag</label>
+                <label className="text-xs font-medium text-gray-600">{t('tagsLabel')}</label>
                 <Input
                   size="sm"
-                  placeholder="miền-bắc, hà-giang"
+                  placeholder={t('tagsPlaceholder')}
                   value={form.tag}
                   onChange={(e) => setForm((f) => ({ ...f, tag: e.target.value }))}
                   disabled={isBusy}
@@ -148,7 +150,7 @@ export function VideoUploadDialog({ open, onOpenChange, onUploadSuccess }: Video
             {uploadState.status === 'error' && (
               <div className="rounded-lg bg-rose-50 border border-rose-100 px-3 py-2.5">
                 <p className="text-xs text-rose-600 font-medium">
-                  {uploadState.phase === 'saving' ? 'Lỗi lưu thông tin' : 'Lỗi upload'}
+                  {uploadState.phase === 'saving' ? t('errorSavingInfo') : t('errorUploading')}
                 </p>
                 <p className="text-xs text-rose-500 mt-0.5">{uploadState.message}</p>
               </div>

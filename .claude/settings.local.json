@@ -78,7 +78,9 @@
       "Skill(sequential-thinking)",
       "Skill(microservices-patterns)",
       "Bash(bash:*)",
-      "mcp__postgres__query"
+      "mcp__postgres__query",
+      "Bash(pnpm check-types *)",
+      "Bash(pnpm lint *)"
     ],
     "deny": [],
     "ask": []

@@ -2,12 +2,14 @@ import { motion } from 'framer-motion';
 import { useId } from 'react';
 
 import { cn } from '@/lib/utils';
-import type { IOption } from '@/types/common.type';
 
-import { ScrollArea } from './ui/scrollArea';
+interface TabItem<T> {
+  name: React.ReactNode;
+  value: T;
+}
 
 interface Props<T extends string | number> {
-  data: IOption<T>[];
+  data: TabItem<T>[];
   onChange: (value: T) => void;
   value: T;
   className?: string;
@@ -19,13 +21,13 @@ const Tabs = <T extends string | number>({ data, extras, className, onChange, va
   return (
     <div className={className}>
       <div className="border-b">
-        <ScrollArea barClassName="h-1.5" orientation="horizontal">
-          <ul className="-mb-0.5 flex min-h-[60px]">
+        <div className="overflow-x-auto scrollbar-hide">
+          <ul className="-mb-0.5 flex min-h-[48px] items-center">
             {data.map((tab, i) => (
               <li
                 onClick={() => onChange(tab.value)}
                 className={cn(
-                  'text-neutral-30 relative mt-auto h-12 cursor-pointer whitespace-nowrap px-4 py-3 text-center text-sm md:text-base',
+                  'text-slate-400 relative cursor-pointer whitespace-nowrap px-5 py-3.5 text-center text-[13px] font-bold transition-colors hover:text-main active:scale-[0.98]',
                   {
                     'text-main': value === tab.value,
                   }
@@ -36,7 +38,7 @@ const Tabs = <T extends string | number>({ data, extras, className, onChange, va
                 {value === tab.value ? (
                   <motion.div
                     layoutId={id}
-                    className="bg-main absolute bottom-0 left-0 z-10 h-[5px] w-full"
+                    className="bg-main absolute bottom-0 left-0 z-10 h-[3px] w-full rounded-t-full"
                     transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
                   />
                 ) : null}
@@ -45,7 +47,7 @@ const Tabs = <T extends string | number>({ data, extras, className, onChange, va
 
             {extras && <li className="ml-auto flex items-center justify-end">{extras}</li>}
           </ul>
-        </ScrollArea>
+        </div>
       </div>
     </div>
   );

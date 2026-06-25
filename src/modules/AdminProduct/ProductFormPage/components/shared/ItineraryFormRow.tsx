@@ -1,5 +1,6 @@
 import { Editor } from '@tinymce/tinymce-react';
 import { ChevronDown, ChevronRight, Copy, GripVertical, Trash2 } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +27,7 @@ export function ItineraryFormRow({
   onClone,
   onToggle,
 }: ItineraryFormRowProps) {
+  const { t } = useTranslation('adminPage');
   const set = (patch: Partial<ItineraryFormValues>) => onChange(index, patch);
 
   return (
@@ -51,7 +53,7 @@ export function ItineraryFormRow({
           className="flex-1 text-left text-sm font-medium text-gray-700 truncate"
           onClick={() => onToggle(index)}
         >
-          {value.name || `Day ${value.order}`}
+          {value.name || `${t('day')} ${value.order}`}
         </button>
 
         {/* Clone */}
@@ -62,7 +64,7 @@ export function ItineraryFormRow({
           rounded="md"
           className="h-7 w-7 text-gray-400 hover:text-violet-600 hover:bg-violet-50 shrink-0"
           onClick={() => onClone(index)}
-          title="Duplicate this day"
+          title={t('duplicateDay')}
         >
           <Copy size={12} />
         </Button>
@@ -89,17 +91,17 @@ export function ItineraryFormRow({
       {isOpen && (
         <div className="p-4 space-y-3 bg-gray-50/40">
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">Title</label>
+            <label className="text-xs font-medium text-gray-600">{t('itineraryTitle')}</label>
             <Input
               size="sm"
-              placeholder="E.g.: Hanoi → Ha Long"
+              placeholder={t('itineraryTitlePlaceholder')}
               value={value.name}
               onChange={(e) => set({ name: e.target.value })}
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-xs font-medium text-gray-600">Daily Activities</label>
+            <label className="text-xs font-medium text-gray-600">{t('dailyActivities')}</label>
             <div className="rounded-lg overflow-hidden border border-input bg-white">
               <Editor
                 tinymceScriptSrc="/tinymce/tinymce.min.js"

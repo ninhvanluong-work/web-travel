@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -6,10 +7,15 @@ import { type ProductFormValues, STATUS_OPTIONS } from '@/lib/validations/produc
 
 export function ConfigCard() {
   const { control } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
+
+  const getStatusLabelKey = (status: string) => {
+    return `status${status.charAt(0).toUpperCase()}${status.slice(1)}`;
+  };
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
-      <h3 className="font-semibold text-gray-900">Trạng thái & Cấu hình</h3>
+      <h3 className="font-semibold text-gray-900">{t('configCardTitle')}</h3>
 
       {/* Status */}
       <FormField
@@ -17,16 +23,16 @@ export function ConfigCard() {
         name="status"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Trạng thái</FormLabel>
+            <FormLabel>{t('configCardStatus')}</FormLabel>
             <FormControl>
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger inputSize="sm" className="w-full">
-                  <SelectValue placeholder="Chọn trạng thái" />
+                  <SelectValue placeholder={t('configCardStatusPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   {STATUS_OPTIONS.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>
-                      {opt.label}
+                      {t(getStatusLabelKey(opt.value))}
                     </SelectItem>
                   ))}
                 </SelectContent>

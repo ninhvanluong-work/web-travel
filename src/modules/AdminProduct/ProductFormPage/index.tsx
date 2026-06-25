@@ -1,4 +1,5 @@
 import { AlertTriangle, AlignLeft, Calendar, FileText, MapPin, Sparkles, Tag, Tv } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -25,17 +26,15 @@ interface ProductFormPageProps {
 }
 
 const NAV_SECTIONS = [
-  { id: 'section-banner', label: 'Product Video', icon: Tv },
-  { id: 'section-tags', label: 'Product Tags', icon: Tag },
-  { id: 'section-overview', label: 'Product Overview', icon: FileText },
-  { id: 'section-quick-facts', label: 'Configuration', icon: MapPin },
-  { id: 'section-experiences', label: 'Experiences', icon: Sparkles },
-  { id: 'section-itinerary', label: 'Itinerary', icon: Calendar },
-  { id: 'section-read-before', label: 'Notes', icon: AlertTriangle },
-  { id: 'section-details', label: 'Details', icon: AlignLeft },
-  // { id: 'section-images', label: 'Images', icon: ImageIcon },
-  // { id: 'section-options', label: 'Pricing Options', icon: DollarSign },
-];
+  { id: 'section-banner', labelKey: 'secProductVideo', icon: Tv },
+  { id: 'section-tags', labelKey: 'secProductTags', icon: Tag },
+  { id: 'section-overview', labelKey: 'secProductOverview', icon: FileText },
+  { id: 'section-quick-facts', labelKey: 'secConfiguration', icon: MapPin },
+  { id: 'section-experiences', labelKey: 'secExperiences', icon: Sparkles },
+  { id: 'section-itinerary', labelKey: 'secItinerary', icon: Calendar },
+  { id: 'section-read-before', labelKey: 'secNotes', icon: AlertTriangle },
+  { id: 'section-details', labelKey: 'secDetails', icon: AlignLeft },
+] as const;
 
 const SECTION_ERROR_FIELDS: Record<string, (keyof ProductFormValues)[]> = {
   'section-banner': ['banner'],
@@ -75,6 +74,7 @@ function SectionCard({ id, label, children }: { id: string; label: string; child
 }
 
 export default function ProductFormPage({ productId }: ProductFormPageProps) {
+  const { t } = useTranslation('adminPage');
   const { form, isEdit, productData, onSubmit, handlePublish, handleHide, isPending, draft } =
     useProductForm(productId);
 
@@ -125,7 +125,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
           <div className="flex gap-8 items-start w-full">
             {/* Scroll-spy nav */}
             <div className="hidden lg:flex flex-col gap-0.5 sticky top-[130px] w-40 shrink-0 pt-4">
-              {NAV_SECTIONS.map(({ id, label, icon: Icon }) => (
+              {NAV_SECTIONS.map(({ id, labelKey, icon: Icon }) => (
                 <Button
                   key={id}
                   variant="ghost"
@@ -137,7 +137,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                   }`}
                 >
                   <Icon size={13} className="shrink-0" />
-                  <span className="flex-1 text-left">{label}</span>
+                  <span className="flex-1 text-left">{t(labelKey)}</span>
                   {sectionHasError(id) && (
                     <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
                   )}
@@ -147,28 +147,28 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
 
             {/* Main content */}
             <div className="flex-1 min-w-0 py-4 space-y-4">
-              <SectionCard id="section-banner" label="Product Video">
+              <SectionCard id="section-banner" label={t('secProductVideo')}>
                 <BannerSection />
               </SectionCard>
-              <SectionCard id="section-tags" label="Product Tags">
+              <SectionCard id="section-tags" label={t('secProductTags')}>
                 <TagsSection />
               </SectionCard>
-              <SectionCard id="section-overview" label="Product Overview">
+              <SectionCard id="section-overview" label={t('secProductOverview')}>
                 <BasicInfoSection isEdit={isEdit} heroVideo={productData?.heroVideo ?? null} />
               </SectionCard>
-              <SectionCard id="section-quick-facts" label="Configuration">
+              <SectionCard id="section-quick-facts" label={t('secConfiguration')}>
                 <QuickFactsSection />
               </SectionCard>
-              <SectionCard id="section-experiences" label="Experiences">
+              <SectionCard id="section-experiences" label={t('secExperiences')}>
                 <ExperiencesSection />
               </SectionCard>
-              <SectionCard id="section-itinerary" label="Itinerary">
+              <SectionCard id="section-itinerary" label={t('secItinerary')}>
                 <TimeItinerarySection />
               </SectionCard>
-              <SectionCard id="section-read-before" label="Notes">
+              <SectionCard id="section-read-before" label={t('secNotes')}>
                 <ReadBeforeSection />
               </SectionCard>
-              <SectionCard id="section-details" label="Details">
+              <SectionCard id="section-details" label={t('secDetails')}>
                 {!isEdit || productData ? (
                   <DetailsSection />
                 ) : (

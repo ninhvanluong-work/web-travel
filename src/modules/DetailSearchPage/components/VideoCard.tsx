@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import React, { useEffect, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
@@ -36,6 +37,7 @@ const VideoCard = ({
   onAudioDeactivate,
   onVideoClick,
 }: Props) => {
+  const { t } = useTranslation('searchPage');
   const [ready, setReady] = useState(false);
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
   // Detect when card is ~500px away from viewport → start buffering
@@ -127,7 +129,7 @@ const VideoCard = ({
             e.stopPropagation();
             onRequestAudio(video.id);
           }}
-          aria-label={isAudioActive ? 'Tắt âm thanh' : 'Bật âm thanh'}
+          aria-label={isAudioActive ? t('muteAudio') : t('unmuteAudio')}
         >
           {isAudioActive ? (
             <Icons.volume2Fill className="w-3.5 h-3.5 text-white" />

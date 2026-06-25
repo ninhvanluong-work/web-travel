@@ -1,26 +1,27 @@
 import { ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import { FormActionButtons } from './form-action-buttons';
 
-const STATUS_CONFIG: Record<string, { dot: string; badge: string; text: string }> = {
+const STATUS_CONFIG: Record<string, { dot: string; badge: string; textKey: string }> = {
   published: {
     dot: 'bg-emerald-500',
     badge: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-    text: 'Published',
+    textKey: 'statusPublished',
   },
   hidden: {
     dot: 'bg-slate-400',
     badge: 'bg-slate-100 text-slate-600 ring-1 ring-slate-200',
-    text: 'Hidden',
+    textKey: 'statusHidden',
   },
   draft: {
     dot: 'bg-amber-400',
     badge: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-    text: 'Draft',
+    textKey: 'statusDraft',
   },
 };
 
@@ -48,6 +49,7 @@ export function ProductFormHeader({
   onHide,
 }: ProductFormHeaderProps) {
   const router = useRouter();
+  const { t } = useTranslation('adminPage');
   const statusCfg = STATUS_CONFIG[currentStatus] ?? STATUS_CONFIG.draft;
 
   return (
@@ -66,7 +68,7 @@ export function ProductFormHeader({
 
         <div className="min-w-0 flex items-center gap-3">
           <h1 className="text-lg font-bold text-slate-800 dark:text-white/90 truncate leading-tight">
-            {isEdit ? 'Edit Tour' : 'Add New Tour'}
+            {isEdit ? t('editTour') : t('addTour')}
           </h1>
 
           {isEdit && (
@@ -74,7 +76,7 @@ export function ProductFormHeader({
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold shrink-0 ${statusCfg.badge}`}
             >
               <span className={`w-1.5 h-1.5 rounded-full ${statusCfg.dot}`} />
-              {statusCfg.text}
+              {t(statusCfg.textKey)}
             </span>
           )}
 
@@ -86,14 +88,16 @@ export function ProductFormHeader({
               className="hidden sm:inline-flex items-center gap-1 text-[11px] text-slate-400 hover:text-brand-500 transition-colors shrink-0"
             >
               <ExternalLink size={12} />
-              View page
+              {t('viewPage')}
             </a>
           )}
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        {lastSaved && <span className="text-[10px] text-gray-400 hidden sm:block">Draft at {lastSaved}</span>}
+        {lastSaved && (
+          <span className="text-[10px] text-gray-400 hidden sm:block">{t('draftAt', { time: lastSaved })}</span>
+        )}
         {isPending && <Loader2 size={16} className="animate-spin text-gray-400" />}
         <FormActionButtons
           isEdit={isEdit}

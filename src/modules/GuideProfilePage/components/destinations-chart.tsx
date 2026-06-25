@@ -1,4 +1,8 @@
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
+
+import { ROUTE } from '@/types';
 
 import type { GuideProfileData } from '../data/mock-guide';
 
@@ -8,17 +12,31 @@ interface DestinationsChartProps {
 }
 
 export default function DestinationsChart({ destinations, guideName }: DestinationsChartProps) {
+  const { t } = useTranslation('guidePage');
+  const router = useRouter();
+
+  const handleBookNow = (destinationName: string) => {
+    router.push(`${ROUTE.SEARCH}?q=${encodeURIComponent(destinationName)}`);
+  };
+
   return (
     <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
-      <p className="text-[14px] font-medium text-neutral-900 mb-1">Những nơi {guideName} dẫn tour</p>
-      <p className="text-[11px] text-neutral-500 mb-3.5">sắp xếp theo số tour đã dẫn</p>
+      <p className="text-[14px] font-medium text-neutral-900 mb-3.5">{t('tourDestinations', { name: guideName })}</p>
 
       <div className="flex flex-col gap-3">
         {destinations.map((d) => (
           <div key={d.name}>
             <div className="flex justify-between items-baseline mb-1 text-[13px]">
               <span className="text-neutral-900">{d.name}</span>
-              <span className="text-[12px] text-neutral-500">{d.toursCount} tours</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[12px] text-neutral-500">{d.toursCount} tours</span>
+                <button
+                  onClick={() => handleBookNow(d.name)}
+                  className="text-[11px] font-medium text-neutral-black underline underline-offset-2 hover:opacity-60 transition-opacity active:scale-95"
+                >
+                  {t('bookNow')}
+                </button>
+              </div>
             </div>
             <div className="h-[2px] bg-neutral-200 rounded-full overflow-hidden">
               <motion.div

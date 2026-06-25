@@ -1,4 +1,5 @@
 import { ImageIcon, Link, Trash2, Video } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -16,6 +17,7 @@ const BANNER_TYPE_OPTIONS = [
 export function BannerItem({ index, onRemove }: { index: number; onRemove: () => void }) {
   const { control, watch } = useFormContext<ProductFormValues>();
   const type = watch(`banner.${index}.type`);
+  const { t } = useTranslation('adminPage');
 
   return (
     <div className="relative p-5 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden transition-all hover:border-brand-300 hover:shadow-theme-sm group flex flex-col sm:flex-row gap-6">
@@ -23,7 +25,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
         type="button"
         onClick={onRemove}
         className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all z-10 opacity-0 group-hover:opacity-100 focus:opacity-100"
-        title="Delete this media"
+        title={t('delete')}
       >
         <Trash2 size={16} />
       </button>
@@ -51,7 +53,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
-                Display type
+                {t('bannerDisplayType')}
               </FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
@@ -67,7 +69,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
                     <SelectItem key={opt.value} value={opt.value} className="text-[13px] py-2">
                       <span className="flex items-center gap-2.5 font-medium text-slate-700">
                         <opt.icon size={15} className={opt.value === 'video' ? 'text-brand-500' : 'text-emerald-500'} />
-                        {opt.label}
+                        {opt.value === 'image' ? t('image') : t('video')}
                       </span>
                     </SelectItem>
                   ))}
@@ -83,7 +85,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
           render={({ field }) => (
             <FormItem className="space-y-2">
               <FormLabel className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">
-                {type === 'video' ? 'Video URL (embed)' : 'Direct Image URL'}
+                {type === 'video' ? t('videoUrlEmbed') : t('directImageUrl')}
               </FormLabel>
               <FormControl>
                 <div className="relative group/input">
@@ -96,10 +98,7 @@ export function BannerItem({ index, onRemove }: { index: number; onRemove: () =>
                     className="pl-10 pr-3 h-10 flex items-center bg-slate-100 border border-slate-200 rounded-lg cursor-not-allowed overflow-hidden"
                   >
                     <span className="text-[13px] text-slate-400 truncate w-full">
-                      {field.value ||
-                        (type === 'video'
-                          ? 'No video — click the box on the left to upload'
-                          : 'No image — click the box on the left to upload')}
+                      {field.value || (type === 'video' ? t('noVideoUploadPrompt') : t('noImageUploadPrompt'))}
                     </span>
                   </div>
                 </div>

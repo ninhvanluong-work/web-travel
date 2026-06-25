@@ -1,3 +1,4 @@
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import * as tus from 'tus-js-client';
 
@@ -20,6 +21,7 @@ export function useVideoUpload({ onSuccess, onCancel }: UseVideoUploadOptions) {
   const [form, setForm] = useState<UploadFormState>({ name: '', description: '', tag: '' });
   const [nameError, setNameError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useTranslation('adminPage');
 
   const isBusy = BUSY_STATUSES.has(uploadState.status);
   const showDropzone = uploadState.status === 'idle' || uploadState.status === 'selected';
@@ -43,7 +45,7 @@ export function useVideoUpload({ onSuccess, onCancel }: UseVideoUploadOptions) {
   }
 
   function handleFileSelect(file: File) {
-    const err = validateVideoFile(file);
+    const err = validateVideoFile(file, t);
     setUploadState({ status: 'selected', file, error: err ?? undefined });
   }
 
@@ -63,7 +65,7 @@ export function useVideoUpload({ onSuccess, onCancel }: UseVideoUploadOptions) {
       setUploadState({
         status: 'error',
         phase: 'saving',
-        message: 'Lưu thông tin thất bại, vui lòng thử lại.',
+        message: t('saveFailed'),
         canRetry: true,
         bunnyVideoId,
       });
@@ -72,7 +74,7 @@ export function useVideoUpload({ onSuccess, onCancel }: UseVideoUploadOptions) {
 
   async function startUpload() {
     if (!form.name.trim()) {
-      setNameError('Tên video không được để trống');
+      setNameError(t('nameRequired'));
       return;
     }
     setNameError('');
@@ -89,7 +91,7 @@ export function useVideoUpload({ onSuccess, onCancel }: UseVideoUploadOptions) {
       });
       if (!credRes.ok) {
         const errBody = (await credRes.json().catch(() => ({}))) as { message?: string; error?: string };
-        throw new Error(errBody.message ?? errBody.error ?? `Lỗi khởi tạo upload (${credRes.status})`);
+        throw new Error(errBody.message ?? errBody.error ?? `${t('initFailed')} (${credRes.status})`);
       }
       const { data: credData } = (await credRes.json()) as {
         data: { videoId: string; libraryId: string; expirationTime: number; signature: string };
@@ -135,7 +137,7 @@ export function useVideoUpload({ onSuccess, onCancel }: UseVideoUploadOptions) {
         tusInstance,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Có lỗi xảy ra, vui lòng thử lại.';
+      const message = err instanceof Error ? err.message : t('genericError');
       setUploadState({ status: 'error', phase: 'upload', message, canRetry: true });
     }
   }

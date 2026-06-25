@@ -1,4 +1,5 @@
 import { Pause, Play, Upload, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
 import type { UploadState } from '@/modules/AdminVideo/VideoPage/components/upload-types';
@@ -24,6 +25,8 @@ export function UploadDialogActions({
   onRetrySave,
   onRetryUpload,
 }: UploadDialogActionsProps) {
+  const { t } = useTranslation('adminPage');
+
   return (
     <div className="flex gap-2 pt-1">
       {uploadState.status === 'idle' && (
@@ -36,7 +39,7 @@ export function UploadDialogActions({
           className="py-2 text-xs"
           onClick={onClose}
         >
-          Đóng
+          {t('close')}
         </Button>
       )}
 
@@ -52,7 +55,7 @@ export function UploadDialogActions({
             onClick={onStart}
           >
             <Upload size={14} className="mr-1.5" />
-            Bắt đầu upload
+            {t('uploadStart')}
           </Button>
           <Button
             type="button"
@@ -78,7 +81,7 @@ export function UploadDialogActions({
             onClick={onPause}
           >
             <Pause size={14} className="mr-1.5" />
-            Tạm dừng
+            {t('uploadPause')}
           </Button>
           <Button
             type="button"
@@ -104,7 +107,7 @@ export function UploadDialogActions({
             onClick={onResume}
           >
             <Play size={14} className="mr-1.5" />
-            Tiếp tục
+            {t('uploadResume')}
           </Button>
           <Button
             type="button"
@@ -114,7 +117,7 @@ export function UploadDialogActions({
             className="text-rose-500 hover:text-rose-600 border-rose-200 px-4 py-2 text-xs"
             onClick={onCancel}
           >
-            Hủy
+            {t('uploadCancel')}
           </Button>
         </>
       )}
@@ -129,7 +132,7 @@ export function UploadDialogActions({
           className="py-2 text-xs"
           onClick={() => onRetrySave(uploadState.bunnyVideoId)}
         >
-          Thử lại lưu
+          {t('retrySave')}
         </Button>
       )}
 
@@ -143,7 +146,7 @@ export function UploadDialogActions({
           className="py-2 text-xs"
           onClick={onRetryUpload}
         >
-          Thử lại
+          {t('retry')}
         </Button>
       )}
     </div>

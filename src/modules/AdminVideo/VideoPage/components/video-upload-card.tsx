@@ -1,4 +1,5 @@
 import { CheckCircle2, Film, Pause, Play, Upload, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import * as tus from 'tus-js-client';
 
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export function VideoUploadCard({ onUploaded }: Props) {
+  const { t } = useTranslation('adminPage');
   const [uploadState, setUploadState] = useState<UploadState>({ status: 'idle' });
   const [form, setForm] = useState<UploadFormState>({ name: '', description: '', tag: '' });
   const [nameError, setNameError] = useState('');
@@ -32,7 +34,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
   }, [uploadState.status]);
 
   function handleFileSelect(file: File) {
-    const err = validateVideoFile(file);
+    const err = validateVideoFile(file, t);
     setUploadState({ status: 'selected', file, error: err ?? undefined });
   }
 
@@ -53,7 +55,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
       setUploadState({
         status: 'error',
         phase: 'saving',
-        message: 'Lưu thông tin thất bại, vui lòng thử lại.',
+        message: t('saveFailed'),
         canRetry: true,
         bunnyVideoId,
       });
@@ -62,7 +64,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
 
   async function startUpload() {
     if (!form.name.trim()) {
-      setNameError('Tên video không được để trống');
+      setNameError(t('nameRequired'));
       return;
     }
     setNameError('');
@@ -79,7 +81,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
       });
       if (!credRes.ok) {
         const errBody = (await credRes.json().catch(() => ({}))) as { message?: string; error?: string };
-        throw new Error(errBody.message ?? errBody.error ?? `Lỗi khởi tạo upload (${credRes.status})`);
+        throw new Error(errBody.message ?? errBody.error ?? `${t('initFailed')} (${credRes.status})`);
       }
       const { data: credData } = (await credRes.json()) as {
         data: { videoId: string; libraryId: string; expirationTime: number; signature: string };
@@ -125,7 +127,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
         tusInstance,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Có lỗi xảy ra, vui lòng thử lại.';
+      const message = err instanceof Error ? err.message : t('genericError');
       setUploadState({ status: 'error', phase: 'upload', message, canRetry: true });
     }
   }
@@ -172,7 +174,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
         <span className="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
           <Upload size={13} className="text-rose-500" />
         </span>
-        <span className="text-sm font-semibold text-gray-700">Upload Video</span>
+        <span className="text-sm font-semibold text-gray-700">{t('uploadVideo')}</span>
       </div>
 
       <div className="p-5 space-y-4">
@@ -181,11 +183,11 @@ export function VideoUploadCard({ onUploaded }: Props) {
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <CheckCircle2 size={40} className="text-emerald-500" />
             <div>
-              <p className="text-sm font-semibold text-gray-800">Upload thành công!</p>
+              <p className="text-sm font-semibold text-gray-800">{t('uploadSuccess')}</p>
               <p className="text-xs text-gray-400 mt-1 truncate max-w-[200px]">{uploadState.videoName}</p>
             </div>
             <Button variant="secondary" rounded="md" blur={false} onClick={handleReset} className="px-4 py-2 text-xs">
-              Upload video khác
+              {t('uploadAnother')}
             </Button>
           </div>
         )}
@@ -195,11 +197,11 @@ export function VideoUploadCard({ onUploaded }: Props) {
             {/* Form fields */}
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-gray-600">
-                Tên video <span className="text-rose-500">*</span>
+                {t('videoName')} <span className="text-rose-500">*</span>
               </label>
               <Input
                 size="sm"
-                placeholder="VD: Du lịch Hà Giang 2025"
+                placeholder={t('videoNamePlaceholder')}
                 value={form.name}
                 onChange={(e) => {
                   setForm((f) => ({ ...f, name: e.target.value }));
@@ -211,11 +213,11 @@ export function VideoUploadCard({ onUploaded }: Props) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-600">Mô tả</label>
+              <label className="text-xs font-medium text-gray-600">{t('description')}</label>
               <TextArea
                 className="text-sm rounded-xl"
                 rows={2}
-                placeholder="Mô tả ngắn về video..."
+                placeholder={t('descriptionPlaceholder')}
                 value={form.description}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                   setForm((f) => ({ ...f, description: e.target.value }))
@@ -225,10 +227,10 @@ export function VideoUploadCard({ onUploaded }: Props) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-gray-600">Tag</label>
+              <label className="text-xs font-medium text-gray-600">{t('tag')}</label>
               <Input
                 size="sm"
-                placeholder="VD: miền-bắc, hà-giang"
+                placeholder={t('tagsPlaceholder')}
                 value={form.tag}
                 onChange={(e) => setForm((f) => ({ ...f, tag: e.target.value }))}
                 disabled={isBusy}
@@ -252,7 +254,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
             {uploadState.status === 'error' && (
               <div className="rounded-lg bg-rose-50 border border-rose-100 px-3 py-2.5">
                 <p className="text-xs text-rose-600 font-medium">
-                  {uploadState.phase === 'saving' ? 'Lỗi lưu thông tin' : 'Lỗi upload'}
+                  {uploadState.phase === 'saving' ? t('saveError') : t('uploadError')}
                 </p>
                 <p className="text-xs text-rose-500 mt-0.5">{uploadState.message}</p>
               </div>
@@ -267,7 +269,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                   className="w-full flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-medium text-gray-400 bg-gray-50 border border-gray-200 rounded-xl cursor-not-allowed"
                 >
                   <Film size={14} />
-                  Chọn file để bắt đầu
+                  {t('selectFile')}
                 </button>
               )}
               {uploadState.status === 'selected' && !uploadState.error && (
@@ -282,7 +284,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                   }}
                 >
                   <Upload size={14} className="mr-1.5" />
-                  Bắt đầu upload
+                  {t('startUpload')}
                 </Button>
               )}
               {uploadState.status === 'uploading' && (
@@ -295,7 +297,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                     onClick={handlePause}
                   >
                     <Pause size={14} className="mr-1.5" />
-                    Tạm dừng
+                    {t('pause')}
                   </Button>
                   <Button
                     variant="ghost"
@@ -318,7 +320,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                     onClick={handleResume}
                   >
                     <Play size={14} className="mr-1.5" />
-                    Tiếp tục
+                    {t('resume')}
                   </Button>
                   <Button
                     variant="secondary"
@@ -327,7 +329,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                     className="text-rose-500 hover:text-rose-600 border-rose-200 px-4 py-2 text-xs"
                     onClick={handleCancel}
                   >
-                    Hủy
+                    {t('cancel')}
                   </Button>
                 </>
               )}
@@ -343,7 +345,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                       saveToDb(uploadState.bunnyVideoId).catch(() => null);
                     }}
                   >
-                    Thử lại lưu
+                    {t('retrySave')}
                   </Button>
                 ) : (
                   <Button
@@ -354,7 +356,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
                     className="py-2 text-xs"
                     onClick={() => setUploadState({ status: 'idle' })}
                   >
-                    Thử lại
+                    {t('retry')}
                   </Button>
                 ))}
             </div>

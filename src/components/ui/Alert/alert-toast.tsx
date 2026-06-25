@@ -1,10 +1,4 @@
-import {
-  CheckCircledIcon,
-  Cross2Icon,
-  CrossCircledIcon,
-  ExclamationTriangleIcon,
-  InfoCircledIcon,
-} from '@radix-ui/react-icons';
+import { CheckCircledIcon, Cross2Icon, ExclamationTriangleIcon, InfoCircledIcon } from '@radix-ui/react-icons';
 import { motion } from 'framer-motion';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -16,7 +10,7 @@ import { type AlertItem, useAlertStore } from '@/stores/use-alert-store';
 const ICON_MAP = {
   success: <CheckCircledIcon className="w-[18px] h-[18px] shrink-0" />,
   warning: <ExclamationTriangleIcon className="w-[18px] h-[18px] shrink-0" />,
-  error: <CrossCircledIcon className="w-[18px] h-[18px] shrink-0" />,
+  error: <ExclamationTriangleIcon className="w-[18px] h-[18px] shrink-0" />,
   info: <InfoCircledIcon className="w-[18px] h-[18px] shrink-0" />,
 } as const;
 
@@ -80,14 +74,22 @@ export function AlertToast({ alert }: { alert: AlertItem }) {
       onTouchStart={pause}
       onTouchEnd={resume}
     >
-      <Alert variant={alert.type} className="rounded-2xl shadow-lg backdrop-blur-md overflow-hidden py-4 px-5 pr-12">
+      <Alert
+        variant={alert.type}
+        className={cn(
+          'rounded-2xl shadow-lg backdrop-blur-md overflow-hidden py-3 px-5',
+          !alert.description && 'items-center'
+        )}
+      >
         {ICON_MAP[alert.type]}
 
-        <div className="space-y-1">
-          <AlertTitle className="font-semibold text-[15px] leading-snug">{alert.title}</AlertTitle>
+        <div className="space-y-1 flex-1 min-w-0">
+          <AlertTitle className="font-semibold text-[15px] leading-snug mb-0 break-words">{alert.title}</AlertTitle>
 
           {alert.description && (
-            <AlertDescription className="text-sm opacity-90 leading-normal">{alert.description}</AlertDescription>
+            <AlertDescription className="text-sm opacity-90 leading-normal break-words">
+              {alert.description}
+            </AlertDescription>
           )}
 
           {alert.action && (
@@ -106,17 +108,16 @@ export function AlertToast({ alert }: { alert: AlertItem }) {
           )}
         </div>
 
-        <Button
-          variant="icon"
-          size="icon"
-          rounded="full"
-          blur={false}
+        <button
           onClick={() => removeAlert(alert.id)}
-          className="absolute top-3 right-3 p-1"
+          className={cn(
+            'shrink-0 rounded-full p-1.5 transition-all duration-200 hover:bg-black/5 opacity-60 hover:opacity-100 focus:outline-none',
+            alert.description && '-mt-1'
+          )}
           aria-label="Close"
         >
-          <Cross2Icon className="w-3.5 h-3.5" />
-        </Button>
+          <Cross2Icon className="w-[18px] h-[18px]" />
+        </button>
 
         {duration > 0 && (
           <div className={cn('absolute bottom-0 left-0 w-full h-[3px] bg-black/5')}>

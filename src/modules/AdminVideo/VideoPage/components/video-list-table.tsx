@@ -1,4 +1,5 @@
 import { Film, Search } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import { Input } from '@/components/ui/input';
 import { useAlertStore } from '@/stores/use-alert-store';
@@ -12,6 +13,7 @@ interface Props {
 }
 
 export function VideoListTable({ refreshKey }: Props) {
+  const { t } = useTranslation('adminPage');
   const { videos, isLoading, hasNext, page, totalPages, pageSize, search, setSearch, setPageSize, nextPage, prevPage } =
     useVideoListPaged(refreshKey);
 
@@ -20,10 +22,10 @@ export function VideoListTable({ refreshKey }: Props) {
     navigator.clipboard
       .writeText(embedUrl)
       .then(() => {
-        addAlert({ type: 'success', title: 'Đã copy embed URL' });
+        addAlert({ type: 'success', title: t('copiedEmbed') });
       })
       .catch(() => {
-        addAlert({ type: 'error', title: 'Không thể copy' });
+        addAlert({ type: 'error', title: t('copyFailed') });
       });
   }
 
@@ -36,7 +38,7 @@ export function VideoListTable({ refreshKey }: Props) {
         <span className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
           <Film size={13} className="text-indigo-600" />
         </span>
-        <span className="text-sm font-semibold text-gray-700">Danh sách Video</span>
+        <span className="text-sm font-semibold text-gray-700">{t('videoList')}</span>
       </div>
 
       {/* Search + page size */}
@@ -46,7 +48,7 @@ export function VideoListTable({ refreshKey }: Props) {
           <Input
             size="sm"
             className="pl-8"
-            placeholder="Tìm kiếm theo tên..."
+            placeholder={t('searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -58,7 +60,7 @@ export function VideoListTable({ refreshKey }: Props) {
         >
           {PAGE_SIZE_OPTIONS.map((n) => (
             <option key={n} value={n}>
-              {n} / trang
+              {t('perPage', { count: n })}
             </option>
           ))}
         </select>
@@ -74,7 +76,7 @@ export function VideoListTable({ refreshKey }: Props) {
               <th className="py-2.5 px-2 text-left w-20">Type</th>
               <th className="py-2.5 px-2 text-left w-24">Tag</th>
               <th className="py-2.5 px-2 text-center w-20">Upload</th>
-              <th className="py-2.5 px-2 text-right w-20">Thích</th>
+              <th className="py-2.5 px-2 text-right w-20">{t('likes')}</th>
               <th className="py-2.5 pl-2 pr-4 text-center w-20">Embed</th>
             </tr>
           </thead>
@@ -115,9 +117,7 @@ export function VideoListTable({ refreshKey }: Props) {
                 <td colSpan={7} className="py-12 text-center">
                   <Film size={28} className="text-gray-200 mx-auto mb-2" />
                   <p className="text-xs text-gray-400">
-                    {search
-                      ? `Không tìm thấy video nào với từ khóa "${search}".`
-                      : 'Chưa có video nào. Hãy upload video đầu tiên.'}
+                    {search ? t('noSearchResults', { search }) : t('noVideosYet')}
                   </p>
                 </td>
               </tr>
@@ -138,18 +138,16 @@ export function VideoListTable({ refreshKey }: Props) {
           disabled={page === 1 || isLoading}
           onClick={prevPage}
         >
-          ← Trang trước
+          {t('prevPage')}
         </button>
-        <span className="text-xs text-gray-400">
-          Trang {page} / {totalPages}
-        </span>
+        <span className="text-xs text-gray-400">{t('pageOf', { page, totalPages })}</span>
         <button
           type="button"
           className="text-xs text-gray-500 hover:text-gray-700 disabled:text-gray-300 disabled:cursor-not-allowed transition-colors"
           disabled={!hasNext || isLoading}
           onClick={nextPage}
         >
-          Trang tiếp →
+          {t('nextPage')}
         </button>
       </div>
     </div>

@@ -1,19 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useTourGuideById } from '@/api/tour-guide/queries';
 
-import type { GuideProfileData } from '@/modules/GuideProfilePage/data/mock-guide';
-import { MOCK_GUIDE } from '@/modules/GuideProfilePage/data/mock-guide';
+export function useGuideProfile(id: string | undefined) {
+  const { data, isLoading, error } = useTourGuideById({
+    variables: { id: id! },
+    enabled: !!id,
+  });
 
-export function useGuideProfile(_id: string | undefined) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<GuideProfileData | null>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setData(MOCK_GUIDE);
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timer);
-  }, []);
-
-  return { data, isLoading };
+  return {
+    data: data ?? null,
+    isLoading,
+    error,
+  };
 }

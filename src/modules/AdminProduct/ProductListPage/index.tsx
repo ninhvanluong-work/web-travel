@@ -1,5 +1,6 @@
 import { CheckCircle2, FileText, SlidersHorizontal } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { useDestinationList, useProductList, useSupplierList } from '@/api/product';
@@ -8,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { StatCard } from '@/components/ui/stat-card';
 import { useProductFilters } from '@/hooks/use-product-filters';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ProductFilterBar } from './components/ProductFilterBar';
@@ -18,6 +19,7 @@ import { useProductListActions } from './hooks/use-product-list-actions';
 const PAGE_SIZE = 10;
 
 export default function ProductListPage() {
+  const { t } = useTranslation('adminPage');
   const router = useRouter();
   const [filterOpen, setFilterOpen] = useState(false);
 
@@ -58,7 +60,7 @@ export default function ProductListPage() {
     <div className="min-h-full bg-gray-50 dark:bg-gray-900 p-6 space-y-5">
       {/* Page header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Tour List</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{t('tourListTitle')}</h1>
         <Button
           variant="primary"
           size="xs"
@@ -68,14 +70,14 @@ export default function ProductListPage() {
           onClick={() => router.push(ROUTE.ADMIN_PRODUCTS_CREATE)}
         >
           <Icons.plusCircle size={15} />
-          Add New Tour
+          {t('addTour')}
         </Button>
       </div>
 
       {/* Stat cards */}
       <div className="grid grid-cols-3 gap-4">
         <StatCard
-          label="Total Tours"
+          label={t('totalTours')}
           value={total}
           icon={Icons.packageIcon}
           accentClass="bg-blue-500"
@@ -83,7 +85,7 @@ export default function ProductListPage() {
           iconColorClass="text-blue-600"
         />
         <StatCard
-          label="Published"
+          label={t('published')}
           value={publishedCount}
           icon={CheckCircle2}
           accentClass="bg-emerald-500"
@@ -91,7 +93,7 @@ export default function ProductListPage() {
           iconColorClass="text-emerald-600"
         />
         <StatCard
-          label="Drafts"
+          label={t('drafts')}
           value={draftCount}
           icon={FileText}
           accentClass="bg-amber-400"
@@ -111,7 +113,7 @@ export default function ProductListPage() {
             />
             <input
               type="text"
-              placeholder="Search tours..."
+              placeholder={t('searchToursPlaceholder')}
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               className="w-full h-11 pl-11 pr-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500"
@@ -130,7 +132,7 @@ export default function ProductListPage() {
                   }`}
                 >
                   <SlidersHorizontal size={16} />
-                  Filter
+                  {t('filter')}
                   {hasActiveFilters && <span className="w-1.5 h-1.5 rounded-full bg-brand-500 inline-block" />}
                 </button>
               </PopoverTrigger>
@@ -139,10 +141,12 @@ export default function ProductListPage() {
                 className="w-[350px] p-7 rounded-2xl shadow-theme-lg border-gray-100 bg-white dark:bg-gray-900"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <p className="text-base font-bold text-gray-900 dark:text-white text-nowrap">Advanced Filters</p>
+                  <p className="text-base font-bold text-gray-900 dark:text-white text-nowrap">
+                    {t('advancedFilters')}
+                  </p>
                   {hasActiveFilters && (
                     <button onClick={resetFilters} className="text-xs text-brand-600 hover:underline font-medium">
-                      Clear All
+                      {t('clearAll')}
                     </button>
                   )}
                 </div>
@@ -175,11 +179,11 @@ export default function ProductListPage() {
         {/* Pagination - TailAdmin Style */}
         <div className="border-t border-gray-100 dark:border-gray-800 px-6 py-5 flex items-center justify-between bg-white dark:bg-transparent">
           <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-            Showing{' '}
+            {t('showing')}{' '}
             <span className="text-gray-900 dark:text-white">
               {pageOffset + 1}–{Math.min(pageOffset + items.length, total)}
             </span>{' '}
-            / <span className="text-gray-900 dark:text-white">{total}</span> tours
+            / <span className="text-gray-900 dark:text-white">{total}</span> {t('toursUnit')}
           </p>
 
           <div className="flex items-center gap-2">
@@ -190,27 +194,37 @@ export default function ProductListPage() {
               className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
             >
               <Icons.chevronLeft size={16} />
-              Previous
+              {t('prev')}
             </button>
 
             <div className="flex items-center gap-1.5">
-              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-                const p = i + 1;
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => setPage(p)}
-                    className={`inline-flex items-center justify-center h-10 w-10 rounded-lg text-sm font-semibold transition-all ${
-                      p === page
-                        ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20'
-                        : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5'
-                    }`}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
+              {(() => {
+                const maxButtons = 5;
+                let startPage = Math.max(1, page - Math.floor(maxButtons / 2));
+                const endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+                if (endPage - startPage + 1 < maxButtons) {
+                  startPage = Math.max(1, endPage - maxButtons + 1);
+                }
+
+                return Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+                  const p = startPage + i;
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => setPage(p)}
+                      className={`inline-flex items-center justify-center h-10 w-10 rounded-lg text-sm font-semibold transition-all ${
+                        p === page
+                          ? 'bg-brand-500 text-white shadow-md shadow-brand-500/20'
+                          : 'text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/5'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  );
+                });
+              })()}
             </div>
 
             <button
@@ -219,7 +233,7 @@ export default function ProductListPage() {
               onClick={() => setPage((p) => p + 1)}
               className="inline-flex items-center gap-1.5 h-10 px-4 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-theme-xs dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400"
             >
-              Next
+              {t('next')}
               <Icons.chevronRight size={16} />
             </button>
           </div>

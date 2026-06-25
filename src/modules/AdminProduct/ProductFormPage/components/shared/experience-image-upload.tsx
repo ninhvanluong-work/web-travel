@@ -3,13 +3,26 @@ import { useRef, useState } from 'react';
 
 import { uploadImage } from '@/api/upload';
 import { Input } from '@/components/ui/input';
+import { cn } from '@/lib/utils';
 
 export function ExperienceImageUpload({
   value,
   onChange,
+  aspectRatio,
+  shape = 'rectangle',
+  hideUrlInput = false,
+  changeLabel = 'Thay đổi ảnh',
+  uploadLabel = 'Tải ảnh lên',
+  uploadingLabel = 'Đang tải lên...',
 }: {
   value: string | null | undefined;
   onChange: (url: string) => void;
+  aspectRatio?: string;
+  shape?: 'rectangle' | 'circle';
+  hideUrlInput?: boolean;
+  changeLabel?: string;
+  uploadLabel?: string;
+  uploadingLabel?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -30,7 +43,11 @@ export function ExperienceImageUpload({
   return (
     <div className="space-y-3">
       <div
-        className="w-full aspect-[4/3] sm:aspect-[16/9] rounded-[14px] overflow-hidden border border-slate-200 shadow-sm bg-slate-50 flex flex-col items-center justify-center relative cursor-pointer hover:border-brand-400 hover:bg-brand-50/30 transition-all group"
+        className={cn(
+          'overflow-hidden border border-slate-200 shadow-sm bg-slate-50 flex flex-col items-center justify-center relative cursor-pointer hover:border-brand-400 hover:bg-brand-50/30 transition-all group',
+          aspectRatio ?? 'w-full aspect-[4/3] sm:aspect-[16/9]',
+          shape === 'circle' ? 'rounded-full' : 'rounded-[14px]'
+        )}
         onClick={() => inputRef.current?.click()}
       >
         {value ? (
@@ -38,36 +55,38 @@ export function ExperienceImageUpload({
             <img src={value} alt="" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1">
               <ImageIcon size={20} className="text-white" />
-              <span className="text-[11px] font-medium text-white">Change image</span>
+              <span className="text-[11px] font-medium text-white">{changeLabel}</span>
             </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full gap-2 text-slate-400 group-hover:text-brand-500 transition-colors">
             {uploading ? <Loader2 size={24} className="animate-spin text-brand-500" /> : <ImageIcon size={24} />}
-            <span className="text-[12px] font-medium">{uploading ? 'Uploading...' : 'Upload image'}</span>
+            <span className="text-[12px] font-medium">{uploading ? uploadingLabel : uploadLabel}</span>
           </div>
         )}
         <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
       </div>
 
-      <div className="relative">
-        <Input
-          size="sm"
-          placeholder="Or paste image URL directly..."
-          value={value ?? ''}
-          onChange={(e) => onChange(e.target.value)}
-          className="pl-3 pr-8 text-[12px] h-9 bg-slate-50/80 border-slate-200 hover:bg-white focus:bg-white focus:border-brand-400 transition-all shadow-sm w-full"
-        />
-        {value && (
-          <button
-            type="button"
-            onClick={() => onChange('')}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <X size={13} />
-          </button>
-        )}
-      </div>
+      {!hideUrlInput && (
+        <div className="relative">
+          <Input
+            size="sm"
+            placeholder="Or paste image URL directly..."
+            value={value ?? ''}
+            onChange={(e) => onChange(e.target.value)}
+            className="pl-3 pr-8 text-[12px] h-9 bg-slate-50/80 border-slate-200 hover:bg-white focus:bg-white focus:border-brand-400 transition-all shadow-sm w-full"
+          />
+          {value && (
+            <button
+              type="button"
+              onClick={() => onChange('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X size={13} />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

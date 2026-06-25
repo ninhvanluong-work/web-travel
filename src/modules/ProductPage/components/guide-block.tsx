@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 interface GuideBlockProps {
   id?: string;
@@ -23,9 +24,11 @@ export default function GuideBlock({
   area,
 }: GuideBlockProps) {
   const router = useRouter();
+  const { t } = useTranslation('productPage');
+
   return (
     <div className="px-[18px] pb-[22px]">
-      <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">Your guide</p>
+      <p className="text-[11px] uppercase tracking-wide text-[#888884] font-medium mb-3">{t('yourGuide')}</p>
       <div className="border border-black/[0.08] rounded-[14px] p-4 flex items-center gap-3">
         <div className="w-11 h-11 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0F6E56] text-[15px] font-medium flex-shrink-0">
           {initials}
@@ -36,7 +39,8 @@ export default function GuideBlock({
             <span className="text-[12px] text-[#888884]">· {rating} ★</span>
           </div>
           <p className="text-[12px] text-[#888884]">
-            {yearsExperience} years experience · {toursInArea} tours in {area}
+            {t('yearsExperienceCount', { count: yearsExperience })} ·{' '}
+            {t('toursInAreaCount', { count: toursInArea, area })}
           </p>
         </div>
         <Button
@@ -47,7 +51,7 @@ export default function GuideBlock({
           onClick={() => id && router.push(ROUTE.GUIDE_PROFILE_PATH(id))}
           disabled={!id}
         >
-          View profile →
+          {t('viewProfile')}
         </Button>
       </div>
     </div>

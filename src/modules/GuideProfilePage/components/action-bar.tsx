@@ -1,20 +1,29 @@
 import { motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
+import type { ITourGuideProfile } from '@/api/tour-guide/types';
 import { useAlertStore } from '@/stores/use-alert-store';
 
-import type { GuideProfileData } from '../data/mock-guide';
+import EditProfileSheet from './edit-profile-sheet';
+import ManageMomentsSheet from './manage-moments-sheet';
 import QrSheet from './qr-sheet';
+import RatingSheet from './rating-sheet';
 
 interface ActionBarProps {
-  guide: Pick<GuideProfileData, 'id' | 'name'>;
+  guide: Pick<ITourGuideProfile, 'id' | 'name'>;
+  isOwner: boolean;
 }
 
-export default function ActionBar({ guide }: ActionBarProps) {
+export default function ActionBar({ guide, isOwner }: ActionBarProps) {
+  const { t } = useTranslation('guidePage');
   const [qrOpen, setQrOpen] = useState(false);
+  const [ratingOpen, setRatingOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [manageMomentsOpen, setManageMomentsOpen] = useState(false);
 
   const handleShare = async () => {
-    const url = `https://vvv.travel/g/${guide.id}`;
+    const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/guide/${guide.id}`;
     if (typeof navigator !== 'undefined' && navigator.share) {
       try {
         await navigator.share({ title: guide.name, url });
@@ -26,9 +35,9 @@ export default function ActionBar({ guide }: ActionBarProps) {
         if (navigator.clipboard) {
           await navigator.clipboard.writeText(url);
         }
-        useAlertStore.getState().addAlert({ type: 'success', title: 'Đã sao chép liên kết' });
+        useAlertStore.getState().addAlert({ type: 'success', title: t('actionBar.shareCopied') });
       } catch {
-        useAlertStore.getState().addAlert({ type: 'error', title: 'Không thể sao chép liên kết' });
+        useAlertStore.getState().addAlert({ type: 'error', title: t('actionBar.shareFailed') });
       }
     }
   };
@@ -39,10 +48,59 @@ export default function ActionBar({ guide }: ActionBarProps) {
         <motion.button
           whileTap={{ scale: 0.96 }}
           transition={{ duration: 0.1 }}
-          className="flex-1 bg-neutral-black text-white py-3 rounded-md text-[13px] font-medium"
+          className="flex-1 bg-neutral-black text-white py-3 px-3 rounded-md text-[13px] font-medium truncate"
         >
-          Đặt tour với {guide.name.split(' ').pop()}
+          {t('bookTour', { name: guide.name.split(' ').pop() })}
         </motion.button>
+
+        {isOwner ? (
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.1 }}
+            onClick={() => setEditOpen(true)}
+            className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap flex items-center justify-center"
+            title={t('editProfile')}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="sm:hidden block"
+            >
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+            <span className="hidden sm:inline">{t('editProfile')}</span>
+          </motion.button>
+        ) : (
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.1 }}
+            onClick={() => setRatingOpen(true)}
+            className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap flex items-center justify-center"
+            title={t('rateMe')}
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="sm:hidden block"
+            >
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+            </svg>
+            <span className="hidden sm:inline">{t('rateMe')}</span>
+          </motion.button>
+        )}
 
         <motion.button
           whileHover={{ rotate: 5 }}
@@ -85,6 +143,18 @@ export default function ActionBar({ guide }: ActionBarProps) {
       </div>
 
       <QrSheet open={qrOpen} onClose={() => setQrOpen(false)} guideId={guide.id} guideName={guide.name} />
+      <RatingSheet open={ratingOpen} onClose={() => setRatingOpen(false)} guideId={guide.id} guideName={guide.name} />
+      <EditProfileSheet
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        guideId={guide.id}
+        guideName={guide.name}
+        onOpenManageMoments={() => {
+          setEditOpen(false);
+          setManageMomentsOpen(true);
+        }}
+      />
+      <ManageMomentsSheet open={manageMomentsOpen} onClose={() => setManageMomentsOpen(false)} guideId={guide.id} />
     </>
   );
 }

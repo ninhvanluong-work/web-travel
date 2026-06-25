@@ -63,8 +63,13 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z.string().nonempty(validationMessages.required('Email')).email(validationMessages.invalid('Email')),
-  password: z.string().nonempty(),
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .max(255)
+    .email('Please enter a valid email address')
+    .transform((v) => v.trim()),
+  password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().default(false).optional(),
 });
 
@@ -107,7 +112,27 @@ export const changePasswordSchema = z.object({
     .refine((v) => REGEX_PASSWORD.test(v), 'Password too week'),
 });
 
+export const signUpSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .max(255)
+    .email('Please enter a valid email address')
+    .transform((v) => v.trim().toLowerCase()),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(6, 'Password must be at least 6 characters')
+    .max(100)
+    .refine(
+      (v) => REGEX_PASSWORD.test(v),
+      'Password must contain at least 1 uppercase, 1 lowercase, and 1 number or special character'
+    ),
+  isTourGuide: z.boolean().default(false),
+});
+
 export type LoginSchema = z.infer<typeof loginSchema>;
+export type SignUpSchema = z.infer<typeof signUpSchema>;
 export type RegisterSchema = z.infer<typeof registerSchema>;
 export type ForgotSchema = z.infer<typeof forgotPasswordSchema>;
 export type ResetSchema = z.infer<typeof resetPassSchema>;

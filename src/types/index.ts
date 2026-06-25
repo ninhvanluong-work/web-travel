@@ -14,7 +14,8 @@ export interface ErrorMutate {
   dynamic_data?: {};
 }
 
-export { ROUTE } from './routes';
+export type { ROUTE_KEY } from './routes';
+export { API_ROUTE, ROUTE } from './routes';
 
 export type ElementProps<ElementType extends React.ElementType, PropsToOmit extends string = never> = Omit<
   React.ComponentPropsWithoutRef<ElementType>,

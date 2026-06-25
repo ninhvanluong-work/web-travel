@@ -6,7 +6,7 @@ import type { IProduct } from '@/api/product';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import { ProductTableRow } from './ProductTableRow';
 

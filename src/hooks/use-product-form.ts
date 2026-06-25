@@ -7,7 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useCreateProduct, useProductById, useUpdateProduct, useUpdateProductStatus } from '@/api/product';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { useAlertStore } from '@/stores/use-alert-store';
-import { ROUTE } from '@/types/routes';
+import { ROUTE } from '@/types';
 
 import { useProductDraft } from './use-product-draft';
 

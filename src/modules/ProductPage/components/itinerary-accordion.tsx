@@ -1,6 +1,5 @@
-'use client';
-
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { Icons } from '@/assets/icons';
@@ -17,18 +16,20 @@ interface ItineraryAccordionProps {
 }
 
 export default function ItineraryAccordion({ steps }: ItineraryAccordionProps) {
+  const { t } = useTranslation('productPage');
   const [openStep, setOpenStep] = useState<number | null>(null);
 
   const toggle = (step: number) => setOpenStep(openStep === step ? null : step);
 
   return (
     <div className="px-[18px] pb-[22px] border-t border-black/[0.08] pt-6">
-      <p className="text-base font-medium">Itinerary</p>
-      <p className="text-[12px] text-[#888884] mt-0.5">tap to see details for each leg</p>
+      <p className="text-base font-medium">{t('itinerary')}</p>
+      <p className="text-[12px] text-[#888884] mt-0.5">{t('tapToSeeLegDetails')}</p>
 
       <div className="mt-4 flex flex-col gap-2.5">
         {steps.map((step) => {
           const isOpen = openStep === step.step;
+          const displayTime = step.time.startsWith('Point ') ? t('pointStep', { step: step.step }) : step.time;
           return (
             <div key={step.step} className="border border-black/[0.08] rounded-[14px] overflow-hidden bg-[#F1EFE8]">
               <button className="w-full flex items-center gap-3 p-4 text-left" onClick={() => toggle(step.step)}>
@@ -36,7 +37,7 @@ export default function ItineraryAccordion({ steps }: ItineraryAccordionProps) {
                   {step.step}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[11px] uppercase tracking-wide text-[#888884]">{step.time}</p>
+                  <p className="text-[11px] uppercase tracking-wide text-[#888884]">{displayTime}</p>
                   <p className="text-[14px] font-medium mt-0.5">{step.title}</p>
                 </div>
                 <motion.span

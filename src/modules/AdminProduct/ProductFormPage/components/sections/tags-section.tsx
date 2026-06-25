@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Tag, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -12,6 +13,7 @@ type TagItem = { id: string; name: string };
 
 export function TagsSection() {
   const { control, setValue } = useFormContext<ProductFormValues>();
+  const { t } = useTranslation('adminPage');
   const rawTags = useWatch({ control, name: 'tags' });
   const tags = useMemo(() => (rawTags ?? []) as TagItem[], [rawTags]);
 
@@ -20,7 +22,7 @@ export function TagsSection() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const debouncedQuery = useDebounce(query, 300);
-  const selectedIds = tags.map((t) => t.id);
+  const selectedIds = tags.map((tag) => tag.id);
 
   const addTag = useCallback(
     (tag: TagItem, shouldFocus = true) => {
@@ -35,7 +37,7 @@ export function TagsSection() {
   function removeTag(id: string) {
     setValue(
       'tags',
-      tags.filter((t) => t.id !== id),
+      tags.filter((tag) => tag.id !== id),
       { shouldValidate: true }
     );
   }
@@ -88,7 +90,7 @@ export function TagsSection() {
 
         <input
           ref={inputRef}
-          placeholder={tags.length === 0 ? 'Find or create a new tag...' : ''}
+          placeholder={tags.length === 0 ? t('findOrCreateTag') : ''}
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);

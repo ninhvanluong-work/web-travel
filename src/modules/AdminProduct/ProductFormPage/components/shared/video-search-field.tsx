@@ -1,4 +1,5 @@
 import { Film, Search, Upload, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -21,6 +22,7 @@ export function VideoSearchField({
 }) {
   const { control, watch, setValue } = useFormContext<ProductFormValues>();
   const currentVideoId = watch('videoId');
+  const { t } = useTranslation('adminPage');
 
   const [query, setQuery] = useState('');
   const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(() => {
@@ -88,7 +90,7 @@ export function VideoSearchField({
       name="videoId"
       render={({ field }) => (
         <FormItem className="space-y-1.5">
-          <FormLabel className="text-[13px] text-slate-500 font-medium">Tour Video</FormLabel>
+          <FormLabel className="text-[13px] text-slate-500 font-medium">{t('tourVideoLabel')}</FormLabel>
 
           {field.value && selectedVideo ? (
             <div className="flex items-center gap-2.5 p-2 rounded-xl bg-slate-50 border border-slate-200 group hover:border-brand-200 hover:bg-brand-50/30 transition-colors">
@@ -105,7 +107,7 @@ export function VideoSearchField({
                 <p className="text-[12px] font-semibold text-slate-700 truncate leading-tight">{selectedVideo.title}</p>
                 <p className="text-[10px] text-brand-500 font-medium mt-0.5 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-brand-400 inline-block" />
-                  Linked
+                  {t('tourVideoLinked')}
                 </p>
               </div>
               <Button
@@ -132,7 +134,7 @@ export function VideoSearchField({
                 <Input
                   size="sm"
                   fullWidth
-                  placeholder="Search videos..."
+                  placeholder={t('searchVideosPlaceholder')}
                   className="pl-9"
                   value={query}
                   onChange={(e) => {
@@ -170,7 +172,7 @@ export function VideoSearchField({
                 onClick={() => setIsUploadOpen(true)}
               >
                 <Upload size={13} />
-                Upload
+                {t('uploadButton')}
               </Button>
 
               <VideoUploadDialog

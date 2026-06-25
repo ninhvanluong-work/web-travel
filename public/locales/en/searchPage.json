@@ -1,0 +1,11 @@
+{
+  "searchPlaceholder": "Search videos...",
+  "searchButton": "Search",
+  "backButton": "Go back",
+  "options": "Options",
+  "noResults": "No videos found",
+  "noMoreVideos": "No more videos found",
+  "loadingMore": "Loading more...",
+  "muteAudio": "Mute audio",
+  "unmuteAudio": "Unmute audio"
+}

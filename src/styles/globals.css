@@ -187,6 +187,22 @@
   .drop-shadow-arrow {
     filter: drop-shadow(0px 1px 4px rgba(0, 0, 0, 0.16));
   }
+
+  /* Admin form label — used on <FormLabel> throughout admin modules */
+  .admin-form-label {
+    @apply text-[13px] text-slate-500 font-medium;
+  }
+
+  /* Section sub-label — uppercase caps label above a group of fields */
+  .section-label-caps {
+    @apply text-[12px] text-slate-400 font-semibold uppercase tracking-wider block mb-2;
+  }
+
+  /* Zone divider — thin border separating content zones inside a section card */
+  .zone-divider {
+    @apply border-t border-slate-100 my-1;
+    @apply dark:border-gray-800/80;
+  }
 }
 
 ::-webkit-scrollbar-track {

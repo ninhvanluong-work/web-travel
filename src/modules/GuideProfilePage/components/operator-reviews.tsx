@@ -1,3 +1,5 @@
+import { useTranslation } from 'next-i18next';
+
 import type { GuideProfileData } from '../data/mock-guide';
 
 interface OperatorReviewsProps {
@@ -5,10 +7,12 @@ interface OperatorReviewsProps {
 }
 
 export default function OperatorReviews({ reviews }: OperatorReviewsProps) {
+  const { t } = useTranslation('guidePage');
+
   if (reviews.length === 0) {
     return (
       <div className="py-[22px] px-[18px] bg-neutral-100 border-b border-neutral-200">
-        <p className="text-caption2 text-neutral-400 italic text-center">Chưa có đánh giá từ công ty tour</p>
+        <p className="text-caption2 text-neutral-400 italic text-center">{t('operatorReviewsEmpty')}</p>
       </div>
     );
   }
@@ -20,7 +24,7 @@ export default function OperatorReviews({ reviews }: OperatorReviewsProps) {
           <path d="M8 1L10 5.5L15 6L11.5 9.5L12.5 14.5L8 12L3.5 14.5L4.5 9.5L1 6L6 5.5L8 1Z" fill="#F5A623" />
         </svg>
         <p className="text-[11px] text-neutral-500 uppercase font-medium" style={{ letterSpacing: '0.5px' }}>
-          Đánh giá từ công ty tour
+          {t('operatorReviews')}
         </p>
       </div>
 
@@ -43,9 +47,7 @@ export default function OperatorReviews({ reviews }: OperatorReviewsProps) {
         ))}
       </div>
 
-      <p className="text-[11px] text-neutral-500 italic text-center mt-3">
-        Đánh giá từ công ty được xác minh và không thể chỉnh sửa
-      </p>
+      <p className="text-[11px] text-neutral-500 italic text-center mt-3">{t('operatorReviewsNote')}</p>
     </div>
   );
 }

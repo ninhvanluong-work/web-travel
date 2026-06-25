@@ -1,4 +1,5 @@
 import { Film, Loader2, X } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
@@ -14,6 +15,7 @@ import type { ProductFormValues } from '@/lib/validations/product';
 export function VideoCard() {
   const { control, watch } = useFormContext<ProductFormValues>();
   const currentVideoId = watch('videoId');
+  const { t } = useTranslation('adminPage');
 
   const [query, setQuery] = useState('');
   const [selectedVideo, setSelectedVideo] = useState<IVideo | null>(null);
@@ -61,7 +63,7 @@ export function VideoCard() {
         <span className="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center shrink-0">
           <Film size={13} className="text-rose-500" />
         </span>
-        <span className="text-xs font-semibold text-gray-700 dark:text-white/90 tracking-wide">Video</span>
+        <span className="text-xs font-semibold text-gray-700 dark:text-white/90 tracking-wide">{t('videoName')}</span>
       </div>
 
       <div className="p-4 space-y-3">
@@ -73,7 +75,7 @@ export function VideoCard() {
               <div className="relative">
                 <Input
                   size="sm"
-                  placeholder="Tìm video theo tên..."
+                  placeholder={t('searchVideosPlaceholder')}
                   value={query}
                   onChange={(e) => {
                     setQuery(e.target.value);
@@ -94,7 +96,7 @@ export function VideoCard() {
                       </div>
                     )}
                     {!isLoading && results.length === 0 && (
-                      <p className="text-xs text-gray-400 text-center py-4">Không có video</p>
+                      <p className="text-xs text-gray-400 text-center py-4">{t('noVideos')}</p>
                     )}
                     {results.map((video) => (
                       <button
