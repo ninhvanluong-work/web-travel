@@ -37,7 +37,7 @@ export default function SignUpPage() {
 
   const onSubmit = (values: SignUpSchema) => {
     register(
-      { email: values.email, password: values.password },
+      { email: values.email, password: values.password, role: values.isTourGuide ? 'tour_guide' : 'normal' },
       {
         onSuccess: () => {
           useAlertStore.getState().addAlert({

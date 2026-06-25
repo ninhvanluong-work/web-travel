@@ -15,7 +15,7 @@ export interface ILoginResponse {
 export interface IRegisterParams {
   email: string;
   password: string;
-  isTourGuide?: boolean;
+  role: 'normal' | 'tour_guide';
 }
 
 export interface IRegisterResponse extends ILoginResponse {}
@@ -31,7 +31,7 @@ export interface IUser {
   lastName?: string;
   company?: string;
   emailVerifiedAt?: string;
-  role?: 'guide' | 'tour_guide' | 'user';
+  role?: 'guide' | 'tour_guide' | 'user' | 'normal';
   tourGuideId?: string;
 }
 

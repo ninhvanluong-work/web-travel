@@ -26,16 +26,7 @@ export const loginRequest = async (params: ILoginParams): Promise<ILoginResponse
 
   const { token, refreshToken, user } = res.data;
 
-  // TODO: remove when API returns role and tourGuideId
-  return {
-    accessToken: token,
-    refreshToken,
-    user: {
-      ...user,
-      role: user.role ?? 'tour_guide',
-      tourGuideId: user.tourGuideId ?? '991ad4ab-f45d-48ee-9d97-2020256d24b3',
-    },
-  };
+  return { accessToken: token, refreshToken, user };
 };
 
 export const logoutRequest = async (): Promise<boolean> => {
