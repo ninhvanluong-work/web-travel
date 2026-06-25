@@ -18,7 +18,7 @@ import { ROUTE } from '@/types';
 const labelCls = 'block text-body4 font-semibold text-[#010F1C] mb-2 tracking-[0.2px] font-dinpro';
 const inputCls =
   '!bg-white rounded-full border-0 placeholder:text-[#939393] shadow-sm text-[#010F1C] [&:-webkit-autofill]:shadow-[inset_0_0_0_9999px_white] [&:-webkit-autofill]:!bg-white';
-const errorCls = 'text-body4 text-red-500 mt-1.5';
+const errorCls = 'text-body4 text-red-500 mt-1.5 ml-4';
 
 export default function SignUpPage() {
   const { t } = useTranslation('authPage');

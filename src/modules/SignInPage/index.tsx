@@ -87,7 +87,7 @@ export default function SignInPage() {
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="text-body4 text-red-500 mt-1.5"
+                  className="text-body4 text-red-500 mt-1.5 ml-4"
                 >
                   {errors.email.message}
                 </motion.p>
@@ -117,7 +117,7 @@ export default function SignInPage() {
                   initial={{ opacity: 0, y: -4 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="text-body4 text-red-500 mt-1.5"
+                  className="text-body4 text-red-500 mt-1.5 ml-4"
                 >
                   {errors.password.message}
                 </motion.p>
