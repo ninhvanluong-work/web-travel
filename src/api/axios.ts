@@ -24,15 +24,12 @@ const onRefreshToken = async () => {
       store.setAccessToken(accessToken);
       return accessToken;
     } catch (e) {
-      Router.replace(ROUTE.HOME);
       store.logout();
+      Router.replace({ pathname: ROUTE.SIGN_IN, query: { callbackUrl: Router.asPath } });
     }
   } else {
-    if (Router.pathname !== ROUTE.HOME) {
-      // toast.error('Your session is expired, please try to login again');
-      Router.replace(ROUTE.HOME);
-    }
     store.logout();
+    Router.replace({ pathname: ROUTE.SIGN_IN, query: { callbackUrl: Router.asPath } });
   }
   return null;
 };

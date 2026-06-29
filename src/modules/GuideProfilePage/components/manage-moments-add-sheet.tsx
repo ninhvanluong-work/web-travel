@@ -120,7 +120,9 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
             };
           }
         );
-        useAlertStore.getState().addAlert({ type: 'success', title: t('manageMomentsSheet.editSuccess') });
+        useAlertStore
+          .getState()
+          .addAlert({ type: 'success', title: t('manageMomentsSheet.editSuccess'), duration: 3000 });
         handleClose();
       } else {
         const created = await createTourGuideMoment(guideId, {
@@ -157,16 +159,20 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
             };
           }
         );
-        useAlertStore.getState().addAlert({ type: 'success', title: t('manageMomentsSheet.addMoment') });
+        useAlertStore
+          .getState()
+          .addAlert({ type: 'success', title: t('manageMomentsSheet.addMoment'), duration: 3000 });
       }
       handleClose();
-    } catch {
+    } catch (err) {
       setPhase('error');
       setErrorPhase('saving');
-      useAlertStore.getState().addAlert({
-        type: 'error',
-        title: editMoment ? t('manageMomentsSheet.editFailed') : t('manageMomentsSheet.saveFailed'),
-      });
+      const apiError = err as { statusCode?: number };
+      const isUnauthorized = apiError?.statusCode === 401;
+      const errorTitle = isUnauthorized
+        ? t('manageMomentsSheet.errorUnauthorized')
+        : t(editMoment ? 'manageMomentsSheet.editFailed' : 'manageMomentsSheet.saveFailed');
+      useAlertStore.getState().addAlert({ type: 'error', title: errorTitle, duration: 3000 });
     }
   }
 
@@ -212,7 +218,9 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
         onError(err) {
           setPhase('error');
           setErrorPhase('upload');
-          useAlertStore.getState().addAlert({ type: 'error', title: t('manageMomentsSheet.uploadFailed') });
+          useAlertStore
+            .getState()
+            .addAlert({ type: 'error', title: t('manageMomentsSheet.uploadFailed'), duration: 3000 });
           console.error('TUS error:', err);
         },
       });
@@ -223,7 +231,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
     } catch (err) {
       setPhase('error');
       setErrorPhase('upload');
-      useAlertStore.getState().addAlert({ type: 'error', title: t('manageMomentsSheet.uploadFailed') });
+      useAlertStore.getState().addAlert({ type: 'error', title: t('manageMomentsSheet.uploadFailed'), duration: 3000 });
       console.error('TUS init error:', err);
     }
   }

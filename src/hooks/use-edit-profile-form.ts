@@ -4,20 +4,14 @@ import { useTranslation } from 'next-i18next';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { saveProfileToLocalStorage } from '@/api/tour-guide/mock-adapter';
 import { useTourGuideById, useTourGuideMoments } from '@/api/tour-guide/queries';
-import type { ITourGuideProfile } from '@/api/tour-guide/types';
-import { getSpecialtyColor } from '@/lib/specialty-colors';
+import { updateTourGuide } from '@/api/tour-guide/requests';
+import type { TourGuideFormPayload } from '@/api/tour-guide/types';
 import { type TourGuideFormValues, tourGuideSchema } from '@/lib/validations/tour-guide';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { useUserStore } from '@/stores/UserStore';
 
 const draftKey = (id: string) => `guide_profile_draft_${id}`;
-
-function getPeriodLabel(item: { startYear: number; endYear?: number | null }, presentLabel: string) {
-  if (!item.endYear) return `${item.startYear} – ${presentLabel}`;
-  return `${item.startYear} – ${item.endYear}`;
-}
 
 interface UseEditProfileFormOptions {
   open: boolean;
@@ -138,33 +132,26 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
     setSaving(true);
 
     try {
-      const patch: Partial<ITourGuideProfile> = {
+      const apiPayload: TourGuideFormPayload = {
         name: values.name,
-        avatarUrl: values.avatar ?? undefined,
-        coverUrl: values.coverImg ?? undefined,
-        title: values.summary ?? '',
-        slogan: values.quote ? `"${values.quote}"` : '',
-        bio: values.description ?? '',
-        metrics: {
-          toursLed: profile.metrics.toursLed,
-          yearsOfExperience: values.expYear,
-          languages: values.languages,
-        },
-        specialties: values.experts.map((label) => {
-          const colors = getSpecialtyColor(label);
-          return { label, bg: colors.bg, text: colors.text };
-        }),
-        careerTimeline: values.careerPath.map((item, index) => ({
-          id: `career-${index}`,
-          companyName: item.company,
-          role: item.role,
-          period: getPeriodLabel(item, t('editProfileSheet.present', { ns: 'guidePage' })),
-          description: `${item.tourCount} tours · ${item.description}`,
-          isCurrent: !item.endYear,
+        avatar: values.avatar ?? undefined,
+        coverImg: values.coverImg ?? undefined,
+        quote: values.quote ?? undefined,
+        summary: values.summary ?? undefined,
+        description: values.description ?? undefined,
+        expYear: values.expYear,
+        languages: values.languages,
+        experts: values.experts,
+        careerPath: values.careerPath.map(({ company, role, startYear, tourCount, description }) => ({
+          company,
+          role,
+          startYear,
+          tourCount,
+          description,
         })),
       };
 
-      saveProfileToLocalStorage(guideId, patch);
+      await updateTourGuide(guideId, apiPayload);
       await queryClient.invalidateQueries({ queryKey: useTourGuideById.getKey({ id: guideId }) });
 
       if (userStore.user?.tourGuideId === guideId) {
@@ -180,10 +167,17 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
       }
 
       localStorage.removeItem(draftKey(guideId));
-      useAlertStore.getState().addAlert({ type: 'success', title: t('updateSuccess', { ns: 'adminPage' }) });
+      useAlertStore
+        .getState()
+        .addAlert({ type: 'success', title: t('updateSuccess', { ns: 'adminPage' }), duration: 3000 });
       onClose();
-    } catch {
-      useAlertStore.getState().addAlert({ type: 'error', title: t('genericError', { ns: 'adminPage' }) });
+    } catch (err) {
+      const apiError = err as { statusCode?: number };
+      const title =
+        apiError?.statusCode === 401
+          ? t('errorUnauthorized', { ns: 'adminPage' })
+          : t('genericError', { ns: 'adminPage' });
+      useAlertStore.getState().addAlert({ type: 'error', title, duration: 3000 });
     } finally {
       setSaving(false);
     }

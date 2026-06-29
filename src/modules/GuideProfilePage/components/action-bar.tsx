@@ -1,9 +1,12 @@
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import type { ITourGuideProfile } from '@/api/tour-guide/types';
 import { useAlertStore } from '@/stores/use-alert-store';
+import { useUserStore } from '@/stores/UserStore';
+import { ROUTE } from '@/types';
 
 import EditProfileSheet from './edit-profile-sheet';
 import ManageMomentsSheet from './manage-moments-sheet';
@@ -17,6 +20,8 @@ interface ActionBarProps {
 
 export default function ActionBar({ guide, isOwner }: ActionBarProps) {
   const { t } = useTranslation('guidePage');
+  const router = useRouter();
+  const user = useUserStore.use.user();
   const [qrOpen, setQrOpen] = useState(false);
   const [ratingOpen, setRatingOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -81,7 +86,13 @@ export default function ActionBar({ guide, isOwner }: ActionBarProps) {
           <motion.button
             whileTap={{ scale: 0.96 }}
             transition={{ duration: 0.1 }}
-            onClick={() => setRatingOpen(true)}
+            onClick={() => {
+              if (!user) {
+                router.push({ pathname: ROUTE.SIGN_IN, query: { callbackUrl: `/guide/${guide.id}` } });
+                return;
+              }
+              setRatingOpen(true);
+            }}
             className="px-3 py-3 rounded-md border border-neutral-200 text-[13px] font-medium whitespace-nowrap flex items-center justify-center"
             title={t('rateMe')}
           >

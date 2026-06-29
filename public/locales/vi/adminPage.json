@@ -7,6 +7,7 @@
   "nameRequired": "Tên video không được để trống",
   "initFailed": "Lỗi khởi tạo upload",
   "genericError": "Có lỗi xảy ra, vui lòng thử lại.",
+  "errorUnauthorized": "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
   "uploadSuccess": "Upload thành công!",
   "uploadAnother": "Upload video khác",
   "videoName": "Tên video",
