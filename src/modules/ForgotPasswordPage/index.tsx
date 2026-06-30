@@ -1,22 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useForgotPasswordMutation } from '@/api/auth';
-import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { forgotPasswordSchema, type ForgotSchema } from '@/lib/validations/auth';
+import { containerVariants, itemVariants, shakeVariants } from '@/modules/auth-shared/animations';
 import { AuthHeader } from '@/modules/auth-shared/auth-header';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { ROUTE } from '@/types';
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation('authPage');
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const { mutate: sendReset, isLoading } = useForgotPasswordMutation();
 
@@ -31,111 +29,90 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = (values: ForgotSchema) => {
     sendReset(values, {
-      onSuccess: () => setIsSuccess(true),
+      onSuccess: () => {
+        useAlertStore.getState().addAlert({
+          type: 'success',
+          title: t('forgotPassword.successTitle'),
+          description: t('forgotPassword.successMessage'),
+          duration: 4000,
+        });
+      },
       onError: (err: unknown) => {
-        const status = (err as { response?: { status?: number } })?.response?.status;
-        const message = status === 404 ? t('forgotPassword.errorNotFound') : t('forgotPassword.errorGeneric');
-        useAlertStore.getState().addAlert({ type: 'error', title: message });
+        const apiErr = err as { message?: string };
+        const message = apiErr?.message ?? t('forgotPassword.errorGeneric');
+        useAlertStore.getState().addAlert({ type: 'error', title: message, duration: 3000 });
       },
     });
   };
 
   return (
-    <div className="h-full overflow-y-auto scrollbar-hide bg-white font-dinpro">
+    <div className="h-full overflow-y-auto scrollbar-hide bg-[#F3F4F6] font-dinpro">
       <AuthHeader backHref={ROUTE.SIGN_IN} />
 
-      <AnimatePresence mode="wait">
-        {isSuccess ? (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-            className="flex flex-col items-center text-center px-[30px] pt-12 pb-10 gap-5"
-          >
-            <div className="w-20 h-20 rounded-full bg-green-100/80 flex items-center justify-center">
-              <Icons.checkCircle className="w-9 h-9 text-green-600" />
-            </div>
+      <motion.div variants={containerVariants} initial="hidden" animate="visible" className="px-[30px] pb-10">
+        <motion.div variants={itemVariants} className="mb-6 text-center">
+          <h1 className="text-[28px] font-bold tracking-[-0.8px] text-[#010F1C] leading-tight font-dinpro">
+            {t('forgotPassword.title')}
+          </h1>
+          <p className="text-body3 text-[#646464] mt-2 leading-relaxed font-dinpro">{t('forgotPassword.subtitle')}</p>
+        </motion.div>
 
-            <div className="space-y-2">
-              <h2 className="text-[22px] font-bold tracking-[-0.5px] text-neutral-black font-dinpro">
-                {t('forgotPassword.successTitle')}
-              </h2>
-              <p className="text-body3 text-neutral-500 leading-relaxed font-dinpro max-w-[260px] mx-auto">
-                {t('forgotPassword.successMessage')}
-              </p>
-            </div>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="mt-2">
+          <motion.div variants={itemVariants} className="mb-5">
+            <motion.div animate={errors.email ? 'shake' : ''} variants={shakeVariants}>
+              <Input
+                {...register('email')}
+                type="email"
+                placeholder={t('forgotPassword.emailPlaceholder')}
+                className="!bg-white rounded-full border-0 placeholder:text-[#939393] shadow-sm text-[#010F1C] [&:-webkit-autofill]:shadow-[inset_0_0_0_9999px_white]"
+                prefix={
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5 text-[#374151] ml-1">
+                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                  </svg>
+                }
+                fullWidth
+                disabled={isLoading}
+              />
+            </motion.div>
+            <motion.div animate={errors.email ? 'shake' : ''} variants={shakeVariants}>
+              {errors.email && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-body4 text-red-500 mt-1.5 ml-4"
+                >
+                  {errors.email.message}
+                </motion.p>
+              )}
+            </motion.div>
+          </motion.div>
 
+          <motion.div variants={itemVariants} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
             <Button
+              type="submit"
               variant="dark"
               size="icon"
               fullWidth
               blur={false}
-              asChild
-              className="h-14 mt-4 rounded-xl bg-neutral-black text-white text-button1 font-semibold tracking-[0.3px] shadow-sm font-dinpro"
+              loading={isLoading}
+              disabled={isLoading}
+              className="h-14 rounded-full bg-[#3BB77E] hover:opacity-90 transition-opacity text-white text-button1 font-semibold tracking-[0.3px] shadow-sm font-dinpro"
             >
-              <Link href={ROUTE.SIGN_IN}>{t('forgotPassword.clickHere')}</Link>
+              {t('forgotPassword.submitButton')}
             </Button>
           </motion.div>
-        ) : (
-          <motion.div
-            key="form"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
-            className="px-[30px] pb-10"
+        </form>
+
+        <motion.div variants={itemVariants} className="flex items-center justify-center gap-1.5 mt-7">
+          <span className="text-body3 text-[#646464] font-dinpro">{t('forgotPassword.rememberPassword')}</span>
+          <Link
+            href={ROUTE.SIGN_IN}
+            className="text-body3 font-bold text-[#3BB77E] font-dinpro hover:opacity-70 transition-opacity"
           >
-            <div className="mb-8">
-              <h1 className="text-[28px] font-bold tracking-[-0.6px] text-neutral-black leading-tight font-dinpro">
-                {t('forgotPassword.title')}
-              </h1>
-              <p className="text-body3 text-neutral-500 mt-3 leading-[1.7] font-dinpro">
-                {t('forgotPassword.subtitle')}
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} noValidate>
-              <div className="mb-6">
-                <label className="block text-body4 font-semibold text-neutral-700 mb-2 tracking-[0.2px] font-dinpro">
-                  {t('forgotPassword.emailLabel')}
-                </label>
-                <Input
-                  {...register('email')}
-                  type="email"
-                  placeholder={t('forgotPassword.emailPlaceholder')}
-                  className="bg-neutral-100/50 border-neutral-200 placeholder:text-neutral-400"
-                  fullWidth
-                  disabled={isLoading}
-                />
-                {errors.email && <p className="text-body4 text-red-500 mt-1.5">{errors.email.message}</p>}
-              </div>
-
-              <Button
-                type="submit"
-                variant="dark"
-                size="icon"
-                fullWidth
-                blur={false}
-                loading={isLoading}
-                disabled={isLoading}
-                className="h-14 rounded-xl bg-neutral-black text-white text-button1 font-semibold tracking-[0.3px] shadow-sm font-dinpro"
-              >
-                {t('forgotPassword.submitButton')}
-              </Button>
-            </form>
-
-            <div className="flex items-center justify-center gap-1.5 mt-7">
-              <span className="text-body3 text-neutral-500 font-dinpro">{t('forgotPassword.rememberPassword')}</span>
-              <Link
-                href={ROUTE.SIGN_IN}
-                className="text-body3 font-bold text-neutral-black font-dinpro hover:opacity-70 transition-opacity"
-              >
-                {t('forgotPassword.clickHere')}
-              </Link>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {t('forgotPassword.clickHere')}
+          </Link>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

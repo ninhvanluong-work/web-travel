@@ -57,5 +57,20 @@
     "clickHere": "Click here",
     "errorNotFound": "No account found with this email.",
     "errorGeneric": "Could not send reset link. Please try again."
+  },
+  "resetPassword": {
+    "title": "Set New Password",
+    "subtitle": "Enter your new password below. The link is valid for 5 minutes.",
+    "newPasswordLabel": "New Password",
+    "newPasswordPlaceholder": "Enter your new password",
+    "confirmPasswordLabel": "Confirm Password",
+    "confirmPasswordPlaceholder": "Re-enter your new password",
+    "submitButton": "Reset Password",
+    "successTitle": "Password updated!",
+    "successMessage": "Your password has been changed successfully. You can now sign in.",
+    "backToLogin": "Back to Sign In",
+    "errorExpired": "This link has expired. Please request a new one.",
+    "errorGeneric": "Could not reset password. Please try again.",
+    "requestAgain": "Request a new link"
   }
 }
