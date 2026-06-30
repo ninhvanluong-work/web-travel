@@ -7,6 +7,7 @@
   "nameRequired": "Video name cannot be empty",
   "initFailed": "Failed to initialize upload",
   "genericError": "An error occurred, please try again.",
+  "errorUnauthorized": "Your session has expired, please sign in again.",
   "uploadSuccess": "Uploaded successfully!",
   "uploadAnother": "Upload another video",
   "videoName": "Video Name",

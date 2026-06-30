@@ -50,7 +50,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           id={id}
           type={type === 'password' ? (show ? 'text' : 'password') : type}
-          className={cn(prefix && 'pl-10', suffix && 'pr-10', inputVariants({ variant, size, className }))}
+          className={cn(
+            inputVariants({ variant, size, className }),
+            prefix && '!pl-11',
+            (suffix || type === 'password') && '!pr-11'
+          )}
           ref={ref}
           {...props}
         />

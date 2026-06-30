@@ -1,7 +1,3 @@
-import axios from 'axios';
-
-import { env } from '@/lib/const';
-
 import { request } from '../axios';
 import type {
   IChangePassword,
@@ -94,14 +90,9 @@ export const resetPassword = async (params: IResetPassword): Promise<ILoginRespo
   return data;
 };
 
-export const refreshTokenRequest = async (refreshToken: string): Promise<Omit<ILoginResponse, 'refreshToken'>> => {
-  const { data } = await axios.get(`${env.API_URL}/authentication/refresh`, {
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  });
-
-  return data;
+// TODO: swap mock for real call when /authentication/refresh is ready on backend
+export const refreshTokenRequest = async (_refreshToken: string): Promise<Omit<ILoginResponse, 'refreshToken'>> => {
+  throw new Error('Refresh token API not yet implemented');
 };
 export const getListCourse = async (): Promise<ICourse[]> => {
   const { data } = await request({

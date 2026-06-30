@@ -34,6 +34,7 @@
     "submitting": "Đang gửi...",
     "successAlert": "Đánh giá đã được gửi!",
     "errorAlert": "Gửi đánh giá thất bại, vui lòng thử lại.",
+    "errorUnauthorized": "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
     "uploadFailed": "Upload thất bại",
     "saveVideoFailed": "Lưu video thất bại, thử lại",
     "fileTooLarge": "Dung lượng tệp vượt quá 10MB"
@@ -120,6 +121,7 @@
     "uploadComplete": "Tải lên hoàn tất",
     "uploadFailed": "Tải lên thất bại, vui lòng thử lại",
     "saveFailed": "Lưu khoảnh khắc thất bại, vui lòng thử lại",
+    "errorUnauthorized": "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
     "fileTooLarge": "File vượt quá giới hạn 50 MB",
     "invalidFormat": "Chỉ hỗ trợ định dạng MP4 hoặc WebM",
     "save": "Lưu khoảnh khắc",

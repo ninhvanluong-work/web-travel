@@ -3,10 +3,10 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
+import { request } from '@/api/axios';
 import { ScrollArea } from '@/components/ui/scrollArea';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { TextArea } from '@/components/ui/textarea';
-import { env } from '@/lib/const';
 import { tourGuideReviewSchema } from '@/lib/validations/review';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { API_ROUTE } from '@/types';
@@ -64,21 +64,22 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
     };
 
     try {
-      const res = await fetch(`${env.API_URL}${API_ROUTE.REVIEW_TOUR_GUIDE(guideId)}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await request({ url: API_ROUTE.REVIEW_TOUR_GUIDE(guideId), method: 'POST', data: payload });
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['/tour-guide/reviews'] }),
         queryClient.invalidateQueries({ queryKey: ['/tour-guide/reviews-infinite'] }),
         queryClient.invalidateQueries({ queryKey: ['/tour-guide/detail'] }),
       ]);
-      useAlertStore.getState().addAlert({ type: 'success', title: t('ratingSheet.successAlert') });
+      useAlertStore.getState().addAlert({ type: 'success', title: t('ratingSheet.successAlert'), duration: 3000 });
       handleClose();
-    } catch {
-      useAlertStore.getState().addAlert({ type: 'error', title: t('ratingSheet.errorAlert') });
+    } catch (err) {
+      const apiError = err as { statusCode?: number };
+      const isUnauthorized = apiError?.statusCode === 401;
+      useAlertStore.getState().addAlert({
+        type: 'error',
+        title: isUnauthorized ? t('ratingSheet.errorUnauthorized') : t('ratingSheet.errorAlert'),
+        duration: 3000,
+      });
     } finally {
       setSubmitting(false);
     }

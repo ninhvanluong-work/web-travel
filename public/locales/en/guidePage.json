@@ -34,6 +34,7 @@
     "submitting": "Submitting...",
     "successAlert": "Review submitted!",
     "errorAlert": "Failed to submit review, please try again.",
+    "errorUnauthorized": "Your session has expired, please sign in again.",
     "uploadFailed": "Upload failed",
     "saveVideoFailed": "Failed to save video, please try again",
     "fileTooLarge": "File size exceeds 10MB"
@@ -120,6 +121,7 @@
     "uploadComplete": "Upload complete",
     "uploadFailed": "Upload failed, please try again",
     "saveFailed": "Failed to save moment, please try again",
+    "errorUnauthorized": "Your session has expired, please sign in again.",
     "fileTooLarge": "File exceeds 50 MB limit",
     "invalidFormat": "Only MP4 or WebM files are supported",
     "save": "Save moment",
