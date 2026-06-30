@@ -73,7 +73,7 @@ export const getUserProfileWithToken = async (token: string): Promise<IUser> => 
 };
 export const forgotPassword = async (params: IForgotPassword): Promise<ILoginResponse> => {
   const { data } = await request({
-    url: '/authentication/forgot-password',
+    url: '/auth/forgot-password',
     method: 'POST',
     data: params,
   });
@@ -82,7 +82,7 @@ export const forgotPassword = async (params: IForgotPassword): Promise<ILoginRes
 };
 export const resetPassword = async (params: IResetPassword): Promise<ILoginResponse> => {
   const { data } = await request({
-    url: '/authentication/reset-password',
+    url: '/auth/reset-password',
     method: 'POST',
     data: params,
   });

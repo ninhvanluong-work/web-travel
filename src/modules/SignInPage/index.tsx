@@ -146,10 +146,9 @@ export default function SignInPage() {
               <span className="text-body4 text-[#646464] font-dinpro">{t('signIn.keepLoggedIn')}</span>
             </label>
             <Link
-              href="#"
+              href={ROUTE.FORGOT_PASSWORD}
               className="text-body4 font-semibold text-[#646464] font-dinpro hover:text-[#3BB77E] transition-colors"
             >
-              {/* Fallback to 'Forgot Password' if translation is missing */}
               {t('signIn.forgotPassword', 'Forgot Password')}
             </Link>
           </motion.div>

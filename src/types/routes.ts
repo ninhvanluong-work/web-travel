@@ -3,6 +3,7 @@ export const ROUTE = {
   SIGN_IN: '/sign-in',
   SIGN_UP: '/sign-up',
   FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
   SEARCH: '/search',
   VIDEO_DETAIL: '/video/[slug]',
   VIDEO_DETAIL_PATH: (slug: string) => `/video/${slug}`,

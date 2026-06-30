@@ -1,6 +1,13 @@
 import { createMutation, createQuery } from 'react-query-kit';
 
-import { forgotPassword, getListCourse, getUserProfile, loginRequest, registerRequest } from './requests';
+import {
+  forgotPassword,
+  getListCourse,
+  getUserProfile,
+  loginRequest,
+  registerRequest,
+  resetPassword,
+} from './requests';
 import type {
   ICourse,
   IForgotPassword,
@@ -8,6 +15,7 @@ import type {
   ILoginResponse,
   IRegisterParams,
   IRegisterResponse,
+  IResetPassword,
   IUser,
 } from './types';
 
@@ -30,4 +38,8 @@ export const useRegisterMutation = createMutation<IRegisterResponse, IRegisterPa
 
 export const useForgotPasswordMutation = createMutation<ILoginResponse, IForgotPassword>({
   mutationFn: forgotPassword,
+});
+
+export const useResetPasswordMutation = createMutation<ILoginResponse, IResetPassword>({
+  mutationFn: resetPassword,
 });

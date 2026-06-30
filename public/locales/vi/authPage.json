@@ -57,5 +57,20 @@
     "clickHere": "Quay lại",
     "errorNotFound": "Không tìm thấy tài khoản với email này.",
     "errorGeneric": "Không thể gửi link. Vui lòng thử lại."
+  },
+  "resetPassword": {
+    "title": "Đặt mật khẩu mới",
+    "subtitle": "Nhập mật khẩu mới bên dưới. Link có hiệu lực trong 5 phút.",
+    "newPasswordLabel": "Mật khẩu mới",
+    "newPasswordPlaceholder": "Nhập mật khẩu mới",
+    "confirmPasswordLabel": "Xác nhận mật khẩu",
+    "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+    "submitButton": "Đặt lại mật khẩu",
+    "successTitle": "Đặt lại thành công!",
+    "successMessage": "Mật khẩu đã được cập nhật. Bạn có thể đăng nhập ngay bây giờ.",
+    "backToLogin": "Quay lại đăng nhập",
+    "errorExpired": "Link đã hết hạn. Vui lòng yêu cầu lại.",
+    "errorGeneric": "Không thể đặt lại mật khẩu. Vui lòng thử lại.",
+    "requestAgain": "Yêu cầu link mới"
   }
 }

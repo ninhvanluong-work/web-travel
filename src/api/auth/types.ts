@@ -49,9 +49,8 @@ export interface IForgotPassword {
   email: string;
 }
 export interface IResetPassword {
-  email: string | string[] | undefined;
-  password: string;
-  token: string | string[] | undefined;
+  token: string;
+  newPassword: string;
 }
 export interface ICourse {
   id: number;

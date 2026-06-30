@@ -77,20 +77,17 @@ export const forgotPasswordSchema = z.object({
   email: z.string().nonempty(validationMessages.required('Email')).email(validationMessages.invalid('Email')),
 });
 
-export const resetPassSchema = z
-  .object({
-    email: z.string(),
-    password: z
-      .string()
-      .nonempty(validationMessages.required('Password'))
-      .min(8, validationMessages.gt(8, 'Password'))
-      .refine((v) => REGEX_PASSWORD.test(v), 'Password too week'),
-    confirmPassword: z.string().nonempty(validationMessages.required('Confirm password')),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
-  });
+export const resetPassSchema = z.object({
+  newPassword: z
+    .string()
+    .min(1, 'Password is required')
+    .min(6, 'Password must be at least 6 characters')
+    .max(100)
+    .refine(
+      (v) => REGEX_PASSWORD.test(v),
+      'Password must contain at least 1 uppercase, 1 lowercase, and 1 number or special character'
+    ),
+});
 
 export const profileSchema = z.object({
   firstName: z.string().nonempty(validationMessages.required('First name')),
