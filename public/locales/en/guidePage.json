@@ -37,7 +37,10 @@
     "errorUnauthorized": "Your session has expired, please sign in again.",
     "uploadFailed": "Upload failed",
     "saveVideoFailed": "Failed to save video, please try again",
-    "fileTooLarge": "File size exceeds 10MB"
+    "fileTooLarge": "File size exceeds 10MB",
+    "ratingRequired": "Please select a star rating",
+    "commentRequired": "Please enter your review",
+    "commentMaxLength": "Review must not exceed 500 characters"
   },
   "ratingLabels": {
     "1": "Very unsatisfied",

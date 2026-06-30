@@ -37,7 +37,10 @@
     "errorUnauthorized": "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
     "uploadFailed": "Upload thất bại",
     "saveVideoFailed": "Lưu video thất bại, thử lại",
-    "fileTooLarge": "Dung lượng tệp vượt quá 10MB"
+    "fileTooLarge": "Dung lượng tệp vượt quá 10MB",
+    "ratingRequired": "Vui lòng chọn số sao đánh giá",
+    "commentRequired": "Vui lòng nhập nhận xét của bạn",
+    "commentMaxLength": "Nhận xét không được vượt quá 500 ký tự"
   },
   "ratingLabels": {
     "1": "Rất không hài lòng",

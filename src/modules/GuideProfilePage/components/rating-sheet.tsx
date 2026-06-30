@@ -47,8 +47,8 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
     if (!result.success) {
       const { fieldErrors } = result.error.flatten();
       setErrors({
-        point: fieldErrors.point?.[0],
-        comment: fieldErrors.comment?.[0],
+        point: fieldErrors.point?.[0] ? t(fieldErrors.point[0] as any) : undefined,
+        comment: fieldErrors.comment?.[0] ? t(fieldErrors.comment[0] as any) : undefined,
       });
       return;
     }
