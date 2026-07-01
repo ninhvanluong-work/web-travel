@@ -7,6 +7,7 @@ import type {
   ILoginParams,
   ILoginResponse,
   IProfile,
+  IRefreshTokenApiResponse,
   IRegisterParams,
   IRegisterResponse,
   IResetPassword,
@@ -29,15 +30,6 @@ export const logoutRequest = async (): Promise<boolean> => {
   const { data } = await request({
     url: '/authentication/log-out',
     method: 'POST',
-  });
-
-  return data;
-};
-
-export const refetchTokenRequest = async (): Promise<ILoginResponse> => {
-  const { data } = await request({
-    url: '/authentication/refresh',
-    method: 'GET',
   });
 
   return data;
@@ -90,9 +82,16 @@ export const resetPassword = async (params: IResetPassword): Promise<ILoginRespo
   return data;
 };
 
-// TODO: swap mock for real call when /authentication/refresh is ready on backend
-export const refreshTokenRequest = async (_refreshToken: string): Promise<Omit<ILoginResponse, 'refreshToken'>> => {
-  throw new Error('Refresh token API not yet implemented');
+export const refreshTokenRequest = async (refreshToken: string): Promise<ILoginResponse> => {
+  const { data: res }: { data: IRefreshTokenApiResponse } = await request({
+    url: '/auth/access-token/renew',
+    method: 'POST',
+    data: { refreshToken },
+    timeout: 10000,
+  });
+
+  const { token: accessToken, refreshToken: newRefreshToken, user } = res.data;
+  return { accessToken, refreshToken: newRefreshToken, user };
 };
 export const getListCourse = async (): Promise<ICourse[]> => {
   const { data } = await request({
