@@ -38,8 +38,9 @@ export default function SignInPage() {
       onSuccess: (data) => {
         setStore(data);
         const callbackUrl = router.query.callbackUrl as string | undefined;
-        if (callbackUrl) {
-          router.push(callbackUrl);
+        const isSafeRedirect = callbackUrl?.startsWith('/') && !callbackUrl.startsWith('//');
+        if (isSafeRedirect) {
+          router.push(callbackUrl!);
         } else if (data.user.role === 'tour_guide' && data.user.tourGuideId) {
           router.push(ROUTE.GUIDE_PROFILE_PATH(data.user.tourGuideId));
         } else {

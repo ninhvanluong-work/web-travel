@@ -20,7 +20,16 @@ export interface IRegisterParams {
 
 export interface IRegisterResponse extends ILoginResponse {}
 
-export interface IRefreshTokenResponse extends ILoginResponse {}
+export interface IRefreshTokenApiResponse {
+  data: {
+    token: string;
+    refreshToken: string;
+    user: IUser;
+  };
+  code: number;
+  error: string | null;
+  message: string;
+}
 
 export interface IUser {
   id: string;
