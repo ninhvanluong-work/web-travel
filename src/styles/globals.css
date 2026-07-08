@@ -2,163 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: 'DINPro';
-  src: url('/fonts/DINPro-Black.woff2') format('woff2'), url('/fonts/DINPro-Black.woff') format('woff');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DINPro';
-  src: url('/fonts/DINPro-Bold.woff2') format('woff2'), url('/fonts/DINPro-Bold.woff') format('woff');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DIN Pro Cond';
-  src: url('/fonts/DINPro-CondensedBlackItalic.woff2') format('woff2'),
-    url('/fonts/DINPro-CondensedBlackItalic.woff') format('woff');
-  font-weight: 900;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DIN Pro Cond';
-  src: url('/fonts/DINPro-CondensedBlack.woff2') format('woff2'),
-    url('/fonts/DINPro-CondensedBlack.woff') format('woff');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DIN Pro Cond';
-  src: url('/fonts/DINPro-CondensedLight.woff2') format('woff2'),
-    url('/fonts/DINPro-CondensedLight.woff') format('woff');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DIN Pro Cond';
-  src: url('/fonts/DINPro-CondensedRegular.woff2') format('woff2'),
-    url('/fonts/DINPro-CondensedRegular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DINPro';
-  src: url('/fonts/DINPro-Light.woff2') format('woff2'), url('/fonts/DINPro-Light.woff') format('woff');
-  font-weight: 300;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DIN Pro Cond';
-  src: url('/fonts/DINPro-CondensedMedium.woff2') format('woff2'),
-    url('/fonts/DINPro-CondensedMedium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DIN Pro Cond';
-  src: url('/fonts/DINPro-CondensedBold.woff2') format('woff2'), url('/fonts/DINPro-CondensedBold.woff') format('woff');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DINPro';
-  src: url('/fonts/DINPro-Medium.woff2') format('woff2'), url('/fonts/DINPro-Medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'DINPro';
-  src: url('/fonts/DINPro.woff2') format('woff2'), url('/fonts/DINPro.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@layer base {
-  :root {
-    --background: 0, 0%, 100%;
-    --foreground: 240, 10%, 3.9%;
-    --card: 0, 0%, 100%;
-    --card-foreground: 240, 10%, 3.9%;
-    --popover: 0, 0%, 100%;
-    --popover-foreground: 240, 10%, 3.9%;
-    --primary: 240, 5.9%, 10%;
-    --primary-foreground: 0, 0%, 98%;
-    --secondary: 240, 4.8%, 95.9%;
-    --secondary-foreground: 240, 5.9%, 10%;
-    --muted: 240, 4.8%, 95.9%;
-    --muted-foreground: 240, 3.8%, 46.1%;
-    --accent: 240, 4.8%, 95.9%;
-    --accent-foreground: 240, 5.9%, 10%;
-    --destructive: 0, 84.2%, 60.2%;
-    --destructive-foreground: 0, 0%, 98%;
-    --border: 240, 5.9%, 90%;
-    --input: 240, 5.9%, 90%;
-    --ring: 240, 5.9%, 10%;
-    --radius: 0.5rem;
-
-    /* CUSTOM TOKEN */
-
-    --header-h: 6.375rem;
-
-    --success: 165, 100%, 37%;
-    --success-light: 166, 58%, 90%;
-
-    --error: 14, 100%, 56%;
-    --error-light: 15, 100%, 93%;
-
-    --warning: 40, 100%, 56%;
-    --warning-light: 40, 100%, 93%;
-
-    --info: 225, 98%, 35%;
-    --info-light: 227, 56%, 94%;
-
-    --divider: 240, 85%, 90%;
-  }
-
-  .dark {
-    --background: 240, 10%, 3.9%;
-    --foreground: 0, 0%, 98%;
-    --card: 240, 10%, 3.9%;
-    --card-foreground: 0, 0%, 98%;
-    --popover: 240, 10%, 3.9%;
-    --popover-foreground: 0, 0%, 98%;
-    --primary: 0, 0%, 98%;
-    --primary-foreground: 240, 5.9%, 10%;
-    --secondary: 240, 3.7%, 15.9%;
-    --secondary-foreground: 0, 0%, 98%;
-    --muted: 240, 3.7%, 15.9%;
-    --muted-foreground: 240, 5%, 64.9%;
-    --accent: 240, 3.7%, 15.9%;
-    --accent-foreground: 0, 0%, 98%;
-    --destructive: 0, 62.8%, 30.6%;
-    --destructive-foreground: 0, 0%, 98%;
-    --border: 240, 3.7%, 15.9%;
-    --input: 240, 3.7%, 15.9%;
-    --ring: 240, 4.9%, 83.9%;
-  }
-}
+@import './fonts.css';
+@import './design-tokens.css';
+@import './animations.css';
+@import './driver-onboarding.css';
+@import './tiptap.css';
 
 @layer base {
   * {
@@ -188,17 +36,14 @@
     filter: drop-shadow(0px 1px 4px rgba(0, 0, 0, 0.16));
   }
 
-  /* Admin form label — used on <FormLabel> throughout admin modules */
   .admin-form-label {
     @apply text-[13px] text-slate-500 font-medium;
   }
 
-  /* Section sub-label — uppercase caps label above a group of fields */
   .section-label-caps {
     @apply text-[12px] text-slate-400 font-semibold uppercase tracking-wider block mb-2;
   }
 
-  /* Zone divider — thin border separating content zones inside a section card */
   .zone-divider {
     @apply border-t border-slate-100 my-1;
     @apply dark:border-gray-800/80;
@@ -217,82 +62,4 @@
 
 ::-webkit-scrollbar-thumb {
   background-color: #b6b6b6;
-}
-
-@layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar-hide {
-    -ms-overflow-style: none; /* IE và Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-
-  .animate-like-pop {
-    animation: like-pop 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  }
-
-  .animate-fade-up {
-    animation: fade-up 0.3s ease-out both;
-  }
-}
-
-@keyframes like-pop {
-  0% {
-    transform: scale(1);
-  }
-  25% {
-    transform: scale(1.5);
-  }
-  55% {
-    transform: scale(0.82);
-  }
-  80% {
-    transform: scale(1.12);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* TipTap table styles */
-.ProseMirror table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 8px 0;
-}
-.ProseMirror table td,
-.ProseMirror table th {
-  border: 1.5px solid #e5e7eb;
-  padding: 6px 10px;
-  min-width: 80px;
-  vertical-align: top;
-  font-size: 13px;
-}
-.ProseMirror table th {
-  background-color: #f9fafb;
-  font-weight: 600;
-}
-.ProseMirror table .selectedCell {
-  background-color: #eff6ff;
-}
-/* TipTap placeholder */
-.ProseMirror p.is-editor-empty:first-child::before {
-  content: attr(data-placeholder);
-  color: #9ca3af;
-  pointer-events: none;
-  float: left;
-  height: 0;
 }

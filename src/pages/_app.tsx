@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import 'driver.js/dist/driver.css';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';

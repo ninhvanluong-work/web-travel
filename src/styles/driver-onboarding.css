@@ -1,0 +1,136 @@
+/* Driver.js onboarding tooltip overrides — brand: DINPro, green #1D9E75 */
+
+.driver-popover {
+  font-family: 'DINPro', 'Helvetica Neue', sans-serif !important;
+  background: #ffffff !important;
+  border-radius: 16px !important;
+  padding: 20px !important;
+  min-width: 260px !important;
+  max-width: 340px !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.14) !important;
+  border: none !important;
+}
+
+.driver-popover * {
+  font-family: 'DINPro', 'Helvetica Neue', sans-serif !important;
+}
+
+/* Green accent bar above title */
+.driver-popover::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 3px;
+  background: #1d9e75;
+  border-radius: 99px;
+  margin-bottom: 14px;
+}
+
+.driver-popover-title {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #111111 !important;
+  line-height: 1.35 !important;
+  padding-right: 24px !important;
+  letter-spacing: -0.2px !important;
+}
+
+.driver-popover-description {
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  color: #555555 !important;
+  line-height: 1.6 !important;
+  margin-top: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+.driver-popover-close-btn {
+  color: #aaaaaa !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  width: 24px !important;
+  height: 24px !important;
+  top: 18px !important;
+  right: 18px !important;
+  transition: color 0.15s !important;
+}
+
+.driver-popover-close-btn:hover,
+.driver-popover-close-btn:focus {
+  color: #111111 !important;
+}
+
+.driver-popover-footer {
+  margin-top: 16px !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.driver-popover-progress-text {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #1d9e75 !important;
+  letter-spacing: 0.3px !important;
+  background: rgba(29, 158, 117, 0.08) !important;
+  padding: 3px 8px !important;
+  border-radius: 99px !important;
+}
+
+.driver-popover-footer-btn {
+  font-family: 'DINPro', sans-serif !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 7px 14px !important;
+  cursor: pointer !important;
+  transition: background 0.15s, opacity 0.15s !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.driver-popover-prev-btn {
+  background: #f3f3f7 !important;
+  color: #555555 !important;
+}
+
+.driver-popover-prev-btn:hover,
+.driver-popover-prev-btn:focus {
+  background: #e8e8ee !important;
+}
+
+.driver-popover-next-btn,
+.driver-popover-done-btn {
+  background: #1d9e75 !important;
+  color: #ffffff !important;
+}
+
+.driver-popover-next-btn:hover,
+.driver-popover-next-btn:focus,
+.driver-popover-done-btn:hover,
+.driver-popover-done-btn:focus {
+  background: #178c65 !important;
+}
+
+.driver-popover-btn-disabled {
+  opacity: 0.35 !important;
+}
+
+.driver-popover-arrow {
+  border-width: 6px !important;
+}
+
+.driver-popover-arrow-side-top {
+  border-top-color: #ffffff !important;
+}
+
+.driver-popover-arrow-side-bottom {
+  border-bottom-color: #ffffff !important;
+}
+
+.driver-popover-arrow-side-left {
+  border-left-color: #ffffff !important;
+}
+
+.driver-popover-arrow-side-right {
+  border-right-color: #ffffff !important;
+}

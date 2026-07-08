@@ -84,7 +84,7 @@ export default function MomentsGrid({ guideId, isOwner }: MomentsGridProps) {
   if (displayedMoments.length === 0) {
     return (
       <>
-        <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
+        <div id="tour-moments" className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
           <div className="flex items-center gap-2 mb-2">
             <p className="text-[14px] font-medium text-neutral-900">{t('momentsFromTour')}</p>
             {isOwner && (
@@ -107,7 +107,7 @@ export default function MomentsGrid({ guideId, isOwner }: MomentsGridProps) {
 
   return (
     <>
-      <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
+      <div id="tour-moments" className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
         <div className="flex justify-between items-baseline mb-3">
           <div className="flex items-center gap-2">
             <p className="text-[14px] font-medium text-neutral-900">{t('momentsFromTour')}</p>
