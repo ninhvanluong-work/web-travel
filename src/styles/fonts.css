@@ -1,0 +1,94 @@
+/* DINPro & DIN Pro Condensed font-face declarations */
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('/fonts/DINPro-Black.woff2') format('woff2'), url('/fonts/DINPro-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('/fonts/DINPro-Bold.woff2') format('woff2'), url('/fonts/DINPro-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('/fonts/DINPro-Medium.woff2') format('woff2'), url('/fonts/DINPro-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('/fonts/DINPro-Light.woff2') format('woff2'), url('/fonts/DINPro-Light.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DINPro';
+  src: url('/fonts/DINPro.woff2') format('woff2'), url('/fonts/DINPro.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DIN Pro Cond';
+  src: url('/fonts/DINPro-CondensedBlackItalic.woff2') format('woff2'),
+    url('/fonts/DINPro-CondensedBlackItalic.woff') format('woff');
+  font-weight: 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DIN Pro Cond';
+  src: url('/fonts/DINPro-CondensedBlack.woff2') format('woff2'),
+    url('/fonts/DINPro-CondensedBlack.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DIN Pro Cond';
+  src: url('/fonts/DINPro-CondensedBold.woff2') format('woff2'), url('/fonts/DINPro-CondensedBold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DIN Pro Cond';
+  src: url('/fonts/DINPro-CondensedMedium.woff2') format('woff2'),
+    url('/fonts/DINPro-CondensedMedium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DIN Pro Cond';
+  src: url('/fonts/DINPro-CondensedLight.woff2') format('woff2'),
+    url('/fonts/DINPro-CondensedLight.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'DIN Pro Cond';
+  src: url('/fonts/DINPro-CondensedRegular.woff2') format('woff2'),
+    url('/fonts/DINPro-CondensedRegular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

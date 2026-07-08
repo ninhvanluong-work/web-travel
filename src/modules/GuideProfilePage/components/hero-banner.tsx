@@ -16,6 +16,7 @@ export default function HeroBanner({ guide }: HeroBannerProps) {
 
   return (
     <div
+      id="tour-hero"
       className="relative h-[280px] overflow-hidden"
       style={
         hasCover

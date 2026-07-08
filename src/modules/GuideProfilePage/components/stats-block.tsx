@@ -38,7 +38,7 @@ function AnimatedNumber({ value, className }: { value: number; className?: strin
 export default function StatsBlock({ metrics }: StatsBlockProps) {
   const { t } = useTranslation('guidePage');
   return (
-    <div className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
+    <div id="tour-stats" className="py-[22px] px-[18px] bg-white border-b border-neutral-200">
       <div className="grid grid-cols-3 text-center">
         <div>
           <p className="text-[26px] font-medium text-neutral-black leading-none tracking-[-0.5px]">
