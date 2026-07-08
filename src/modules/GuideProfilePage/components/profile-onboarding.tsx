@@ -1,5 +1,6 @@
-import { driver } from 'driver.js';
 import { useEffect } from 'react';
+
+import { driver } from 'driver.js';
 
 interface ProfileOnboardingProps {
   isReady: boolean;
