@@ -7,7 +7,6 @@ import { useProfileTutorial } from '@/hooks/useProfileTutorial';
 import { useUserStore } from '@/stores/UserStore';
 
 import ActionBar from './components/action-bar';
-import ProfileOnboarding from './components/profile-onboarding';
 import CareerTimeline from './components/career-timeline';
 import DestinationsChart from './components/destinations-chart';
 import GuestFeedback from './components/guest-feedback';
@@ -15,6 +14,7 @@ import GuideProfileSkeleton from './components/guide-profile-skeleton';
 import HeroBanner from './components/hero-banner';
 import MomentsGrid from './components/moments-grid';
 import OperatorReviews from './components/operator-reviews';
+import ProfileOnboarding from './components/profile-onboarding';
 import SpecialtyTags from './components/specialty-tags';
 import StatsBlock from './components/stats-block';
 import StorytellingBlock from './components/storytelling-block';
