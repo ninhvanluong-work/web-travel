@@ -10,8 +10,7 @@ interface ProfileOnboardingProps {
 
 export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, markAsSeen }: ProfileOnboardingProps) {
   useEffect(() => {
-    if (!isReady) return;
-    if (hasSeen && replayTrigger === 0) return;
+    if (!isReady || (hasSeen && replayTrigger === 0)) return undefined;
 
     const driverObj = driver({
       showProgress: true,
@@ -94,9 +93,7 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
 
     driverObj.drive();
 
-    return () => {
-      driverObj.destroy();
-    };
+    return () => driverObj.destroy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, replayTrigger]);
 
