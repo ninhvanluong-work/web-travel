@@ -7,7 +7,8 @@ export function mergeWithLocalStorage(id: string, profile: ITourGuideProfile): I
     const raw = localStorage.getItem(storageKey(id));
     if (!raw) return profile;
     const saved = JSON.parse(raw) as Partial<ITourGuideProfile>;
-    return { ...profile, ...saved };
+    // hasSeenOnboarding is DB-owned — always keep the API value, never let localStorage overwrite it
+    return { ...profile, ...saved, hasSeenOnboarding: profile.hasSeenOnboarding };
   } catch {
     return profile;
   }

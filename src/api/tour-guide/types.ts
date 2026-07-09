@@ -98,6 +98,7 @@ export interface ApiTourGuideDetail {
   careerPath: ApiTourGuideCareerPath[];
   destinationSummary: ApiTourGuideDestinationSummary[] | null;
   totalProducts: number;
+  onboarding?: boolean;
 }
 
 export interface ApiTourGuideDetailResponse {
@@ -105,6 +106,23 @@ export interface ApiTourGuideDetailResponse {
   code: number;
   message: string;
   error: string | null;
+}
+
+export interface ApiTourGuideOnboardingData {
+  id: string;
+  name: string;
+  avatar: string | null;
+  ratingCount: number;
+  expYear: number;
+  ratingValue: number;
+  createdAt: string;
+}
+
+export interface ApiTourGuideOnboardingResponse {
+  data: ApiTourGuideOnboardingData;
+  code: number;
+  error: string | null;
+  message: string;
 }
 
 export interface ApiTourGuideReviewItem {
@@ -305,6 +323,7 @@ export interface ITourGuideProfile {
   coverUrl: string | undefined;
   avatarUrl: string | undefined;
   bio: string;
+  hasSeenOnboarding: boolean;
   metrics: {
     toursLed: number;
     yearsOfExperience: number;

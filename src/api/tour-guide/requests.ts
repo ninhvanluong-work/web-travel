@@ -8,6 +8,8 @@ import type {
   ApiTourGuideListResponse,
   ApiTourGuideMoment,
   ApiTourGuideMomentsResponse,
+  ApiTourGuideOnboardingData,
+  ApiTourGuideOnboardingResponse,
   ApiTourGuideReviewResponse,
   ApiUpdateMomentPayload,
   ITourGuide,
@@ -57,6 +59,7 @@ const toTourGuideProfile = (api: ApiTourGuideDetail): ITourGuideProfile => ({
   coverUrl: api.coverImg ?? undefined,
   avatarUrl: api.avatar ?? undefined,
   bio: api.description ?? '',
+  hasSeenOnboarding: api.onboarding ?? false,
   metrics: {
     toursLed: api.ratingCount,
     yearsOfExperience: api.expYear,
@@ -165,6 +168,11 @@ export async function updateTourGuide(id: string, payload: TourGuideFormPayload)
 
 export async function deleteTourGuide(id: string): Promise<void> {
   await request.delete(`/tour-guide/${id}`);
+}
+
+export async function markOnboardingComplete(): Promise<ApiTourGuideOnboardingData> {
+  const { data } = await request.post<ApiTourGuideOnboardingResponse>('/tour-guide/onboarding');
+  return data.data;
 }
 
 export const toTourGuideMoment = (api: ApiTourGuideMoment): ITourGuideMoment => ({

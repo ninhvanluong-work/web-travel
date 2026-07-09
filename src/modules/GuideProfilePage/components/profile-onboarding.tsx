@@ -94,6 +94,8 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
     driverObj.drive();
 
     return () => driverObj.destroy();
+    // hasSeen is intentionally excluded from deps: replay works via replayTrigger (> 0 bypasses the hasSeen guard).
+    // Adding hasSeen here would cause the effect to re-run on every markAsSeen call and break the flow.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isReady, replayTrigger]);
 

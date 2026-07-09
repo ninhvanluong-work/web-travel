@@ -10,6 +10,7 @@ import {
   getTourGuideMoments,
   getTourGuidePage,
   getTourGuideReviews,
+  markOnboardingComplete,
   type TourGuidePage,
   updateTourGuide,
   updateTourGuideMoment,
@@ -18,6 +19,7 @@ import type {
   ApiCreateMomentPayload,
   ApiTourGuideDetail,
   ApiTourGuideMoment,
+  ApiTourGuideOnboardingData,
   ApiUpdateMomentPayload,
   ITourGuideListParams,
   ITourGuideListResult,
@@ -63,6 +65,10 @@ export const useUpdateTourGuide = createMutation<ApiTourGuideDetail, { id: strin
 
 export const useDeleteTourGuide = createMutation<void, { id: string }>({
   mutationFn: ({ id }) => deleteTourGuide(id),
+});
+
+export const useMarkOnboardingComplete = createMutation<ApiTourGuideOnboardingData, void>({
+  mutationFn: () => markOnboardingComplete(),
 });
 
 export const useTourGuideReviews = createQuery<ITourGuideReviewResult, ITourGuideReviewParams>({

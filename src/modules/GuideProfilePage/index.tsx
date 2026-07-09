@@ -35,7 +35,7 @@ export default function GuideProfilePage() {
   const user = useUserStore.use.user();
   const isOwner = user?.role === 'tour_guide' && !!id && user?.tourGuideId === id;
 
-  const { hasSeen, markAsSeen, resetTutorial } = useProfileTutorial();
+  const { hasSeen, markAsSeen, resetTutorial } = useProfileTutorial(data?.hasSeenOnboarding);
   const [replayTrigger, setReplayTrigger] = useState(0);
 
   const handleReplay = () => {
