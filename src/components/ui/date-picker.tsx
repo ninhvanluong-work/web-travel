@@ -40,6 +40,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       }
       onChange(date);
       setInputValue(format(date, 'dd/MM/yyyy'));
+      close();
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {

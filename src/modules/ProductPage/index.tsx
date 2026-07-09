@@ -93,7 +93,7 @@ export default function ProductPage() {
   const p = mapApiToProductPage(data, t);
 
   return (
-    <div className="flex flex-col h-full bg-white font-dinpro">
+    <div className="flex flex-col h-full bg-white font-dinpro relative">
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
           <HeroCarousel media={p.media} />
@@ -195,6 +195,9 @@ export default function ProductPage() {
           discountPercent={p.discountPercent}
           currency={p.currency}
           priceUnit={p.priceUnit}
+          onBookNow={() => {
+            router.push(`/product/${productId}/booking`);
+          }}
         />
       </motion.div>
     </div>
