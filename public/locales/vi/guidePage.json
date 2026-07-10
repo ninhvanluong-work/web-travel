@@ -138,5 +138,24 @@
     "deleteConfirmTitle": "Xóa khoảnh khắc này?",
     "deleteConfirmDesc": "Hành động này không thể hoàn tác.",
     "deleteConfirm": "Xóa"
+  },
+  "onboarding": {
+    "nextBtnText": "Tiếp tục →",
+    "prevBtnText": "← Quay lại",
+    "doneBtnText": "Bắt đầu thôi!",
+    "stepWelcomeTitle": "Chào mừng đến với Hồ sơ của bạn! 🎉",
+    "stepWelcomeDesc": "Đây là trang cá nhân của bạn, nơi du khách và các đơn vị lữ hành sẽ nhìn thấy. Hãy cùng khám phá cách làm cho hồ sơ của bạn thật ấn tượng nhé!",
+    "stepHeroTitle": "Ảnh đại diện & Ảnh bìa",
+    "stepHeroDesc": "Một bức ảnh chuyên nghiệp và nụ cười rạng rỡ sẽ là điểm cộng lớn. Nhấn vào đây để cập nhật những hình ảnh đẹp nhất của bạn.",
+    "stepActionBarTitle": "Thanh công cụ",
+    "stepActionBarDesc": "Nơi bạn có thể chỉnh sửa thông tin nhanh, chia sẻ hồ sơ (Share), hoặc xem các thống kê cá nhân.",
+    "stepStorytellingTitle": "Câu chuyện của bạn",
+    "stepStorytellingDesc": "Hãy kể cho du khách nghe về đam mê, kinh nghiệm và phong cách dẫn tour độc đáo của bạn. Một câu chuyện hay sẽ tạo nên sự kết nối tuyệt vời.",
+    "stepStatsTitle": "Thành tích & Chỉ số",
+    "stepStatsDesc": "Các con số biết nói! Nơi này tổng hợp số tour bạn đã dẫn, số năm kinh nghiệm và số ngôn ngữ bạn sử dụng.",
+    "stepMomentsTitle": "Khoảnh khắc đáng nhớ",
+    "stepMomentsDesc": "Đăng tải những bức ảnh tuyệt đẹp từ các chuyến đi của bạn. Đây là \"portfolio\" trực quan nhất để thuyết phục khách hàng.",
+    "stepReadyTitle": "Bạn đã sẵn sàng! 🚀",
+    "stepReadyDesc": "Giờ thì hãy bắt đầu cập nhật thông tin và sẵn sàng cho những chuyến đi tuyệt vời sắp tới!"
   }
 }
