@@ -5,6 +5,17 @@ import { useState } from 'react';
 
 import type { ITourGuideProfile } from '@/api/tour-guide/types';
 import { Icons } from '@/assets/icons';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { useLogout } from '@/hooks/useLogout';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { useUserStore } from '@/stores/UserStore';
@@ -156,16 +167,40 @@ export default function ActionBar({ guide, isOwner }: ActionBarProps) {
         </motion.button>
 
         {isOwner && (
-          <motion.button
-            whileTap={{ scale: 0.96 }}
-            transition={{ duration: 0.1 }}
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            aria-label="Đăng xuất"
-            className="p-3 rounded-md border border-red-200 text-red-500 disabled:opacity-50"
-          >
-            <Icons.logout size={20} />
-          </motion.button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <motion.button
+                whileTap={{ scale: 0.96 }}
+                transition={{ duration: 0.1 }}
+                disabled={isLoggingOut}
+                aria-label="Đăng xuất"
+                className="p-3 rounded-md border border-red-200 text-red-500 disabled:opacity-50"
+              >
+                {isLoggingOut ? <Icons.spinner className="h-5 w-5 animate-spin" /> : <Icons.logout size={20} />}
+              </motion.button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-base font-semibold text-neutral-900">
+                  {t('actionBar.logoutTitle')}
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-sm text-neutral-500 mt-1">
+                  {t('actionBar.logoutDesc')}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-row gap-3 mt-4 sm:space-x-0">
+                <AlertDialogCancel className="flex-1 m-0 h-11 rounded-xl bg-neutral-100 border-0 text-neutral-700 text-sm font-semibold hover:bg-neutral-200 transition-colors">
+                  {t('actionBar.logoutCancel')}
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleLogout}
+                  className="flex-1 h-11 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700 transition-colors border-0"
+                >
+                  {t('actionBar.logoutConfirm')}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         )}
       </div>
 

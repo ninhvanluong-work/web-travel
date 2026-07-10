@@ -1,5 +1,11 @@
 {
   "muteAudio": "Tắt âm thanh",
   "unmuteAudio": "Bật âm thanh",
-  "searchPlaceholder": "Tìm kiếm..."
+  "searchPlaceholder": "Tìm kiếm...",
+  "userMenu": {
+    "signIn": "Đăng nhập",
+    "signOut": "Đăng xuất",
+    "account": "Tài khoản",
+    "accountDesc": "Thông tin tài khoản và đăng xuất"
+  }
 }

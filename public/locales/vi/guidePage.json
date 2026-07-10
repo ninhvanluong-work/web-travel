@@ -54,7 +54,11 @@
   },
   "actionBar": {
     "shareCopied": "Đã sao chép liên kết",
-    "shareFailed": "Không thể sao chép liên kết"
+    "shareFailed": "Không thể sao chép liên kết",
+    "logoutTitle": "Đăng xuất",
+    "logoutDesc": "Bạn có chắc muốn đăng xuất khỏi tài khoản không?",
+    "logoutConfirm": "Đăng xuất",
+    "logoutCancel": "Hủy"
   },
   "momentsFromTour": "Khoảnh khắc từ tour",
   "noMomentsYet": "Chưa có khoảnh khắc nào được đăng tải",

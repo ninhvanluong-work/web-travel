@@ -1,5 +1,11 @@
 {
   "muteAudio": "Mute audio",
   "unmuteAudio": "Unmute audio",
-  "searchPlaceholder": "Search..."
+  "searchPlaceholder": "Search...",
+  "userMenu": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "account": "Account",
+    "accountDesc": "Account info and sign out"
+  }
 }
