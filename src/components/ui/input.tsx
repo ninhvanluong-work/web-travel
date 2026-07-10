@@ -11,7 +11,7 @@ import { Show } from './Utilities';
 export const inputVariants = cva(
   cn(
     'border-input border placeholder:font-light bg-transparent ring-offset-background peer',
-    'focus-visible:ring-brand-500/10 focus-visible:border-brand-300 flex w-full file:border-0 file:bg-transparent',
+    'focus-visible:ring-brand-500/10 focus-visible:border-brand-300 w-full file:border-0 file:bg-transparent',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50',
     'dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500'
     // 'read-only:bg-readonly read-only:border-readonly-border read-only:cursor-default'
@@ -23,8 +23,8 @@ export const inputVariants = cva(
         filled: 'bg-background',
       },
       size: {
-        sm: 'h-11 px-[14px] py-[8px] text-sm rounded-lg file:text-sm file:font-medium',
-        default: 'h-14 px-[16px] py-[10px] text-sm rounded-lg file:text-sm file:font-medium',
+        sm: 'h-11 px-[14px] py-0 text-sm rounded-lg file:text-sm file:font-medium',
+        default: 'h-14 px-[16px] py-0 text-sm rounded-lg file:text-sm file:font-medium',
       },
     },
     defaultVariants: {

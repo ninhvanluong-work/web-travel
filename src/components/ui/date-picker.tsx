@@ -40,6 +40,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       }
       onChange(date);
       setInputValue(format(date, 'dd/MM/yyyy'));
+      close();
     };
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -70,6 +71,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             value={inputValue}
             onChange={handleInputChange}
             onBlur={handleBlur}
+            onClick={open}
           />
         </div>
         {isOpen && (
@@ -77,7 +79,6 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             ref={refs.setFloating}
             style={floatingStyles}
             className={cn('bg-popover shadow-popover left-0 z-50 min-h-[40px] w-fit min-w-max rounded-md outline-none')}
-            onClick={open}
           >
             <div ref={popoverRef}>
               <Calendar

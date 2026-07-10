@@ -8,6 +8,7 @@ interface StickyCTABarProps {
   discountPercent: number;
   currency: string;
   priceUnit: string;
+  onBookNow?: () => void;
 }
 
 export default function StickyCTABar({
@@ -16,6 +17,7 @@ export default function StickyCTABar({
   discountPercent,
   currency,
   priceUnit,
+  onBookNow,
 }: StickyCTABarProps) {
   const { t } = useTranslation('productPage');
   const symbol = currency;
@@ -47,6 +49,7 @@ export default function StickyCTABar({
           rounded="full"
           blur={false}
           className="bg-[#0F6E56] text-white px-[22px] py-[13px] text-[14px] font-medium h-auto"
+          onClick={onBookNow}
         >
           {t('bookNow')}
         </Button>
