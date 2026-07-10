@@ -4,16 +4,15 @@ import { useEffect } from 'react';
 
 interface ProfileOnboardingProps {
   isReady: boolean;
-  replayTrigger: number;
   hasSeen: boolean;
   markAsSeen: () => void;
 }
 
-export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, markAsSeen }: ProfileOnboardingProps) {
+export default function ProfileOnboarding({ isReady, hasSeen, markAsSeen }: ProfileOnboardingProps) {
   const { t } = useTranslation('guidePage');
 
   useEffect(() => {
-    if (!isReady || (hasSeen && replayTrigger === 0)) return undefined;
+    if (!isReady || hasSeen) return undefined;
 
     const driverObj = driver({
       showProgress: true,
@@ -91,10 +90,10 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
     driverObj.drive();
 
     return () => driverObj.destroy();
-    // hasSeen is intentionally excluded from deps: replay works via replayTrigger (> 0 bypasses the hasSeen guard).
+    // hasSeen is intentionally excluded from deps:
     // Adding hasSeen here would cause the effect to re-run on every markAsSeen call and break the flow.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady, replayTrigger, t]);
+  }, [isReady, t]);
 
   return null;
 }

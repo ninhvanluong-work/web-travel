@@ -16,10 +16,9 @@ import RatingSheet from './rating-sheet';
 interface ActionBarProps {
   guide: Pick<ITourGuideProfile, 'id' | 'name'>;
   isOwner: boolean;
-  onReplayTutorial?: () => void;
 }
 
-export default function ActionBar({ guide, isOwner, onReplayTutorial }: ActionBarProps) {
+export default function ActionBar({ guide, isOwner }: ActionBarProps) {
   const { t } = useTranslation('guidePage');
   const router = useRouter();
   const user = useUserStore.use.user();
@@ -152,18 +151,6 @@ export default function ActionBar({ guide, isOwner, onReplayTutorial }: ActionBa
             />
           </svg>
         </motion.button>
-
-        {onReplayTutorial && (
-          <motion.button
-            whileTap={{ scale: 0.96 }}
-            transition={{ duration: 0.1 }}
-            onClick={onReplayTutorial}
-            aria-label="Replay tutorial"
-            className="p-3 rounded-md border border-neutral-200 text-[13px] font-medium text-neutral-500"
-          >
-            ?
-          </motion.button>
-        )}
       </div>
 
       <QrSheet open={qrOpen} onClose={() => setQrOpen(false)} guideId={guide.id} guideName={guide.name} />
