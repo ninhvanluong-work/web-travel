@@ -42,6 +42,8 @@ export interface IUser {
   emailVerifiedAt?: string;
   role?: 'guide' | 'tour_guide' | 'user' | 'normal';
   tourGuideId?: string;
+  avatar?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface ILoginApiResponse {

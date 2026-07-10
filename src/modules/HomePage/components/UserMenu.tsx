@@ -1,6 +1,7 @@
 import { useDisclosure } from '@mantine/hooks';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 
 import { Icons } from '@/assets/icons';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -33,6 +34,7 @@ const stagger = {
 };
 
 export default function UserMenu() {
+  const { t } = useTranslation('homePage');
   const [open, { toggle, close }] = useDisclosure(false);
   const user = useUserStore.use.user();
   const accessToken = useUserStore.use.accessToken();
@@ -48,7 +50,7 @@ export default function UserMenu() {
         href={ROUTE.SIGN_IN}
         className="fixed top-4 left-4 z-40 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full text-white text-xs font-semibold border border-white/20 active:scale-95 transition-transform"
       >
-        Đăng nhập
+        {t('userMenu.signIn')}
       </Link>
     );
   }
@@ -59,17 +61,17 @@ export default function UserMenu() {
         onClick={toggle}
         whileTap={{ scale: 0.9 }}
         transition={{ duration: 0.12 }}
-        className="fixed top-4 left-4 z-40 h-11 w-11 rounded-full bg-black/40 backdrop-blur-md border border-white/25 flex items-center justify-center text-white text-[15px] font-bold shadow-lg"
+        className="fixed top-4 left-4 z-40 h-11 w-11 rounded-full bg-black/40 backdrop-blur-md border border-white/25 flex items-center justify-center text-white text-[15px] font-bold shadow-lg overflow-hidden"
         aria-label="User menu"
       >
-        {initials}
+        {user?.avatar ? <img src={user.avatar} alt={displayName} className="h-full w-full object-cover" /> : initials}
       </motion.button>
 
       <Sheet open={open} onOpenChange={toggle}>
         <SheetContent side="bottom" className="rounded-t-3xl pb-safe bg-white px-0 pt-0 border-0 shadow-2xl">
           <SheetHeader className="sr-only">
-            <SheetTitle>Tài khoản</SheetTitle>
-            <SheetDescription>Thông tin tài khoản và đăng xuất</SheetDescription>
+            <SheetTitle>{t('userMenu.account')}</SheetTitle>
+            <SheetDescription>{t('userMenu.accountDesc')}</SheetDescription>
           </SheetHeader>
 
           {/* Drag handle */}
@@ -87,8 +89,12 @@ export default function UserMenu() {
               className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-neutral-50"
             >
               {/* Gradient avatar */}
-              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 flex items-center justify-center text-white text-[18px] font-bold shrink-0 shadow-md">
-                {initials}
+              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 flex items-center justify-center text-white text-[18px] font-bold shrink-0 shadow-md overflow-hidden">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  initials
+                )}
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[15px] font-semibold text-neutral-900 truncate leading-tight">{displayName}</span>
@@ -116,7 +122,7 @@ export default function UserMenu() {
               <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center shrink-0">
                 {isLoading ? <Icons.spinner className="h-5 w-5 animate-spin" /> : <Icons.logout size={20} />}
               </div>
-              <span className="text-[15px] font-semibold">Đăng xuất</span>
+              <span className="text-[15px] font-semibold">{t('userMenu.signOut')}</span>
               <Icons.chevronRight size={18} className="ml-auto text-red-300" />
             </motion.button>
           </div>

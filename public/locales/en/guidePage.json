@@ -54,7 +54,11 @@
   },
   "actionBar": {
     "shareCopied": "Link copied",
-    "shareFailed": "Could not copy link"
+    "shareFailed": "Could not copy link",
+    "logoutTitle": "Sign out",
+    "logoutDesc": "Are you sure you want to sign out of your account?",
+    "logoutConfirm": "Sign out",
+    "logoutCancel": "Cancel"
   },
   "momentsFromTour": "Moments from tour",
   "noMomentsYet": "No moments uploaded yet",
