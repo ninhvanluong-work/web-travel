@@ -5,6 +5,7 @@ import {
   getListCourse,
   getUserProfile,
   loginRequest,
+  logoutRequest,
   registerRequest,
   resetPassword,
 } from './requests';
@@ -30,6 +31,10 @@ export const useListCourse = createQuery<ICourse[]>({
 
 export const useLoginMutation = createMutation<ILoginResponse, ILoginParams>({
   mutationFn: loginRequest,
+});
+
+export const useLogoutMutation = createMutation<boolean>({
+  mutationFn: logoutRequest,
 });
 
 export const useRegisterMutation = createMutation<IRegisterResponse, IRegisterParams>({
