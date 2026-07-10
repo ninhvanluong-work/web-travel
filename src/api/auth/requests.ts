@@ -28,7 +28,7 @@ export const loginRequest = async (params: ILoginParams): Promise<ILoginResponse
 
 export const logoutRequest = async (): Promise<boolean> => {
   const { data } = await request({
-    url: '/authentication/log-out',
+    url: '/auth/logout',
     method: 'POST',
   });
 

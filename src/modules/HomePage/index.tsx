@@ -10,6 +10,7 @@ import type { NextPageWithLayout } from '@/types';
 import { ROUTE } from '@/types';
 
 import SearchBox from './components/SearchBox';
+import UserMenu from './components/UserMenu';
 
 const HomePage: NextPageWithLayout = () => {
   const { t } = useTranslation('homePage');
@@ -168,6 +169,8 @@ const HomePage: NextPageWithLayout = () => {
           </div>
         </div>
       </div>
+
+      <UserMenu />
 
       <button
         className="fixed top-4 right-4 p-3 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors z-40 active:scale-95"

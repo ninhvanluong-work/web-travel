@@ -4,6 +4,8 @@ import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import type { ITourGuideProfile } from '@/api/tour-guide/types';
+import { Icons } from '@/assets/icons';
+import { useLogout } from '@/hooks/useLogout';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { useUserStore } from '@/stores/UserStore';
 import { ROUTE } from '@/types';
@@ -22,6 +24,7 @@ export default function ActionBar({ guide, isOwner }: ActionBarProps) {
   const { t } = useTranslation('guidePage');
   const router = useRouter();
   const user = useUserStore.use.user();
+  const { handleLogout, isLoading: isLoggingOut } = useLogout();
   const [qrOpen, setQrOpen] = useState(false);
   const [ratingOpen, setRatingOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -151,6 +154,19 @@ export default function ActionBar({ guide, isOwner }: ActionBarProps) {
             />
           </svg>
         </motion.button>
+
+        {isOwner && (
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.1 }}
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            aria-label="Đăng xuất"
+            className="p-3 rounded-md border border-red-200 text-red-500 disabled:opacity-50"
+          >
+            <Icons.logout size={20} />
+          </motion.button>
+        )}
       </div>
 
       <QrSheet open={qrOpen} onClose={() => setQrOpen(false)} guideId={guide.id} guideName={guide.name} />
