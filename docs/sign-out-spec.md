@@ -1,81 +1,106 @@
-# Đặc tả tính năng Đăng xuất (Sign Out) & Đổi tài khoản
+# Đặc tả tính năng Đăng xuất (Logout) & Dọn dẹp Phiên làm việc
 
-Tài liệu này mô tả chi tiết chiến lược, UI/UX và luồng xử lý kỹ thuật cho tính năng Đăng xuất. Việc lập kế hoạch này tuân theo phương pháp **\_bmad** (đề cao các nguyên lý YAGNI, KISS, DRY và tư duy ngược - Inversion Thinking).
+Tài liệu này mô tả chi tiết đặc tả kỹ thuật, luồng dữ liệu, và thiết kế UI/UX cho chức năng Đăng xuất (Logout) trong hệ thống Web Travel. Tài liệu được thiết lập và chuẩn hoá theo phương pháp **\_bmad** (đề cao sự tối giản KISS, tính thực tế YAGNI, không lặp lại DRY và Tư duy nghịch đảo - Inversion Thinking).
 
 ---
 
 ## 1. Mục tiêu (Goal)
 
-- Cho phép người dùng (User / Tour Guide) đăng xuất khỏi phiên làm việc hiện tại một cách an toàn.
-- Đưa ứng dụng về trạng thái nguyên thủy (không chứa dữ liệu nhạy cảm ở local).
-- Hỗ trợ việc đổi tài khoản nhanh chóng, tạo trải nghiệm mượt mà không cần refresh lại trang.
+- Cung cấp phương thức đăng xuất an toàn cho người dùng (Khách hàng / Hướng dẫn viên / Quản trị viên) khỏi phiên làm việc hiện tại.
+- Bảo vệ dữ liệu cá nhân bằng cách dọn dẹp triệt để tất cả các token xác thực và dữ liệu đã lưu trong cache trình duyệt.
+- Mang lại trải nghiệm chuyển tiếp mượt mà, phản hồi trực quan (WOW UX) trên cả giao diện Client và Admin.
 
 ---
 
-## 2. Phân tích Kỹ thuật & Luồng xử lý (Technical Strategy)
+## 2. Đặc tả Kỹ thuật & Luồng xử lý (Technical Specifications)
 
-Theo nguyên lý Inversion (Nghĩ ngược lại từ kết quả), để đăng xuất thành công và đổi tài khoản, chúng ta cần loại bỏ toàn bộ định danh của người dùng khỏi trình duyệt và thông báo cho Backend.
+Để ngăn chặn các lỗi kẹt trạng thái khi hệ thống mạng không ổn định hoặc API sập, luồng xử lý đăng xuất được thiết kế theo tư duy **Nghịch đảo (Inversion Thinking)** - ưu tiên trạng thái sạch của Client làm mục tiêu tối hậu.
 
-### 2.1. Tương tác với Backend
+```mermaid
+sequenceDiagram
+    actor User as Người dùng
+    participant Client as Web App (Client)
+    participant API as Backend Server (/auth/logout)
 
-- **API Endpoint:** `POST /authentication/log-out`
-- **Hành động:**
-  1. Gửi request đăng xuất lên server (sử dụng hàm `logoutRequest` trong `src/api/auth/requests.ts`).
-  2. Việc gọi API này có thể nhằm mục đích vô hiệu hóa (revoke) `refreshToken` hoặc ghi nhận hành vi đăng xuất trên hệ thống.
-     _(Lưu ý: Kể cả khi API lỗi, quá trình đăng xuất ở client vẫn phải được tiếp tục để tránh kẹt trạng thái)._
+    User->>Client: Bấm nút "Đăng xuất"
+    Client->>Client: Bật trạng thái Loading, khóa tương tác
+    Note over Client,API: Thực hiện gọi API bất đồng bộ
+    rect rgb(240, 240, 240)
+        Client->>API: POST /auth/logout (Bearer Token)
+        alt API Thành công (200 OK)
+            API-->>Client: Phản hồi thành công
+        else API Thất bại (500 / Timeout / Offline)
+            API-->>Client: Lỗi mạng hoặc lỗi server
+        end
+    end
+    Client->>Client: Xóa accessToken, refreshToken trong Zustand Store
+    Client->>Client: Xóa toàn bộ React Query Cache (queryClient.clear())
+    Client->>Client: Hủy trạng thái Loading
+    Client->>User: Chuyển hướng về trang Đăng nhập (/sign-in)
+```
 
-### 2.2. Xử lý Client State (Zustand & Cache)
+### 2.1. API Endpoint
 
-- **Zustand Store (`useUserStore`):**
-  - Gọi hàm `useUserStore.getState().logout()` để xóa `accessToken`, `refreshToken` và `user` profile khỏi bộ nhớ và `localStorage`.
-- **Query Cache (React Query/SWR):**
-  - Thực hiện clear toàn bộ cache liên quan đến user (ví dụ: giỏ hàng, thông tin cá nhân, danh sách tour) để tránh việc rò rỉ dữ liệu khi người dùng khác đăng nhập vào cùng một máy (Account Switching).
+- **URL:** `POST /auth/logout` (Kế thừa từ tài liệu Swagger `https://web-travel-be.fly.dev/docs#/Auth/logout`)
+- **Headers:** `Authorization: Bearer <accessToken>`
+- **Phản hồi mẫu (200):**
+  ```json
+  {
+    "data": null,
+    "code": 200,
+    "error": null,
+    "message": "logout success"
+  }
+  ```
 
-### 2.3. Điều hướng (Routing)
+### 2.2. Xử lý Client State
 
-- Sau khi xóa sạch state, ứng dụng sẽ tự động điều hướng (Redirect) người dùng về trang Đăng nhập (`ROUTE.SIGN_IN`).
+1. **Zustand Store (`useUserStore`):**
+   - Gọi hàm `logout()` để reset trạng thái về ban đầu:
+     ```typescript
+     {
+       accessToken: '',
+       refreshToken: undefined,
+       user: {} as IUser
+     }
+     ```
+   - Trạng thái này sẽ tự động được đồng bộ xóa sạch khỏi `localStorage` nhờ middleware `persist` của Zustand.
+2. **React Query Cache:**
+   - Gọi `queryClient.clear()` hoặc `queryClient.removeQueries()` để xoá sạch tất cả các dữ liệu đã lưu trong cache (thông tin cá nhân, danh sách tour đã lưu nháp, danh sách quản trị...).
+   - **Lý do:** Đảm bảo khi một tài khoản khác đăng nhập trên cùng một thiết bị, họ không bị nhìn thấy "flash" dữ liệu cũ của tài khoản trước.
+
+### 2.3. Chiến lược Kháng lỗi (Fault-Tolerance)
+
+- Toàn bộ quá trình gọi API phải được bọc trong khối `try-catch`.
+- **QUAN TRỌNG:** Nếu API `/auth/logout` ném ra lỗi (do hết hạn token từ trước, mất kết nối mạng hoặc lỗi server 500), Client vẫn phải thực hiện dọn dẹp Local State & chuyển hướng về `/sign-in`. Không được chặn luồng đăng xuất của người dùng khi backend lỗi.
 
 ---
 
-## 3. Yêu cầu Giao diện (UI) & Trải nghiệm (UX)
+## 3. Giao diện (UI) & Trải nghiệm người dùng (WOW UX)
 
-Để đảm bảo tính nguyên tắc DRY (Don't Repeat Yourself), UI đăng xuất sẽ được tích hợp vào một Dropdown dùng chung cho Header.
+Chức năng đăng xuất được tích hợp linh hoạt trên 3 khu vực giao diện chính với các tiêu chuẩn thiết kế cao cấp:
 
-### 3.1. User Menu Component
+### 3.1. Client Header Dropdown (`<UserMenu />`) [Trì hoãn - Thực hiện sau]
 
-- Xây dựng component `<UserMenu />` (tại `src/components/layouts/MainLayout/UserMenu.tsx`).
-- Sử dụng component `DropdownMenu` và `Avatar` từ thư viện UI hiện tại (`src/components/ui/dropdown-menu.tsx`, `src/components/ui/avatar.tsx`).
-- **Trạng thái hiển thị:**
-  - **Chưa đăng nhập:** Hiển thị 2 nút `Đăng nhập` và `Đăng ký`.
-  - **Đã đăng nhập:** Hiển thị `Avatar` của người dùng.
-- **Tương tác (Micro-interactions):**
-  - Click vào Avatar -> Mở Dropdown Menu.
-  - Dropdown Menu bao gồm:
-    - Phần Header nhỏ hiển thị Email/Tên (Xác nhận tài khoản đang dùng).
-    - Các mục điều hướng cá nhân (Profile, Settings...).
-    - Dấu gạch ngang phân cách (`Separator`).
-    - Nút **"Đăng xuất"** (Có thể dùng màu đỏ/destructive để báo hiệu hành động kết thúc phiên).
+- Việc thiết kế và tích hợp component `<UserMenu />` dạng dropdown trên Desktop Navbar sẽ được thực hiện ở Pha 2. Trong Pha 1, ứng dụng chỉ tập trung triển khai chức năng đăng xuất trên giao diện Mobile (Sidebar Drawer).
 
-### 3.2. Cập nhật Layout Chính (Navbar & Sidebar)
+### 3.2. Mobile Bottom Sheet Drawer (`modules/HomePage/components/UserMenu.tsx`)
 
-- **Desktop (`Navbar.tsx`):** Render `<UserMenu />` ở góc phải.
-- **Mobile (`Sidebar.tsx`):** Thêm nút "Đăng xuất" ở cuối danh sách menu trên giao diện Drawer/Sheet.
+- Tích hợp thông tin tài khoản và nút Đăng xuất trực tiếp vào trong ngăn kéo trượt dưới lên (Bottom Sheet):
+  - Nút bấm tròn nổi ở góc trên bên trái Trang chủ tự động hiển thị ảnh đại diện `user.avatar` (nếu có) thay thế cho chữ initials.
+  - Khi bấm, mở ra ngăn kéo đáy hiển thị Avatar lớn, Tên, Email người dùng và một nút Đăng xuất màu đỏ pastel sang trọng (`bg-red-50 text-red-600 active:bg-red-100`).
+  - Tích hợp hiệu ứng chạm co giãn nhẹ `whileTap={{ scale: 0.97 }}` của framer-motion trên nút bấm.
+
+### 3.3. Admin Sidebar Footer (`AdminLayout/Sidebar.tsx`) [Trì hoãn - Thực hiện sau]
+
+- Việc tích hợp và kết nối nút Đăng xuất trên thanh Sidebar của Admin sẽ được thực hiện ở Pha 2 (Admin implementation). Trong Pha 1, ứng dụng tập trung hoàn thiện giao diện đăng xuất ở Client (MainLayout) trước.
 
 ---
 
-## 4. Các câu hỏi mở (Open Questions)
+## 4. Kế hoạch Kiểm thử & Xác minh (Verification Criteria)
 
-_Cần làm rõ trước khi implement để tránh code thừa (YAGNI):_
-
-1. Backend có thực sự yêu cầu gửi request `POST /authentication/log-out` hay không? Hay chỉ cần xóa token ở Client là đủ?
-2. Có cần hiển thị Modal (Alert Dialog) xác nhận "Bạn có chắc chắn muốn đăng xuất?" hay sẽ cho đăng xuất ngay khi bấm nút?
-3. Trong Dropdown Menu, chúng ta cần hiển thị những link nào khác ngoài nút "Đăng xuất" (VD: "Quản lý Profile")?
-
----
-
-## 5. Các bước triển khai (Implementation Steps)
-
-1. **Bước 1:** Cập nhật hook `useAuth` để lấy đúng trạng thái `isLoggedIn` từ `useUserStore`.
-2. **Bước 2:** Xây dựng component `<UserMenu />` kết hợp logic Logout.
-3. **Bước 3:** Tích hợp `<UserMenu />` vào `Navbar.tsx` và `Sidebar.tsx`.
-4. **Bước 4:** Bổ sung việc dọn dẹp (clear cache) query nếu có sử dụng React Query.
+| Mã kiểm thử | Tên ca kiểm thử                          | Mô tả                                                | Kết quả mong đợi                                                                                                                                                                                    |
+| :---------- | :--------------------------------------- | :--------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **TC-01**   | Luồng đăng xuất trên Mobile (Thành công) | Đăng xuất từ Mobile Sidebar khi mạng ổn định.        | 1. API `POST /auth/logout` được gọi thành công.<br>2. Zustand store được xóa trống.<br>3. React query cache được dọn sạch.<br>4. Redirect về `/sign-in`.                                            |
+| **TC-02**   | Đăng xuất Mobile (Lỗi mạng)              | Đăng xuất từ Mobile Sidebar khi ngắt mạng (offline). | 1. API `POST /auth/logout` báo lỗi mạng.<br>2. Client **vẫn** xóa Zustand store cục bộ & clear query cache.<br>3. Chuyển hướng thành công về `/sign-in`.                                            |
+| **TC-03**   | Giao diện Mobile Drawer                  | Hiển thị thông tin và nút Logout trong Drawer.       | 1. Drawer hiển thị đúng Avatar/Email ở phía trên.<br>2. Nút "Đăng xuất" màu đỏ destructive hiển thị ở dưới cùng.<br>3. Khi click hiển thị trạng thái đang xử lý (loading spinner) và disable click. |

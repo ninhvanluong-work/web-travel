@@ -61,10 +61,10 @@ export default function UserMenu() {
         onClick={toggle}
         whileTap={{ scale: 0.9 }}
         transition={{ duration: 0.12 }}
-        className="fixed top-4 left-4 z-40 h-11 w-11 rounded-full bg-black/40 backdrop-blur-md border border-white/25 flex items-center justify-center text-white text-[15px] font-bold shadow-lg"
+        className="fixed top-4 left-4 z-40 h-11 w-11 rounded-full bg-black/40 backdrop-blur-md border border-white/25 flex items-center justify-center text-white text-[15px] font-bold shadow-lg overflow-hidden"
         aria-label="User menu"
       >
-        {initials}
+        {user?.avatar ? <img src={user.avatar} alt={displayName} className="h-full w-full object-cover" /> : initials}
       </motion.button>
 
       <Sheet open={open} onOpenChange={toggle}>
@@ -89,8 +89,12 @@ export default function UserMenu() {
               className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-neutral-50"
             >
               {/* Gradient avatar */}
-              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 flex items-center justify-center text-white text-[18px] font-bold shrink-0 shadow-md">
-                {initials}
+              <div className="h-14 w-14 rounded-full bg-gradient-to-br from-neutral-700 to-neutral-900 flex items-center justify-center text-white text-[18px] font-bold shrink-0 shadow-md overflow-hidden">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={displayName} className="h-full w-full object-cover" />
+                ) : (
+                  initials
+                )}
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[15px] font-semibold text-neutral-900 truncate leading-tight">{displayName}</span>
