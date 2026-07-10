@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 
 import { useGuideProfile } from '@/hooks/use-guide-profile';
 import { useProfileTutorial } from '@/hooks/useProfileTutorial';
@@ -35,13 +35,7 @@ export default function GuideProfilePage() {
   const user = useUserStore.use.user();
   const isOwner = user?.role === 'tour_guide' && !!id && user?.tourGuideId === id;
 
-  const { hasSeen, markAsSeen, resetTutorial } = useProfileTutorial(data?.hasSeenOnboarding);
-  const [replayTrigger, setReplayTrigger] = useState(0);
-
-  const handleReplay = () => {
-    resetTutorial();
-    setReplayTrigger((n) => n + 1);
-  };
+  const { hasSeen, markAsSeen } = useProfileTutorial(data?.hasSeenOnboarding);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -63,19 +57,12 @@ export default function GuideProfilePage() {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {isOwner && (
-        <ProfileOnboarding
-          isReady={!isLoading && !!data}
-          replayTrigger={replayTrigger}
-          hasSeen={hasSeen}
-          markAsSeen={markAsSeen}
-        />
-      )}
+      {isOwner && <ProfileOnboarding isReady={!isLoading && !!data} hasSeen={hasSeen} markAsSeen={markAsSeen} />}
       <motion.div {...fadeUp(0)}>
         <HeroBanner guide={data} />
       </motion.div>
       <motion.div {...fadeUp(0.08)}>
-        <ActionBar guide={data} isOwner={isOwner} onReplayTutorial={isOwner ? handleReplay : undefined} />
+        <ActionBar guide={data} isOwner={isOwner} />
       </motion.div>
       <motion.div {...fadeUp(0.16)}>
         <StorytellingBlock bio={data.bio} />

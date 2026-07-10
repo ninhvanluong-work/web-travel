@@ -138,5 +138,24 @@
     "deleteConfirmTitle": "Delete this moment?",
     "deleteConfirmDesc": "This action cannot be undone.",
     "deleteConfirm": "Delete"
+  },
+  "onboarding": {
+    "nextBtnText": "Next →",
+    "prevBtnText": "← Back",
+    "doneBtnText": "Let's start!",
+    "stepWelcomeTitle": "Welcome to your Profile! 🎉",
+    "stepWelcomeDesc": "This is your personal page, where travelers and operators will see you. Let's explore how to make your profile outstanding!",
+    "stepHeroTitle": "Avatar & Cover Photo",
+    "stepHeroDesc": "A professional photo and a bright smile will be a big plus. Tap here to update your best photos.",
+    "stepActionBarTitle": "Action Bar",
+    "stepActionBarDesc": "Where you can quickly edit info, share your profile (Share), or view your personal statistics.",
+    "stepStorytellingTitle": "Your Story",
+    "stepStorytellingDesc": "Tell travelers about your passion, experience, and unique guiding style. A good story creates a great connection.",
+    "stepStatsTitle": "Achievements & Metrics",
+    "stepStatsDesc": "Numbers speak! This section summarizes the tours you have guided, years of experience, and languages you speak.",
+    "stepMomentsTitle": "Memorable Moments",
+    "stepMomentsDesc": "Upload stunning photos/videos from your trips. This is the most visual portfolio to convince customers.",
+    "stepReadyTitle": "You're ready! 🚀",
+    "stepReadyDesc": "Now start updating your profile and get ready for the awesome journeys ahead!"
   }
 }

@@ -1,16 +1,18 @@
 import { driver } from 'driver.js';
+import { useTranslation } from 'next-i18next';
 import { useEffect } from 'react';
 
 interface ProfileOnboardingProps {
   isReady: boolean;
-  replayTrigger: number;
   hasSeen: boolean;
   markAsSeen: () => void;
 }
 
-export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, markAsSeen }: ProfileOnboardingProps) {
+export default function ProfileOnboarding({ isReady, hasSeen, markAsSeen }: ProfileOnboardingProps) {
+  const { t } = useTranslation('guidePage');
+
   useEffect(() => {
-    if (!isReady || (hasSeen && replayTrigger === 0)) return undefined;
+    if (!isReady || hasSeen) return undefined;
 
     const driverObj = driver({
       showProgress: true,
@@ -18,26 +20,24 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
       smoothScroll: true,
       allowClose: true,
       overlayOpacity: 0.65,
-      nextBtnText: 'Tiếp tục →',
-      prevBtnText: '← Quay lại',
-      doneBtnText: 'Bắt đầu thôi!',
+      nextBtnText: t('onboarding.nextBtnText'),
+      prevBtnText: t('onboarding.prevBtnText'),
+      doneBtnText: t('onboarding.doneBtnText'),
       onDestroyed: () => {
         markAsSeen();
       },
       steps: [
         {
           popover: {
-            title: 'Chào mừng đến với Hồ sơ của bạn! 🎉',
-            description:
-              'Đây là trang cá nhân của bạn, nơi du khách và các đơn vị lữ hành sẽ nhìn thấy. Hãy cùng khám phá cách làm cho hồ sơ của bạn thật ấn tượng nhé!',
+            title: t('onboarding.stepWelcomeTitle'),
+            description: t('onboarding.stepWelcomeDesc'),
           },
         },
         {
           element: '#tour-hero',
           popover: {
-            title: 'Ảnh đại diện & Ảnh bìa',
-            description:
-              'Một bức ảnh chuyên nghiệp và nụ cười rạng rỡ sẽ là điểm cộng lớn. Nhấn vào đây để cập nhật những hình ảnh đẹp nhất của bạn.',
+            title: t('onboarding.stepHeroTitle'),
+            description: t('onboarding.stepHeroDesc'),
             side: 'bottom',
             align: 'start',
           },
@@ -45,9 +45,8 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
         {
           element: '#tour-action-bar',
           popover: {
-            title: 'Thanh công cụ',
-            description:
-              'Nơi bạn có thể chỉnh sửa thông tin nhanh, chia sẻ hồ sơ (Share), hoặc xem các thống kê cá nhân.',
+            title: t('onboarding.stepActionBarTitle'),
+            description: t('onboarding.stepActionBarDesc'),
             side: 'bottom',
             align: 'start',
           },
@@ -55,9 +54,8 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
         {
           element: '#tour-storytelling',
           popover: {
-            title: 'Câu chuyện của bạn',
-            description:
-              'Hãy kể cho du khách nghe về đam mê, kinh nghiệm và phong cách dẫn tour độc đáo của bạn. Một câu chuyện hay sẽ tạo nên sự kết nối tuyệt vời.',
+            title: t('onboarding.stepStorytellingTitle'),
+            description: t('onboarding.stepStorytellingDesc'),
             side: 'bottom',
             align: 'start',
           },
@@ -65,9 +63,8 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
         {
           element: '#tour-stats',
           popover: {
-            title: 'Thành tích & Chỉ số',
-            description:
-              'Các con số biết nói! Nơi này tổng hợp số tour bạn đã dẫn, số năm kinh nghiệm và số ngôn ngữ bạn sử dụng.',
+            title: t('onboarding.stepStatsTitle'),
+            description: t('onboarding.stepStatsDesc'),
             side: 'top',
             align: 'start',
           },
@@ -75,17 +72,16 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
         {
           element: '#tour-moments',
           popover: {
-            title: 'Khoảnh khắc đáng nhớ',
-            description:
-              'Đăng tải những bức ảnh tuyệt đẹp từ các chuyến đi của bạn. Đây là "portfolio" trực quan nhất để thuyết phục khách hàng.',
+            title: t('onboarding.stepMomentsTitle'),
+            description: t('onboarding.stepMomentsDesc'),
             side: 'top',
             align: 'start',
           },
         },
         {
           popover: {
-            title: 'Bạn đã sẵn sàng! 🚀',
-            description: 'Giờ thì hãy bắt đầu cập nhật thông tin và sẵn sàng cho những chuyến đi tuyệt vời sắp tới!',
+            title: t('onboarding.stepReadyTitle'),
+            description: t('onboarding.stepReadyDesc'),
           },
         },
       ],
@@ -94,10 +90,10 @@ export default function ProfileOnboarding({ isReady, replayTrigger, hasSeen, mar
     driverObj.drive();
 
     return () => driverObj.destroy();
-    // hasSeen is intentionally excluded from deps: replay works via replayTrigger (> 0 bypasses the hasSeen guard).
+    // hasSeen is intentionally excluded from deps:
     // Adding hasSeen here would cause the effect to re-run on every markAsSeen call and break the flow.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isReady, replayTrigger]);
+  }, [isReady, t]);
 
   return null;
 }
