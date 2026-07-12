@@ -16,7 +16,14 @@ export default function QrSheet({ open, onClose, guideId, guideName }: QrSheetPr
 
   return (
     <Sheet open={open} onOpenChange={(v) => !v && onClose()}>
-      <SheetContent side="bottom" className="rounded-t-2xl pb-8">
+      <SheetContent
+        side="bottom"
+        className="rounded-t-2xl pb-8"
+        style={{
+          left: 'max(0px, calc(50% - 215px))',
+          right: 'max(0px, calc(50% - 215px))',
+        }}
+      >
         <SheetHeader className="mb-6">
           <SheetTitle className="text-[15px] font-medium">{t('qrSheet.title', { name: guideName })}</SheetTitle>
         </SheetHeader>

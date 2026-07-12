@@ -2,8 +2,19 @@ import { useDisclosure } from '@mantine/hooks';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
+import { useState } from 'react';
 
 import { Icons } from '@/assets/icons';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useLogout } from '@/hooks/useLogout';
 import { useUserStore } from '@/stores/UserStore';
@@ -36,6 +47,7 @@ const stagger = {
 export default function UserMenu() {
   const { t } = useTranslation('homePage');
   const [open, { toggle, close }] = useDisclosure(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const user = useUserStore.use.user();
   const accessToken = useUserStore.use.accessToken();
   const { handleLogout, isLoading } = useLogout();
@@ -48,7 +60,7 @@ export default function UserMenu() {
     return (
       <Link
         href={ROUTE.SIGN_IN}
-        className="fixed top-4 left-4 z-40 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full text-white text-xs font-semibold border border-white/20 active:scale-95 transition-transform"
+        className="fixed top-4 left-4 z-40 h-11 px-5 bg-black/40 backdrop-blur-md rounded-full text-white text-sm font-semibold border border-white/25 active:scale-95 transition-all flex items-center justify-center shadow-lg hover:bg-black/50"
       >
         {t('userMenu.signIn')}
       </Link>
@@ -68,7 +80,14 @@ export default function UserMenu() {
       </motion.button>
 
       <Sheet open={open} onOpenChange={toggle}>
-        <SheetContent side="bottom" className="rounded-t-3xl pb-safe bg-white px-0 pt-0 border-0 shadow-2xl">
+        <SheetContent
+          side="bottom"
+          className="rounded-t-3xl pb-safe bg-white px-0 pt-0 border-0 shadow-2xl"
+          style={{
+            left: 'max(0px, calc(50% - 215px))',
+            right: 'max(0px, calc(50% - 215px))',
+          }}
+        >
           <SheetHeader className="sr-only">
             <SheetTitle>{t('userMenu.account')}</SheetTitle>
             <SheetDescription>{t('userMenu.accountDesc')}</SheetDescription>
@@ -113,8 +132,7 @@ export default function UserMenu() {
               animate="show"
               whileTap={{ scale: 0.97 }}
               onClick={() => {
-                close();
-                handleLogout();
+                setShowLogoutConfirm(true);
               }}
               disabled={isLoading}
               className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-red-50 text-red-600 active:bg-red-100 transition-colors disabled:opacity-50"
@@ -128,6 +146,28 @@ export default function UserMenu() {
           </div>
         </SheetContent>
       </Sheet>
+
+      <AlertDialog open={showLogoutConfirm} onOpenChange={setShowLogoutConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('userMenu.logoutTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('userMenu.logoutDesc')}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex flex-row gap-3 sm:space-x-0">
+            <AlertDialogCancel className="flex-1 m-0 h-11">{t('userMenu.logoutCancel')}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowLogoutConfirm(false);
+                close();
+                handleLogout();
+              }}
+              className="flex-1 m-0 h-11 bg-red-600 hover:bg-red-700 text-white"
+            >
+              {t('userMenu.logoutConfirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

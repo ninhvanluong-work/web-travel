@@ -6,6 +6,10 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "account": "Account",
-    "accountDesc": "Account info and sign out"
+    "accountDesc": "Account info and sign out",
+    "logoutTitle": "Sign out",
+    "logoutDesc": "Are you sure you want to sign out?",
+    "logoutConfirm": "Sign out",
+    "logoutCancel": "Cancel"
   }
 }
