@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -57,8 +58,9 @@ export default function StepOptions() {
           {DEPARTURE_SLOTS.map((slot) => {
             const active = departureTime === slot.id;
             return (
-              <button
+              <motion.button
                 key={slot.id}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setDepartureTime(slot.id)}
                 className={cn(
                   'rounded-[16px] border px-6 py-[22px] text-left transition-all',
@@ -80,7 +82,7 @@ export default function StepOptions() {
                     {slot.spots} spots left
                   </p>
                 </div>
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -96,25 +98,35 @@ export default function StepOptions() {
           {PICKUP_POINTS.map((point, i) => {
             const active = pickupLocation === point.id;
             return (
-              <button
+              <motion.button
                 key={point.id}
+                whileTap={{ scale: 0.99 }}
                 onClick={() => setPickupLocation(point.id)}
                 className={cn(
                   'w-full flex items-center gap-4 px-6 py-5 text-left transition-colors bg-white',
                   i > 0 && 'border-t border-[#EBEBEB]'
                 )}
               >
-                {/* Radio circle */}
+                {/* Animated radio circle */}
                 <div
                   className={cn(
-                    'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0',
+                    'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
                     active ? 'border-[#0F6E56]' : 'border-[#CCC]'
                   )}
                 >
-                  {active && <div className="w-3.5 h-3.5 rounded-full bg-[#0F6E56]" />}
+                  <AnimatePresence>
+                    {active && (
+                      <motion.div
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                        className="w-3.5 h-3.5 rounded-full bg-[#0F6E56]"
+                      />
+                    )}
+                  </AnimatePresence>
                 </div>
 
-                {/* Label + Most popular stacked */}
                 <div>
                   <span
                     className={cn(
@@ -126,7 +138,7 @@ export default function StepOptions() {
                   </span>
                   {point.popular && <span className="text-[12px] text-[#0F6E56] font-medium">Most popular</span>}
                 </div>
-              </button>
+              </motion.button>
             );
           })}
         </div>
@@ -142,8 +154,9 @@ export default function StepOptions() {
           {PACKAGES.map((pkg) => {
             const active = packageType === pkg.id;
             return (
-              <button
+              <motion.button
                 key={pkg.id}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setPackageType(pkg.id)}
                 className={cn(
                   'rounded-[16px] border px-6 py-6 text-left transition-all w-full',
@@ -168,7 +181,7 @@ export default function StepOptions() {
                     </span>
                   ))}
                 </div>
-              </button>
+              </motion.button>
             );
           })}
         </div>

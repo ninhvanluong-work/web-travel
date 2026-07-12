@@ -1,4 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import { Minus, Plus } from 'lucide-react';
+import React from 'react';
 
 import { DatePicker } from '@/components/ui/date-picker';
 import { cn } from '@/lib/utils';
@@ -11,37 +13,66 @@ interface GuestCounterProps {
   onChange: (v: number) => void;
 }
 
+const numVariants = {
+  enter: (d: number) => ({ y: d > 0 ? 15 : -15, opacity: 0 }),
+  center: { y: 0, opacity: 1 },
+  exit: (d: number) => ({ y: d > 0 ? -15 : 15, opacity: 0 }),
+};
+
 function GuestCounter({ value, min = 0, max = 20, onChange }: GuestCounterProps) {
+  const prevValueRef = React.useRef(value);
+  const [scrollDir, setScrollDir] = React.useState(1);
+
+  React.useEffect(() => {
+    setScrollDir(value > prevValueRef.current ? 1 : -1);
+    prevValueRef.current = value;
+  }, [value]);
+
   const isAtMin = value <= min;
   const isAtMax = value >= max;
 
   return (
     <div className="flex items-center gap-3">
-      {/* Minus button */}
-      <button
+      <motion.button
+        whileTap={{ scale: 0.92 }}
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={isAtMin}
         className={cn(
-          'w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all select-none',
-          isAtMin ? 'border-[#DDD] text-[#CCC]' : 'border-[#0F6E56] text-[#0F6E56] active:scale-95'
+          'w-9 h-9 rounded-full border-2 flex items-center justify-center select-none',
+          isAtMin ? 'border-[#DDD] text-[#CCC]' : 'border-[#0F6E56] text-[#0F6E56]'
         )}
       >
         <Minus size={16} strokeWidth={2.5} />
-      </button>
+      </motion.button>
 
-      <span className="w-6 text-center text-[18px] font-bold tabular-nums text-[#111]">{value}</span>
+      <div className="w-6 h-7 flex items-center justify-center overflow-hidden relative">
+        <AnimatePresence mode="popLayout" initial={false} custom={scrollDir}>
+          <motion.span
+            key={value}
+            custom={scrollDir}
+            variants={numVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+            className="absolute text-[18px] font-bold tabular-nums text-[#111]"
+          >
+            {value}
+          </motion.span>
+        </AnimatePresence>
+      </div>
 
-      {/* Plus button */}
-      <button
+      <motion.button
+        whileTap={{ scale: 0.92 }}
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={isAtMax}
         className={cn(
-          'w-9 h-9 rounded-full flex items-center justify-center transition-all select-none',
-          isAtMax ? 'bg-[#DDD] text-[#AAA]' : 'bg-[#0F6E56] text-white active:scale-95'
+          'w-9 h-9 rounded-full flex items-center justify-center select-none',
+          isAtMax ? 'bg-[#DDD] text-[#AAA]' : 'bg-[#0F6E56] text-white'
         )}
       >
         <Plus size={16} strokeWidth={2.5} />
-      </button>
+      </motion.button>
     </div>
   );
 }
@@ -99,7 +130,7 @@ export default function StepInfo({ adultPrice, currency }: StepInfoProps) {
         <GuestCounter value={guests.children} min={0} onChange={(v) => setGuests({ ...guests, children: v })} />
       </div>
 
-      {/* Infant notice — green, matches design */}
+      {/* Infant notice */}
       <div className="bg-[#EAF7F1] rounded-[14px] px-5 py-4 flex items-center gap-3">
         <span className="text-[18px] leading-none flex-shrink-0">&#x1F476;</span>
         <p className="text-[13px] font-medium text-[#0F6E56] leading-snug">

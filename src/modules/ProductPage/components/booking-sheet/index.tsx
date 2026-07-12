@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'framer-motion';
 import React from 'react';
 
 import { Icons } from '@/assets/icons';
@@ -17,6 +18,18 @@ interface BookingSheetProps {
   onClose: () => void;
 }
 
+const slideVariants = {
+  enter: (direction: 'forward' | 'backward') => ({
+    x: direction === 'forward' ? '100%' : '-100%',
+    opacity: 0,
+  }),
+  center: { x: 0, opacity: 1 },
+  exit: (direction: 'forward' | 'backward') => ({
+    x: direction === 'forward' ? '-100%' : '100%',
+    opacity: 0,
+  }),
+};
+
 export default function BookingSheet({
   productName,
   duration,
@@ -34,11 +47,13 @@ export default function BookingSheet({
   const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
 
-  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [direction, setDirection] = React.useState<'forward' | 'backward'>('forward');
+  const prevStep = React.useRef(step);
 
-  // Scroll to top whenever step changes
   React.useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0, behavior: 'instant' });
+    if (step > prevStep.current) setDirection('forward');
+    else if (step < prevStep.current) setDirection('backward');
+    prevStep.current = step;
   }, [step]);
 
   const childPrice = adultPrice * 0.5;
@@ -72,7 +87,6 @@ export default function BookingSheet({
       {/* Header */}
       <div className="flex items-center px-4 pt-4 pb-3 bg-white border-b border-black/[0.07] flex-shrink-0">
         <div className="flex items-center gap-3 min-w-0">
-          {/* Tour icon */}
           <div className="w-11 h-11 rounded-[12px] bg-[#0F6E56] flex items-center justify-center flex-shrink-0">
             <Icons.mountain className="w-5 h-5 text-white" />
           </div>
@@ -90,20 +104,36 @@ export default function BookingSheet({
         <BookingStepper currentStep={step} />
       </div>
 
-      {/* Step content */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto scrollbar-hide">
-        {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} />}
-        {step === 2 && <StepOptions />}
-        {step === 3 && <StepReview productName={productName} adultPrice={adultPrice} currency={currency} />}
-        {step === 4 && (
-          <StepPayment
-            productName={productName}
-            duration={duration}
-            total={runningTotal}
-            currency={currency}
-            onEditBooking={() => setStep(3)}
-          />
-        )}
+      {/* Step content — slide canvas */}
+      <div className="flex-1 relative overflow-hidden">
+        <AnimatePresence initial={false} mode="sync" custom={direction}>
+          <motion.div
+            key={step}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{
+              x: { type: 'spring', stiffness: 300, damping: 30 },
+              opacity: { duration: 0.2 },
+            }}
+            className="absolute inset-0 overflow-y-auto scrollbar-hide"
+          >
+            {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} />}
+            {step === 2 && <StepOptions />}
+            {step === 3 && <StepReview productName={productName} adultPrice={adultPrice} currency={currency} />}
+            {step === 4 && (
+              <StepPayment
+                productName={productName}
+                duration={duration}
+                total={runningTotal}
+                currency={currency}
+                onEditBooking={() => setStep(3)}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Bottom bar — hidden on step 4 */}
@@ -113,7 +143,6 @@ export default function BookingSheet({
           style={{ paddingBottom: 'max(16px, env(safe-area-inset-bottom))' }}
         >
           <div className="flex items-center gap-3">
-            {/* Back arrow — only from step 2 onwards */}
             {step > 1 && (
               <button
                 onClick={handleBack}
@@ -123,13 +152,11 @@ export default function BookingSheet({
               </button>
             )}
 
-            {/* Total — centered, takes remaining space */}
             <div className="flex-1 min-w-0">
               <p className="text-[11px] text-[#999] leading-none">{totalLabel}</p>
               <p className="text-[20px] font-bold tabular-nums text-[#111] leading-tight mt-0.5">{fmt(displayTotal)}</p>
             </div>
 
-            {/* Continue / Confirm button */}
             <button
               onClick={handleNext}
               disabled={!canContinue}
