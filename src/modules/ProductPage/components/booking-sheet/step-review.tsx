@@ -23,7 +23,7 @@ const PACKAGE_LABELS: Record<string, string> = {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2] last:border-0">
-      <span className="text-[14px] text-[#888] flex-shrink-0 w-[90px]">{label}</span>
+      <span className="text-[14px] font-medium text-[#555] flex-shrink-0 w-[90px]">{label}</span>
       <span className="text-[14px] font-semibold text-[#111] text-right flex-1">{value}</span>
     </div>
   );
@@ -62,7 +62,7 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
       .join(', ') || '—';
 
   return (
-    <div className="flex flex-col gap-4 px-5 pt-5 pb-8">
+    <div className="flex flex-col gap-5 px-5 pt-5 pb-8">
       {/* Heading */}
       <div>
         <h2 className="text-[24px] font-bold text-[#111] tracking-tight leading-snug">Review Booking</h2>
@@ -93,7 +93,7 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
             <span className="text-[14px] text-[#666]">
               {guests.adults} adult{guests.adults > 1 ? 's' : ''} &times; {fmt(adultPrice + premiumSurcharge)}
             </span>
-            <span className="text-[14px] font-semibold text-[#0F6E56]">{fmt(adultTotal)}</span>
+            <span className="text-[14px] font-semibold text-[#111]">{fmt(adultTotal)}</span>
           </div>
         )}
 
@@ -103,7 +103,7 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
               {guests.children} child{guests.children > 1 ? 'ren' : ''} &times;{' '}
               {fmt(childPrice + premiumSurcharge * 0.5)}
             </span>
-            <span className="text-[14px] font-semibold text-[#0F6E56]">{fmt(childTotal)}</span>
+            <span className="text-[14px] font-semibold text-[#111]">{fmt(childTotal)}</span>
           </div>
         )}
 

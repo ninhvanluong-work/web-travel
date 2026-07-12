@@ -63,7 +63,7 @@ export default function StepInfo({ adultPrice, currency }: StepInfoProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-5 pt-5 pb-8">
+    <div className="flex flex-col gap-5 px-5 pt-5 pb-8">
       {/* Heading */}
       <div>
         <h2 className="text-[24px] font-bold text-[#111] tracking-tight leading-snug">{"Who's joining?"}</h2>

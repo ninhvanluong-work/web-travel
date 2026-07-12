@@ -151,7 +151,7 @@ export default function StepOptions() {
                 )}
               >
                 <p className={cn('text-[16px] font-bold', active ? 'text-white' : 'text-[#111]')}>{pkg.label}</p>
-                <p className={cn('text-[12px] font-semibold mt-0.5', active ? 'text-[#A8D8C9]' : 'text-[#0F6E56]')}>
+                <p className={cn('text-[12px] font-semibold mt-0.5', active ? 'text-[#A8D8C9]' : 'text-[#777]')}>
                   {pkg.note}
                 </p>
                 <div className="flex flex-col gap-1 mt-3">
@@ -160,10 +160,10 @@ export default function StepOptions() {
                       key={f}
                       className={cn(
                         'inline-flex items-center gap-1.5 text-[12px]',
-                        active ? 'text-[#A8D8C9]' : 'text-[#555]'
+                        active ? 'text-[#A8D8C9]' : 'text-[#333]'
                       )}
                     >
-                      <Check size={11} strokeWidth={2.5} className={active ? 'text-[#A8D8C9]' : 'text-[#0F6E56]'} />
+                      <Check size={11} strokeWidth={2.5} className={active ? 'text-[#A8D8C9]' : 'text-[#B2C5D4]'} />
                       {f}
                     </span>
                   ))}
