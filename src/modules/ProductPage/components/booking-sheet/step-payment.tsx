@@ -50,13 +50,13 @@ export default function StepPayment({
 
         {/* Tour row */}
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-[14px] text-[#888] flex-shrink-0 w-[70px]">Tour</span>
+          <span className="text-[14px] font-medium text-[#555] flex-shrink-0 w-[70px]">Tour</span>
           <span className="text-[14px] font-semibold text-[#111] text-right">{productName}</span>
         </div>
 
         {/* Date row */}
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-[14px] text-[#888] flex-shrink-0 w-[70px]">Date</span>
+          <span className="text-[14px] font-medium text-[#555] flex-shrink-0 w-[70px]">Date</span>
           <span className="text-[14px] font-semibold text-[#111] text-right">
             {date ? format(date, 'EEE, MMM d, yyyy') : '—'}
           </span>
@@ -64,7 +64,7 @@ export default function StepPayment({
 
         {/* Guests row */}
         <div className="flex items-center justify-between px-5 py-3">
-          <span className="text-[14px] text-[#888] flex-shrink-0 w-[70px]">Guests</span>
+          <span className="text-[14px] font-medium text-[#555] flex-shrink-0 w-[70px]">Guests</span>
           <span className="text-[14px] font-semibold text-[#111] text-right">{guestLabel}</span>
         </div>
 

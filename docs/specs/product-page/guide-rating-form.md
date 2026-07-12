@@ -43,7 +43,7 @@ Form được xây dựng theo phong cách giao diện tối giản, bo tròn g�
 
    - Đánh giá bằng số sao từ 1 đến 5 (mặc định chưa chọn hoặc chọn 5 sao).
    - Biểu tượng ngôi sao lớn (kích thước khoảng `28px`), đổi màu khi được chọn (màu vàng ấm `#FBBF24` / `text-amber-400`).
-   - **Hiệu ứng Vi mô (Micro-animations):** Khi người dùng click chọn số sao, các ngôi sao sẽ có hiệu ứng nảy (elastic scale: `scale: [1, 1.25, 0.95, 1]`) chạy lần lượt từ trái sang phải bằng Framer Motion.
+   - **Hiệu ứng Vi mô (Micro-animations):** Khi người dùng click chọn số sao, các ngôi sao sẽ có hiệu ứng nảy (elastic scale) chạy lần lượt từ trái sang phải bằng Framer Motion. Chi tiết chiến lược thiết kế chuyển động chuyên nghiệp xem tại [rating-star-animation.md](file:///d:/Remote/web-travel/docs/specs/product-page/rating-star-animation.md).
    - **Nhãn cảm xúc động (Dynamic Rating Labels):** Hiển thị nhãn mô tả cảm xúc tương ứng ngay bên dưới ngôi sao dựa trên điểm đã chọn để tăng tính cá nhân hóa:
      - 1 sao: _"Rất không hài lòng"_
      - 2 sao: _"Không hài lòng"_

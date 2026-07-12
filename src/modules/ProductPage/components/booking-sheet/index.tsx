@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Icons } from '@/assets/icons';
 import { useBookingStore } from '@/stores/BookingStore';
 
 import BookingStepper from './booking-stepper';
@@ -73,7 +74,7 @@ export default function BookingSheet({
         <div className="flex items-center gap-3 min-w-0">
           {/* Tour icon */}
           <div className="w-11 h-11 rounded-[12px] bg-[#0F6E56] flex items-center justify-center flex-shrink-0">
-            <span className="text-[20px]">🧳</span>
+            <Icons.mountain className="w-5 h-5 text-white" />
           </div>
           <div className="min-w-0">
             <p className="text-[14px] font-bold text-[#111] truncate">{productName}</p>
@@ -100,7 +101,7 @@ export default function BookingSheet({
             duration={duration}
             total={runningTotal}
             currency={currency}
-            onEditBooking={() => setStep(1)}
+            onEditBooking={() => setStep(3)}
           />
         )}
       </div>
