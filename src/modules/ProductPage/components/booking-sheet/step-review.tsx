@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -107,7 +108,6 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
           </div>
         )}
 
-        {/* Total row */}
         <div className="flex items-center justify-between px-5 py-3 pb-4">
           <span className="text-[16px] font-bold text-[#111]">Total</span>
           <span className="text-[20px] font-bold text-[#0F6E56]">{fmt(grandTotal)}</span>
@@ -132,17 +132,31 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
             agreedToTerms ? 'bg-[#0F6E56] border-[#0F6E56]' : 'border-[#CCC] bg-white'
           )}
         >
-          {agreedToTerms && (
-            <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
-              <path
-                d="M1 4.5L4 7.5L10 1"
-                stroke="white"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
+          <AnimatePresence>
+            {agreedToTerms && (
+              <motion.svg
+                key="checkmark"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                width="11"
+                height="9"
+                viewBox="0 0 11 9"
+                fill="none"
+              >
+                <motion.path
+                  d="M1 4.5L4 7.5L10 1"
+                  stroke="white"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.25, ease: 'easeOut' }}
+                />
+              </motion.svg>
+            )}
+          </AnimatePresence>
         </div>
         <p className="text-[13px] text-[#444] leading-relaxed">
           I agree to the <span className="text-[#0F6E56] font-semibold underline">Terms and Conditions</span> and{' '}
