@@ -6,6 +6,10 @@
     "signIn": "Đăng nhập",
     "signOut": "Đăng xuất",
     "account": "Tài khoản",
-    "accountDesc": "Thông tin tài khoản và đăng xuất"
+    "accountDesc": "Thông tin tài khoản và đăng xuất",
+    "logoutTitle": "Đăng xuất",
+    "logoutDesc": "Bạn có chắc muốn đăng xuất khỏi tài khoản không?",
+    "logoutConfirm": "Đăng xuất",
+    "logoutCancel": "Hủy"
   }
 }
