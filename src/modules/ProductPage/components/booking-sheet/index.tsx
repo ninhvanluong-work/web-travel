@@ -47,14 +47,15 @@ export default function BookingSheet({
   const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
 
-  const [direction, setDirection] = React.useState<'forward' | 'backward'>('forward');
-  const prevStep = React.useRef(step);
+  const directionRef = React.useRef<'forward' | 'backward'>('forward');
+  const prevStepRef = React.useRef(step);
 
-  React.useEffect(() => {
-    if (step > prevStep.current) setDirection('forward');
-    else if (step < prevStep.current) setDirection('backward');
-    prevStep.current = step;
-  }, [step]);
+  if (step !== prevStepRef.current) {
+    directionRef.current = step > prevStepRef.current ? 'forward' : 'backward';
+    prevStepRef.current = step;
+  }
+
+  const direction = directionRef.current;
 
   const childPrice = adultPrice * 0.5;
   const premiumSurcharge = packageType === 'premium' ? 40 : 0;
@@ -82,6 +83,22 @@ export default function BookingSheet({
     if (step > 1) setStep((step - 1) as 1 | 2 | 3);
   };
 
+  const swipeTouchStart = React.useRef<{ x: number; y: number } | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    swipeTouchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!swipeTouchStart.current) return;
+    const dx = swipeTouchStart.current.x - e.changedTouches[0].clientX;
+    const dy = swipeTouchStart.current.y - e.changedTouches[0].clientY;
+    swipeTouchStart.current = null;
+    if (Math.abs(dx) < Math.abs(dy) || Math.abs(dx) < 50) return;
+    if (dx > 0 && canContinue) handleNext();
+    else if (dx < 0) handleBack();
+  };
+
   return (
     <div className="flex flex-col h-full bg-[#F8F8F8]">
       {/* Header */}
@@ -105,7 +122,7 @@ export default function BookingSheet({
       </div>
 
       {/* Step content — slide canvas */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="flex-1 relative overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <AnimatePresence initial={false} mode="sync" custom={direction}>
           <motion.div
             key={step}

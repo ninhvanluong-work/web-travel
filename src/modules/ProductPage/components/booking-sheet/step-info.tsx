@@ -21,12 +21,14 @@ const numVariants = {
 
 function GuestCounter({ value, min = 0, max = 20, onChange }: GuestCounterProps) {
   const prevValueRef = React.useRef(value);
-  const [scrollDir, setScrollDir] = React.useState(1);
+  const scrollDirRef = React.useRef(1);
 
-  React.useEffect(() => {
-    setScrollDir(value > prevValueRef.current ? 1 : -1);
+  if (value !== prevValueRef.current) {
+    scrollDirRef.current = value > prevValueRef.current ? 1 : -1;
     prevValueRef.current = value;
-  }, [value]);
+  }
+
+  const scrollDir = scrollDirRef.current;
 
   const isAtMin = value <= min;
   const isAtMax = value >= max;
