@@ -16,7 +16,11 @@ import { DialogClose } from '@/components/ui/dialog';
 export function VideoPopup({ moment, onClose }: { moment: ITourGuideMoment; onClose: () => void }) {
   const playerRef = useRef<BunnyPlayerHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [playing, setPlaying] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
+
+  const pausedRef = useRef(false);
+  pausedRef.current = paused;
 
   // swipe-right state (mirrors useSwipeBack internals)
   const startX = useRef(0);
@@ -27,7 +31,7 @@ export function VideoPopup({ moment, onClose }: { moment: ITourGuideMoment; onCl
 
   useEffect(() => {
     const player = playerRef.current;
-    player?.play().then(() => setPlaying(true));
+    player?.play();
     return () => {
       player?.pause();
     };
@@ -35,11 +39,14 @@ export function VideoPopup({ moment, onClose }: { moment: ITourGuideMoment; onCl
 
   const handleTap = () => {
     if (dragging.current) return;
-    if (playing) {
-      playerRef.current?.pause();
-      setPlaying(false);
+    if (paused) {
+      playerRef.current?.play();
+      setPaused(false);
+    } else if (playerRef.current?.isPlaying()) {
+      playerRef.current.pause();
+      setPaused(true);
     } else {
-      playerRef.current?.play().then(() => setPlaying(true));
+      playerRef.current?.play();
     }
   };
 
@@ -118,7 +125,20 @@ export function VideoPopup({ moment, onClose }: { moment: ITourGuideMoment; onCl
         embedUrl={moment.embedUrl}
         muted={false}
         className="absolute inset-0 w-full h-full"
+        onReady={() => {
+          setVideoReady(true);
+          if (!pausedRef.current) {
+            playerRef.current?.play();
+          }
+        }}
       />
+
+      {/* Loading spinner */}
+      {!videoReady && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
+        </div>
+      )}
 
       {/* Full-area tap zone for play/pause */}
       <div className="absolute inset-0 z-10" onClick={handleTap} />
@@ -131,7 +151,7 @@ export function VideoPopup({ moment, onClose }: { moment: ITourGuideMoment; onCl
       </DialogClose>
 
       {/* Pause indicator */}
-      {!playing && (
+      {paused && (
         <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
           <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center">
             <svg width="22" height="22" viewBox="0 0 12 12">
