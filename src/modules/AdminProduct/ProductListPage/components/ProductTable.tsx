@@ -10,12 +10,10 @@ import { ROUTE } from '@/types';
 
 import { ProductTableRow } from './ProductTableRow';
 
-type ProductStatus = 'draft' | 'published' | 'hidden';
-
 interface ProductTableProps {
   products: IProduct[];
   isLoading?: boolean;
-  onChangeStatus: (product: IProduct, status: ProductStatus) => void;
+  onChangeStatus: (product: IProduct, status: 'published' | 'hidden') => void;
   onDelete: (product: IProduct) => void;
 }
 
