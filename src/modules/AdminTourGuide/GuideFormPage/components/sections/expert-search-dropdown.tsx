@@ -43,7 +43,7 @@ export function ExpertSearchDropdown({
         align="start"
         sideOffset={6}
         onOpenAutoFocus={(e) => e.preventDefault()}
-        className="w-[var(--radix-popover-trigger-width)] min-w-[300px] p-0 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 bg-white/95 backdrop-blur-md overflow-hidden"
+        className="w-[var(--radix-popover-trigger-width)] min-w-[340px] max-w-[calc(100vw-32px)] p-0 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100 bg-white/95 backdrop-blur-md overflow-hidden"
       >
         {/* Header */}
         <div className="px-4 pt-3 pb-2 border-b border-slate-50 bg-slate-50/30">
@@ -53,7 +53,7 @@ export function ExpertSearchDropdown({
         </div>
 
         {/* List */}
-        <div className="overflow-y-auto overscroll-contain max-h-60 scrollbar-thin">
+        <div className="overflow-y-auto overscroll-contain max-h-[300px] scrollbar-thin">
           {/* Chưa có chuyên môn nào trong kho */}
           {suggestions.length === 0 && (
             <div className="py-8 text-center px-4">
@@ -76,26 +76,26 @@ export function ExpertSearchDropdown({
               <button
                 key={label}
                 type="button"
-                onMouseDown={(e) => {
-                  e.preventDefault();
+                onPointerDown={(e) => e.preventDefault()}
+                onClick={() => {
                   if (!isSelected) onAdd(label);
                 }}
-                className={`group w-full flex items-center gap-3 px-4 py-2.5 text-left transition-all duration-150 ${
+                className={`group w-full flex items-start gap-3 px-4 py-2.5 text-left transition-all duration-150 ${
                   isSelected ? 'cursor-default bg-slate-50/60' : 'hover:bg-brand-50/80 active:bg-brand-100/50'
                 }`}
               >
                 <span
-                  className="w-2 h-2 rounded-full shrink-0 transition-opacity"
+                  className="w-2 h-2 rounded-full shrink-0 transition-opacity mt-1.5"
                   style={{ backgroundColor: colors.text, opacity: isSelected ? 0.4 : 1 }}
                 />
                 <span
-                  className={`flex-1 text-[13px] font-medium transition-colors ${
+                  className={`flex-1 text-[13px] font-medium transition-colors whitespace-normal break-words ${
                     isSelected ? 'text-slate-400' : 'text-slate-700 group-hover:text-brand-700'
                   }`}
                 >
                   {label}
                 </span>
-                {isSelected && <Check size={13} className="text-brand-400 shrink-0" />}
+                {isSelected && <Check size={13} className="text-brand-400 shrink-0 mt-0.5" />}
               </button>
             );
           })}
@@ -106,8 +106,8 @@ export function ExpertSearchDropdown({
           <div className="border-t border-slate-100 bg-slate-50/10">
             <button
               type="button"
-              onMouseDown={(e) => {
-                e.preventDefault();
+              onPointerDown={(e) => e.preventDefault()}
+              onClick={() => {
                 onAdd(trimmed);
               }}
               className="w-full flex items-center gap-3 px-4 py-3 hover:bg-brand-50 text-left transition-all duration-150"

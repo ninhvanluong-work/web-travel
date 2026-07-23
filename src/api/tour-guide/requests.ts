@@ -3,6 +3,7 @@ import { mergeWithLocalStorage } from './mock-adapter';
 import type {
   ApiCreateMomentPayload,
   ApiCreateMomentResponse,
+  ApiSkillCategory,
   ApiTourGuideDetail,
   ApiTourGuideDetailResponse,
   ApiTourGuideListResponse,
@@ -11,6 +12,7 @@ import type {
   ApiTourGuideOnboardingData,
   ApiTourGuideOnboardingResponse,
   ApiTourGuideReviewResponse,
+  ApiTourGuideSkillsResponse,
   ApiUpdateMomentPayload,
   ITourGuide,
   ITourGuideListParams,
@@ -218,6 +220,11 @@ export async function updateTourGuideMoment(
 
 export async function deleteTourGuideMoment(guideId: string, momentId: string): Promise<void> {
   await request.delete(`/tour-guide/${guideId}/moment/${momentId}`);
+}
+
+export async function getTourGuideSkills(): Promise<ApiSkillCategory[]> {
+  const { data } = await request.get<ApiTourGuideSkillsResponse>('/tour-guide/skills');
+  return data.data.skillCategories;
 }
 
 export async function getTourGuideReviews({
