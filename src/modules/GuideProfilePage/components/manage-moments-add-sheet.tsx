@@ -123,7 +123,6 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
         useAlertStore
           .getState()
           .addAlert({ type: 'success', title: t('manageMomentsSheet.editSuccess'), duration: 3000 });
-        handleClose();
       } else {
         const created = await createTourGuideMoment(guideId, {
           name: savedName,
@@ -245,7 +244,10 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
       useAlertStore.getState().addAlert({ type: 'error', title: t('manageMomentsSheet.fileTooLarge') });
       return;
     }
-    if (!['video/mp4', 'video/webm'].includes(selected.type)) {
+    const isAllowedType =
+      ['video/mp4', 'video/webm', 'video/quicktime'].includes(selected.type) ||
+      selected.name.toLowerCase().endsWith('.mov');
+    if (!isAllowedType) {
       useAlertStore.getState().addAlert({ type: 'error', title: t('manageMomentsSheet.invalidFormat') });
       return;
     }
@@ -322,7 +324,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
           <p className="text-[12px] text-white font-medium">
             {phase === 'preparing' && t('manageMomentsSheet.preparing')}
             {phase === 'uploading' && t('manageMomentsSheet.uploading', { progress })}
-            {phase === 'saving' && 'Saving...'}
+            {phase === 'saving' && t('manageMomentsSheet.saving')}
           </p>
           {file && (
             <p className="absolute bottom-2 left-3 right-3 text-[11px] text-white/60 truncate text-center">
@@ -369,7 +371,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
       return (
         <span className="flex items-center justify-center gap-1.5">
           <Spinner size="0.875rem" className="text-white" />
-          Saving...
+          {t('manageMomentsSheet.saving')}
         </span>
       );
     }
@@ -423,7 +425,7 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
             <input
               ref={fileInputRef}
               type="file"
-              accept="video/mp4,video/webm"
+              accept="video/mp4,video/webm,video/quicktime,.mov"
               className="hidden"
               onChange={handleFileSelect}
             />
