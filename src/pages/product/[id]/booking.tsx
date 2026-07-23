@@ -28,12 +28,12 @@ const BookingPage: NextPage = () => {
   if (isError || !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-white p-6">
-        <p className="text-[15px] font-semibold text-gray-800">Failed to load booking details.</p>
+        <p className="text-[15px] font-semibold text-gray-800">{t('booking.failedToLoad')}</p>
         <button
           onClick={() => router.push(`/product/${productId}`)}
           className="mt-4 px-6 py-2.5 bg-[#0F6E56] text-white rounded-full text-[14px] font-medium"
         >
-          Go back
+          {t('booking.goBack')}
         </button>
       </div>
     );
@@ -50,6 +50,7 @@ const BookingPage: NextPage = () => {
           duration={p.quickFacts.duration}
           adultPrice={p.salePrice}
           currency={p.currency}
+          options={data.options}
           onClose={() => router.push(`/product/${productId}`)}
         />
       </div>

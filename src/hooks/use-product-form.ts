@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { useCreateOption } from '@/api/option';
 import { useCreateProduct, useProductById, useUpdateProduct, useUpdateProductStatus } from '@/api/product';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { useAlertStore } from '@/stores/use-alert-store';
@@ -98,17 +99,8 @@ export function useProductForm(productId?: string) {
 
   const { addAlert } = useAlertStore.getState();
 
-  const createMutation = useCreateProduct({
-    onSuccess: () => {
-      draft.clearDraftOnSuccess();
-      invalidateList();
-      addAlert({ type: 'success', title: 'Tour created successfully' });
-      router.push(ROUTE.ADMIN_PRODUCTS);
-    },
-    onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
-    },
-  });
+  const createMutation = useCreateProduct();
+  const createOptionMutation = useCreateOption();
 
   const updateMutation = useUpdateProduct({
     onError: (err: any) => {
@@ -121,6 +113,40 @@ export function useProductForm(productId?: string) {
       addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Failed to update tour status' });
     },
   });
+
+  const handleCreateNew = async (data: ProductFormValues) => {
+    try {
+      const product = await createMutation.mutateAsync(data);
+
+      const elements = product.elements ?? [];
+      const dayEl = elements.find((e) => e.key === 'day');
+      const nightEl = elements.find((e) => e.key === 'night');
+      const day = dayEl ? parseInt(dayEl.name, 10) || 2 : 2;
+      const night = nightEl ? parseInt(nightEl.name, 10) || 1 : 1;
+
+      try {
+        await createOptionMutation.mutateAsync({
+          title: data.name,
+          productId: product.id,
+          isDefault: true,
+          status: 'active',
+          order: 1,
+          currency: 'USD',
+          day,
+          night,
+        });
+      } catch {
+        // option creation is best-effort; product was created successfully
+      }
+
+      draft.clearDraftOnSuccess();
+      invalidateList();
+      addAlert({ type: 'success', title: 'Tour created successfully' });
+      router.push(ROUTE.ADMIN_PRODUCTS);
+    } catch (err: any) {
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
+    }
+  };
 
   const onSubmit = (data: ProductFormValues) => {
     if (isEdit) {
@@ -136,13 +162,13 @@ export function useProductForm(productId?: string) {
         }
       );
     } else {
-      createMutation.mutate(data);
+      handleCreateNew(data);
     }
   };
 
   const onPublish = (data: ProductFormValues) => {
     if (!isEdit) {
-      createMutation.mutate(data);
+      handleCreateNew(data);
       return;
     }
     updateMutation.mutate(
@@ -186,7 +212,11 @@ export function useProductForm(productId?: string) {
     );
   });
 
-  const isPending = createMutation.isPending || updateMutation.isPending || updateStatusMutation.isPending;
+  const isPending =
+    createMutation.isPending ||
+    createOptionMutation.isPending ||
+    updateMutation.isPending ||
+    updateStatusMutation.isPending;
 
   return { form, isEdit, productData, onSubmit, onPublish, handlePublish, handleHide, isPending, draft };
 }

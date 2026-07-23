@@ -1,38 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
-const DEPARTURE_SLOTS = [
-  { id: '07:30', time: '07:30', label: 'Morning departure', spots: 4 },
-  { id: '13:00', time: '13:00', label: 'Afternoon departure', spots: 2 },
-];
-
-const PICKUP_POINTS = [
-  { id: 'old-quarter', label: 'Hanoi Old Quarter', popular: true },
-  { id: 'hoan-kiem', label: 'Hoan Kiem Lake', popular: false },
-  { id: 'ba-dinh', label: 'Ba Dinh Square', popular: false },
-];
-
-const PACKAGES = [
-  {
-    id: 'basic' as const,
-    label: 'Basic',
-    note: 'Included',
-    surcharge: 0,
-    features: ['Shared guide', 'Lunch included', 'Transport'],
-  },
-  {
-    id: 'premium' as const,
-    label: 'Premium',
-    note: '+$40/pp',
-    surcharge: 40,
-    features: ['Private guide', 'All meals', 'Transport', 'Hotel pickup'],
-  },
-];
-
 export default function StepOptions() {
+  const { t } = useTranslation('productPage');
+
   const departureTime = useBookingStore.use.departureTime();
   const setDepartureTime = useBookingStore.use.setDepartureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
@@ -40,19 +15,53 @@ export default function StepOptions() {
   const packageType = useBookingStore.use.packageType();
   const setPackageType = useBookingStore.use.setPackageType();
 
+  const DEPARTURE_SLOTS = [
+    { id: '07:30', time: '07:30', label: t('booking.morningDeparture'), spots: 4 },
+    { id: '13:00', time: '13:00', label: t('booking.afternoonDeparture'), spots: 2 },
+  ];
+
+  const PICKUP_POINTS = [
+    { id: 'old-quarter', label: t('booking.locationOldQuarter'), popular: true },
+    { id: 'hoan-kiem', label: t('booking.locationHoanKiem'), popular: false },
+    { id: 'ba-dinh', label: t('booking.locationBaDinh'), popular: false },
+  ];
+
+  const PACKAGES = [
+    {
+      id: 'basic' as const,
+      label: t('booking.packageBasic'),
+      note: t('booking.packageIncluded'),
+      surcharge: 0,
+      features: [t('booking.featureSharedGuide'), t('booking.featureLunchIncluded'), t('booking.featureTransport')],
+    },
+    {
+      id: 'premium' as const,
+      label: t('booking.packagePremium'),
+      note: '+$40/pp',
+      surcharge: 40,
+      features: [
+        t('booking.featurePrivateGuide'),
+        t('booking.featureAllMeals'),
+        t('booking.featureTransport'),
+        t('booking.featureHotelPickup'),
+      ],
+    },
+  ];
+
   return (
     <div className="flex flex-col gap-5 px-5 pt-5 pb-8">
-      {/* Heading */}
       <div>
-        <h2 className="text-[24px] font-bold text-[#111] tracking-tight">Customize your trip</h2>
-        <p className="text-[14px] text-[#555] mt-1">Select departure, pickup, and package</p>
+        <h2 className="text-[24px] font-bold text-[#111] tracking-tight">{t('booking.customizeYourTrip')}</h2>
+        <p className="text-[14px] text-[#555] mt-1">{t('booking.selectDeparturePickupPackage')}</p>
       </div>
 
       {/* Departure Time */}
       <div>
         <div className="flex items-center gap-1.5 mb-3">
           <span className="text-[14px]">⏰</span>
-          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">Departure Time</span>
+          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">
+            {t('booking.departureTime')}
+          </span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {DEPARTURE_SLOTS.map((slot) => {
@@ -79,7 +88,7 @@ export default function StepOptions() {
                 <div className="flex items-center gap-1 mt-2">
                   <span className={cn('w-1.5 h-1.5 rounded-full', active ? 'bg-[#A8D8C9]' : 'bg-[#999]')} />
                   <p className={cn('text-[11px]', active ? 'text-[#A8D8C9]' : 'text-[#888]')}>
-                    {slot.spots} spots left
+                    {t('booking.spotsLeft', { count: slot.spots })}
                   </p>
                 </div>
               </motion.button>
@@ -92,7 +101,9 @@ export default function StepOptions() {
       <div>
         <div className="flex items-center gap-1.5 mb-3">
           <span className="text-[14px]">📍</span>
-          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">Pickup Location</span>
+          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">
+            {t('booking.pickupLocation')}
+          </span>
         </div>
         <div className="bg-white border border-[#E5E5E5] rounded-[16px] overflow-hidden shadow-sm">
           {PICKUP_POINTS.map((point, i) => {
@@ -107,7 +118,6 @@ export default function StepOptions() {
                   i > 0 && 'border-t border-[#EBEBEB]'
                 )}
               >
-                {/* Animated radio circle */}
                 <div
                   className={cn(
                     'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
@@ -136,7 +146,9 @@ export default function StepOptions() {
                   >
                     {point.label}
                   </span>
-                  {point.popular && <span className="text-[12px] text-[#0F6E56] font-medium">Most popular</span>}
+                  {point.popular && (
+                    <span className="text-[12px] text-[#0F6E56] font-medium">{t('booking.mostPopular')}</span>
+                  )}
                 </div>
               </motion.button>
             );
@@ -148,7 +160,7 @@ export default function StepOptions() {
       <div>
         <div className="flex items-center gap-1.5 mb-3">
           <span className="text-[14px]">🎒</span>
-          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">Tour Package</span>
+          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">{t('booking.tourPackage')}</span>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {PACKAGES.map((pkg) => {
