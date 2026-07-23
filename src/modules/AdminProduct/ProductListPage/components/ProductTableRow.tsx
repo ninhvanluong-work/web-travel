@@ -24,9 +24,8 @@ const STATUS_CONFIG: Record<ProductStatus, { labelKey: string; className: string
   hidden: { labelKey: 'statusHidden', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
 };
 
-const STATUS_OPTIONS: { value: ProductStatus; labelKey: string }[] = [
+const STATUS_OPTIONS: { value: 'published' | 'hidden'; labelKey: string }[] = [
   { value: 'published', labelKey: 'actionPublish' },
-  { value: 'draft', labelKey: 'actionDraft' },
   { value: 'hidden', labelKey: 'actionHide' },
 ];
 
@@ -72,7 +71,7 @@ function getAvatarColor(name: string) {
 
 interface Props {
   product: IProduct;
-  onChangeStatus: (product: IProduct, status: ProductStatus) => void;
+  onChangeStatus: (product: IProduct, status: 'published' | 'hidden') => void;
   onDelete: (product: IProduct) => void;
 }
 

@@ -144,6 +144,21 @@ docs/specs/
 
 ---
 
+## 📦 product-page/
+
+| File                                                                                        | Tính năng                                             | Status |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------ |
+| [spec-product-page-from-video.md](./product-page/spec-product-page-from-video.md)           | UI với mock data — 13 sections                        | ✅     |
+| [spec-product-page-api-integration.md](./product-page/spec-product-page-api-integration.md) | Tích hợp API thật GET /product/:id                    | ✅     |
+| [booking-api-integration.md](./product-page/booking-api-integration.md)                     | Tích hợp API Đặt Tour (Default Option & Tour Session) | 📝     |
+| [quick-facts-builder.md](./product-page/quick-facts-builder.md)                             | Trình dựng cấu hình Quick Facts                       | 📝     |
+| [guide-profile-spec.md](./product-page/guide-profile-spec.md)                               | Thông tin chi tiết Tour Guide trên Product Page       | 📝     |
+| [guide-rating-form.md](./product-page/guide-rating-form.md)                                 | Form đánh giá Tour Guide                              | 📝     |
+| [rating-star-animation.md](./product-page/rating-star-animation.md)                         | Hiệu ứng sao đánh giá                                 | 📝     |
+| [rich-text-rendering.md](./product-page/rich-text-rendering.md)                             | Hiển thị nội dung mô tả dạng Rich Text                | 📝     |
+
+---
+
 ## Superseded Chain
 
 ```

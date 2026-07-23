@@ -61,9 +61,12 @@ const handleSuccess = (res: AxiosResponse) => res;
 const handleError = async (error: any) => {
   const originalRequest = error.config!;
   const data = error?.response?.data as any;
+  const status = error?.response?.status;
 
   const isAuthEndpoint = originalRequest?.url?.startsWith('/auth/');
-  if (data?.statusCode === 401 && !originalRequest?._retry && !isAuthEndpoint) {
+  const isUnauthorized = status === 401 || data?.statusCode === 401;
+
+  if (isUnauthorized && !originalRequest?._retry && !isAuthEndpoint) {
     originalRequest._retry = true;
 
     if (isRefreshing) {
@@ -100,6 +103,14 @@ request.interceptors.response.use(handleSuccess, handleError);
 
 request.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
+    const isAuthEndpoint = config.url?.startsWith('/auth/');
+    const isLogout = config.url === '/auth/logout';
+
+    // Do not attach the Authorization header for auth endpoints except logout
+    if (isAuthEndpoint && !isLogout) {
+      return config;
+    }
+
     const token = useUserStore.getState().accessToken;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;

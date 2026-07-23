@@ -1,3 +1,4 @@
+import type { ApiOptionDetail } from '../option/types';
 import type { ApiTourGuide } from '../tour-guide/types';
 
 export type { ApiTourGuide, ApiTourGuideListResponse } from '../tour-guide/types';
@@ -153,6 +154,7 @@ export interface ApiProductDetail {
   tags: ApiTagItem[];
   tourGuides: ApiTourGuide[];
   elements: ApiElementItem[];
+  options?: ApiOptionDetail[];
 }
 
 // ── Product review ────────────────────────────────────────────────────────

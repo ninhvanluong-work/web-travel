@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 
+import type { ApiOptionDetail } from '@/api/option/types';
 import { Icons } from '@/assets/icons';
 import { useBookingStore } from '@/stores/BookingStore';
 
@@ -15,6 +17,7 @@ interface BookingSheetProps {
   duration: string;
   adultPrice: number;
   currency: string;
+  options?: ApiOptionDetail[];
   onClose: () => void;
 }
 
@@ -35,8 +38,11 @@ export default function BookingSheet({
   duration,
   adultPrice,
   currency,
+  options,
   onClose: _onClose,
 }: BookingSheetProps) {
+  const { t } = useTranslation('productPage');
+
   const step = useBookingStore.use.step();
   const setStep = useBookingStore.use.setStep();
 
@@ -46,6 +52,7 @@ export default function BookingSheet({
   const pickupLocation = useBookingStore.use.pickupLocation();
   const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
+  const sessionPricing = useBookingStore.use.sessionPricing();
 
   const directionRef = React.useRef<'forward' | 'backward'>('forward');
   const prevStepRef = React.useRef(step);
@@ -57,22 +64,33 @@ export default function BookingSheet({
 
   const direction = directionRef.current;
 
-  const childPrice = adultPrice * 0.5;
+  const defaultOption = options?.find((o) => o.isDefault) ?? options?.[0];
+  const optionId = defaultOption?.id;
+
+  const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
+  const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
   const premiumSurcharge = packageType === 'premium' ? 40 : 0;
-  const estimatedTotal = guests.adults * adultPrice + guests.children * childPrice;
+  const estimatedTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
   const runningTotal =
-    guests.adults * (adultPrice + premiumSurcharge) + guests.children * (childPrice + premiumSurcharge * 0.5);
+    guests.adults * (effectiveAdultPrice + premiumSurcharge) +
+    guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
   const displayTotal = step === 1 ? estimatedTotal : runningTotal;
-  let totalLabel = 'Total to pay';
-  if (step === 1) totalLabel = 'Estimated total';
-  else if (step === 2) totalLabel = 'Running total';
+  let totalLabel = t('booking.totalToPay');
+  if (step === 1) totalLabel = t('booking.estimatedTotal');
+  else if (step === 2) totalLabel = t('booking.runningTotal');
 
   let canContinue = false;
-  if (step === 1) canContinue = date !== null && guests.adults >= 1;
-  else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null && packageType !== null;
+  if (step === 1) {
+    canContinue =
+      date !== null &&
+      guests.adults >= 1 &&
+      !sessionPricing.isLoadingSession &&
+      sessionPricing.sessionError === null &&
+      sessionPricing.isAdultAvailable;
+  } else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null && packageType !== null;
   else if (step === 3) canContinue = agreedToTerms;
 
   const handleNext = () => {
@@ -110,7 +128,8 @@ export default function BookingSheet({
           <div className="min-w-0">
             <p className="text-[14px] font-bold text-[#111] truncate">{productName}</p>
             <p className="text-[12px] text-[#777] mt-0.5">
-              {duration} · from <span className="text-[#0F6E56] font-semibold">{fmt(adultPrice)}</span>/person
+              {duration} · {t('booking.from')} <span className="text-[#0F6E56] font-semibold">{fmt(adultPrice)}</span>
+              {t('booking.perPerson')}
             </p>
           </div>
         </div>
@@ -137,7 +156,7 @@ export default function BookingSheet({
             }}
             className="absolute inset-0 overflow-y-auto scrollbar-hide"
           >
-            {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} />}
+            {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} optionId={optionId} />}
             {step === 2 && <StepOptions />}
             {step === 3 && <StepReview productName={productName} adultPrice={adultPrice} currency={currency} />}
             {step === 4 && (
@@ -183,7 +202,7 @@ export default function BookingSheet({
                 color: canContinue ? 'white' : '#999',
               }}
             >
-              {step === 3 ? 'Confirm Booking →' : 'Continue →'}
+              {step === 3 ? t('booking.confirmBooking') : t('booking.continue')}
             </button>
           </div>
         </div>
