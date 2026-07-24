@@ -1,3 +1,29 @@
+export interface ApiPickupLocation {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  optionId: string;
+  name: string;
+  address: string | null;
+  isPopular: boolean;
+  mapUrl: string | null;
+  order: number;
+}
+
+export interface ApiDepartureTime {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  optionId: string;
+  time: string;
+  label: string;
+  order: number;
+  isActive: boolean;
+  note: string | null;
+}
+
 export interface ApiOptionDetail {
   id: string;
   createdAt: string;
@@ -10,8 +36,11 @@ export interface ApiOptionDetail {
   isDefault: boolean;
   status: 'active' | 'inactive';
   order: number;
+  allowUnit: string | null;
   currency: string;
   productId: string;
+  pickupLocations: ApiPickupLocation[];
+  departureTimes: ApiDepartureTime[];
 }
 
 export interface CreateOptionPayload {

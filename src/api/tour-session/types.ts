@@ -3,9 +3,11 @@ export interface ApiUnitRef {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
-  key: 'adult' | 'children';
+  tourSessionId: string;
   name: string;
   note: string | null;
+  price: string;
+  capacity: number;
 }
 
 export interface ApiTourSessionItem {
@@ -15,13 +17,9 @@ export interface ApiTourSessionItem {
   deletedAt: string | null;
   optionId: string;
   travelDate: string;
-  departureTime: string;
-  capacity: number;
   remainingSlot: number;
-  unitRefId: string;
-  price: string;
   status: 'active' | 'inactive';
-  unitRef: ApiUnitRef;
+  unitReferences: ApiUnitRef[];
 }
 
 export interface ITourSessionParams {

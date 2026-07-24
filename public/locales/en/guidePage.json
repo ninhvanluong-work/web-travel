@@ -144,6 +144,15 @@
     "deleteConfirmDesc": "This action cannot be undone.",
     "deleteConfirm": "Delete"
   },
+  "expertise": {
+    "browseSkills": "Browse standard skills",
+    "searchResults": "Results for \"{{query}}\"",
+    "loadFailed": "Could not load skills list. You can still type your own.",
+    "retry": "Retry",
+    "noResults": "No skills match your search",
+    "createNew": "Add \"{{name}}\" as custom skill",
+    "otherSpecialties": "Other Specialties"
+  },
   "onboarding": {
     "nextBtnText": "Next →",
     "prevBtnText": "← Back",

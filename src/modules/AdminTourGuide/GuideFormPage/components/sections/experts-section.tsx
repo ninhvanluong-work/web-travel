@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { Button } from '@/components/ui/button';
 import { getSpecialtyColor } from '@/lib/specialty-colors';
 import type { TourGuideFormValues } from '@/lib/validations/tour-guide';
 
@@ -119,53 +118,49 @@ export function ExpertsSection() {
         )}
       </div>
 
-      {/* Zone 2: Input + nút Thêm (giữ nguyên bố cục gốc, thêm dropdown gợi ý) */}
+      {/* Zone 2: Input */}
       <div className="space-y-2">
         <label className="section-label-caps">{t('enterNewExpert')}</label>
-        <div className="flex gap-3 items-center w-full">
-          <div className="flex-1">
-            <ExpertSearchDropdown
-              open={showDropdown}
-              onOpenChange={setShowDropdown}
-              query={query}
-              suggestions={suggestions}
-              selectedExperts={experts}
-              onAdd={addExpert}
-            >
-              <input
-                ref={inputRef}
-                placeholder={t('expertPlaceholder')}
-                value={query}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setShowDropdown(true);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addExpert(query);
-                  }
-                  if (e.key === 'Escape') setShowDropdown(false);
-                }}
-                onFocus={() => setShowDropdown(true)}
-                autoComplete="off"
-                className="h-10 w-full px-[14px] rounded-xl border border-slate-200 shadow-theme-xs bg-slate-50/50 text-[13px] text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all duration-200"
-              />
-            </ExpertSearchDropdown>
+        <ExpertSearchDropdown
+          open={showDropdown}
+          onOpenChange={setShowDropdown}
+          query={query}
+          suggestions={suggestions}
+          selectedExperts={experts}
+          onAdd={addExpert}
+        >
+          <div className="relative w-full">
+            <input
+              ref={inputRef}
+              placeholder={t('expertPlaceholder')}
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setShowDropdown(true);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  addExpert(query);
+                }
+                if (e.key === 'Escape') setShowDropdown(false);
+              }}
+              onFocus={() => setShowDropdown(true)}
+              autoComplete="off"
+              className="h-10 w-full pl-[14px] pr-10 rounded-xl border border-slate-200 shadow-theme-xs bg-slate-50/50 text-[13px] text-slate-800 placeholder-slate-400 outline-none focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 transition-all duration-200"
+            />
+            {query.trim() && (
+              <button
+                type="button"
+                onClick={() => addExpert(query)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-brand-500 transition-colors"
+                title={t('add')}
+              >
+                <Plus size={16} />
+              </button>
+            )}
           </div>
-          <Button
-            type="button"
-            onClick={() => addExpert(query)}
-            variant="primary"
-            size="xs"
-            rounded="md"
-            blur={false}
-            className="h-10 px-5 rounded-xl bg-brand-500 hover:bg-brand-600 border-0 flex items-center gap-1 shrink-0 shadow-theme-xs font-semibold text-xs"
-          >
-            <Plus size={14} />
-            {t('add')}
-          </Button>
-        </div>
+        </ExpertSearchDropdown>
       </div>
     </div>
   );

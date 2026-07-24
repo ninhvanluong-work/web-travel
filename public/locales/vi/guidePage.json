@@ -144,6 +144,15 @@
     "deleteConfirmDesc": "Hành động này không thể hoàn tác.",
     "deleteConfirm": "Xóa"
   },
+  "expertise": {
+    "browseSkills": "Duyệt kỹ năng chuẩn",
+    "searchResults": "Kết quả cho \"{{query}}\"",
+    "loadFailed": "Không tải được danh sách kỹ năng. Bạn vẫn có thể tự nhập.",
+    "retry": "Thử lại",
+    "noResults": "Không tìm thấy kỹ năng phù hợp",
+    "createNew": "Thêm \"{{name}}\" làm kỹ năng tự chọn",
+    "otherSpecialties": "Chuyên môn khác"
+  },
   "onboarding": {
     "nextBtnText": "Tiếp tục →",
     "prevBtnText": "← Quay lại",

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 
+import { useOptionDetail } from '@/api/option';
 import type { ApiOptionDetail } from '@/api/option/types';
 import { Icons } from '@/assets/icons';
 import { useBookingStore } from '@/stores/BookingStore';
@@ -50,7 +51,6 @@ export default function BookingSheet({
   const guests = useBookingStore.use.guests();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
-  const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const sessionPricing = useBookingStore.use.sessionPricing();
 
@@ -67,17 +67,20 @@ export default function BookingSheet({
   const defaultOption = options?.find((o) => o.isDefault) ?? options?.[0];
   const optionId = defaultOption?.id;
 
+  const { data: optionDetail, isLoading: isLoadingOptions } = useOptionDetail({
+    variables: { id: optionId! },
+    enabled: !!optionId,
+  });
+
+  const departureTimes = optionDetail?.departureTimes ?? [];
+  const pickupLocations = optionDetail?.pickupLocations ?? [];
+
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
-  const premiumSurcharge = packageType === 'premium' ? 40 : 0;
-  const estimatedTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
-  const runningTotal =
-    guests.adults * (effectiveAdultPrice + premiumSurcharge) +
-    guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
+  const total = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
-  const displayTotal = step === 1 ? estimatedTotal : runningTotal;
   let totalLabel = t('booking.totalToPay');
   if (step === 1) totalLabel = t('booking.estimatedTotal');
   else if (step === 2) totalLabel = t('booking.runningTotal');
@@ -90,7 +93,7 @@ export default function BookingSheet({
       !sessionPricing.isLoadingSession &&
       sessionPricing.sessionError === null &&
       sessionPricing.isAdultAvailable;
-  } else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null && packageType !== null;
+  } else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null;
   else if (step === 3) canContinue = agreedToTerms;
 
   const handleNext = () => {
@@ -157,13 +160,27 @@ export default function BookingSheet({
             className="absolute inset-0 overflow-y-auto scrollbar-hide"
           >
             {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} optionId={optionId} />}
-            {step === 2 && <StepOptions />}
-            {step === 3 && <StepReview productName={productName} adultPrice={adultPrice} currency={currency} />}
+            {step === 2 && (
+              <StepOptions
+                departureTimes={departureTimes}
+                pickupLocations={pickupLocations}
+                isLoading={isLoadingOptions}
+              />
+            )}
+            {step === 3 && (
+              <StepReview
+                productName={productName}
+                adultPrice={adultPrice}
+                currency={currency}
+                departureTimes={departureTimes}
+                pickupLocations={pickupLocations}
+              />
+            )}
             {step === 4 && (
               <StepPayment
                 productName={productName}
                 duration={duration}
-                total={runningTotal}
+                total={total}
                 currency={currency}
                 onEditBooking={() => setStep(3)}
               />
@@ -190,7 +207,7 @@ export default function BookingSheet({
 
             <div className="flex-1 min-w-0">
               <p className="text-[11px] text-[#999] leading-none">{totalLabel}</p>
-              <p className="text-[20px] font-bold tabular-nums text-[#111] leading-tight mt-0.5">{fmt(displayTotal)}</p>
+              <p className="text-[20px] font-bold tabular-nums text-[#111] leading-tight mt-0.5">{fmt(total)}</p>
             </div>
 
             <button

@@ -174,33 +174,47 @@ export default function StepInfo({ adultPrice, currency, optionId }: StepInfoPro
       return;
     }
 
-    const adultSession = items.find((i) => i.unitRef.key === 'adult');
-    const childSession = items.find((i) => i.unitRef.key === 'children');
+    const session = items[0];
+    const unitRefs = session?.unitReferences ?? [];
+    const adultRef = unitRefs.find((u) => u.name.toLowerCase().includes('adult'));
+    const childRef = unitRefs.find((u) => u.name.toLowerCase().includes('child'));
 
-    const adultPriceVal = adultSession ? parseFloat(adultSession.price) || adultPrice : 0;
-    const childPriceVal = childSession ? parseFloat(childSession.price) || adultPriceVal * 0.5 : 0;
+    if (!adultRef && !childRef) {
+      setSessionPricing({
+        isLoadingSession: false,
+        sessionError: t('booking.noSessionsForDate'),
+        isAdultAvailable: false,
+        isChildAvailable: false,
+        adultMaxSlots: 0,
+        childMaxSlots: 0,
+      });
+      setGuests({ adults: 0, children: 0 });
+      return;
+    }
 
-    const adultMaxSlots = adultSession?.remainingSlot ?? 0;
-    const childMaxSlots = childSession?.remainingSlot ?? 0;
+    const adultPriceVal = adultRef ? parseFloat(adultRef.price) || adultPrice : adultPrice;
+    const childPriceVal = childRef ? parseFloat(childRef.price) || adultPriceVal * 0.5 : 0;
+
+    const remainingSlot = session?.remainingSlot ?? 0;
 
     setSessionPricing({
       isLoadingSession: false,
       sessionError: null,
       adultPrice: adultPriceVal,
       childPrice: childPriceVal,
-      adultNote: adultSession?.unitRef.note ?? null,
-      childNote: childSession?.unitRef.note ?? null,
-      adultMaxSlots,
-      childMaxSlots,
-      isAdultAvailable: !!adultSession && adultMaxSlots > 0,
-      isChildAvailable: !!childSession && childMaxSlots > 0,
+      adultNote: adultRef?.note ?? null,
+      childNote: childRef?.note ?? null,
+      adultMaxSlots: remainingSlot,
+      childMaxSlots: remainingSlot,
+      isAdultAvailable: !!adultRef && remainingSlot > 0,
+      isChildAvailable: !!childRef && remainingSlot > 0,
     });
 
     const cur = guestsRef.current;
-    if (cur.adults > adultMaxSlots || cur.children > childMaxSlots) {
+    if (cur.adults > remainingSlot || cur.children > remainingSlot) {
       setGuests({
-        adults: Math.min(cur.adults, adultMaxSlots),
-        children: Math.min(cur.children, childMaxSlots),
+        adults: Math.min(cur.adults, remainingSlot),
+        children: Math.min(cur.children, remainingSlot),
       });
     }
   }, [sessionData, isSessionLoading, dateStr, adultPrice]); // eslint-disable-line react-hooks/exhaustive-deps

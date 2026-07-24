@@ -10,6 +10,7 @@ import {
   getTourGuideMoments,
   getTourGuidePage,
   getTourGuideReviews,
+  getTourGuideSkills,
   markOnboardingComplete,
   type TourGuidePage,
   updateTourGuide,
@@ -17,6 +18,7 @@ import {
 } from './requests';
 import type {
   ApiCreateMomentPayload,
+  ApiSkillCategory,
   ApiTourGuideDetail,
   ApiTourGuideMoment,
   ApiTourGuideOnboardingData,
@@ -35,6 +37,12 @@ export interface ITourGuideReviewsInfiniteVariables {
   id: string;
   pageSize?: number;
 }
+
+export const useTourGuideSkills = createQuery<ApiSkillCategory[], void>({
+  primaryKey: '/tour-guide/skills',
+  queryFn: () => getTourGuideSkills(),
+  staleTime: 24 * 60 * 60 * 1000,
+});
 
 export const useTourGuideListInfinite = createInfiniteQuery<TourGuidePage, void, Error, number>({
   primaryKey: '/tour-guide',

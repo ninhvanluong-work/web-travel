@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 
+import type { ApiDepartureTime, ApiPickupLocation } from '@/api/option/types';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
@@ -19,45 +20,38 @@ interface StepReviewProps {
   productName: string;
   adultPrice: number;
   currency: string;
+  departureTimes: ApiDepartureTime[];
+  pickupLocations: ApiPickupLocation[];
 }
 
-export default function StepReview({ productName, adultPrice, currency }: StepReviewProps) {
+export default function StepReview({
+  productName,
+  adultPrice,
+  currency,
+  departureTimes,
+  pickupLocations,
+}: StepReviewProps) {
   const { t } = useTranslation('productPage');
 
   const date = useBookingStore.use.date();
   const guests = useBookingStore.use.guests();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
-  const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const setAgreedToTerms = useBookingStore.use.setAgreedToTerms();
   const sessionPricing = useBookingStore.use.sessionPricing();
 
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
-  const premiumSurcharge = packageType === 'premium' ? 40 : 0;
 
-  const adultTotal = guests.adults * (effectiveAdultPrice + premiumSurcharge);
-  const childTotal = guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
+  const adultTotal = guests.adults * effectiveAdultPrice;
+  const childTotal = guests.children * effectiveChildPrice;
   const grandTotal = adultTotal + childTotal;
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
-  const DEPARTURE_LABELS: Record<string, string> = {
-    '07:30': t('booking.morningDepartureLabel'),
-    '13:00': t('booking.afternoonDepartureLabel'),
-  };
-
-  const PICKUP_LABELS: Record<string, string> = {
-    'old-quarter': t('booking.locationOldQuarter'),
-    'hoan-kiem': t('booking.locationHoanKiem'),
-    'ba-dinh': t('booking.locationBaDinh'),
-  };
-
-  const PACKAGE_LABELS: Record<string, string> = {
-    basic: t('booking.packageBasic'),
-    premium: t('booking.packagePremium'),
-  };
+  const selectedDeparture = departureTimes.find((d) => d.id === departureTime);
+  const selectedPickup = pickupLocations.find((p) => p.id === pickupLocation);
 
   const guestLabel =
     [
@@ -86,13 +80,9 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
         <DetailRow label={t('booking.guestsLabel')} value={guestLabel} />
         <DetailRow
           label={t('booking.departureLabel')}
-          value={departureTime ? DEPARTURE_LABELS[departureTime] ?? departureTime : '—'}
+          value={selectedDeparture ? `${selectedDeparture.time.slice(0, 5)} · ${selectedDeparture.label}` : '—'}
         />
-        <DetailRow
-          label={t('booking.pickupLabel')}
-          value={pickupLocation ? PICKUP_LABELS[pickupLocation] ?? pickupLocation : '—'}
-        />
-        <DetailRow label={t('booking.packageLabel')} value={PACKAGE_LABELS[packageType ?? ''] ?? '—'} />
+        <DetailRow label={t('booking.pickupLabel')} value={selectedPickup?.name ?? '—'} />
       </div>
 
       {/* Price Summary card */}
@@ -104,7 +94,7 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
         {guests.adults > 0 && (
           <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
             <span className="text-[14px] text-[#666]">
-              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice + premiumSurcharge)}
+              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(adultTotal)}</span>
           </div>
@@ -113,8 +103,7 @@ export default function StepReview({ productName, adultPrice, currency }: StepRe
         {guests.children > 0 && (
           <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
             <span className="text-[14px] text-[#666]">
-              {t('booking.child', { count: guests.children })} &times;{' '}
-              {fmt(effectiveChildPrice + premiumSurcharge * 0.5)}
+              {t('booking.child', { count: guests.children })} &times; {fmt(effectiveChildPrice)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(childTotal)}</span>
           </div>

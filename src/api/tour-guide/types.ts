@@ -312,6 +312,29 @@ export interface ITourGuideMomentsParams {
   pageSize?: number;
 }
 
+// ── Skills API ────────────────────────────────────────────────────────────
+
+export interface ApiSkill {
+  code: string;
+  name: string;
+}
+
+export interface ApiSkillCategory {
+  code: string;
+  name: string;
+  displayOrder: number;
+  skills: ApiSkill[];
+}
+
+export interface ApiTourGuideSkillsResponse {
+  data: {
+    skillCategories: ApiSkillCategory[];
+  };
+  code: number;
+  message: string;
+  error: string | null;
+}
+
 // ── Domain model — profile (mapped from detail API) ───────────────────────
 
 export interface ITourGuideProfile {
