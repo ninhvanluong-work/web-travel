@@ -24,7 +24,7 @@ const PROGRESS_COLOR = {
 export function AlertToast({ alert }: { alert: AlertItem }) {
   const removeAlert = useAlertStore((state) => state.removeAlert);
 
-  const defaultDuration = alert.type === 'success' || alert.type === 'info' ? 4000 : 0;
+  const defaultDuration = alert.type === 'success' || alert.type === 'info' ? 4000 : 5000;
   const duration = alert.duration ?? defaultDuration;
 
   const [progress, setProgress] = useState(100);
