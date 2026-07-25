@@ -56,7 +56,7 @@ const initialState: BookingState = {
   guests: { adults: 0, children: 0 },
   departureTime: null,
   pickupLocation: null,
-  packageType: 'basic',
+  packageType: null,
   agreedToTerms: false,
   sessionPricing: initialSessionPricing,
 };
