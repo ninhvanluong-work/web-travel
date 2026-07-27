@@ -37,6 +37,7 @@ export default function StepReview({
   const guests = useBookingStore.use.guests();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
+  const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const setAgreedToTerms = useBookingStore.use.setAgreedToTerms();
   const sessionPricing = useBookingStore.use.sessionPricing();
@@ -44,14 +45,24 @@ export default function StepReview({
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
 
-  const adultTotal = guests.adults * effectiveAdultPrice;
-  const childTotal = guests.children * effectiveChildPrice;
+  let premiumSurcharge = 0;
+  if (packageType === 'premium') {
+    premiumSurcharge = currency === '₫' ? 1000000 : 40;
+  }
+
+  const adultTotal = guests.adults * (effectiveAdultPrice + premiumSurcharge);
+  const childTotal = guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
   const grandTotal = adultTotal + childTotal;
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
   const selectedDeparture = departureTimes.find((d) => d.id === departureTime);
   const selectedPickup = pickupLocations.find((p) => p.id === pickupLocation);
+
+  const PACKAGE_LABELS: Record<string, string> = {
+    basic: t('booking.packageBasic'),
+    premium: t('booking.packagePremium'),
+  };
 
   const guestLabel =
     [
@@ -83,6 +94,7 @@ export default function StepReview({
           value={selectedDeparture ? `${selectedDeparture.time.slice(0, 5)} · ${selectedDeparture.label}` : '—'}
         />
         <DetailRow label={t('booking.pickupLabel')} value={selectedPickup?.name ?? '—'} />
+        <DetailRow label={t('booking.packageLabel')} value={PACKAGE_LABELS[packageType ?? ''] ?? '—'} />
       </div>
 
       {/* Price Summary card */}
@@ -94,7 +106,7 @@ export default function StepReview({
         {guests.adults > 0 && (
           <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
             <span className="text-[14px] text-[#666]">
-              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice)}
+              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice + premiumSurcharge)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(adultTotal)}</span>
           </div>
@@ -103,7 +115,8 @@ export default function StepReview({
         {guests.children > 0 && (
           <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
             <span className="text-[14px] text-[#666]">
-              {t('booking.child', { count: guests.children })} &times; {fmt(effectiveChildPrice)}
+              {t('booking.child', { count: guests.children })} &times;{' '}
+              {fmt(effectiveChildPrice + premiumSurcharge * 0.5)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(childTotal)}</span>
           </div>

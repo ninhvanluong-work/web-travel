@@ -44,6 +44,9 @@ export default function BookingSheet({
 }: BookingSheetProps) {
   const { t } = useTranslation('productPage');
 
+  const reset = useBookingStore.use.reset();
+  React.useEffect(() => () => reset(), [reset]);
+
   const step = useBookingStore.use.step();
   const setStep = useBookingStore.use.setStep();
 
@@ -51,6 +54,7 @@ export default function BookingSheet({
   const guests = useBookingStore.use.guests();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
+  const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const sessionPricing = useBookingStore.use.sessionPricing();
 
@@ -77,7 +81,18 @@ export default function BookingSheet({
 
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
-  const total = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
+
+  let premiumSurcharge = 0;
+  if (packageType === 'premium') {
+    premiumSurcharge = currency === '₫' ? 1000000 : 40;
+  }
+
+  const estimatedTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
+  const runningTotal =
+    guests.adults * (effectiveAdultPrice + premiumSurcharge) +
+    guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
+
+  const displayTotal = step === 1 ? estimatedTotal : runningTotal;
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
@@ -93,7 +108,7 @@ export default function BookingSheet({
       !sessionPricing.isLoadingSession &&
       sessionPricing.sessionError === null &&
       sessionPricing.isAdultAvailable;
-  } else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null;
+  } else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null && packageType !== null;
   else if (step === 3) canContinue = agreedToTerms;
 
   const handleNext = () => {
@@ -164,6 +179,7 @@ export default function BookingSheet({
               <StepOptions
                 departureTimes={departureTimes}
                 pickupLocations={pickupLocations}
+                currency={currency}
                 isLoading={isLoadingOptions}
               />
             )}
@@ -180,7 +196,7 @@ export default function BookingSheet({
               <StepPayment
                 productName={productName}
                 duration={duration}
-                total={total}
+                total={runningTotal}
                 currency={currency}
                 onEditBooking={() => setStep(3)}
               />
@@ -207,7 +223,7 @@ export default function BookingSheet({
 
             <div className="flex-1 min-w-0">
               <p className="text-[11px] text-[#999] leading-none">{totalLabel}</p>
-              <p className="text-[20px] font-bold tabular-nums text-[#111] leading-tight mt-0.5">{fmt(total)}</p>
+              <p className="text-[20px] font-bold tabular-nums text-[#111] leading-tight mt-0.5">{fmt(displayTotal)}</p>
             </div>
 
             <button
