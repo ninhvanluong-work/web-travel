@@ -105,6 +105,7 @@
     "cancellationPolicy": "Cancellation Policy",
     "loadingOptions": "Loading options...",
     "noDepartureTimes": "No departure times available for this option.",
-    "noPickupLocations": "No pickup locations available for this option."
+    "noPickupLocations": "No pickup locations available for this option.",
+    "perPersonSuffix": "pp"
   }
 }

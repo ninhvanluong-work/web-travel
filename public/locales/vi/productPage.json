@@ -105,6 +105,7 @@
     "cancellationPolicy": "Chính sách hủy tour",
     "loadingOptions": "Đang tải tùy chọn...",
     "noDepartureTimes": "Không có giờ khởi hành cho tùy chọn này.",
-    "noPickupLocations": "Không có điểm đón cho tùy chọn này."
+    "noPickupLocations": "Không có điểm đón cho tùy chọn này.",
+    "perPersonSuffix": "khách"
   }
 }

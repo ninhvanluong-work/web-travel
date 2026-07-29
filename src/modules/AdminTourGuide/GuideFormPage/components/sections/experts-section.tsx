@@ -39,7 +39,6 @@ export function ExpertsSection() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Tải gợi ý từ localStorage khi mount
   useEffect(() => {
     setSuggestions(loadSuggestions());
   }, []);
@@ -51,7 +50,6 @@ export function ExpertsSection() {
 
       setValue('experts', [...experts, trimmed], { shouldValidate: true });
 
-      // Lưu vào localStorage nếu chưa có
       setSuggestions((prev) => {
         if (prev.includes(trimmed)) return prev;
         const updated = [...prev, trimmed];

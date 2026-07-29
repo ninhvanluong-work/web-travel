@@ -129,6 +129,13 @@ export default function StepInfo({ adultPrice, currency, optionId }: StepInfoPro
     enabled: !!optionId && !!dateStr,
   });
 
+  // Default travel date to current date on mount if not already set
+  React.useEffect(() => {
+    if (!date) {
+      setDate(new Date());
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Reset when date is cleared
   React.useEffect(() => {
     if (!date) {
