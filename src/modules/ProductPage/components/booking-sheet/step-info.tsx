@@ -9,6 +9,8 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
+import { ContactInfoCard } from './contact-info-card';
+
 interface GuestCounterProps {
   value: number;
   min?: number;
@@ -304,6 +306,8 @@ export default function StepInfo({ adultPrice, currency, optionId }: StepInfoPro
                   />
                 </div>
               )}
+
+              <ContactInfoCard currency={currency} />
             </>
           )}
         </>

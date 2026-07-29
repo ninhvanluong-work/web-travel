@@ -57,6 +57,9 @@ export default function BookingSheet({
   const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const sessionPricing = useBookingStore.use.sessionPricing();
+  const contactName = useBookingStore.use.contactName();
+  const contactPhone = useBookingStore.use.contactPhone();
+  const contactEmail = useBookingStore.use.contactEmail();
 
   const directionRef = React.useRef<'forward' | 'backward'>('forward');
   const prevStepRef = React.useRef(step);
@@ -107,7 +110,10 @@ export default function BookingSheet({
       guests.adults >= 1 &&
       !sessionPricing.isLoadingSession &&
       sessionPricing.sessionError === null &&
-      sessionPricing.isAdultAvailable;
+      sessionPricing.isAdultAvailable &&
+      contactName.trim() !== '' &&
+      contactPhone.trim() !== '' &&
+      contactEmail.trim() !== '';
   } else if (step === 2) canContinue = departureTime !== null && pickupLocation !== null && packageType !== null;
   else if (step === 3) canContinue = agreedToTerms;
 
