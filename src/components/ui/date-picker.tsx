@@ -20,9 +20,21 @@ export interface DatePickerProps extends Omit<InputProps, 'onChange' | 'value'> 
 }
 const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
   ({ onChange, value, onBlur, calendarProps, disablePast, ...props }, ref) => {
-    const [inputValue, setInputValue] = React.useState<string>('');
+    const [isFocused, setIsFocused] = React.useState<boolean>(false);
+    const [inputValue, setInputValue] = React.useState<string>(() => {
+      return value && isValid(value) ? format(value, 'dd/MM/yyyy') : '';
+    });
     const [isOpen, floatingStyles, refs, { open, toggle, close }] = usePopover();
     const popoverRef = useClickOutside(close);
+
+    React.useEffect(() => {
+      if (isFocused) return;
+      if (value && isValid(value)) {
+        setInputValue(format(value, 'dd/MM/yyyy'));
+      } else {
+        setInputValue('');
+      }
+    }, [value, isFocused]);
 
     const handleInputChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
       setInputValue(e.currentTarget.value);
@@ -43,7 +55,12 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
       close();
     };
 
+    const handleFocus = () => {
+      setIsFocused(true);
+    };
+
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+      setIsFocused(false);
       onBlur?.(e);
       const date = parse(e.currentTarget.value, 'dd/MM/yyyy', new Date());
       if (disablePast) {
@@ -70,6 +87,7 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
             ref={ref}
             value={inputValue}
             onChange={handleInputChange}
+            onFocus={handleFocus}
             onBlur={handleBlur}
             onClick={open}
           />
