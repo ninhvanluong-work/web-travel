@@ -14,6 +14,16 @@ interface SessionPricing {
   sessionError: string | null;
 }
 
+export interface CustomPickupLocation {
+  placeId: string | 'manual';
+  name: string;
+  formattedAddress: string;
+  lat: number | null;
+  lng: number | null;
+  distanceMeter: number;
+  surcharge: number;
+}
+
 interface BookingState {
   step: 1 | 2 | 3 | 4;
   date: Date | null;
@@ -28,6 +38,8 @@ interface BookingState {
   contactEmail: string;
   contactMessenger: string;
   contactMessengerHandle: string;
+  pickupType: 'predefined' | 'custom';
+  customPickup: CustomPickupLocation | null;
 }
 
 interface BookingActions {
@@ -44,6 +56,8 @@ interface BookingActions {
   setContactEmail: (v: string) => void;
   setContactMessenger: (v: string) => void;
   setContactMessengerHandle: (v: string) => void;
+  setPickupType: (v: 'predefined' | 'custom') => void;
+  setCustomPickup: (v: CustomPickupLocation | null) => void;
   reset: () => void;
 }
 
@@ -74,6 +88,8 @@ const initialState: BookingState = {
   contactEmail: '',
   contactMessenger: '',
   contactMessengerHandle: '',
+  pickupType: 'predefined',
+  customPickup: null,
 };
 
 const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
@@ -91,6 +107,8 @@ const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
   setContactEmail: (contactEmail) => set({ contactEmail }),
   setContactMessenger: (contactMessenger) => set({ contactMessenger }),
   setContactMessengerHandle: (contactMessengerHandle) => set({ contactMessengerHandle }),
+  setPickupType: (pickupType) => set({ pickupType }),
+  setCustomPickup: (customPickup) => set({ customPickup }),
   reset: () => set(initialState),
 }));
 

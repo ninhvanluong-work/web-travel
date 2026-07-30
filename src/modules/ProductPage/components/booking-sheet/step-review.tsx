@@ -37,6 +37,8 @@ export default function StepReview({
   const guests = useBookingStore.use.guests();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
+  const pickupType = useBookingStore.use.pickupType();
+  const customPickup = useBookingStore.use.customPickup();
   const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const setAgreedToTerms = useBookingStore.use.setAgreedToTerms();
@@ -54,14 +56,17 @@ export default function StepReview({
     premiumSurcharge = currency === '₫' ? 1000000 : 40;
   }
 
+  const goongSurcharge = pickupType === 'custom' && customPickup ? customPickup.surcharge : 0;
+
   const adultTotal = guests.adults * (effectiveAdultPrice + premiumSurcharge);
   const childTotal = guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
-  const grandTotal = adultTotal + childTotal;
+  const grandTotal = adultTotal + childTotal + goongSurcharge;
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
   const selectedDeparture = departureTimes.find((d) => d.id === departureTime);
   const selectedPickup = pickupLocations.find((p) => p.id === pickupLocation);
+  const pickupDisplay = pickupType === 'custom' ? customPickup?.name ?? '—' : selectedPickup?.name ?? '—';
 
   const PACKAGE_LABELS: Record<string, string> = {
     basic: t('booking.packageBasic'),
@@ -97,7 +102,7 @@ export default function StepReview({
           label={t('booking.departureLabel')}
           value={selectedDeparture ? `${selectedDeparture.time.slice(0, 5)} · ${selectedDeparture.label}` : '—'}
         />
-        <DetailRow label={t('booking.pickupLabel')} value={selectedPickup?.name ?? '—'} />
+        <DetailRow label={t('booking.pickupLabel')} value={pickupDisplay} />
         <DetailRow label={t('booking.packageLabel')} value={PACKAGE_LABELS[packageType ?? ''] ?? '—'} />
       </div>
 
@@ -136,6 +141,13 @@ export default function StepReview({
               {fmt(effectiveChildPrice + premiumSurcharge * 0.5)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(childTotal)}</span>
+          </div>
+        )}
+
+        {goongSurcharge > 0 && (
+          <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
+            <span className="text-[14px] text-[#666]">{t('booking.pickupSurcharge')}</span>
+            <span className="text-[14px] font-semibold text-[#D46A00]">+{fmt(goongSurcharge)}</span>
           </div>
         )}
 

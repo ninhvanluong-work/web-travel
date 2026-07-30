@@ -119,6 +119,20 @@
     "phoneHintVnd": "VD: 0912 345 678 hoặc +84 912 345 678",
     "phoneHintUsd": "VD: +1 234 567 8900",
     "contactPrivacyNotice": "Thông tin cá nhân của bạn chỉ được thu thập cho mục đích đặt tour và được bảo vệ bằng mã hóa. Thông tin chỉ được chia sẻ với các bên liên quan để thực hiện giao dịch.",
-    "contactPrivacyPolicy": "Chính sách bảo mật"
+    "contactPrivacyPolicy": "Chính sách bảo mật",
+    "pickupTabPredefined": "Điểm đón có sẵn",
+    "pickupTabCustom": "Đón tại khách sạn",
+    "searchPlaceholder": "Tìm tên khách sạn hoặc địa chỉ...",
+    "manualPlaceholder": "Nhập chi tiết địa chỉ của bạn...",
+    "manualAddressLabel": "Địa chỉ tự nhập",
+    "fallbackManual": "Không tìm thấy địa chỉ? Nhập thủ công",
+    "quickSuggest": "Gợi ý:",
+    "surchargeBanner": "Phụ thu đón xe ngoại vùng",
+    "surchargeDetail": "Vị trí của bạn cách điểm xuất phát {{km}} km (vượt quá 5km). Phụ thu đón xe: +{{amount}}",
+    "pickupSurcharge": "Phụ thu đón xe",
+    "viewOnMap": "Xem trên bản đồ",
+    "mapTitle": "Vị trí đón khách",
+    "tourHub": "Điểm xuất phát",
+    "tourHubName": "Hồ Hoàn Kiếm (Tour Hub)"
   }
 }
