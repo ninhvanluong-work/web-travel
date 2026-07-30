@@ -9,6 +9,8 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
+import { ContactInfoCard } from './contact-info-card';
+
 interface GuestCounterProps {
   value: number;
   min?: number;
@@ -128,6 +130,13 @@ export default function StepInfo({ adultPrice, currency, optionId }: StepInfoPro
     },
     enabled: !!optionId && !!dateStr,
   });
+
+  // Default travel date to current date on mount if not already set
+  React.useEffect(() => {
+    if (!date) {
+      setDate(new Date());
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset when date is cleared
   React.useEffect(() => {
@@ -297,6 +306,8 @@ export default function StepInfo({ adultPrice, currency, optionId }: StepInfoPro
                   />
                 </div>
               )}
+
+              <ContactInfoCard currency={currency} />
             </>
           )}
         </>

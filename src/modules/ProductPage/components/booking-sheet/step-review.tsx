@@ -41,6 +41,10 @@ export default function StepReview({
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const setAgreedToTerms = useBookingStore.use.setAgreedToTerms();
   const sessionPricing = useBookingStore.use.sessionPricing();
+  const contactName = useBookingStore.use.contactName();
+  const contactPhone = useBookingStore.use.contactPhone();
+  const contactEmail = useBookingStore.use.contactEmail();
+  const contactMessenger = useBookingStore.use.contactMessenger();
 
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
@@ -95,6 +99,19 @@ export default function StepReview({
         />
         <DetailRow label={t('booking.pickupLabel')} value={selectedPickup?.name ?? '—'} />
         <DetailRow label={t('booking.packageLabel')} value={PACKAGE_LABELS[packageType ?? ''] ?? '—'} />
+      </div>
+
+      {/* Contact Info card */}
+      <div className="bg-white border border-[#E5E5E5] rounded-[16px] overflow-hidden shadow-sm">
+        <div className="px-5 py-3">
+          <p className="text-[11px] font-bold text-[#0F6E56] uppercase tracking-widest">
+            {t('booking.contactInfoSection')}
+          </p>
+        </div>
+        <DetailRow label={t('booking.contactName')} value={contactName || '—'} />
+        <DetailRow label={t('booking.contactPhone')} value={contactPhone || '—'} />
+        <DetailRow label={t('booking.contactEmail')} value={contactEmail || '—'} />
+        {contactMessenger && <DetailRow label={t('booking.contactMessengerLabel')} value={contactMessenger} />}
       </div>
 
       {/* Price Summary card */}

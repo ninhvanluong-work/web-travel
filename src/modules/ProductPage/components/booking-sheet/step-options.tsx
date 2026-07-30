@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
+import React from 'react';
 
 import type { ApiDepartureTime, ApiPickupLocation } from '@/api/option/types';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,15 @@ export default function StepOptions({ departureTimes, pickupLocations, currency,
   const packageType = useBookingStore.use.packageType();
   const setPackageType = useBookingStore.use.setPackageType();
 
+  // Auto-select departure time if there's only 1 active slot
+  React.useEffect(() => {
+    if (isLoading) return;
+    const activeSlots = departureTimes.filter((slot) => slot.isActive);
+    if (activeSlots.length === 1 && departureTime !== activeSlots[0].id) {
+      setDepartureTime(activeSlots[0].id);
+    }
+  }, [departureTimes, departureTime, setDepartureTime, isLoading]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-3">
@@ -42,7 +52,7 @@ export default function StepOptions({ departureTimes, pickupLocations, currency,
     {
       id: 'premium' as const,
       label: t('booking.packagePremium'),
-      note: currency === '₫' ? '+₫1.000.000/khách' : '+$40/pp',
+      note: `+${currency === '₫' ? '₫1.000.000' : '$40'}/${t('booking.perPersonSuffix')}`,
       surcharge: currency === '₫' ? 1000000 : 40,
       features: [
         t('booking.featurePrivateGuide'),

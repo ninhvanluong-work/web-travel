@@ -22,6 +22,7 @@ module.exports = {
         '3xl': '10000px',
       },
       fontFamily: {
+        sans: ['var(--font-sans)', ...fontFamily.sans],
         dinpro: ['DINPro', 'sans-serif'],
         dinprocond: ['DIN Pro Cond', 'sans-serif'],
       },

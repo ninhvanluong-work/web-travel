@@ -8,7 +8,7 @@ interface ExpertSearchDropdownProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   query: string;
-  suggestions: string[]; // toàn bộ chuyên môn đã từng lưu
+  suggestions: string[];
   selectedExperts: string[];
   onAdd: (label: string) => void;
   children: React.ReactNode;
@@ -26,10 +26,8 @@ export function ExpertSearchDropdown({
   const { t } = useTranslation('adminPage');
   const trimmed = query.trim();
 
-  // Hiện tất cả, lọc theo query nếu có
   const filtered = trimmed ? suggestions.filter((s) => s.toLowerCase().includes(trimmed.toLowerCase())) : suggestions;
 
-  // Kiểm tra exact match để biết có cần "Tạo mới" không
   const exactMatchInSuggestions = suggestions.some((s) => s.toLowerCase() === trimmed.toLowerCase());
   const showCreate = trimmed && !exactMatchInSuggestions;
 
@@ -54,7 +52,6 @@ export function ExpertSearchDropdown({
 
         {/* List */}
         <div className="overflow-y-auto overscroll-contain max-h-[300px] scrollbar-thin">
-          {/* Chưa có chuyên môn nào trong kho */}
           {suggestions.length === 0 && (
             <div className="py-8 text-center px-4">
               <Sparkles size={20} className="mx-auto mb-2 text-slate-200" />
@@ -101,7 +98,6 @@ export function ExpertSearchDropdown({
           })}
         </div>
 
-        {/* Tạo mới — ghim phía dưới */}
         {showCreate && (
           <div className="border-t border-slate-100 bg-slate-50/10">
             <button

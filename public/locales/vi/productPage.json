@@ -105,6 +105,20 @@
     "cancellationPolicy": "Chính sách hủy tour",
     "loadingOptions": "Đang tải tùy chọn...",
     "noDepartureTimes": "Không có giờ khởi hành cho tùy chọn này.",
-    "noPickupLocations": "Không có điểm đón cho tùy chọn này."
+    "noPickupLocations": "Không có điểm đón cho tùy chọn này.",
+    "perPersonSuffix": "khách",
+    "contactInfoSection": "Thông tin liên hệ",
+    "contactName": "Họ và tên",
+    "contactNamePlaceholder": "VD: Nguyễn Văn A",
+    "contactPhone": "Số điện thoại",
+    "contactEmail": "Email",
+    "contactEmailPlaceholder": "VD: hello@email.com",
+    "contactMessenger": "Ứng dụng liên lạc",
+    "contactMessengerLabel": "Chat App",
+    "messengerHandlePlaceholder": "Số hoặc tên tài khoản {{app}} của bạn",
+    "phoneHintVnd": "VD: 0912 345 678 hoặc +84 912 345 678",
+    "phoneHintUsd": "VD: +1 234 567 8900",
+    "contactPrivacyNotice": "Thông tin cá nhân của bạn chỉ được thu thập cho mục đích đặt tour và được bảo vệ bằng mã hóa. Thông tin chỉ được chia sẻ với các bên liên quan để thực hiện giao dịch.",
+    "contactPrivacyPolicy": "Chính sách bảo mật"
   }
 }

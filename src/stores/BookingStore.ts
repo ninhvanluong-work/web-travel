@@ -23,6 +23,11 @@ interface BookingState {
   packageType: 'basic' | 'premium' | null;
   agreedToTerms: boolean;
   sessionPricing: SessionPricing;
+  contactName: string;
+  contactPhone: string;
+  contactEmail: string;
+  contactMessenger: string;
+  contactMessengerHandle: string;
 }
 
 interface BookingActions {
@@ -34,6 +39,11 @@ interface BookingActions {
   setPackageType: (v: 'basic' | 'premium' | null) => void;
   setAgreedToTerms: (v: boolean) => void;
   setSessionPricing: (pricing: Partial<SessionPricing>) => void;
+  setContactName: (v: string) => void;
+  setContactPhone: (v: string) => void;
+  setContactEmail: (v: string) => void;
+  setContactMessenger: (v: string) => void;
+  setContactMessengerHandle: (v: string) => void;
   reset: () => void;
 }
 
@@ -59,6 +69,11 @@ const initialState: BookingState = {
   packageType: null,
   agreedToTerms: false,
   sessionPricing: initialSessionPricing,
+  contactName: '',
+  contactPhone: '',
+  contactEmail: '',
+  contactMessenger: '',
+  contactMessengerHandle: '',
 };
 
 const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
@@ -71,6 +86,11 @@ const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
   setPackageType: (packageType) => set({ packageType }),
   setAgreedToTerms: (agreedToTerms) => set({ agreedToTerms }),
   setSessionPricing: (pricing) => set((state) => ({ sessionPricing: { ...state.sessionPricing, ...pricing } })),
+  setContactName: (contactName) => set({ contactName }),
+  setContactPhone: (contactPhone) => set({ contactPhone }),
+  setContactEmail: (contactEmail) => set({ contactEmail }),
+  setContactMessenger: (contactMessenger) => set({ contactMessenger }),
+  setContactMessengerHandle: (contactMessengerHandle) => set({ contactMessengerHandle }),
   reset: () => set(initialState),
 }));
 
