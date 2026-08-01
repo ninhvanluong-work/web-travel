@@ -43,6 +43,7 @@ interface BookingState {
   contactMessengerHandle: string;
   pickupType: 'predefined' | 'custom';
   customPickup: CustomPickupLocation | null;
+  bookingId: string | null;
 }
 
 interface BookingActions {
@@ -61,6 +62,7 @@ interface BookingActions {
   setContactMessengerHandle: (v: string) => void;
   setPickupType: (v: 'predefined' | 'custom') => void;
   setCustomPickup: (v: CustomPickupLocation | null) => void;
+  setBookingId: (id: string | null) => void;
   reset: () => void;
 }
 
@@ -96,6 +98,7 @@ const initialState: BookingState = {
   contactMessengerHandle: '',
   pickupType: 'predefined',
   customPickup: null,
+  bookingId: null,
 };
 
 const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
@@ -115,6 +118,7 @@ const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
   setContactMessengerHandle: (contactMessengerHandle) => set({ contactMessengerHandle }),
   setPickupType: (pickupType) => set({ pickupType }),
   setCustomPickup: (customPickup) => set({ customPickup }),
+  setBookingId: (bookingId) => set({ bookingId }),
   reset: () => set(initialState),
 }));
 

@@ -26,6 +26,8 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
   const contactMessenger = useBookingStore.use.contactMessenger();
   const contactMessengerHandle = useBookingStore.use.contactMessengerHandle();
 
+  const setBookingId = useBookingStore.use.setBookingId();
+
   const [bookingError, setBookingError] = React.useState<string | null>(null);
 
   const { mutate: callCreateBooking, isLoading: isSavingBooking } = useCreateBooking();
@@ -103,7 +105,8 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
           messengerApp,
         },
         {
-          onSuccess: () => {
+          onSuccess: (data) => {
+            setBookingId(data.id);
             setBookingError(null);
             setStep(4);
           },
