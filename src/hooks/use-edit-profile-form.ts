@@ -155,11 +155,12 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
       await queryClient.invalidateQueries({ queryKey: useTourGuideById.getKey({ id: guideId }) });
 
       if (userStore.user?.tourGuideId === guideId) {
-        userStore.setStore({
-          accessToken: userStore.accessToken,
-          refreshToken: userStore.refreshToken,
+        const freshStore = useUserStore.getState();
+        freshStore.setStore({
+          accessToken: freshStore.accessToken,
+          refreshToken: freshStore.refreshToken,
           user: {
-            ...userStore.user,
+            ...freshStore.user,
             firstName: values.name.split(' ')[0] || '',
             lastName: values.name.split(' ').slice(1).join(' ') || '',
           },
