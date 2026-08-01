@@ -46,11 +46,11 @@ const BookingPage: NextPage = () => {
       {/* Mobile-first wrapper matching the main layout */}
       <div className="w-full max-w-[480px] h-[100dvh] bg-white shadow-lg relative flex flex-col overflow-hidden">
         <BookingSheet
+          productId={productId!}
           productName={p.name}
           duration={p.quickFacts.duration}
           adultPrice={p.salePrice}
           currency={p.currency}
-          options={data.options}
           onClose={() => router.push(`/product/${productId}`)}
         />
       </div>

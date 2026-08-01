@@ -2,8 +2,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 
-import { useOptionDetail } from '@/api/option';
-import type { ApiOptionDetail } from '@/api/option/types';
+import { useProductBookingDetail } from '@/api/product';
 import { Icons } from '@/assets/icons';
 import { useBookingStore } from '@/stores/BookingStore';
 
@@ -16,11 +15,11 @@ import StepReview from './step-review';
 import { useBookingSheetState } from './use-booking-sheet-state';
 
 interface BookingSheetProps {
+  productId: string;
   productName: string;
   duration: string;
   adultPrice: number;
   currency: string;
-  options?: ApiOptionDetail[];
   onClose: () => void;
 }
 
@@ -37,11 +36,11 @@ const slideVariants = {
 };
 
 export default function BookingSheet({
+  productId,
   productName,
   duration,
   adultPrice,
   currency,
-  options,
   onClose: _onClose,
 }: BookingSheetProps) {
   const { t } = useTranslation('productPage');
@@ -58,22 +57,22 @@ export default function BookingSheet({
     fmt,
     totalLabel,
     canContinue,
+    isSavingBooking,
+    bookingError,
     handleNext,
     handleBack,
     handleTouchStart,
     handleTouchEnd,
-  } = useBookingSheetState(adultPrice, currency);
+  } = useBookingSheetState(productId, adultPrice, currency);
 
-  const defaultOption = options?.find((o) => o.isDefault) ?? options?.[0];
-  const optionId = defaultOption?.id;
-
-  const { data: optionDetail, isLoading: isLoadingOptions } = useOptionDetail({
-    variables: { id: optionId! },
-    enabled: !!optionId,
+  const { data: bookingDetail, isLoading: isLoadingBookingDetail } = useProductBookingDetail({
+    variables: { id: productId },
+    enabled: !!productId,
   });
 
-  const departureTimes = optionDetail?.departureTimes ?? [];
-  const pickupLocations = optionDetail?.pickupLocations ?? [];
+  const departureTimes = bookingDetail?.departureTimes ?? [];
+  const pickupLocations = bookingDetail?.pickupLocations ?? [];
+  const options = bookingDetail?.options ?? [];
 
   return (
     <div className="flex flex-col h-full bg-[#F8F8F8]">
@@ -98,7 +97,7 @@ export default function BookingSheet({
         <BookingStepper currentStep={step} />
       </div>
 
-      {/* Step content — slide canvas */}
+      {/* Step content */}
       <div className="flex-1 relative overflow-hidden" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <AnimatePresence initial={false} mode="sync" custom={direction}>
           <motion.div
@@ -114,13 +113,14 @@ export default function BookingSheet({
             }}
             className="absolute inset-0 overflow-y-auto scrollbar-hide"
           >
-            {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} optionId={optionId} />}
+            {step === 1 && <StepInfo adultPrice={adultPrice} currency={currency} productId={productId} />}
             {step === 2 && (
               <StepOptions
                 departureTimes={departureTimes}
                 pickupLocations={pickupLocations}
+                options={options}
                 currency={currency}
-                isLoading={isLoadingOptions}
+                isLoading={isLoadingBookingDetail}
               />
             )}
             {step === 3 && (
@@ -130,6 +130,7 @@ export default function BookingSheet({
                 currency={currency}
                 departureTimes={departureTimes}
                 pickupLocations={pickupLocations}
+                options={options}
               />
             )}
             {step === 4 && (
@@ -149,6 +150,8 @@ export default function BookingSheet({
         <BookingBottomBar
           step={step}
           canContinue={canContinue}
+          isSavingBooking={isSavingBooking}
+          bookingError={bookingError}
           displayTotal={displayTotal}
           totalLabel={totalLabel}
           fmt={fmt}

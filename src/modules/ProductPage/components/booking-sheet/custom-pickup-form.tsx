@@ -3,7 +3,7 @@ import { AlertTriangle, Map } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
-import type { ApiPickupLocation } from '@/api/option/types';
+import type { ApiProductBookingPickupLocation as ApiPickupLocation } from '@/api/product/booking-config-types';
 import { goongService, TOUR_HUB_COORDS } from '@/lib/goong';
 import type { CustomPickupLocation } from '@/stores/BookingStore';
 import { useBookingStore } from '@/stores/BookingStore';
@@ -20,28 +20,16 @@ export default function CustomPickupForm({ pickupLocations, currency }: CustomPi
   const { t } = useTranslation('productPage');
   const [isMapOpen, setIsMapOpen] = useState(false);
 
-  const packageType = useBookingStore.use.packageType();
   const customPickup = useBookingStore.use.customPickup();
   const setCustomPickup = useBookingStore.use.setCustomPickup();
 
-  const basicPickupFee = currency === '₫' ? 100000 : 5;
-  const distanceSurchargePerKm = currency === '₫' ? 20000 : 1;
-
   const handleSelect = async (data: GoongSelectData & { isPredefined?: boolean }) => {
     let distance = 0;
-    let surcharge = 0;
-
-    if (packageType === 'basic' && !data.isPredefined) {
-      surcharge += basicPickupFee;
-    }
 
     if (data.lat && data.lng) {
       const element = await goongService.getRoadDistance(TOUR_HUB_COORDS, { lat: data.lat, lng: data.lng });
       if (element && element.status === 'OK') {
         distance = element.distance.value;
-        if (distance > 5000) {
-          surcharge += Math.ceil((distance - 5000) / 1000) * distanceSurchargePerKm;
-        }
       }
     }
 
@@ -52,7 +40,7 @@ export default function CustomPickupForm({ pickupLocations, currency }: CustomPi
       lat: data.lat,
       lng: data.lng,
       distanceMeter: distance,
-      surcharge,
+      surcharge: 0,
     };
     setCustomPickup(pickup);
   };

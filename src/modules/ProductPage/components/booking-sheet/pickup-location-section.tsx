@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 
-import type { ApiPickupLocation } from '@/api/option/types';
+import type { ApiProductBookingPickupLocation as ApiPickupLocation } from '@/api/product/booking-config-types';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 

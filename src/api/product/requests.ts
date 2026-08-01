@@ -1,6 +1,7 @@
 import { type ProductFormValues, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 
 import { request } from '../axios';
+import type { ApiProductBookingData, ApiProductBookingResponse } from './booking-config-types';
 import type {
   ApiProductDetail,
   ApiProductListResponse,
@@ -129,4 +130,9 @@ export async function updateProductStatus(id: string, status: 'published' | 'hid
 
 export async function deleteProduct(id: string): Promise<void> {
   await request.delete(`/product/${id}`);
+}
+
+export async function getProductBookingDetail(productId: string): Promise<ApiProductBookingData> {
+  const { data } = await request.get<ApiProductBookingResponse>(`/product/${productId}/booking`);
+  return data.data;
 }

@@ -8,12 +8,20 @@ import { cn } from '@/lib/utils';
 interface PhoneInputProps {
   value: string;
   onChange: (value: string) => void;
+  onBlur?: () => void;
   defaultCountry?: Country;
   placeholder?: string;
   className?: string;
 }
 
-export function PhoneInput({ value, onChange, defaultCountry = 'VN', placeholder, className }: PhoneInputProps) {
+export function PhoneInput({
+  value,
+  onChange,
+  onBlur,
+  defaultCountry = 'VN',
+  placeholder,
+  className,
+}: PhoneInputProps) {
   return (
     <div className={cn('phone-input-wrapper', className)}>
       <ReactPhoneInput
@@ -22,6 +30,7 @@ export function PhoneInput({ value, onChange, defaultCountry = 'VN', placeholder
         defaultCountry={defaultCountry}
         value={value}
         onChange={(v) => onChange(v ?? '')}
+        onBlur={onBlur}
         placeholder={placeholder}
       />
     </div>

@@ -12,6 +12,9 @@ interface SessionPricing {
   isChildAvailable: boolean;
   isLoadingSession: boolean;
   sessionError: string | null;
+  adultUnitId: string | null;
+  childUnitId: string | null;
+  sessionId: string | null;
 }
 
 export interface CustomPickupLocation {
@@ -30,7 +33,7 @@ interface BookingState {
   guests: { adults: number; children: number };
   departureTime: string | null;
   pickupLocation: string | null;
-  packageType: 'basic' | 'premium' | null;
+  packageType: string | null;
   agreedToTerms: boolean;
   sessionPricing: SessionPricing;
   contactName: string;
@@ -48,7 +51,7 @@ interface BookingActions {
   setGuests: (guests: { adults: number; children: number }) => void;
   setDepartureTime: (v: string | null) => void;
   setPickupLocation: (v: string | null) => void;
-  setPackageType: (v: 'basic' | 'premium' | null) => void;
+  setPackageType: (v: string | null) => void;
   setAgreedToTerms: (v: boolean) => void;
   setSessionPricing: (pricing: Partial<SessionPricing>) => void;
   setContactName: (v: string) => void;
@@ -72,6 +75,9 @@ const initialSessionPricing: SessionPricing = {
   isChildAvailable: false,
   isLoadingSession: false,
   sessionError: null,
+  adultUnitId: null,
+  childUnitId: null,
+  sessionId: null,
 };
 
 const initialState: BookingState = {
