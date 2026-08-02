@@ -86,7 +86,7 @@ export default function StepOptions({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setDepartureTime(slot.id)}
                   className={cn(
-                    'rounded-[16px] border px-6 py-[22px] text-left transition-all',
+                    'rounded-[16px] border px-6 py-[22px] text-left',
                     active ? 'border-[#0F6E56] bg-[#0F6E56] shadow-md' : 'border-[#E5E5E5] bg-white shadow-sm'
                   )}
                 >
@@ -138,7 +138,7 @@ export default function StepOptions({
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setPackageType(opt.id)}
                   className={cn(
-                    'rounded-[16px] border px-6 py-6 text-left transition-all w-full flex flex-col h-full',
+                    'rounded-[16px] border px-6 py-6 text-left w-full flex flex-col h-full',
                     active ? 'border-[#0F6E56] bg-[#0F6E56] shadow-md' : 'border-[#E5E5E5] bg-white shadow-sm'
                   )}
                 >
