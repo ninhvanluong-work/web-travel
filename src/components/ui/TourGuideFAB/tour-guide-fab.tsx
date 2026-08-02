@@ -20,6 +20,7 @@ export function TourGuideFAB() {
   const lastScrollY = useRef(0);
 
   const isOnOwnProfile = router.pathname === '/guide/[id]' && router.query.id === user?.tourGuideId;
+  const hasBottomBar = router.pathname === '/product/[id]' || router.pathname === '/product/[id]/booking';
 
   useEffect(() => {
     const timer = setTimeout(() => setIsExpanded(false), HINT_DURATION);
@@ -55,10 +56,10 @@ export function TourGuideFAB() {
       onHoverStart={() => setIsExpanded(true)}
       onHoverEnd={() => setIsExpanded(false)}
       onClick={() => router.push(ROUTE.GUIDE_PROFILE_PATH(user.tourGuideId!))}
-      className="fixed bottom-6 right-4 z-50 h-[52px] min-w-[52px] px-3.5
+      className={`fixed right-4 z-50 h-[52px] min-w-[52px] px-3.5
                  rounded-full bg-neutral-black text-white shadow-xl
                  flex items-center gap-2.5 overflow-hidden transition-opacity duration-300
-                 cursor-pointer"
+                 cursor-pointer ${hasBottomBar ? 'bottom-[calc(96px+env(safe-area-inset-bottom))]' : 'bottom-6'}`}
       aria-label={t('tourGuideFab.label')}
     >
       {isPulsing && (

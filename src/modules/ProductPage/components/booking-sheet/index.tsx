@@ -63,6 +63,7 @@ export default function BookingSheet({
     handleBack,
     handleTouchStart,
     handleTouchEnd,
+    effectiveAdultPrice,
   } = useBookingSheetState(productId, adultPrice, currency);
 
   const { data: bookingDetail, isLoading: isLoadingBookingDetail } = useProductBookingDetail({
@@ -85,7 +86,8 @@ export default function BookingSheet({
           <div className="min-w-0">
             <p className="text-[14px] font-bold text-[#111] truncate">{productName}</p>
             <p className="text-[12px] text-[#777] mt-0.5">
-              {duration} · {t('booking.from')} <span className="text-[#0F6E56] font-semibold">{fmt(adultPrice)}</span>
+              {duration} · {t('booking.from')}{' '}
+              <span className="text-[#0F6E56] font-semibold">{fmt(effectiveAdultPrice)}</span>
               {t('booking.perPerson')}
             </p>
           </div>

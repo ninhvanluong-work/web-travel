@@ -154,5 +154,6 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
     handleBack,
     handleTouchStart,
     handleTouchEnd,
+    effectiveAdultPrice,
   };
 }

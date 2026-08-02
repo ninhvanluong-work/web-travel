@@ -54,8 +54,8 @@ const AlertBanner: React.FC<AlertBannerProps> = ({
 
   return (
     <div className={`rounded-xl border p-4 ${container}`}>
-      <div className="flex items-start gap-3">
-        <div className={`-mt-0.5 ${icon}`}>
+      <div className="flex items-center gap-3">
+        <div className={icon}>
           <IconComponent className="fill-current" width={24} height={24} />
         </div>
 
