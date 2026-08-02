@@ -42,6 +42,15 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
 
+  const activePrices: number[] = [];
+  if (sessionPricing.isAdultAvailable && sessionPricing.adultPrice > 0) {
+    activePrices.push(sessionPricing.adultPrice);
+  }
+  if (sessionPricing.isChildAvailable && sessionPricing.childPrice > 0) {
+    activePrices.push(sessionPricing.childPrice);
+  }
+  const effectiveMinPrice = activePrices.length > 0 ? Math.min(...activePrices) : adultPrice;
+
   const estimatedTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
   const runningTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
 
@@ -154,6 +163,6 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
     handleBack,
     handleTouchStart,
     handleTouchEnd,
-    effectiveAdultPrice,
+    effectiveMinPrice,
   };
 }
