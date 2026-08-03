@@ -2,9 +2,11 @@ import { createMutation, createQuery } from 'react-query-kit';
 
 import type { ProductFormValues } from '@/lib/validations/product';
 
+import type { ApiProductBookingData } from './booking-config-types';
 import {
   createProduct,
   deleteProduct,
+  getProductBookingDetail,
   getProductById,
   getProductList,
   getProductReviews,
@@ -56,4 +58,9 @@ export const useDeleteProduct = createMutation<void, { id: string }>({
 export const useProductReviews = createQuery<IProductReviewResult, IProductReviewParams>({
   primaryKey: '/product/review',
   queryFn: ({ queryKey: [, { id, pageSize }] }) => getProductReviews(id, pageSize),
+});
+
+export const useProductBookingDetail = createQuery<ApiProductBookingData, { id: string }>({
+  primaryKey: '/product/booking',
+  queryFn: ({ queryKey: [, { id }] }) => getProductBookingDetail(id),
 });

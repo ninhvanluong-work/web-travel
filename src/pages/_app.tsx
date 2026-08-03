@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import 'driver.js/dist/driver.css';
+import '@goongmaps/goong-js/dist/goong-js.css';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';

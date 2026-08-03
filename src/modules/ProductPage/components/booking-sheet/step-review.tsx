@@ -3,18 +3,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 
-import type { ApiDepartureTime, ApiPickupLocation } from '@/api/option/types';
+import type {
+  ApiProductBookingDepartureTime as ApiDepartureTime,
+  ApiProductBookingOption,
+  ApiProductBookingPickupLocation as ApiPickupLocation,
+} from '@/api/product/booking-config-types';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
-function DetailRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2] last:border-0">
-      <span className="text-[14px] font-medium text-[#555] flex-shrink-0 w-[90px]">{label}</span>
-      <span className="text-[14px] font-semibold text-[#111] text-right flex-1">{value}</span>
-    </div>
-  );
-}
+import { DetailRow } from './detail-row';
 
 interface StepReviewProps {
   productName: string;
@@ -22,6 +19,7 @@ interface StepReviewProps {
   currency: string;
   departureTimes: ApiDepartureTime[];
   pickupLocations: ApiPickupLocation[];
+  options: ApiProductBookingOption[];
 }
 
 export default function StepReview({
@@ -30,6 +28,7 @@ export default function StepReview({
   currency,
   departureTimes,
   pickupLocations,
+  options,
 }: StepReviewProps) {
   const { t } = useTranslation('productPage');
 
@@ -37,6 +36,8 @@ export default function StepReview({
   const guests = useBookingStore.use.guests();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
+  const pickupType = useBookingStore.use.pickupType();
+  const customPickup = useBookingStore.use.customPickup();
   const packageType = useBookingStore.use.packageType();
   const agreedToTerms = useBookingStore.use.agreedToTerms();
   const setAgreedToTerms = useBookingStore.use.setAgreedToTerms();
@@ -45,28 +46,21 @@ export default function StepReview({
   const contactPhone = useBookingStore.use.contactPhone();
   const contactEmail = useBookingStore.use.contactEmail();
   const contactMessenger = useBookingStore.use.contactMessenger();
+  const contactMessengerHandle = useBookingStore.use.contactMessengerHandle();
 
   const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
   const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
 
-  let premiumSurcharge = 0;
-  if (packageType === 'premium') {
-    premiumSurcharge = currency === '₫' ? 1000000 : 40;
-  }
-
-  const adultTotal = guests.adults * (effectiveAdultPrice + premiumSurcharge);
-  const childTotal = guests.children * (effectiveChildPrice + premiumSurcharge * 0.5);
+  const adultTotal = guests.adults * effectiveAdultPrice;
+  const childTotal = guests.children * effectiveChildPrice;
   const grandTotal = adultTotal + childTotal;
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
   const selectedDeparture = departureTimes.find((d) => d.id === departureTime);
   const selectedPickup = pickupLocations.find((p) => p.id === pickupLocation);
-
-  const PACKAGE_LABELS: Record<string, string> = {
-    basic: t('booking.packageBasic'),
-    premium: t('booking.packagePremium'),
-  };
+  const pickupDisplay = pickupType === 'custom' ? customPickup?.name ?? '—' : selectedPickup?.name ?? '—';
+  const selectedOption = options.find((o) => o.id === packageType);
 
   const guestLabel =
     [
@@ -97,8 +91,8 @@ export default function StepReview({
           label={t('booking.departureLabel')}
           value={selectedDeparture ? `${selectedDeparture.time.slice(0, 5)} · ${selectedDeparture.label}` : '—'}
         />
-        <DetailRow label={t('booking.pickupLabel')} value={selectedPickup?.name ?? '—'} />
-        <DetailRow label={t('booking.packageLabel')} value={PACKAGE_LABELS[packageType ?? ''] ?? '—'} />
+        <DetailRow label={t('booking.pickupLabel')} value={pickupDisplay} />
+        <DetailRow label={t('booking.packageLabel')} value={selectedOption?.title ?? '—'} />
       </div>
 
       {/* Contact Info card */}
@@ -111,7 +105,12 @@ export default function StepReview({
         <DetailRow label={t('booking.contactName')} value={contactName || '—'} />
         <DetailRow label={t('booking.contactPhone')} value={contactPhone || '—'} />
         <DetailRow label={t('booking.contactEmail')} value={contactEmail || '—'} />
-        {contactMessenger && <DetailRow label={t('booking.contactMessengerLabel')} value={contactMessenger} />}
+        {contactMessenger && (
+          <DetailRow
+            label={t('booking.contactMessengerLabel')}
+            value={contactMessengerHandle ? `${contactMessenger}: ${contactMessengerHandle}` : contactMessenger}
+          />
+        )}
       </div>
 
       {/* Price Summary card */}
@@ -123,7 +122,7 @@ export default function StepReview({
         {guests.adults > 0 && (
           <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
             <span className="text-[14px] text-[#666]">
-              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice + premiumSurcharge)}
+              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(adultTotal)}</span>
           </div>
@@ -132,8 +131,7 @@ export default function StepReview({
         {guests.children > 0 && (
           <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
             <span className="text-[14px] text-[#666]">
-              {t('booking.child', { count: guests.children })} &times;{' '}
-              {fmt(effectiveChildPrice + premiumSurcharge * 0.5)}
+              {t('booking.child', { count: guests.children })} &times; {fmt(effectiveChildPrice)}
             </span>
             <span className="text-[14px] font-semibold text-[#111]">{fmt(childTotal)}</span>
           </div>

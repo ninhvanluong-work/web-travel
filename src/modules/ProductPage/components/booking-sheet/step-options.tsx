@@ -1,36 +1,52 @@
-import { AnimatePresence, motion } from 'framer-motion';
-import { Check } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 
-import type { ApiDepartureTime, ApiPickupLocation } from '@/api/option/types';
+import type {
+  ApiProductBookingDepartureTime,
+  ApiProductBookingOption,
+  ApiProductBookingPickupLocation,
+} from '@/api/product/booking-config-types';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
+import PickupLocationSection from './pickup-location-section';
+
 interface StepOptionsProps {
-  departureTimes: ApiDepartureTime[];
-  pickupLocations: ApiPickupLocation[];
+  departureTimes: ApiProductBookingDepartureTime[];
+  pickupLocations: ApiProductBookingPickupLocation[];
+  options: ApiProductBookingOption[];
   currency: string;
   isLoading?: boolean;
 }
 
-export default function StepOptions({ departureTimes, pickupLocations, currency, isLoading }: StepOptionsProps) {
+export default function StepOptions({
+  departureTimes,
+  pickupLocations,
+  options,
+  currency,
+  isLoading,
+}: StepOptionsProps) {
   const { t } = useTranslation('productPage');
   const departureTime = useBookingStore.use.departureTime();
   const setDepartureTime = useBookingStore.use.setDepartureTime();
-  const pickupLocation = useBookingStore.use.pickupLocation();
-  const setPickupLocation = useBookingStore.use.setPickupLocation();
   const packageType = useBookingStore.use.packageType();
   const setPackageType = useBookingStore.use.setPackageType();
 
-  // Auto-select departure time if there's only 1 active slot
   React.useEffect(() => {
     if (isLoading) return;
     const activeSlots = departureTimes.filter((slot) => slot.isActive);
-    if (activeSlots.length === 1 && departureTime !== activeSlots[0].id) {
+    if (activeSlots.length === 1 && !departureTime) {
       setDepartureTime(activeSlots[0].id);
     }
   }, [departureTimes, departureTime, setDepartureTime, isLoading]);
+
+  React.useEffect(() => {
+    if (isLoading || options.length !== 1) return;
+    if (!packageType) {
+      setPackageType(options[0].id);
+    }
+  }, [options, packageType, setPackageType, isLoading]);
 
   if (isLoading) {
     return (
@@ -41,123 +57,7 @@ export default function StepOptions({ departureTimes, pickupLocations, currency,
     );
   }
 
-  const PACKAGES = [
-    {
-      id: 'basic' as const,
-      label: t('booking.packageBasic'),
-      note: t('booking.packageIncluded'),
-      surcharge: 0,
-      features: [t('booking.featureSharedGuide'), t('booking.featureLunchIncluded'), t('booking.featureTransport')],
-    },
-    {
-      id: 'premium' as const,
-      label: t('booking.packagePremium'),
-      note: `+${currency === '₫' ? '₫1.000.000' : '$40'}/${t('booking.perPersonSuffix')}`,
-      surcharge: currency === '₫' ? 1000000 : 40,
-      features: [
-        t('booking.featurePrivateGuide'),
-        t('booking.featureAllMeals'),
-        t('booking.featureTransport'),
-        t('booking.featureHotelPickup'),
-      ],
-    },
-  ];
-
   const activeSlots = departureTimes.filter((slot) => slot.isActive);
-
-  const renderDepartureTimes = () => {
-    if (activeSlots.length === 0) {
-      return <p className="text-[13px] text-[#999]">{t('booking.noDepartureTimes')}</p>;
-    }
-    return (
-      <div className="grid grid-cols-2 gap-3">
-        {activeSlots.map((slot) => {
-          const active = departureTime === slot.id;
-          return (
-            <motion.button
-              key={slot.id}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => setDepartureTime(slot.id)}
-              className={cn(
-                'rounded-[16px] border px-6 py-[22px] text-left transition-all',
-                active ? 'border-[#0F6E56] bg-[#0F6E56] shadow-md' : 'border-[#E5E5E5] bg-white shadow-sm'
-              )}
-            >
-              <p
-                className={cn(
-                  'text-[26px] font-bold leading-none tracking-tight',
-                  active ? 'text-white' : 'text-[#111]'
-                )}
-              >
-                {slot.time.slice(0, 5)}
-              </p>
-              <p className={cn('text-[12px] mt-1', active ? 'text-[#A8D8C9]' : 'text-[#666]')}>{slot.label}</p>
-              {slot.note && (
-                <p className={cn('text-[11px] mt-1', active ? 'text-[#A8D8C9]' : 'text-[#999]')}>{slot.note}</p>
-              )}
-            </motion.button>
-          );
-        })}
-      </div>
-    );
-  };
-
-  const renderPickupLocations = () => {
-    if (pickupLocations.length === 0) {
-      return <p className="text-[13px] text-[#999]">{t('booking.noPickupLocations')}</p>;
-    }
-    return (
-      <div className="bg-white border border-[#E5E5E5] rounded-[16px] overflow-hidden shadow-sm">
-        {pickupLocations.map((point, i) => {
-          const active = pickupLocation === point.id;
-          return (
-            <motion.button
-              key={point.id}
-              whileTap={{ scale: 0.99 }}
-              onClick={() => setPickupLocation(point.id)}
-              className={cn(
-                'w-full flex items-center gap-4 px-6 py-5 text-left transition-colors bg-white',
-                i > 0 && 'border-t border-[#EBEBEB]'
-              )}
-            >
-              <div
-                className={cn(
-                  'w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-colors',
-                  active ? 'border-[#0F6E56]' : 'border-[#CCC]'
-                )}
-              >
-                <AnimatePresence>
-                  {active && (
-                    <motion.div
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      exit={{ scale: 0 }}
-                      transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-                      className="w-3.5 h-3.5 rounded-full bg-[#0F6E56]"
-                    />
-                  )}
-                </AnimatePresence>
-              </div>
-
-              <div>
-                <span
-                  className={cn(
-                    'text-[14px] block leading-snug',
-                    active ? 'font-bold text-[#0F6E56]' : 'font-medium text-[#222]'
-                  )}
-                >
-                  {point.name}
-                </span>
-                {point.isPopular && (
-                  <span className="text-[12px] text-[#0F6E56] font-medium">{t('booking.mostPopular')}</span>
-                )}
-              </div>
-            </motion.button>
-          );
-        })}
-      </div>
-    );
-  };
 
   return (
     <div className="flex flex-col gap-5 px-5 pt-5 pb-8">
@@ -174,7 +74,39 @@ export default function StepOptions({ departureTimes, pickupLocations, currency,
             {t('booking.departureTime')}
           </span>
         </div>
-        {renderDepartureTimes()}
+        {activeSlots.length === 0 ? (
+          <p className="text-[13px] text-[#999]">{t('booking.noDepartureTimes')}</p>
+        ) : (
+          <div className="grid grid-cols-2 gap-3">
+            {activeSlots.map((slot) => {
+              const active = departureTime === slot.id;
+              return (
+                <motion.button
+                  key={slot.id}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setDepartureTime(slot.id)}
+                  className={cn(
+                    'rounded-[16px] border px-6 py-[22px] text-left',
+                    active ? 'border-[#0F6E56] bg-[#0F6E56] shadow-md' : 'border-[#E5E5E5] bg-white shadow-sm'
+                  )}
+                >
+                  <p
+                    className={cn(
+                      'text-[26px] font-bold leading-none tracking-tight',
+                      active ? 'text-white' : 'text-[#111]'
+                    )}
+                  >
+                    {slot.time.slice(0, 5)}
+                  </p>
+                  <p className={cn('text-[12px] mt-1', active ? 'text-[#A8D8C9]' : 'text-[#666]')}>{slot.label}</p>
+                  {slot.note && (
+                    <p className={cn('text-[11px] mt-1', active ? 'text-[#A8D8C9]' : 'text-[#999]')}>{slot.note}</p>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Pickup Location */}
@@ -185,55 +117,59 @@ export default function StepOptions({ departureTimes, pickupLocations, currency,
             {t('booking.pickupLocation')}
           </span>
         </div>
-        {renderPickupLocations()}
+        <PickupLocationSection pickupLocations={pickupLocations} currency={currency} />
       </div>
 
-      {/* Tour Package */}
-      <div>
-        <div className="flex items-center gap-1.5 mb-3">
-          <span className="text-[14px]">🎒</span>
-          <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">{t('booking.tourPackage')}</span>
+      {/* Tour Package — dynamic from API */}
+      {options.length > 0 && (
+        <div>
+          <div className="flex items-center gap-1.5 mb-3">
+            <span className="text-[14px]">🎒</span>
+            <span className="text-[11px] font-bold text-[#333] uppercase tracking-wider">
+              {t('booking.tourPackage')}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {options.map((opt) => {
+              const active = packageType === opt.id;
+              return (
+                <motion.button
+                  key={opt.id}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setPackageType(opt.id)}
+                  className={cn(
+                    'rounded-[16px] border px-6 py-6 text-left w-full flex flex-col h-full',
+                    active ? 'border-[#0F6E56] bg-[#0F6E56] shadow-md' : 'border-[#E5E5E5] bg-white shadow-sm'
+                  )}
+                >
+                  <p className={cn('text-[16px] font-bold', active ? 'text-white' : 'text-[#111]')}>{opt.title}</p>
+                  {opt.description && (
+                    <p className={cn('text-[12px] mt-3 leading-relaxed', active ? 'text-[#A8D8C9]' : 'text-[#555]')}>
+                      {opt.description}
+                    </p>
+                  )}
+                  {opt.include && opt.include.length > 0 && (
+                    <ul className="mt-4 flex flex-col gap-1.5 text-[12px] w-full">
+                      {opt.include.map((item, idx) => (
+                        <li
+                          key={idx}
+                          className={cn(
+                            'flex items-center gap-1.5 font-medium',
+                            active ? 'text-[#A8D8C9]' : 'text-[#555]'
+                          )}
+                        >
+                          <span className={cn('text-[10px]', active ? 'text-white' : 'text-[#0F6E56]')}>✓</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          {PACKAGES.map((pkg) => {
-            const active = packageType === pkg.id;
-            return (
-              <motion.button
-                key={pkg.id}
-                whileTap={{ scale: 0.98 }}
-                onClick={() => setPackageType(pkg.id)}
-                className={cn(
-                  'rounded-[16px] border px-6 py-6 text-left transition-all w-full flex flex-col h-full',
-                  active ? 'border-[#0F6E56] bg-[#0F6E56] shadow-md' : 'border-[#E5E5E5] bg-white shadow-sm'
-                )}
-              >
-                <p className={cn('text-[16px] font-bold', active ? 'text-white' : 'text-[#111]')}>{pkg.label}</p>
-                <p className={cn('text-[12px] font-semibold mt-0.5', active ? 'text-[#A8D8C9]' : 'text-[#777]')}>
-                  {pkg.note}
-                </p>
-                <div className="flex flex-col gap-1.5 mt-4 w-full">
-                  {pkg.features.map((f) => (
-                    <span
-                      key={f}
-                      className={cn(
-                        'inline-flex items-start gap-1.5 text-[12px] leading-snug',
-                        active ? 'text-[#A8D8C9]' : 'text-[#333]'
-                      )}
-                    >
-                      <Check
-                        size={11}
-                        strokeWidth={2.5}
-                        className={cn('mt-0.5 flex-shrink-0', active ? 'text-[#A8D8C9]' : 'text-[#B2C5D4]')}
-                      />
-                      <span>{f}</span>
-                    </span>
-                  ))}
-                </div>
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
+import React from 'react';
 
 import { Input } from '@/components/ui/input';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -8,11 +9,15 @@ import { useBookingStore } from '@/stores/BookingStore';
 
 const MESSENGER_APPS = ['WhatsApp', 'Zalo', 'Telegram', 'Line'] as const;
 
-interface ContactInfoCardProps {
-  currency: string;
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+function getEmailError(email: string, t: (key: string) => string): string | null {
+  if (!email.trim()) return t('booking.errorEmailRequired');
+  if (!isValidEmail(email)) return t('booking.errorEmailInvalid');
+  return null;
 }
 
-export function ContactInfoCard({ currency }: ContactInfoCardProps) {
+export function ContactInfoCard() {
   const { t } = useTranslation('productPage');
 
   const contactName = useBookingStore.use.contactName();
@@ -25,6 +30,25 @@ export function ContactInfoCard({ currency }: ContactInfoCardProps) {
   const setContactMessenger = useBookingStore.use.setContactMessenger();
   const contactMessengerHandle = useBookingStore.use.contactMessengerHandle();
   const setContactMessengerHandle = useBookingStore.use.setContactMessengerHandle();
+
+  const [touched, setTouched] = React.useState({
+    name: false,
+    phone: false,
+    email: false,
+    handle: false,
+  });
+
+  const touch = (field: keyof typeof touched) => setTouched((prev) => ({ ...prev, [field]: true }));
+
+  const errors = {
+    name: !contactName.trim() ? t('booking.errorNameRequired') : null,
+    phone: !contactPhone.trim() ? t('booking.errorPhoneRequired') : null,
+    email: getEmailError(contactEmail, t),
+    handle:
+      contactMessenger && !contactMessengerHandle.trim()
+        ? t('booking.errorHandleRequired', { app: contactMessenger })
+        : null,
+  };
 
   return (
     <div className="bg-white border border-[#E5E5E5] rounded-[16px] px-5 py-5 shadow-sm space-y-5 font-sans">
@@ -42,8 +66,11 @@ export function ContactInfoCard({ currency }: ContactInfoCardProps) {
           type="text"
           value={contactName}
           onChange={(e) => setContactName(e.target.value)}
+          onBlur={() => touch('name')}
           placeholder={t('booking.contactNamePlaceholder')}
+          className={cn(touched.name && errors.name && 'border-red-400 focus:border-red-400')}
         />
+        {touched.name && errors.name && <p className="text-[12px] text-red-500 leading-snug">{errors.name}</p>}
       </div>
 
       {/* Phone */}
@@ -54,9 +81,12 @@ export function ContactInfoCard({ currency }: ContactInfoCardProps) {
         <PhoneInput
           value={contactPhone}
           onChange={setContactPhone}
-          defaultCountry={currency === '₫' ? 'VN' : 'US'}
+          onBlur={() => touch('phone')}
+          defaultCountry="VN"
           placeholder={t('booking.contactPhone')}
+          className={cn(touched.phone && errors.phone && 'border-red-400')}
         />
+        {touched.phone && errors.phone && <p className="text-[12px] text-red-500 leading-snug">{errors.phone}</p>}
       </div>
 
       {/* Email */}
@@ -69,8 +99,11 @@ export function ContactInfoCard({ currency }: ContactInfoCardProps) {
           type="email"
           value={contactEmail}
           onChange={(e) => setContactEmail(e.target.value)}
+          onBlur={() => touch('email')}
           placeholder={t('booking.contactEmailPlaceholder')}
+          className={cn(touched.email && errors.email && 'border-red-400 focus:border-red-400')}
         />
+        {touched.email && errors.email && <p className="text-[12px] text-red-500 leading-snug">{errors.email}</p>}
       </div>
 
       {/* Chat App */}
@@ -89,6 +122,7 @@ export function ContactInfoCard({ currency }: ContactInfoCardProps) {
                   if (active) {
                     setContactMessenger('');
                     setContactMessengerHandle('');
+                    setTouched((prev) => ({ ...prev, handle: false }));
                   } else {
                     setContactMessenger(app);
                     setContactMessengerHandle('');
@@ -120,9 +154,13 @@ export function ContactInfoCard({ currency }: ContactInfoCardProps) {
                 type="text"
                 value={contactMessengerHandle}
                 onChange={(e) => setContactMessengerHandle(e.target.value)}
+                onBlur={() => touch('handle')}
                 placeholder={t('booking.messengerHandlePlaceholder', { app: contactMessenger })}
-                className="mt-1"
+                className={cn('mt-1', touched.handle && errors.handle && 'border-red-400 focus:border-red-400')}
               />
+              {touched.handle && errors.handle && (
+                <p className="text-[12px] text-red-500 leading-snug mt-1">{errors.handle}</p>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

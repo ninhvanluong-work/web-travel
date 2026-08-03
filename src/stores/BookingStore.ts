@@ -12,6 +12,19 @@ interface SessionPricing {
   isChildAvailable: boolean;
   isLoadingSession: boolean;
   sessionError: string | null;
+  adultUnitId: string | null;
+  childUnitId: string | null;
+  sessionId: string | null;
+}
+
+export interface CustomPickupLocation {
+  placeId: string | 'manual';
+  name: string;
+  formattedAddress: string;
+  lat: number | null;
+  lng: number | null;
+  distanceMeter: number;
+  surcharge: number;
 }
 
 interface BookingState {
@@ -20,7 +33,7 @@ interface BookingState {
   guests: { adults: number; children: number };
   departureTime: string | null;
   pickupLocation: string | null;
-  packageType: 'basic' | 'premium' | null;
+  packageType: string | null;
   agreedToTerms: boolean;
   sessionPricing: SessionPricing;
   contactName: string;
@@ -28,6 +41,9 @@ interface BookingState {
   contactEmail: string;
   contactMessenger: string;
   contactMessengerHandle: string;
+  pickupType: 'predefined' | 'custom';
+  customPickup: CustomPickupLocation | null;
+  bookingId: string | null;
 }
 
 interface BookingActions {
@@ -36,7 +52,7 @@ interface BookingActions {
   setGuests: (guests: { adults: number; children: number }) => void;
   setDepartureTime: (v: string | null) => void;
   setPickupLocation: (v: string | null) => void;
-  setPackageType: (v: 'basic' | 'premium' | null) => void;
+  setPackageType: (v: string | null) => void;
   setAgreedToTerms: (v: boolean) => void;
   setSessionPricing: (pricing: Partial<SessionPricing>) => void;
   setContactName: (v: string) => void;
@@ -44,6 +60,9 @@ interface BookingActions {
   setContactEmail: (v: string) => void;
   setContactMessenger: (v: string) => void;
   setContactMessengerHandle: (v: string) => void;
+  setPickupType: (v: 'predefined' | 'custom') => void;
+  setCustomPickup: (v: CustomPickupLocation | null) => void;
+  setBookingId: (id: string | null) => void;
   reset: () => void;
 }
 
@@ -58,6 +77,9 @@ const initialSessionPricing: SessionPricing = {
   isChildAvailable: false,
   isLoadingSession: false,
   sessionError: null,
+  adultUnitId: null,
+  childUnitId: null,
+  sessionId: null,
 };
 
 const initialState: BookingState = {
@@ -74,6 +96,9 @@ const initialState: BookingState = {
   contactEmail: '',
   contactMessenger: '',
   contactMessengerHandle: '',
+  pickupType: 'predefined',
+  customPickup: null,
+  bookingId: null,
 };
 
 const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
@@ -91,6 +116,9 @@ const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
   setContactEmail: (contactEmail) => set({ contactEmail }),
   setContactMessenger: (contactMessenger) => set({ contactMessenger }),
   setContactMessengerHandle: (contactMessengerHandle) => set({ contactMessengerHandle }),
+  setPickupType: (pickupType) => set({ pickupType }),
+  setCustomPickup: (customPickup) => set({ customPickup }),
+  setBookingId: (bookingId) => set({ bookingId }),
   reset: () => set(initialState),
 }));
 
