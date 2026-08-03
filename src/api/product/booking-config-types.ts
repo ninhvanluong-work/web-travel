@@ -38,6 +38,7 @@ export interface ApiProductBookingOption {
   order: number;
   currency: string;
   productId: string;
+  include?: string[];
 }
 
 export interface ApiProductBookingData {

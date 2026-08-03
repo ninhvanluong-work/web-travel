@@ -143,13 +143,26 @@ export default function StepOptions({
                   )}
                 >
                   <p className={cn('text-[16px] font-bold', active ? 'text-white' : 'text-[#111]')}>{opt.title}</p>
-                  <p className={cn('text-[12px] font-semibold mt-0.5', active ? 'text-[#A8D8C9]' : 'text-[#777]')}>
-                    {t('booking.daysNights', { day: opt.day, night: opt.night })}
-                  </p>
                   {opt.description && (
                     <p className={cn('text-[12px] mt-3 leading-relaxed', active ? 'text-[#A8D8C9]' : 'text-[#555]')}>
                       {opt.description}
                     </p>
+                  )}
+                  {opt.include && opt.include.length > 0 && (
+                    <ul className="mt-4 flex flex-col gap-1.5 text-[12px] w-full">
+                      {opt.include.map((item, idx) => (
+                        <li
+                          key={idx}
+                          className={cn(
+                            'flex items-center gap-1.5 font-medium',
+                            active ? 'text-[#A8D8C9]' : 'text-[#555]'
+                          )}
+                        >
+                          <span className={cn('text-[10px]', active ? 'text-white' : 'text-[#0F6E56]')}>✓</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </motion.button>
               );
