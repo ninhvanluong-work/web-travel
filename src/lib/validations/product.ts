@@ -47,6 +47,38 @@ export const itinerarySchema = z.object({
   description: z.string().optional().nullable(),
 });
 
+export const optionSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().min(1, 'Package name is required'),
+  isActive: z.boolean().default(true),
+  currency: z.string().default('VND'),
+  description: z.string().optional().nullable(),
+  include: z.array(z.string()).optional().default([]),
+});
+
+export const unitFormSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(1, 'Unit name is required'),
+  note: z.string().optional().default(''),
+});
+
+export const departureTimeFormSchema = z.object({
+  id: z.string().uuid().optional(),
+  time: z.string().min(5, 'Time is required'),
+  label: z.string().optional().default(''),
+  note: z.string().optional().default(''),
+  isActive: z.boolean().default(true),
+  order: z.coerce.number().int().min(0).default(0),
+});
+
+export const pickupLocationFormSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().min(1, 'Location name is required'),
+  address: z.string().optional().default(''),
+  mapUrl: z.string().optional().default(''),
+  isPopular: z.boolean().default(false),
+});
+
 // ── Product ──────────────────────────────────────────────────────────────
 export const productSchema = z.object({
   name: z.string().min(1, 'Product name is required').max(500),
@@ -98,22 +130,17 @@ export const productSchema = z.object({
     )
     .optional()
     .default([]),
-});
-
-export const optionSchema = z.object({
-  id: z.string().uuid().optional(),
-  title: z.string().min(1, 'Package name is required'),
-  description: z.string().optional().nullable(),
-  adultPrice: z.coerce.number().min(0).default(0),
-  childPrice: z.coerce.number().min(0).default(0),
-  infantPrice: z.coerce.number().min(0).default(0),
-  currency: z.string().default('VND'),
-  order: z.coerce.number().int().min(0).default(0),
-  originalPrice: z.coerce.number().min(0).optional().nullable(),
+  options: z.array(optionSchema).optional().default([]),
+  departureTimes: z.array(departureTimeFormSchema).optional().default([]),
+  pickupLocations: z.array(pickupLocationFormSchema).optional().default([]),
+  units: z.array(unitFormSchema).optional().default([]),
 });
 
 export type ProductFormValues = z.infer<typeof productSchema>;
 export type OptionFormValues = z.infer<typeof optionSchema>;
+export type UnitFormValues = z.infer<typeof unitFormSchema>;
+export type DepartureTimeFormValues = z.infer<typeof departureTimeFormSchema>;
+export type PickupLocationFormValues = z.infer<typeof pickupLocationFormSchema>;
 export type ItineraryFormValues = z.infer<typeof itinerarySchema>;
 
 export type ExperienceFormValues = {

@@ -1,4 +1,16 @@
-import { AlertTriangle, AlignLeft, Calendar, FileText, MapPin, Sparkles, Tag, Tv } from 'lucide-react';
+import {
+  AlertTriangle,
+  AlignLeft,
+  Boxes,
+  Calendar,
+  Clock,
+  FileText,
+  MapPin,
+  Package,
+  Sparkles,
+  Tag,
+  Tv,
+} from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import { useEffect, useState } from 'react';
 
@@ -7,19 +19,23 @@ import { FormWrapper } from '@/components/ui/form';
 import { useProductForm } from '@/hooks/use-product-form';
 import { useScrollSpy } from '@/hooks/use-scroll-spy';
 import type { ProductFormValues } from '@/lib/validations/product';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import { DraftRecoveryBanner } from './components/draft-recovery-banner';
 import { ProductFormHeader } from './components/product-form-header';
+import { SectionCard } from './components/section-card';
 import { BannerSection } from './components/sections/banner-section';
 import { BasicInfoSection } from './components/sections/basic-info-section';
+import { DepartureSection } from './components/sections/departure-section';
 import { DetailsSection } from './components/sections/details-section';
 import { ExperiencesSection } from './components/sections/experiences-section';
-// import { ImagesSection } from './components/sections/images-section';
-// import { OptionsSection } from './components/sections/options-section';
+import { OptionsSection } from './components/sections/options-section';
+import { PickupSection } from './components/sections/pickup-section';
 import { QuickFactsSection } from './components/sections/quick-facts-section';
 import { ReadBeforeSection } from './components/sections/read-before-section';
 import { TagsSection } from './components/sections/tags-section';
 import { TimeItinerarySection } from './components/sections/time-itinerary-section';
+import { UnitSection } from './components/sections/unit-section';
 
 interface ProductFormPageProps {
   productId?: string;
@@ -34,6 +50,10 @@ const NAV_SECTIONS = [
   { id: 'section-itinerary', labelKey: 'secItinerary', icon: Calendar },
   { id: 'section-read-before', labelKey: 'secNotes', icon: AlertTriangle },
   { id: 'section-details', labelKey: 'secDetails', icon: AlignLeft },
+  { id: 'section-options', labelKey: 'secOptions', icon: Package },
+  { id: 'section-pickups', labelKey: 'secPickups', icon: MapPin },
+  { id: 'section-departures', labelKey: 'secDepartures', icon: Clock },
+  { id: 'section-units', labelKey: 'secUnits', icon: Boxes },
 ] as const;
 
 const SECTION_ERROR_FIELDS: Record<string, (keyof ProductFormValues)[]> = {
@@ -55,23 +75,13 @@ const SECTION_ERROR_FIELDS: Record<string, (keyof ProductFormValues)[]> = {
   'section-itinerary': ['itineraries'],
   'section-read-before': ['readBefores'],
   'section-details': ['include', 'exclude'],
+  'section-options': ['options'],
+  'section-departures': ['departureTimes'],
+  'section-pickups': ['pickupLocations'],
+  'section-units': ['units'],
 };
 
 const SECTION_IDS = NAV_SECTIONS.map((s) => s.id);
-
-function SectionCard({ id, label, children }: { id: string; label: string; children: React.ReactNode }) {
-  return (
-    <div
-      id={id}
-      className="scroll-mt-20 bg-white rounded-2xl border border-slate-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]"
-    >
-      <div className="border-b border-slate-100 dark:border-gray-800 px-5 py-4 rounded-t-2xl">
-        <h2 className="text-base font-bold text-slate-800 dark:text-white/90 tracking-tight">{label}</h2>
-      </div>
-      <div className="px-5 pt-5 pb-5">{children}</div>
-    </div>
-  );
-}
 
 export default function ProductFormPage({ productId }: ProductFormPageProps) {
   const { t } = useTranslation('adminPage');
@@ -86,10 +96,13 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
   }, [draft.hasDraft, isEdit]);
 
   const currentStatus = form.watch('status') ?? 'draft';
-  const { errors } = form.formState;
+  const { errors, isSubmitted } = form.formState;
+  const { addAlert } = useAlertStore.getState();
 
-  const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }));
-  const handleSaveChanges = form.handleSubmit((data) => onSubmit(data));
+  const onValidationError = () => addAlert({ type: 'error', title: t('tourValidationError') });
+
+  const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }), onValidationError);
+  const handleSaveChanges = form.handleSubmit((data) => onSubmit(data), onValidationError);
 
   const sectionHasError = (sectionId: string) => (SECTION_ERROR_FIELDS[sectionId] ?? []).some((f) => !!errors[f]);
 
@@ -123,7 +136,6 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
       <div className="flex-1">
         <FormWrapper form={form} onSubmit={onSubmit}>
           <div className="flex gap-8 items-start w-full">
-            {/* Scroll-spy nav */}
             <div className="hidden lg:flex flex-col gap-0.5 sticky top-[130px] w-40 shrink-0 pt-4">
               {NAV_SECTIONS.map(({ id, labelKey, icon: Icon }) => (
                 <Button
@@ -145,7 +157,6 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
               ))}
             </div>
 
-            {/* Main content */}
             <div className="flex-1 min-w-0 py-4 space-y-4">
               <SectionCard id="section-banner" label={t('secProductVideo')}>
                 <BannerSection />
@@ -184,12 +195,34 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
                   </div>
                 )}
               </SectionCard>
-              {/* <SectionCard id="section-images" label="Images">
-                  <ImagesSection />
-                </SectionCard> */}
-              {/* <SectionCard id="section-options" label="Pricing Options">
-                  <OptionsSection />
-                </SectionCard> */}
+              <SectionCard id="section-options" label={t('secOptions')}>
+                <OptionsSection
+                  value={form.watch('options') ?? []}
+                  onChange={(rows) => form.setValue('options', rows, { shouldDirty: true })}
+                  isSubmitted={isSubmitted}
+                />
+              </SectionCard>
+              <SectionCard id="section-pickups" label={t('secPickups')}>
+                <PickupSection
+                  value={form.watch('pickupLocations') ?? []}
+                  onChange={(rows) => form.setValue('pickupLocations', rows, { shouldDirty: true })}
+                  isSubmitted={isSubmitted}
+                />
+              </SectionCard>
+              <SectionCard id="section-departures" label={t('secDepartures')}>
+                <DepartureSection
+                  value={form.watch('departureTimes') ?? []}
+                  onChange={(rows) => form.setValue('departureTimes', rows, { shouldDirty: true })}
+                  isSubmitted={isSubmitted}
+                />
+              </SectionCard>
+              <SectionCard id="section-units" label={t('secUnits')}>
+                <UnitSection
+                  value={form.watch('units') ?? []}
+                  onChange={(rows) => form.setValue('units', rows, { shouldDirty: true })}
+                  isSubmitted={isSubmitted}
+                />
+              </SectionCard>
             </div>
           </div>
         </FormWrapper>

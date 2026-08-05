@@ -41,6 +41,16 @@ export interface ApiProductBookingOption {
   include?: string[];
 }
 
+export interface ApiProductUnit {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  productId: string;
+  name: string;
+  note: string | null;
+}
+
 export interface ApiProductBookingData {
   departureTimes: ApiProductBookingDepartureTime[];
   pickupLocations: ApiProductBookingPickupLocation[];

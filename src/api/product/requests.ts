@@ -102,6 +102,37 @@ function toApiPayload(values: ProductFormValues) {
           description: it.description || '',
         }))
       : undefined,
+    options: (values.options ?? []).map((o, idx) => ({
+      ...(o.id && { id: o.id }),
+      title: o.title,
+      order: idx,
+      status: o.isActive ? 'active' : 'inactive',
+      currency: o.currency,
+      description: o.description || undefined,
+      include: o.include?.length ? o.include : undefined,
+    })),
+    departureTimes: (values.departureTimes ?? []).map((d, idx) => ({
+      ...(d.id && { id: d.id }),
+      time: d.time.length === 5 ? `${d.time}:00` : d.time,
+      label: d.label || undefined,
+      note: d.note || undefined,
+      isActive: d.isActive,
+      order: idx,
+    })),
+    pickupLocations: (values.pickupLocations ?? []).map((p, idx) => ({
+      ...(p.id && { id: p.id }),
+      name: p.name,
+      address: p.address || undefined,
+      mapUrl: p.mapUrl || undefined,
+      isPopular: p.isPopular,
+      order: idx,
+    })),
+    units: (values.units ?? []).map((u, idx) => ({
+      ...(u.id && { id: u.id }),
+      name: u.name,
+      note: u.note || undefined,
+      order: idx,
+    })),
   };
 }
 
