@@ -159,16 +159,9 @@ export default function StepPayment({
 
           {isVnd ? (
             <>
-              {total < 1000 && (
-                <AlertBanner
-                  variant="warning"
-                  title={t('booking.errorTitle')}
-                  message={t('booking.paymentVnpayMinLimit')}
-                />
-              )}
               <button
                 onClick={handleVnpayCheckout}
-                disabled={isCreatingVnpay || total < 1000}
+                disabled={isCreatingVnpay}
                 className="w-full h-[64px] rounded-[16px] bg-[#0065af] hover:bg-[#005596] active:scale-[0.98] disabled:opacity-60 transition-all flex items-center justify-between px-5 shadow-md"
               >
                 <div className="flex items-center gap-4">
