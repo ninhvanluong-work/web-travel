@@ -20,6 +20,8 @@ const scaleSpringVariants = {
   },
 };
 
+const VNPAY_RETURN_ORIGIN_KEY = 'vnpay_return_origin';
+
 export default function VnpayReturnPage() {
   const router = useRouter();
   const { t } = useTranslation('productPage');
@@ -27,6 +29,16 @@ export default function VnpayReturnPage() {
 
   const isSuccess = status === 'success';
   const amountVal = Number(amount) || 0;
+
+  const handleRetry = () => {
+    const origin = sessionStorage.getItem(VNPAY_RETURN_ORIGIN_KEY);
+    sessionStorage.removeItem(VNPAY_RETURN_ORIGIN_KEY);
+    if (origin) {
+      window.location.href = origin;
+    } else {
+      router.push('/');
+    }
+  };
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center py-12 px-4">
@@ -120,7 +132,7 @@ export default function VnpayReturnPage() {
 
             <div className="flex flex-col gap-3">
               <button
-                onClick={() => router.back()}
+                onClick={handleRetry}
                 className="w-full py-3.5 bg-[#0065af] text-white rounded-full font-semibold text-[14px] hover:bg-[#005596] transition-colors"
               >
                 {t('booking.paymentVnpayRetry')}

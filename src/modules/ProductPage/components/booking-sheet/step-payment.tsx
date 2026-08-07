@@ -20,6 +20,9 @@ interface StepPaymentProps {
   onEditBooking: () => void;
 }
 
+const VNPAY_MIN_AMOUNT = 10_000;
+const VNPAY_RETURN_ORIGIN_KEY = 'vnpay_return_origin';
+
 const stagger = {
   hidden: {},
   show: { transition: { staggerChildren: 0.1, delayChildren: 0.3 } },
@@ -92,6 +95,7 @@ export default function StepPayment({
     setErrorMessage(null);
     try {
       const { paymentUrl } = await callCreateVnpayUrl({ bookingId });
+      sessionStorage.setItem(VNPAY_RETURN_ORIGIN_KEY, window.location.href);
       window.location.href = paymentUrl;
     } catch {
       setErrorMessage(t('booking.paymentCreateOrderError'));
@@ -159,9 +163,16 @@ export default function StepPayment({
 
           {isVnd ? (
             <>
+              {total < VNPAY_MIN_AMOUNT && (
+                <AlertBanner
+                  variant="warning"
+                  title={t('booking.errorTitle')}
+                  message={t('booking.paymentVnpayMinLimit')}
+                />
+              )}
               <button
                 onClick={handleVnpayCheckout}
-                disabled={isCreatingVnpay}
+                disabled={isCreatingVnpay || total < VNPAY_MIN_AMOUNT}
                 className="w-full h-[64px] rounded-[16px] bg-[#0065af] hover:bg-[#005596] active:scale-[0.98] disabled:opacity-60 transition-all flex items-center justify-between px-5 shadow-md"
               >
                 <div className="flex items-center gap-4">
