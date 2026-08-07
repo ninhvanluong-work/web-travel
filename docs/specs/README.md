@@ -129,10 +129,11 @@ docs/specs/
 
 ## 🛠️ admin/
 
-| File                                       | Tính năng                             | Status |
-| ------------------------------------------ | ------------------------------------- | ------ |
-| [image-upload.md](./admin/image-upload.md) | Upload ảnh qua API CDN thay vì base64 | 📝     |
-| [form-actions.md](./admin/form-actions.md) | Bỏ nút "Đăng tour" ở chế độ tạo mới   | 📝     |
+| File                                                   | Tính năng                                 | Status |
+| ------------------------------------------------------ | ----------------------------------------- | ------ |
+| [image-upload.md](./admin/image-upload.md)             | Upload ảnh qua API CDN thay vì base64     | 📝     |
+| [form-actions.md](./admin/form-actions.md)             | Bỏ nút "Đăng tour" ở chế độ tạo mới       | 📝     |
+| [booking-management.md](./admin/booking-management.md) | Quản lý Booking, Lịch khởi hành & Giá bán | 📝     |
 
 ---
 
