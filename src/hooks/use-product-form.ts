@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useCreateOption } from '@/api/option';
 import { useCreateProduct, useProductById, useUpdateProduct, useUpdateProductStatus } from '@/api/product';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { useAlertStore } from '@/stores/use-alert-store';
@@ -35,11 +35,16 @@ const DEFAULT_VALUES: ProductFormValues = {
   experiences: [],
   itineraries: [],
   readBefores: READ_BEFORE_KEY_OPTIONS.map((opt) => ({ key: opt.value, description: '' })),
+  options: [],
+  departureTimes: [],
+  pickupLocations: [],
+  units: [],
 };
 
 export function useProductForm(productId?: string) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation('adminPage');
   const isEdit = !!productId;
 
   const invalidateList = () => {
@@ -75,7 +80,7 @@ export function useProductForm(productId?: string) {
       images: (productData.images ?? []).map((url) => ({ url })),
       videoId: productData.heroVideo?.id ?? null,
       shortDescription: productData.shortDescription ?? null,
-      tags: (productData.tags ?? []).map((t) => ({ id: t.id, name: t.name })),
+      tags: (productData.tags ?? []).map((tag) => ({ id: tag.id, name: tag.name })),
       banner: (productData.banner ?? []).map((b) => ({ url: b.url, type: b.type })),
       elementIds: (productData.elements ?? []).map((e) => e.id),
       experiences: (productData.experience ?? []).map((e) => ({
@@ -94,57 +99,62 @@ export function useProductForm(productId?: string) {
         const found = (productData.readBefore ?? []).find((r) => r.key === opt.value);
         return { key: opt.value, description: found?.description ?? '' };
       }),
+      options: (productData.options ?? []).map((o) => ({
+        id: o.id,
+        title: o.title,
+        isActive: o.status === 'active',
+        currency: o.currency ?? 'VND',
+        description: o.description ?? null,
+        include: o.include ?? [],
+      })),
+      departureTimes: (productData.departureTimes ?? []).map((d) => ({
+        id: d.id,
+        time: d.time.slice(0, 5),
+        label: d.label ?? '',
+        note: d.note ?? '',
+        isActive: d.isActive,
+        order: d.order,
+      })),
+      pickupLocations: (productData.pickupLocations ?? []).map((p) => ({
+        id: p.id,
+        name: p.name,
+        address: p.address ?? '',
+        mapUrl: p.mapUrl ?? '',
+        isPopular: p.isPopular,
+      })),
+      units: (productData.units ?? []).map((u) => ({
+        id: u.id,
+        name: u.name,
+        note: u.note ?? '',
+      })),
     });
   }, [productData, form]);
 
   const { addAlert } = useAlertStore.getState();
 
   const createMutation = useCreateProduct();
-  const createOptionMutation = useCreateOption();
 
   const updateMutation = useUpdateProduct({
     onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
     },
   });
 
   const updateStatusMutation = useUpdateProductStatus({
     onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'Failed to update tour status' });
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('updateStatusFailed') });
     },
   });
 
   const handleCreateNew = async (data: ProductFormValues) => {
     try {
-      const product = await createMutation.mutateAsync(data);
-
-      const elements = product.elements ?? [];
-      const dayEl = elements.find((e) => e.key === 'day');
-      const nightEl = elements.find((e) => e.key === 'night');
-      const day = dayEl ? parseInt(dayEl.name, 10) || 2 : 2;
-      const night = nightEl ? parseInt(nightEl.name, 10) || 1 : 1;
-
-      try {
-        await createOptionMutation.mutateAsync({
-          title: data.name,
-          productId: product.id,
-          isDefault: true,
-          status: 'active',
-          order: 1,
-          currency: 'USD',
-          day,
-          night,
-        });
-      } catch {
-        // option creation is best-effort; product was created successfully
-      }
-
+      await createMutation.mutateAsync(data);
       draft.clearDraftOnSuccess();
       invalidateList();
-      addAlert({ type: 'success', title: 'Tour created successfully' });
+      addAlert({ type: 'success', title: t('tourCreatedSuccess') });
       router.push(ROUTE.ADMIN_PRODUCTS);
     } catch (err: any) {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? 'An error occurred, please try again' });
+      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
     }
   };
 
@@ -156,7 +166,7 @@ export function useProductForm(productId?: string) {
           onSuccess: () => {
             draft.clearDraftOnSuccess();
             invalidateList();
-            addAlert({ type: 'success', title: 'Tour updated successfully' });
+            addAlert({ type: 'success', title: t('tourUpdatedSuccess') });
             router.push(ROUTE.ADMIN_PRODUCTS);
           },
         }
@@ -181,7 +191,7 @@ export function useProductForm(productId?: string) {
               onSuccess: () => {
                 draft.clearDraftOnSuccess();
                 invalidateList();
-                addAlert({ type: 'success', title: 'Tour published successfully' });
+                addAlert({ type: 'success', title: t('tourPublishedSuccess') });
                 router.push(ROUTE.ADMIN_PRODUCTS);
               },
             }
@@ -190,7 +200,9 @@ export function useProductForm(productId?: string) {
     );
   };
 
-  const handlePublish = form.handleSubmit(onPublish);
+  const onValidationError = () => addAlert({ type: 'error', title: t('tourValidationError') });
+
+  const handlePublish = form.handleSubmit(onPublish, onValidationError);
 
   const handleHide = form.handleSubmit((data) => {
     updateMutation.mutate(
@@ -203,20 +215,16 @@ export function useProductForm(productId?: string) {
               onSuccess: () => {
                 draft.clearDraftOnSuccess();
                 invalidateList();
-                addAlert({ type: 'success', title: 'Tour hidden successfully' });
+                addAlert({ type: 'success', title: t('tourHiddenSuccess') });
                 router.push(ROUTE.ADMIN_PRODUCTS);
               },
             }
           ),
       }
     );
-  });
+  }, onValidationError);
 
-  const isPending =
-    createMutation.isPending ||
-    createOptionMutation.isPending ||
-    updateMutation.isPending ||
-    updateStatusMutation.isPending;
+  const isPending = createMutation.isPending || updateMutation.isPending || updateStatusMutation.isPending;
 
   return { form, isEdit, productData, onSubmit, onPublish, handlePublish, handleHide, isPending, draft };
 }

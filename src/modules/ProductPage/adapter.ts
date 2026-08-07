@@ -219,7 +219,7 @@ export function mapApiToProductPage(data: ApiProductDetail, t: (key: string, opt
     originalPrice: price > 0 ? Math.round(price / 0.85) : 138,
     salePrice: price > 0 ? price : 117,
     discountPercent: 15,
-    currency: '$',
+    currency: data.currency === 'VND' ? '₫' : data.currency ?? '$',
     priceUnit: t('personUnit'),
   };
 }

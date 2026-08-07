@@ -3,7 +3,7 @@ import { Lock } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 
-import { useCapturePaypalOrder, useCreatePaypalOrder, usePaypalConfig } from '@/api/payment';
+import { useCapturePaypalOrder, useCreatePaypalOrder, useCreateVnpayPaymentUrl, usePaypalConfig } from '@/api/payment';
 import AlertBanner from '@/components/ui/AlertBanner';
 import { useBookingStore } from '@/stores/BookingStore';
 
@@ -43,16 +43,20 @@ export default function StepPayment({
   const date = useBookingStore.use.date();
   const guests = useBookingStore.use.guests();
 
+  const isVnd = currency === '₫' || currency === 'VND';
+  const isUsd = !isVnd;
+
   const [paymentSuccess, setPaymentSuccess] = React.useState(false);
   const [cancelMessage, setCancelMessage] = React.useState<string | null>(null);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const { data: paypalConfig, isLoading: isLoadingConfig } = usePaypalConfig({
-    enabled: !!bookingId,
+    enabled: isUsd && !!bookingId,
   });
 
   const { mutateAsync: callCreateOrder } = useCreatePaypalOrder();
   const { mutateAsync: callCaptureOrder, isLoading: isCapturing } = useCapturePaypalOrder();
+  const { mutateAsync: callCreateVnpayUrl, isLoading: isCreatingVnpay } = useCreateVnpayPaymentUrl();
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
@@ -76,6 +80,21 @@ export default function StepPayment({
     } catch {
       setErrorMessage(t('booking.paymentCreateOrderError'));
       throw new Error('create-order failed');
+    }
+  };
+
+  const handleVnpayCheckout = async () => {
+    if (!bookingId) {
+      setErrorMessage(t('booking.paymentMissingBookingId'));
+      return;
+    }
+    setCancelMessage(null);
+    setErrorMessage(null);
+    try {
+      const { paymentUrl } = await callCreateVnpayUrl({ bookingId });
+      window.location.href = paymentUrl;
+    } catch {
+      setErrorMessage(t('booking.paymentCreateOrderError'));
     }
   };
 
@@ -138,20 +157,54 @@ export default function StepPayment({
             <span className="text-white/80 text-[18px] flex-shrink-0 ml-2">→</span>
           </button>
 
-          {isLoadingConfig || !paypalConfig?.clientId ? (
-            <div className="w-full h-[55px] rounded-[16px] bg-[#F4F4F4] animate-pulse flex items-center justify-center text-[13px] text-[#888] font-medium">
-              {t('booking.paymentLoadingPaypal')}
-            </div>
+          {isVnd ? (
+            <>
+              {total < 1000 && (
+                <AlertBanner
+                  variant="warning"
+                  title={t('booking.errorTitle')}
+                  message={t('booking.paymentVnpayMinLimit')}
+                />
+              )}
+              <button
+                onClick={handleVnpayCheckout}
+                disabled={isCreatingVnpay || total < 1000}
+                className="w-full h-[64px] rounded-[16px] bg-[#0065af] hover:bg-[#005596] active:scale-[0.98] disabled:opacity-60 transition-all flex items-center justify-between px-5 shadow-md"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-[10px] bg-white flex items-center justify-center flex-shrink-0">
+                    {isCreatingVnpay ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#0065af]" />
+                    ) : (
+                      <span className="text-[14px] font-black text-[#0065af]">VN</span>
+                    )}
+                  </div>
+                  <div className="text-left">
+                    <p className="text-[15px] font-bold text-white leading-snug">{t('booking.paymentVnpay')}</p>
+                    <p className="text-[12px] text-white/80 mt-0.5 leading-none">{t('booking.paymentVnpaySubtext')}</p>
+                  </div>
+                </div>
+                <span className="text-white/80 text-[18px] flex-shrink-0 ml-2">→</span>
+              </button>
+            </>
           ) : (
-            <StepPaymentPaypalButton
-              clientId={paypalConfig.clientId}
-              currency={paypalConfig.currency}
-              isCapturing={isCapturing}
-              onCreateOrder={handleCreateOrder}
-              onApprove={handleApprove}
-              onError={() => setErrorMessage(t('booking.paymentGatewayError'))}
-              onCancel={() => setCancelMessage(t('booking.paymentCancelled'))}
-            />
+            <>
+              {isLoadingConfig || !paypalConfig?.clientId ? (
+                <div className="w-full h-[55px] rounded-[16px] bg-[#F4F4F4] animate-pulse flex items-center justify-center text-[13px] text-[#888] font-medium">
+                  {t('booking.paymentLoadingPaypal')}
+                </div>
+              ) : (
+                <StepPaymentPaypalButton
+                  clientId={paypalConfig.clientId}
+                  currency={paypalConfig.currency}
+                  isCapturing={isCapturing}
+                  onCreateOrder={handleCreateOrder}
+                  onApprove={handleApprove}
+                  onError={() => setErrorMessage(t('booking.paymentGatewayError'))}
+                  onCancel={() => setCancelMessage(t('booking.paymentCancelled'))}
+                />
+              )}
+            </>
           )}
         </motion.div>
 

@@ -1,92 +1,56 @@
-import { DollarSign, Plus } from 'lucide-react';
-import { useState } from 'react';
+import { Package, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CURRENCY_OPTIONS, type OptionFormValues } from '@/lib/validations/product';
 
-import { OptionsGridTable } from './options-grid-table';
+import { OptionCard, type OptionRow } from '../shared/option-card';
 
 interface Props {
-  options: OptionFormValues[];
-  onChange: (v: OptionFormValues[]) => void;
+  value: OptionRow[];
+  onChange: (rows: OptionRow[]) => void;
+  isSubmitted?: boolean;
 }
 
-const DEFAULT_OPTION: OptionFormValues = {
-  title: '',
-  description: '',
-  adultPrice: 0,
-  childPrice: 0,
-  infantPrice: 0,
-  currency: 'VND',
-  order: 0,
-};
+export function OptionsSection({ value, onChange, isSubmitted }: Props) {
+  const patch = (index: number, p: Partial<OptionRow>) =>
+    onChange(value.map((r, i) => (i === index ? { ...r, ...p } : r)));
 
-export function OptionsSection({ options, onChange }: Props) {
-  const [lockCurrency, setLockCurrency] = useState('');
-
-  const set = (index: number, patch: Partial<OptionFormValues>) => {
-    onChange(options.map((o, i) => (i === index ? { ...o, ...patch } : o)));
-  };
-
-  const handleAdd = () => {
-    onChange([...options, { ...DEFAULT_OPTION, currency: lockCurrency || 'VND', order: options.length }]);
-  };
+  const handleAdd = () =>
+    onChange([...value, { title: '', isActive: true, currency: 'VND', description: null, include: [] }]);
 
   const handleClone = (index: number) => {
-    const clone = { ...options[index], id: undefined, order: options.length };
-    onChange([...options, clone]);
+    const src = value[index];
+    onChange([...value, { ...src, id: undefined }]);
   };
 
-  const handleRemove = (index: number) => {
-    onChange(options.filter((_, i) => i !== index).map((o, i) => ({ ...o, order: i })));
-  };
+  const handleRemove = (index: number) => onChange(value.filter((_, i) => i !== index));
 
-  const handleCurrencyLock = (currency: string) => {
-    setLockCurrency(currency);
-    onChange(options.map((o) => ({ ...o, currency })));
-  };
-
-  if (options.length === 0) {
+  if (value.length === 0) {
     return (
       <button
         type="button"
         onClick={handleAdd}
         className="w-full border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center gap-2 text-slate-400 hover:border-brand-300 hover:text-brand-500 hover:bg-brand-50/40 transition-colors"
       >
-        <DollarSign size={20} className="opacity-50" />
-        <span className="text-sm font-medium">Chưa có gói giá</span>
-        <span className="text-xs text-slate-400">Nhấn để thêm gói đầu tiên</span>
+        <Package size={20} className="opacity-50" />
+        <span className="text-sm font-medium">No packages yet</span>
+        <span className="text-xs">Click to add the first package</span>
       </button>
     );
   }
 
   return (
     <div className="space-y-3">
-      {/* Currency lock */}
-      <div className="flex items-center gap-2 text-xs text-gray-500">
-        <span>Áp dụng tiền tệ cho tất cả:</span>
-        <Select value={lockCurrency} onValueChange={handleCurrencyLock}>
-          <SelectTrigger inputSize="sm" className="w-24">
-            <SelectValue placeholder="Chọn..." />
-          </SelectTrigger>
-          <SelectContent>
-            {CURRENCY_OPTIONS.map((c) => (
-              <SelectItem key={c.value} value={c.value}>
-                {c.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <OptionsGridTable
-        options={options}
-        lockCurrency={lockCurrency}
-        onSet={set}
-        onClone={handleClone}
-        onRemove={handleRemove}
-      />
+      {value.map((row, i) => (
+        <OptionCard
+          key={row.id ?? `pending-${i}`}
+          row={row}
+          index={i}
+          onPatch={(p) => patch(i, p)}
+          onClone={() => handleClone(i)}
+          onRemove={() => handleRemove(i)}
+          isSubmitted={isSubmitted}
+        />
+      ))}
 
       <Button
         type="button"
@@ -98,7 +62,7 @@ export function OptionsSection({ options, onChange }: Props) {
         onClick={handleAdd}
       >
         <Plus size={12} />
-        Thêm gói giá
+        Add package
       </Button>
     </div>
   );

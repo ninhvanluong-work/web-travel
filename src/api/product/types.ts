@@ -1,5 +1,10 @@
 import type { ApiOptionDetail } from '../option/types';
 import type { ApiTourGuide } from '../tour-guide/types';
+import type {
+  ApiProductBookingDepartureTime,
+  ApiProductBookingPickupLocation,
+  ApiProductUnit,
+} from './booking-config-types';
 
 export type { ApiTourGuide, ApiTourGuideListResponse } from '../tour-guide/types';
 
@@ -155,6 +160,10 @@ export interface ApiProductDetail {
   tourGuides: ApiTourGuide[];
   elements: ApiElementItem[];
   options?: ApiOptionDetail[];
+  departureTimes?: ApiProductBookingDepartureTime[];
+  pickupLocations?: ApiProductBookingPickupLocation[];
+  units?: ApiProductUnit[];
+  currency?: string;
 }
 
 // ── Product review ────────────────────────────────────────────────────────

@@ -1,7 +1,7 @@
 import { createMutation, createQuery } from 'react-query-kit';
 
-import { capturePaypalOrder, createPaypalOrder, getPaypalConfig } from './requests';
-import type { ApiPaypalCaptureOrderResponse, ApiPaypalConfig } from './types';
+import { capturePaypalOrder, createPaypalOrder, createVnpayPaymentUrl, getPaypalConfig } from './requests';
+import type { ApiPaypalCaptureOrderResponse, ApiPaypalConfig, ApiVnpayCreateUrlResponse } from './types';
 
 export const usePaypalConfig = createQuery<ApiPaypalConfig>({
   primaryKey: '/payment/paypal/config',
@@ -17,4 +17,8 @@ export const useCapturePaypalOrder = createMutation<
   { bookingId: string; orderId: string }
 >({
   mutationFn: ({ bookingId, orderId }) => capturePaypalOrder(bookingId, orderId),
+});
+
+export const useCreateVnpayPaymentUrl = createMutation<ApiVnpayCreateUrlResponse['data'], { bookingId: string }>({
+  mutationFn: ({ bookingId }) => createVnpayPaymentUrl(bookingId),
 });

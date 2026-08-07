@@ -4,6 +4,7 @@ import type {
   ApiPaypalConfig,
   ApiPaypalConfigResponse,
   ApiPaypalCreateOrderResponse,
+  ApiVnpayCreateUrlResponse,
 } from './types';
 
 export async function getPaypalConfig(): Promise<ApiPaypalConfig> {
@@ -23,5 +24,10 @@ export async function capturePaypalOrder(
   const { data } = await request.post<ApiPaypalCaptureOrderResponse>(`/payment/paypal/${bookingId}/capture-order`, {
     orderId,
   });
+  return data.data;
+}
+
+export async function createVnpayPaymentUrl(bookingId: string): Promise<ApiVnpayCreateUrlResponse['data']> {
+  const { data } = await request.post<ApiVnpayCreateUrlResponse>(`/payment/vnpay/${bookingId}/create-payment-url`);
   return data.data;
 }

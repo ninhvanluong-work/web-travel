@@ -37,8 +37,9 @@ export interface ApiOptionDetail {
   status: 'active' | 'inactive';
   order: number;
   allowUnit: string | null;
-  currency: string;
+  currency?: string;
   productId: string;
+  include?: string[];
   pickupLocations: ApiPickupLocation[];
   departureTimes: ApiDepartureTime[];
 }
@@ -46,6 +47,16 @@ export interface ApiOptionDetail {
 export interface CreateOptionPayload {
   title: string;
   productId: string;
+  isDefault?: boolean;
+  status?: 'active' | 'inactive';
+  order?: number;
+  currency?: string;
+  day?: number;
+  night?: number;
+}
+
+export interface UpdateOptionPayload {
+  title?: string;
   isDefault?: boolean;
   status?: 'active' | 'inactive';
   order?: number;
