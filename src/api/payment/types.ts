@@ -38,3 +38,13 @@ export interface ApiPaypalCaptureOrderResponse {
   message: string;
   error: string | null;
 }
+
+export interface ApiVnpayCreateUrlResponse {
+  data: {
+    txnRef: string;
+    paymentUrl: string;
+  };
+  code: number;
+  message: string;
+  error: string | null;
+}
