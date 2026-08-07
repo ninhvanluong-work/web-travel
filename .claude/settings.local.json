@@ -80,7 +80,13 @@
       "Bash(bash:*)",
       "mcp__postgres__query",
       "Bash(pnpm check-types *)",
-      "Bash(pnpm lint *)"
+      "Bash(pnpm lint *)",
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File lint-changed.ps1)",
+      "Bash(git rm *)",
+      "Bash(awk '{ins=$4; del=$6; print \"LINES:\"\\(ins+del\\)}')",
+      "Bash(awk 'END {print \"FILES:\"NR}')",
+      "Bash(awk '{print \"SECRETS:\"$1}')",
+      "Bash(git reset *)"
     ],
     "deny": [],
     "ask": []
