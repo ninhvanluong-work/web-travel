@@ -163,7 +163,7 @@
     "paymentSuccessHome": "Back to Home",
     "paymentVnpay": "Pay with VNPAY",
     "paymentVnpaySubtext": "QR Code or Domestic ATM Cards",
-    "paymentVnpayMinLimit": "Minimum payment amount via VNPAY is 1,000 ₫.",
+    "paymentVnpayMinLimit": "Minimum payment via VNPAY is 10,000 ₫. Please add more guests or services to continue.",
     "paymentVnpaySuccessTitle": "Payment Successful!",
     "paymentVnpaySuccessMessage": "Your booking is confirmed. A confirmation email has been sent to you.",
     "paymentVnpayFailedTitle": "Payment Failed",

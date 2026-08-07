@@ -163,7 +163,7 @@
     "paymentSuccessHome": "Quay lại Trang Chủ",
     "paymentVnpay": "Thanh toán qua VNPAY",
     "paymentVnpaySubtext": "Quét mã QR hoặc ATM nội địa",
-    "paymentVnpayMinLimit": "Số tiền thanh toán tối thiểu qua VNPAY là 1.000 ₫.",
+    "paymentVnpayMinLimit": "Số tiền tối thiểu để thanh toán qua VNPAY là 10.000 ₫. Vui lòng tăng số lượng khách hoặc chọn thêm dịch vụ.",
     "paymentVnpaySuccessTitle": "Thanh Toán Thành Công!",
     "paymentVnpaySuccessMessage": "Đơn đặt tour của bạn đã được xác nhận. Email xác nhận đã được gửi tới bạn.",
     "paymentVnpayFailedTitle": "Thanh toán không thành công",
