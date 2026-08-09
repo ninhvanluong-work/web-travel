@@ -79,7 +79,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       rounded,
       asChild = false,
       loading,
-      blur = true,
+      blur = false,
       children,
       ...props
     },
