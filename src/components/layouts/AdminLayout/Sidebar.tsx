@@ -1,6 +1,6 @@
 import 'animate.css';
 
-import { Film, LayoutDashboard, LogOut, Package, Users } from 'lucide-react';
+import { Building2, Film, LayoutDashboard, LogOut, Package, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
@@ -17,6 +17,7 @@ const NAV_ITEMS = [
   { labelKey: 'dashboard', href: '/admin', icon: LayoutDashboard, exact: true },
   { labelKey: 'products', href: ROUTE.ADMIN_PRODUCTS, icon: Package },
   { labelKey: 'guides', href: ROUTE.ADMIN_GUIDES, icon: Users },
+  { labelKey: 'suppliers', href: ROUTE.ADMIN_SUPPLIERS, icon: Building2 },
   { labelKey: 'videos', href: ROUTE.ADMIN_VIDEOS, icon: Film },
 ];
 
