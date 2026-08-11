@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { CalendarDays, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 
@@ -73,9 +73,10 @@ interface Props {
   product: IProduct;
   onChangeStatus: (product: IProduct, status: 'published' | 'hidden') => void;
   onDelete: (product: IProduct) => void;
+  onManageSessions: (product: IProduct) => void;
 }
 
-export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
+export function ProductTableRow({ product, onChangeStatus, onDelete, onManageSessions }: Props) {
   const { t } = useTranslation('adminPage');
   const statusCfg = STATUS_CONFIG[product.status as ProductStatus] ?? STATUS_CONFIG.draft;
 
@@ -143,6 +144,18 @@ export function ProductTableRow({ product, onChangeStatus, onDelete }: Props) {
       {/* Created at */}
       <TableCell className="py-6 text-xs text-gray-500 whitespace-nowrap">
         {dayjs(product.createdAt).format('DD/MM/YYYY')}
+      </TableCell>
+
+      {/* Manage Sessions */}
+      <TableCell className="w-10">
+        <button
+          type="button"
+          onClick={() => onManageSessions(product)}
+          title={t('secSessions')}
+          className="h-9 w-9 flex items-center justify-center rounded-lg text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+        >
+          <CalendarDays size={16} />
+        </button>
       </TableCell>
 
       {/* Actions — "..." menu only */}

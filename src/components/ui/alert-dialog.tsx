@@ -3,7 +3,6 @@
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog';
 import * as React from 'react';
 
-import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const AlertDialog = AlertDialogPrimitive.Root;
@@ -75,7 +74,14 @@ const AlertDialogAction = React.forwardRef<
   React.ElementRef<typeof AlertDialogPrimitive.Action>,
   React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
 >(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action ref={ref} className={cn(buttonVariants(), className)} {...props} />
+  <AlertDialogPrimitive.Action
+    ref={ref}
+    className={cn(
+      'inline-flex h-9 items-center justify-center rounded-xl bg-red-600 px-4 text-xs sm:text-sm font-semibold text-white transition-all hover:bg-red-700 active:scale-95 disabled:pointer-events-none disabled:opacity-50 shadow-sm cursor-pointer',
+      className
+    )}
+    {...props}
+  />
 ));
 AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName;
 
@@ -85,7 +91,10 @@ const AlertDialogCancel = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <AlertDialogPrimitive.Cancel
     ref={ref}
-    className={cn(buttonVariants({ variant: 'outline' }), 'mt-2 sm:mt-0', className)}
+    className={cn(
+      'mt-2 inline-flex h-9 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-xs sm:text-sm font-medium text-slate-700 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95 disabled:pointer-events-none disabled:opacity-50 sm:mt-0 cursor-pointer',
+      className
+    )}
     {...props}
   />
 ));
