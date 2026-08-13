@@ -1,6 +1,6 @@
 import 'animate.css';
 
-import { Building2, Film, LayoutDashboard, LogOut, Package, Users } from 'lucide-react';
+import { BookOpen, Building2, Film, LayoutDashboard, LogOut, Package, Users } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { labelKey: 'guides', href: ROUTE.ADMIN_GUIDES, icon: Users },
   { labelKey: 'suppliers', href: ROUTE.ADMIN_SUPPLIERS, icon: Building2 },
   { labelKey: 'videos', href: ROUTE.ADMIN_VIDEOS, icon: Film },
+  { labelKey: 'bookings', href: ROUTE.ADMIN_BOOKINGS, icon: BookOpen },
 ];
 
 function Sidebar({ isCollapsed }: SidebarProps) {
