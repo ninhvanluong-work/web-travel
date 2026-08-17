@@ -126,3 +126,55 @@ export interface ApiBookingResponse {
   message: string;
   error: string | null;
 }
+
+// ── Payment types ────────────────────────────────────────────────────────────
+
+export type PaymentProvider = 'paypal' | 'vnpay' | 'stripe' | 'momo' | 'bank_transfer' | 'cash' | string;
+
+export type PaymentStatus = 'pending' | 'succeed' | 'succeeded' | 'failed' | 'cancelled' | 'refunded';
+
+export interface IBookingPayment {
+  id: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  provider: PaymentProvider;
+  providerTxId?: string | null;
+  providerIntentId?: string | null;
+  price: string | number;
+  currency: string;
+  status: PaymentStatus;
+  failureReason?: string | null;
+  rawResponse?: Record<string, unknown> | null;
+  bookingId: string;
+}
+
+export interface IBookingPaymentLog {
+  id: string;
+  updatedAt?: string;
+  deletedAt?: string | null;
+  bookingPaymentId: string;
+  bookingId: string;
+  fromStatus: PaymentStatus;
+  toStatus: PaymentStatus;
+  provider: PaymentProvider;
+  providerTxId?: string | null;
+  reason?: string | null;
+  rawResponse?: Record<string, unknown> | null;
+  source: string;
+  createdAt: string;
+}
+
+export interface ApiBookingPaymentListResponse {
+  data: IBookingPayment[];
+  code: number;
+  error: string | null;
+  message: string;
+}
+
+export interface ApiBookingPaymentLogsResponse {
+  data: IBookingPaymentLog[];
+  code: number;
+  error: string | null;
+  message: string;
+}

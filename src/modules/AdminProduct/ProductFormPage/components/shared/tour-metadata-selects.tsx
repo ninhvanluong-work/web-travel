@@ -1,10 +1,10 @@
 import { useTranslation } from 'next-i18next';
 import { useFormContext } from 'react-hook-form';
 
-import { useDestinationList, useSupplierList } from '@/api/product/lookup';
+import { useDestinationList } from '@/api/product/lookup';
+import { useSupplierListInfinite } from '@/api/supplier';
 import { useTourGuideListInfinite } from '@/api/tour-guide';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SelectWithSearch from '@/components/ui/select-with-search';
 import type { ProductFormValues } from '@/lib/validations/product';
 
@@ -13,9 +13,18 @@ export function TourMetadataSelects() {
   const { t } = useTranslation('adminPage');
 
   const { data: destinations = [] } = useDestinationList();
-  const { data: suppliers = [] } = useSupplierList();
+  const {
+    data: suppliersData,
+    fetchNextPage: fetchNextSupplierPage,
+    hasNextPage: hasNextSupplierPage,
+    isFetchingNextPage: isFetchingNextSupplierPage,
+  } = useSupplierListInfinite();
   const { data: tourGuidesData, fetchNextPage, hasNextPage, isFetchingNextPage } = useTourGuideListInfinite();
 
+  const destinationOptions = destinations.map((item) => ({ label: item.name, value: item.id }));
+  const supplierOptions = (suppliersData?.pages ?? [])
+    .flatMap((p) => p.items)
+    .map((item) => ({ label: item.name, value: item.id }));
   const tourGuideOptions = (tourGuidesData?.pages ?? [])
     .flatMap((p) => p.items)
     .map((item) => ({ label: item.name, value: item.id }));
@@ -28,23 +37,15 @@ export function TourMetadataSelects() {
         render={({ field }) => (
           <FormItem className="space-y-1.5">
             <FormLabel className="text-[13px] text-slate-500 font-medium">{t('destinationLabel')}</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value ?? undefined}>
-              <FormControl>
-                <SelectTrigger
-                  inputSize="sm"
-                  className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
-                >
-                  <SelectValue placeholder={t('selectCategory')} />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {destinations.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormControl>
+              <SelectWithSearch
+                placeholder={t('selectCategory')}
+                value={field.value ?? ''}
+                onValueChange={(v) => field.onChange(v || undefined)}
+                data={destinationOptions}
+                className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}
@@ -56,23 +57,19 @@ export function TourMetadataSelects() {
         render={({ field }) => (
           <FormItem className="space-y-1.5">
             <FormLabel className="text-[13px] text-slate-500 font-medium">{t('supplierLabel')}</FormLabel>
-            <Select onValueChange={field.onChange} value={field.value ?? undefined}>
-              <FormControl>
-                <SelectTrigger
-                  inputSize="sm"
-                  className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
-                >
-                  <SelectValue placeholder={t('selectSupplier')} />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {suppliers.map((item) => (
-                  <SelectItem key={item.id} value={item.id}>
-                    {item.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <FormControl>
+              <SelectWithSearch
+                placeholder={t('selectSupplier')}
+                value={field.value ?? ''}
+                onValueChange={(v) => field.onChange(v || undefined)}
+                data={supplierOptions}
+                onScrollToBottom={() => {
+                  if (hasNextSupplierPage) fetchNextSupplierPage();
+                }}
+                isLoadingMore={isFetchingNextSupplierPage}
+                className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
+              />
+            </FormControl>
             <FormMessage />
           </FormItem>
         )}

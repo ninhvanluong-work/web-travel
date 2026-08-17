@@ -5,8 +5,9 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { PriceInput } from '@/components/ui/price-input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TextArea } from '@/components/ui/textarea';
-import { generateSlug, type ProductFormValues } from '@/lib/validations/product';
+import { CURRENCY_OPTIONS, generateSlug, type ProductFormValues } from '@/lib/validations/product';
 
 import { TourMetadataSelects } from '../shared/tour-metadata-selects';
 import { VideoSearchField } from '../shared/video-search-field';
@@ -75,19 +76,45 @@ export function BasicInfoSection({
 
       {/* Row 3: price | video */}
       <div className="grid grid-cols-2 gap-5 pt-4 border-t border-slate-100">
-        <FormField
-          control={control}
-          name="minPrice"
-          render={({ field }) => (
-            <FormItem className="space-y-1.5">
-              <FormLabel className="text-[13px] text-slate-500 font-medium">{t('startingPriceLabel')}</FormLabel>
-              <FormControl>
-                <PriceInput value={field.value ?? 0} onChange={field.onChange} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="space-y-3">
+          <FormField
+            control={control}
+            name="currency"
+            render={({ field }) => (
+              <FormItem className="space-y-1.5">
+                <FormLabel className="text-[13px] text-slate-500 font-medium">{t('currencyLabel')}</FormLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger inputSize="sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {CURRENCY_OPTIONS.map((opt) => (
+                      <SelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="minPrice"
+            render={({ field }) => (
+              <FormItem className="space-y-1.5">
+                <FormLabel className="text-[13px] text-slate-500 font-medium">{t('startingPriceLabel')}</FormLabel>
+                <FormControl>
+                  <PriceInput value={field.value ?? 0} onChange={field.onChange} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <VideoSearchField
           initialVideo={heroVideo ? { id: heroVideo.id, title: heroVideo.name, thumbnail: heroVideo.thumbnail } : null}
         />
