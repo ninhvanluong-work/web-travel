@@ -18,5 +18,5 @@ export async function getBookingList(params: IBookingQueryParams): Promise<IBook
     Object.entries(params).filter(([, v]) => v !== '' && v !== undefined && v !== null)
   );
   const { data } = await request.get<IBookingListResponse>('/booking', { params: cleanParams });
-  return { items: data.data.items, pagination: data.data.pagination };
+  return { items: data.data.items, pagination: data.data.pagination, stats: data.data.stats };
 }

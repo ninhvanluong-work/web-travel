@@ -52,13 +52,30 @@ export interface IBookingPagination {
   totalPages: number;
 }
 
+export interface IBookingStatItem {
+  count: number;
+  totalPrice: number;
+}
+
+export interface IBookingStats {
+  pending: IBookingStatItem;
+  paid: IBookingStatItem;
+  cancel: IBookingStatItem;
+  total: IBookingStatItem;
+}
+
 export interface IBookingListResult {
   items: IBookingListItem[];
   pagination: IBookingPagination;
+  stats?: IBookingStats;
 }
 
 export interface IBookingListResponse {
-  data: { items: IBookingListItem[]; pagination: IBookingPagination };
+  data: {
+    items: IBookingListItem[];
+    pagination: IBookingPagination;
+    stats?: IBookingStats;
+  };
   code: number;
   message: string;
   error: string | null;

@@ -79,9 +79,10 @@ const DatePicker = React.forwardRef<HTMLInputElement, DatePickerProps>(
     };
 
     return (
-      <div>
-        <div className="relative" ref={refs.setReference}>
+      <div className="w-full">
+        <div className="relative w-full" ref={refs.setReference}>
           <Input
+            fullWidth
             {...props}
             suffix={<Icons.calendar className="cursor-pointer" onClick={toggle} />}
             ref={ref}

@@ -86,7 +86,8 @@
       "Bash(awk '{ins=$4; del=$6; print \"LINES:\"\\(ins+del\\)}')",
       "Bash(awk 'END {print \"FILES:\"NR}')",
       "Bash(awk '{print \"SECRETS:\"$1}')",
-      "Bash(git reset *)"
+      "Bash(git reset *)",
+      "Bash(./lint-changed.bat *)"
     ],
     "deny": [],
     "ask": []

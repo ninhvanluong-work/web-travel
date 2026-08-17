@@ -32,20 +32,11 @@ export function BookingListPage() {
     keepPreviousData: true,
   } as any);
 
-  // Queries cho KPI total counts
-  const { data: paidData } = useBookingList({ variables: { status: 'paid', pageSize: 1 } } as any);
-  const { data: pendingData } = useBookingList({ variables: { status: 'pending', pageSize: 1 } } as any);
-  const { data: cancelData } = useBookingList({ variables: { status: 'cancel', pageSize: 1 } } as any);
-
   const items = useMemo(() => data?.items ?? [], [data?.items]);
   const pagination = data?.pagination;
   const totalPages = pagination?.totalPages ?? 1;
   const total = pagination?.total ?? 0;
   const pageOffset = (page - 1) * PAGE_SIZE;
-
-  const paidCount = paidData?.pagination?.total ?? items.filter((i) => i.status === 'paid').length;
-  const pendingCount = pendingData?.pagination?.total ?? items.filter((i) => i.status === 'pending').length;
-  const cancelCount = cancelData?.pagination?.total ?? items.filter((i) => i.status === 'cancel').length;
 
   return (
     <div className="min-h-full bg-gray-50 dark:bg-gray-900 p-6 space-y-5">
@@ -53,7 +44,7 @@ export function BookingListPage() {
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{t('bookingListTitle')}</h1>
       </div>
 
-      <BookingKpiCards total={total} paid={paidCount} pending={pendingCount} cancelled={cancelCount} />
+      <BookingKpiCards stats={data?.stats} total={total} />
 
       <div className="bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
         <BookingFilterToolbar

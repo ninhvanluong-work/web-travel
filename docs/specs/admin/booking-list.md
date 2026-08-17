@@ -149,6 +149,18 @@ export interface IBookingPagination {
   totalPages: number;
 }
 
+export interface IBookingStatItem {
+  count: number;
+  totalPrice: number;
+}
+
+export interface IBookingStats {
+  pending: IBookingStatItem;
+  paid: IBookingStatItem;
+  cancel: IBookingStatItem;
+  total: IBookingStatItem;
+}
+
 export interface IBookingQueryParams {
   page?: number; // Default: 1
   pageSize?: number; // Default: 10
@@ -164,6 +176,7 @@ export interface IBookingListResponse {
   data: {
     items: IBookingListItem[];
     pagination: IBookingPagination;
+    stats?: IBookingStats;
   };
   code: number;
   message: string;

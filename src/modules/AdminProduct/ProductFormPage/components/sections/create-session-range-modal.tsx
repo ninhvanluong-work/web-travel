@@ -85,9 +85,14 @@ export function CreateSessionRangeModal({ open, productId, units, onClose }: Pro
           }
         },
         onError: (err: any) => {
+          const errStatus = err?.response?.status;
           const msg = err?.response?.data?.message;
           const text = Array.isArray(msg) ? msg.join(', ') : msg ?? t('genericError');
-          setError(text);
+          if (errStatus === 409) {
+            setError(`${t('sessionRangeConflict')}. ${text}`);
+          } else {
+            setError(text);
+          }
         },
       }
     );
@@ -147,10 +152,10 @@ export function CreateSessionRangeModal({ open, productId, units, onClose }: Pro
             <div className="flex items-center justify-between rounded-xl bg-emerald-50/70 border border-emerald-200/70 px-3.5 py-2.5 text-xs text-emerald-800">
               <div className="flex items-center gap-2 font-medium">
                 <CheckCircle2 size={15} className="text-emerald-600 shrink-0" />
-                <span>Số phiên tạo dự kiến:</span>
+                <span>{t('sessionRangePreview')}</span>
               </div>
               <span className="font-bold text-emerald-700 bg-emerald-100/80 px-2 py-0.5 rounded-md">
-                {rangeDays} phiên
+                {rangeDays} {t('sessionsUnit')}
               </span>
             </div>
           )}
