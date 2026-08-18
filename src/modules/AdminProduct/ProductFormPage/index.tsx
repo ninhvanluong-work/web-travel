@@ -21,6 +21,7 @@ import { useScrollSpy } from '@/hooks/use-scroll-spy';
 import type { ProductFormValues } from '@/lib/validations/product';
 import { useAlertStore } from '@/stores/use-alert-store';
 
+import { ProductSessionSheet } from '../ProductListPage/components/ProductSessionSheet';
 import { DraftRecoveryBanner } from './components/draft-recovery-banner';
 import { ProductFormHeader } from './components/product-form-header';
 import { SectionCard } from './components/section-card';
@@ -89,6 +90,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
     useProductForm(productId);
 
   const [showDraftBanner, setShowDraftBanner] = useState(false);
+  const [sessionDrawerOpen, setSessionDrawerOpen] = useState(false);
   const activeSection = useScrollSpy(SECTION_IDS);
 
   useEffect(() => {
@@ -131,6 +133,7 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
         onSaveChanges={handleSaveChanges}
         onPublish={handlePublish}
         onHide={handleHide}
+        onManageSessions={isEdit && productId ? () => setSessionDrawerOpen(true) : undefined}
       />
 
       <div className="flex-1">
@@ -227,6 +230,15 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
           </div>
         </FormWrapper>
       </div>
+
+      {isEdit && productId && (
+        <ProductSessionSheet
+          open={sessionDrawerOpen}
+          productId={productId}
+          productName={form.watch('name') ?? ''}
+          onClose={() => setSessionDrawerOpen(false)}
+        />
+      )}
     </div>
   );
 }

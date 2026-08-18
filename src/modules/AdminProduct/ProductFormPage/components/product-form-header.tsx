@@ -1,4 +1,4 @@
-import { ArrowLeft, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowLeft, CalendarDays, ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 
@@ -35,6 +35,7 @@ interface ProductFormHeaderProps {
   onSaveChanges: () => void;
   onPublish: () => void;
   onHide: () => void;
+  onManageSessions?: () => void;
 }
 
 export function ProductFormHeader({
@@ -47,6 +48,7 @@ export function ProductFormHeader({
   onSaveChanges,
   onPublish,
   onHide,
+  onManageSessions,
 }: ProductFormHeaderProps) {
   const router = useRouter();
   const { t } = useTranslation('adminPage');
@@ -99,6 +101,22 @@ export function ProductFormHeader({
           <span className="text-[10px] text-gray-400 hidden sm:block">{t('draftAt', { time: lastSaved })}</span>
         )}
         {isPending && <Loader2 size={16} className="animate-spin text-gray-400" />}
+
+        {isEdit && onManageSessions && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="xs"
+            rounded="md"
+            blur={false}
+            onClick={onManageSessions}
+            className="hidden sm:inline-flex gap-1.5 border border-slate-200 text-slate-600 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50"
+          >
+            <CalendarDays size={14} />
+            {t('sessionManage')}
+          </Button>
+        )}
+
         <FormActionButtons
           isEdit={isEdit}
           currentStatus={currentStatus}

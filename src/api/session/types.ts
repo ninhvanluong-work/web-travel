@@ -1,3 +1,5 @@
+// ── Raw API types ─────────────────────────────────────────────────────────────
+
 export interface ApiUnit {
   id: string;
   createdAt: string;
@@ -31,27 +33,113 @@ export interface ApiSessionItem {
   sessionUnits: ApiSessionUnit[];
 }
 
+export interface ApiSessionListResponse {
+  data: {
+    items: ApiSessionItem[];
+    pagination: {
+      page: number;
+      pageSize: number;
+      total: number;
+      totalPages: number;
+    };
+  };
+  code: number;
+  message: string;
+  error: string | null;
+}
+
+export interface ApiSessionDetailResponse {
+  data: ApiSessionItem;
+  code: number;
+  message: string;
+  error: string | null;
+}
+
+export interface ApiSessionRangeResponse {
+  data: ApiSessionItem[];
+  code: number;
+  message: string;
+  error: string | null;
+}
+
+// ── Domain model ──────────────────────────────────────────────────────────────
+
+export interface IUnit {
+  id: string;
+  name: string;
+  note: string | null;
+  productId: string;
+}
+
+export interface ISessionUnit {
+  id: string;
+  sessionId: string;
+  unitId: string;
+  price: number;
+  unit?: IUnit;
+}
+
+export interface ISession {
+  id: string;
+  productId: string;
+  travelDate: string; // YYYY-MM-DD
+  capacity: number;
+  status: 'active' | 'inactive';
+  sessionUnits: ISessionUnit[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ISessionPagination {
+  page: number;
+  pageSize: number;
+  total: number;
+  totalPages: number;
+}
+
+export interface ISessionListResult {
+  items: ISession[];
+  pagination: ISessionPagination;
+}
+
+// ── Query params ──────────────────────────────────────────────────────────────
+
 export interface ISessionParams {
   productId: string;
-  fromDate: string;
-  toDate: string;
+  fromDate?: string;
+  toDate?: string;
+  status?: 'active' | 'inactive';
+  keyword?: string;
   page?: number;
   pageSize?: number;
 }
 
-export interface ApiSessionData {
-  items: ApiSessionItem[];
-  pagination: {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-  };
+// ── Mutation payloads ─────────────────────────────────────────────────────────
+
+export interface SessionUnitPayload {
+  unitId: string;
+  price: number;
 }
 
-export interface ApiSessionResponse {
-  data: ApiSessionData;
-  code: number;
-  message: string;
-  error: string | null;
+export interface CreateSessionPayload {
+  productId: string;
+  travelDate: string; // YYYY-MM-DD
+  status: 'active' | 'inactive';
+  capacity?: number;
+  sessionUnits?: SessionUnitPayload[];
+}
+
+export interface CreateSessionRangePayload {
+  productId: string;
+  fromDate: string; // YYYY-MM-DD
+  toDate: string; // YYYY-MM-DD
+  status?: 'active' | 'inactive';
+  capacity?: number;
+  sessionUnits?: SessionUnitPayload[];
+}
+
+export interface UpdateSessionPayload {
+  status?: 'active' | 'inactive';
+  capacity?: number;
+  sessionUnits?: SessionUnitPayload[];
 }

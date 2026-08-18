@@ -15,6 +15,7 @@ interface ProductTableProps {
   isLoading?: boolean;
   onChangeStatus: (product: IProduct, status: 'published' | 'hidden') => void;
   onDelete: (product: IProduct) => void;
+  onManageSessions: (product: IProduct) => void;
 }
 
 type SortKey = 'name' | 'minPrice' | 'createdAt';
@@ -43,7 +44,7 @@ function SortableHeader({
   );
 }
 
-export function ProductTable({ products, isLoading, onChangeStatus, onDelete }: ProductTableProps) {
+export function ProductTable({ products, isLoading, onChangeStatus, onDelete, onManageSessions }: ProductTableProps) {
   const router = useRouter();
   const [sort, setSort] = useState<{ key: SortKey; dir: 'asc' | 'desc' } | null>(null);
 
@@ -81,6 +82,7 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete }: 
             <TableHead className={`${thClass} whitespace-nowrap`}>
               <SortableHeader label="Created" sortKey="createdAt" sort={sort} onSort={handleSort} />
             </TableHead>
+            <TableHead className={`${thClass} !w-10`} />
             <TableHead className={`${thClass} !w-14`} />
           </TableRow>
         </TableHeader>
@@ -109,7 +111,13 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete }: 
             </TableRow>
           ) : (
             sorted.map((product) => (
-              <ProductTableRow key={product.id} product={product} onChangeStatus={onChangeStatus} onDelete={onDelete} />
+              <ProductTableRow
+                key={product.id}
+                product={product}
+                onChangeStatus={onChangeStatus}
+                onDelete={onDelete}
+                onManageSessions={onManageSessions}
+              />
             ))
           )}
         </TableBody>

@@ -1,22 +1,13 @@
 import { createQuery } from 'react-query-kit';
 
+import { getSupplierList } from '@/api/supplier/requests';
 import type { LookupItem } from '@/lib/validations/product';
 
 import { getProductList } from './requests';
 
 async function fetchSuppliers(): Promise<LookupItem[]> {
-  // NOTE: backend caps pageSize at 50 — if total products > 50 some suppliers may be missing
-  const { items } = await getProductList({ pageSize: 50 });
-  const seen = new Set<string>();
-  return items
-    .filter((p) => p.supplier !== null)
-    .reduce<LookupItem[]>((acc, p) => {
-      if (!seen.has(p.supplier!.id)) {
-        seen.add(p.supplier!.id);
-        acc.push({ id: p.supplier!.id, name: p.supplier!.name });
-      }
-      return acc;
-    }, []);
+  const { items } = await getSupplierList({ pageSize: 50 });
+  return items.map((item) => ({ id: item.id, name: item.name }));
 }
 
 async function fetchDestinations(): Promise<LookupItem[]> {

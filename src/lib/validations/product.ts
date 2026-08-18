@@ -91,6 +91,7 @@ export const productSchema = z.object({
   include: z.string().optional().nullable(),
   exclude: z.string().optional().nullable(),
   minPrice: z.coerce.number().min(0, 'Price cannot be negative').default(0),
+  currency: z.enum(['VND', 'USD']).default('VND'),
   status: z.enum(['draft', 'published', 'hidden']).default('draft'),
   thumbnail: z.string().optional().nullable(),
   itineraryImage: z.string().optional().nullable(),

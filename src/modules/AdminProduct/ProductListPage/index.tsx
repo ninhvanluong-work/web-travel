@@ -13,6 +13,7 @@ import { ROUTE } from '@/types';
 
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ProductFilterBar } from './components/ProductFilterBar';
+import { ProductSessionSheet } from './components/ProductSessionSheet';
 import { ProductTable } from './components/ProductTable';
 import { useProductListActions } from './hooks/use-product-list-actions';
 
@@ -55,6 +56,8 @@ export default function ProductListPage() {
   const draftCount = items.filter((p) => p.status === 'draft').length;
 
   const { deleteTarget, setDeleteTarget, handleChangeStatus, handleDeleteConfirm } = useProductListActions(refetch);
+
+  const [sessionProduct, setSessionProduct] = useState<{ id: string; name: string } | null>(null);
 
   return (
     <div className="min-h-full bg-gray-50 dark:bg-gray-900 p-6 space-y-5">
@@ -173,6 +176,7 @@ export default function ProductListPage() {
             isLoading={isLoading || isFetching}
             onChangeStatus={handleChangeStatus}
             onDelete={setDeleteTarget}
+            onManageSessions={(p) => setSessionProduct({ id: p.id, name: p.name })}
           />
         </div>
 
@@ -244,6 +248,12 @@ export default function ProductListPage() {
         target={deleteTarget}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setDeleteTarget(null)}
+      />
+
+      <ProductSessionSheet
+        productId={sessionProduct?.id ?? null}
+        productName={sessionProduct?.name ?? ''}
+        onClose={() => setSessionProduct(null)}
       />
     </div>
   );

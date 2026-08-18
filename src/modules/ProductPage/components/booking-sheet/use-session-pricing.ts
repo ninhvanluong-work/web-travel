@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
 
-import { useSessions } from '@/api/session';
+import { useSessionList } from '@/api/session';
 import { useBookingStore } from '@/stores/BookingStore';
 
 export function useSessionPricing(productId: string, adultPrice: number) {
@@ -15,7 +15,7 @@ export function useSessionPricing(productId: string, adultPrice: number) {
 
   const dateStr = date ? format(date, 'yyyy-MM-dd') : undefined;
 
-  const { data: sessionData, isLoading: isSessionLoading } = useSessions({
+  const { data: sessionData, isLoading: isSessionLoading } = useSessionList({
     variables: {
       productId,
       fromDate: dateStr ?? '',
@@ -102,8 +102,8 @@ export function useSessionPricing(productId: string, adultPrice: number) {
       return;
     }
 
-    const adultPriceVal = parseFloat(adultUnit.price) || adultPrice;
-    const childPriceVal = childUnit ? parseFloat(childUnit.price) || adultPriceVal * 0.5 : 0;
+    const adultPriceVal = adultUnit.price || adultPrice;
+    const childPriceVal = childUnit ? childUnit.price || adultPriceVal * 0.5 : 0;
 
     setSessionPricing({
       isLoadingSession: false,

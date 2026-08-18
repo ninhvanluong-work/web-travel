@@ -1,4 +1,4 @@
-import { createMutation, createQuery } from 'react-query-kit';
+import { createInfiniteQuery, createMutation, createQuery } from 'react-query-kit';
 
 import { createSupplier, deleteSupplier, getSupplierById, getSupplierList, updateSupplier } from './requests';
 import type { ISupplier, ISupplierListParams, ISupplierListResult, SupplierFormPayload } from './types';
@@ -7,6 +7,14 @@ export const useSupplierList = createQuery<ISupplierListResult, ISupplierListPar
   primaryKey: '/supplier/list',
   queryFn: ({ queryKey: [, variables] }) => getSupplierList(variables ?? {}),
   staleTime: 0,
+});
+
+export const useSupplierListInfinite = createInfiniteQuery<ISupplierListResult, void, Error, number>({
+  primaryKey: '/supplier/infinite',
+  queryFn: ({ pageParam = 1 }) => getSupplierList({ page: pageParam as number, pageSize: 10 }),
+  getNextPageParam: (lastPage) =>
+    lastPage.pagination.page < lastPage.pagination.totalPages ? lastPage.pagination.page + 1 : undefined,
+  staleTime: 5 * 60 * 1000,
 });
 
 export const useSupplierById = createQuery<ISupplier, { id: string }>({

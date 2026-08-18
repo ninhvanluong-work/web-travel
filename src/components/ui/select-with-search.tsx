@@ -2,7 +2,7 @@ import { Check, Loader2 } from 'lucide-react';
 import React, { forwardRef, type ReactNode, useCallback, useRef, useState } from 'react';
 
 import { Icons } from '@/assets/icons';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
@@ -77,19 +77,20 @@ const SelectWithSearch = forwardRef<HTMLInputElement, SelectWithSearchProps>(
             />
           </div>
         </PopoverTrigger>
-        <PopoverContent align="start" className="w-[var(--radix-popper-anchor-width)]">
+        <PopoverContent align="start" className="w-[var(--radix-popper-anchor-width)] p-0">
           <Command>
             <CommandInput placeholder="Search by keyword..." />
-            <CommandEmpty>No result found.</CommandEmpty>
-            <CommandGroup>
-              <div ref={listRef} className="max-h-[300px] overflow-auto" onScroll={handleScroll}>
+            <CommandList ref={listRef} className="max-h-[300px] overflow-auto" onScroll={handleScroll}>
+              <CommandEmpty>No result found.</CommandEmpty>
+              <CommandGroup>
                 {data.map((x) => (
                   <CommandItem
+                    key={x.value}
+                    value={`${x.label}___${x.value}`}
                     onSelect={() => {
                       onValueChange?.(x.value);
                       setOpen(false);
                     }}
-                    key={x.value}
                   >
                     <Check className={cn('mr-2 h-4 w-4', value === x.value ? 'opacity-100' : 'opacity-0')} />
                     <div className="flex items-center space-x-2">
@@ -103,8 +104,8 @@ const SelectWithSearch = forwardRef<HTMLInputElement, SelectWithSearchProps>(
                     <Loader2 size={14} className="animate-spin text-slate-400" />
                   </div>
                 )}
-              </div>
-            </CommandGroup>
+              </CommandGroup>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

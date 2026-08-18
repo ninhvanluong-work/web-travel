@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import SelectWithSearch from '@/components/ui/select-with-search';
 import type { ProductSelectFilters } from '@/hooks/use-product-filters';
 import type { LookupItem } from '@/lib/validations/product';
 
@@ -32,48 +33,39 @@ export function ProductFilterBar({ selects, suppliers, destinations, onSelectCha
     onSelectChange(localSelects);
   };
 
+  const supplierOptions = [
+    { label: 'All Suppliers', value: '' },
+    ...suppliers.map((s) => ({ label: s.name, value: s.id })),
+  ];
+  const destinationOptions = [
+    { label: 'All Destinations', value: '' },
+    ...destinations.map((d) => ({ label: d.name, value: d.id })),
+  ];
+
   return (
     <div className="flex flex-col gap-6">
       {/* Supplier */}
       <div className="space-y-2">
         <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Supplier</p>
-        <Select value={localSelects.supplierId} onValueChange={(v) => handleUpdateLocal({ supplierId: v })}>
-          <SelectTrigger
-            inputSize="sm"
-            className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
-          >
-            <SelectValue placeholder="All Suppliers" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl shadow-theme-lg">
-            <SelectItem value="">All Suppliers</SelectItem>
-            {suppliers.map((s) => (
-              <SelectItem key={s.id} value={s.id}>
-                {s.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectWithSearch
+          placeholder="All Suppliers"
+          value={localSelects.supplierId || ''}
+          onValueChange={(v) => handleUpdateLocal({ supplierId: v })}
+          data={supplierOptions}
+          className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
+        />
       </div>
 
       {/* Destination */}
       <div className="space-y-2">
         <p className="text-[11px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Destination</p>
-        <Select value={localSelects.destinationId} onValueChange={(v) => handleUpdateLocal({ destinationId: v })}>
-          <SelectTrigger
-            inputSize="sm"
-            className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
-          >
-            <SelectValue placeholder="All Destinations" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl shadow-theme-lg">
-            <SelectItem value="">All Destinations</SelectItem>
-            {destinations.map((d) => (
-              <SelectItem key={d.id} value={d.id}>
-                {d.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <SelectWithSearch
+          placeholder="All Destinations"
+          value={localSelects.destinationId || ''}
+          onValueChange={(v) => handleUpdateLocal({ destinationId: v })}
+          data={destinationOptions}
+          className="w-full h-11 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 rounded-xl"
+        />
       </div>
 
       {/* Status */}

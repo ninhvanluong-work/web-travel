@@ -75,6 +75,7 @@ function toApiPayload(values: ProductFormValues) {
     exclude: values.exclude || undefined,
     status: values.status,
     minPrice: values.minPrice,
+    currency: values.currency,
     destinationId: values.destinationId || undefined,
     supplierId: values.supplierId || undefined,
     heroVideoId: values.videoId || undefined,
