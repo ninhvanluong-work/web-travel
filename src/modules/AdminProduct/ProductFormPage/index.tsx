@@ -101,7 +101,22 @@ export default function ProductFormPage({ productId }: ProductFormPageProps) {
   const { errors, isSubmitted } = form.formState;
   const { addAlert } = useAlertStore.getState();
 
-  const onValidationError = () => addAlert({ type: 'error', title: t('tourValidationError') });
+  const scrollToFirstError = () => {
+    setTimeout(() => {
+      const firstInvalidElement = document.querySelector<HTMLElement>(
+        '[aria-invalid="true"], .border-red-300, .border-red-400, .border-red-500, input:invalid, textarea:invalid'
+      );
+      if (firstInvalidElement) {
+        firstInvalidElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalidElement.focus({ preventScroll: true });
+      }
+    }, 100);
+  };
+
+  const onValidationError = () => {
+    addAlert({ type: 'error', title: t('tourValidationError') });
+    scrollToFirstError();
+  };
 
   const handleSaveDraft = form.handleSubmit((data) => onSubmit({ ...data, status: 'draft' }), onValidationError);
   const handleSaveChanges = form.handleSubmit((data) => onSubmit(data), onValidationError);
