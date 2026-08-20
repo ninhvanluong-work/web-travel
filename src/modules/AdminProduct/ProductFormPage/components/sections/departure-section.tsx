@@ -53,12 +53,16 @@ export function DepartureSection({ value, onChange, isSubmitted }: Props) {
                       type="time"
                       value={row.time}
                       onChange={(e) => patch(i, { time: e.target.value })}
+                      aria-invalid={isSubmitted && !row.time ? true : undefined}
                       className={`w-full rounded-lg border bg-white px-2 py-1.5 text-xs tabular-nums focus:outline-none focus:ring-1 ${
                         isSubmitted && !row.time
                           ? 'border-red-400 text-red-500 focus:ring-red-300'
                           : 'border-slate-200 text-slate-700 focus:ring-brand-300'
                       }`}
                     />
+                    {isSubmitted && !row.time && (
+                      <p className="text-[10px] text-red-500 mt-0.5 font-medium">Time is required</p>
+                    )}
                   </td>
                   <td className="py-2 px-2">
                     <Input
