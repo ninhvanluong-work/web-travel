@@ -57,6 +57,7 @@ export function UnitSection({ value, onChange, isSubmitted }: Props) {
                       value={row.name}
                       onChange={(e) => patch(i, { name: e.target.value })}
                       placeholder="e.g., Adult"
+                      aria-invalid={nameInvalid ? true : undefined}
                       className={`w-full text-sm px-2 py-1 rounded-md border bg-white focus:outline-none focus:ring-1 focus:ring-brand-400 ${
                         nameInvalid ? 'border-rose-400 bg-rose-50/40 placeholder:text-rose-300' : 'border-slate-200'
                       }`}
