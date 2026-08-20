@@ -17,17 +17,14 @@ export default function StepInfo({ adultPrice, currency, productId }: StepInfoPr
   const { t } = useTranslation('productPage');
 
   const { date, setDate } = useSessionPricing(productId, adultPrice);
-  const guests = useBookingStore.use.guests();
-  const setGuests = useBookingStore.use.setGuests();
+  const passengers = useBookingStore.use.passengers();
+  const setPassengerCount = useBookingStore.use.setPassengerCount();
   const sessionPricing = useBookingStore.use.sessionPricing();
 
   const fmtPrice = (n: number) => {
     if (currency === '₫') return `₫${n.toLocaleString('vi-VN')}`;
     return `$${n.toLocaleString('en-US')}`;
   };
-
-  const adultSubtext = sessionPricing.adultNote ?? t('booking.adultAgeNote');
-  const childSubtext = sessionPricing.childNote ?? t('booking.childAgeNote');
 
   return (
     <div className="flex flex-col gap-5 px-5 pt-5 pb-8">
@@ -63,39 +60,25 @@ export default function StepInfo({ adultPrice, currency, productId }: StepInfoPr
             </>
           ) : (
             <>
-              {sessionPricing.isAdultAvailable && (
-                <div className="bg-white border border-[#E5E5E5] rounded-[16px] px-5 py-5 flex items-center justify-between shadow-sm">
-                  <div>
-                    <p className="text-[15px] font-bold text-[#111]">{t('booking.adults')}</p>
-                    <p className="text-[13px] text-[#888] mt-0.5">
-                      {adultSubtext} &middot; {fmtPrice(sessionPricing.adultPrice)} {t('booking.perPerson')}
-                    </p>
-                  </div>
-                  <GuestCounter
-                    value={guests.adults}
-                    min={0}
-                    max={99}
-                    onChange={(v) => setGuests({ ...guests, adults: v })}
-                  />
-                </div>
-              )}
+              {sessionPricing.units.map((unit) => {
+                const count = passengers[unit.unitId] ?? 0;
+                const noteText = unit.note ?? '';
+                const priceText = `${fmtPrice(unit.price)} ${t('booking.perPerson')}`;
+                const subtext = noteText ? `${noteText} · ${priceText}` : priceText;
 
-              {sessionPricing.isChildAvailable && (
-                <div className="bg-white border border-[#E5E5E5] rounded-[16px] px-5 py-5 flex items-center justify-between shadow-sm">
-                  <div>
-                    <p className="text-[15px] font-bold text-[#111]">{t('booking.children')}</p>
-                    <p className="text-[13px] text-[#888] mt-0.5">
-                      {childSubtext} &middot; {fmtPrice(sessionPricing.childPrice)} {t('booking.perPerson')}
-                    </p>
+                return (
+                  <div
+                    key={unit.unitId}
+                    className="bg-white border border-[#E5E5E5] rounded-[16px] px-5 py-5 flex items-center justify-between shadow-sm"
+                  >
+                    <div>
+                      <p className="text-[15px] font-bold text-[#111]">{unit.name}</p>
+                      <p className="text-[13px] text-[#888] mt-0.5">{subtext}</p>
+                    </div>
+                    <GuestCounter value={count} min={0} max={99} onChange={(v) => setPassengerCount(unit.unitId, v)} />
                   </div>
-                  <GuestCounter
-                    value={guests.children}
-                    min={0}
-                    max={99}
-                    onChange={(v) => setGuests({ ...guests, children: v })}
-                  />
-                </div>
-              )}
+                );
+              })}
 
               <ContactInfoCard />
             </>

@@ -44,7 +44,8 @@ export default function StepPayment({
 
   const bookingId = useBookingStore.use.bookingId();
   const date = useBookingStore.use.date();
-  const guests = useBookingStore.use.guests();
+  const passengers = useBookingStore.use.passengers();
+  const sessionPricing = useBookingStore.use.sessionPricing();
 
   const isVnd = currency === '₫' || currency === 'VND';
   const isUsd = !isVnd;
@@ -64,10 +65,12 @@ export default function StepPayment({
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
   const guestLabel =
-    [
-      guests.adults > 0 ? t('booking.adult', { count: guests.adults }) : '',
-      guests.children > 0 ? t('booking.child', { count: guests.children }) : '',
-    ]
+    sessionPricing.units
+      .map((u) => {
+        const count = passengers[u.unitId] ?? 0;
+        if (count <= 0) return null;
+        return `${count} ${u.name}`;
+      })
       .filter(Boolean)
       .join(', ') || '—';
 

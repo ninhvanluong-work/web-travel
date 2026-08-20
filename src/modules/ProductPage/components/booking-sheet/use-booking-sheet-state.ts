@@ -12,7 +12,7 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
   const step = useBookingStore.use.step();
   const setStep = useBookingStore.use.setStep();
   const date = useBookingStore.use.date();
-  const guests = useBookingStore.use.guests();
+  const passengers = useBookingStore.use.passengers();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
   const pickupType = useBookingStore.use.pickupType();
@@ -39,20 +39,18 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
     prevStepRef.current = step;
   }
 
-  const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
-  const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
+  const effectiveMinPrice =
+    sessionPricing.units.length > 0 ? Math.min(...sessionPricing.units.map((u) => u.price)) : adultPrice;
 
-  const activePrices: number[] = [];
-  if (sessionPricing.isAdultAvailable && sessionPricing.adultPrice > 0) {
-    activePrices.push(sessionPricing.adultPrice);
-  }
-  if (sessionPricing.isChildAvailable && sessionPricing.childPrice > 0) {
-    activePrices.push(sessionPricing.childPrice);
-  }
-  const effectiveMinPrice = activePrices.length > 0 ? Math.min(...activePrices) : adultPrice;
+  const totalPassengersCount = Object.values(passengers).reduce((sum, count) => sum + count, 0);
 
-  const estimatedTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
-  const runningTotal = guests.adults * effectiveAdultPrice + guests.children * effectiveChildPrice;
+  const calculatedTotal = sessionPricing.units.reduce((sum, u) => {
+    const count = passengers[u.unitId] ?? 0;
+    return sum + count * u.price;
+  }, 0);
+
+  const estimatedTotal = calculatedTotal;
+  const runningTotal = calculatedTotal;
 
   const displayTotal = step === 1 ? estimatedTotal : runningTotal;
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
@@ -65,10 +63,10 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
   if (step === 1) {
     canContinue =
       date !== null &&
-      guests.adults >= 1 &&
+      totalPassengersCount >= 1 &&
       !sessionPricing.isLoadingSession &&
       sessionPricing.sessionError === null &&
-      sessionPricing.isAdultAvailable &&
+      sessionPricing.units.length > 0 &&
       contactName.trim() !== '' &&
       contactPhone.trim() !== '' &&
       contactEmail.trim() !== '' &&
@@ -92,13 +90,9 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
           ? [{ name: contactMessenger, username: contactMessengerHandle }]
           : [];
 
-      const passengers: { unitId: string; count: number }[] = [];
-      if (guests.adults > 0 && sessionPricing.adultUnitId) {
-        passengers.push({ unitId: sessionPricing.adultUnitId, count: guests.adults });
-      }
-      if (guests.children > 0 && sessionPricing.childUnitId) {
-        passengers.push({ unitId: sessionPricing.childUnitId, count: guests.children });
-      }
+      const passengersPayload = Object.entries(passengers)
+        .filter(([, count]) => count > 0)
+        .map(([unitId, count]) => ({ unitId, count }));
 
       callCreateBooking(
         {
@@ -107,7 +101,7 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
           tourSessionId: sessionPricing.sessionId!,
           pickupLocationId: pickupType === 'predefined' ? pickupLocation : null,
           departureId: departureTime!,
-          passengers,
+          passengers: passengersPayload,
           username: contactName,
           email: contactEmail,
           phone: contactPhone,
