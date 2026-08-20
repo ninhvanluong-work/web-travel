@@ -62,6 +62,9 @@ export function UnitSection({ value, onChange, isSubmitted }: Props) {
                         nameInvalid ? 'border-rose-400 bg-rose-50/40 placeholder:text-rose-300' : 'border-slate-200'
                       }`}
                     />
+                    {nameInvalid && (
+                      <p className="text-[10px] text-red-500 mt-0.5 font-medium">Unit name is required</p>
+                    )}
                   </td>
                   <td className="px-2 py-1.5">
                     <input

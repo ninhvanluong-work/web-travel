@@ -59,15 +59,23 @@ Tài liệu này phân tích chiến lược, nghiệp vụ và thông số kỹ
   - Hiển thị danh sách các `Unit` sẵn có của Product để nhập `price` cho từng Unit.
   - Nếu ngày được chọn đã có Session -> Hiển thị thông báo lỗi "Ngày này đã tồn tại Session, vui lòng chỉnh sửa Session hiện có".
 
-#### User Story 2: Tạo Session hàng loạt theo khoảng thời gian (Range)
+#### User Story 2: Tạo Session hàng loạt theo khoảng thời gian (Range) kèm Bộ Lọc Thứ & Ma Trận Xử Lý Xung Đột (Skip vs Overwrite)
 
-> _Là Admin, tôi muốn tạo Session cho cả khoảng thời gian từ `fromDate` đến `toDate` và thiết lập đơn giá mặc định cho các Unit._
+> _Là Admin, tôi muốn tạo Session cho cả khoảng thời gian từ `fromDate` đến `toDate`, lọc theo các ngày trong tuần (Thứ 2 - Chủ Nhật), và chủ động chọn Ghi đè (Overwrite) hoặc Bỏ qua (Skip) đối với các ngày đã có dữ liệu trong Database._
 
 - **Acceptance Criteria**:
-  - Đơn giản hóa việc chọn `fromDate` và `toDate`.
-  - Nhập khung giá chung cho các `Unit` áp dụng cho toàn bộ các ngày trong khoảng.
-  - Hệ thống tự động tạo danh sách Session tương ứng.
-  - Hiển thị kết quả chi tiết: Số Session được tạo thành công, các ngày bị bỏ qua do đã tồn tại.
+  - **Chọn Khoảng Thời Gian (`fromDate` -> `toDate`)**: Cho phép chọn ngày bắt đầu và ngày kết thúc (ví dụ: `01/08/2026` - `30/08/2026`).
+  - **Bộ Lọc Thứ Trong Tuần (Weekday Selection Filter)**:
+    - Hiển thị Checkbox **All Week** (Mặc định = `Checked`). Khi chọn All Week, tự động tick tất cả từ Thứ 2 đến Chủ nhật.
+    - Danh sách Checkbox 7 ngày trong tuần: **Thứ 2, Thứ 3, Thứ 4, Thứ 5, Thứ 6, Thứ 7, Chủ Nhật** (Mặc định = `Checked` cho cả 7 ngày).
+    - Nếu Admin chỉ tích chọn một số thứ nhất định (VD: chỉ chọn **Thứ 2**): Hệ thống chỉ sinh ra các ngày rơi đúng vào Thứ 2 trong khoảng thời gian đã chọn (VD: 03/08, 10/08, 17/08, 24/08).
+  - **Ma Trận Kiểm Tra & Xử Lý Xung Đột Dữ Liệu (Conflict Resolution Matrix)**:
+    - Khi có các ngày thuộc khoảng đã chọn **đã tồn tại trong Database** (VD: ngày `02/08/2026` đã có Session từ trước):
+    - Hệ thống hiển thị Bảng xem trước (Conflict Preview Table) gồm 2 cột thao tác chính:
+      1. **Cột `Skip` (Bỏ qua)**: Giữ nguyên dữ liệu cũ trong DB, không ghi đè. Cột header có Checkbox **Check All Skip** để chọn bỏ qua toàn bộ các ngày bị trùng.
+      2. **Cột `Overwrite` (Ghi đè)**: Cập nhật lại dữ liệu & bảng giá mới cho Session ngày đó. Cột header có Checkbox **Check All Overwrite** để chọn ghi đè toàn bộ các ngày bị trùng.
+    - Hai ô checkbox `Skip` và `Overwrite` trên từng dòng là **tương hỗ (mutually exclusive)**: Tích `Skip` sẽ tự động bỏ tích `Overwrite` và ngược lại.
+  - **Kết quả Thực thi**: Báo cáo chi tiết số Session tạo mới thành công, số Session được ghi đè, và số Session bị bỏ qua.
 
 #### User Story 3: Xem & Quản lý danh sách Session (Calendar / Table)
 
@@ -182,7 +190,7 @@ Hệ thống kết nối với Backend Swagger Endpoint: `https://web-travel-be.
 }
 ```
 
-#### B. POST `/session/range` (Tạo theo dải ngày)
+#### B. POST `/session/range` (Tạo theo dải ngày & Xử lý Xung đột)
 
 **Request Body**:
 
@@ -190,7 +198,23 @@ Hệ thống kết nối với Backend Swagger Endpoint: `https://web-travel-be.
 {
   "productId": "79e3f3a8-2981-4762-81a6-7d497cf5abf2",
   "fromDate": "2026-08-01",
-  "toDate": "2026-08-05"
+  "toDate": "2026-08-30",
+  "weekdays": [1, 2, 3, 4, 5, 6, 0], // 0: Sunday, 1: Mon, 2: Tue... [1] nếu chỉ chọn Thứ 2
+  "capacity": 20,
+  "status": "active",
+  "conflictResolutions": {
+    "defaultAction": "skip", // "skip" | "overwrite"
+    "overrides": [
+      { "date": "2026-08-02", "action": "overwrite" },
+      { "date": "2026-08-09", "action": "skip" }
+    ]
+  },
+  "sessionUnits": [
+    {
+      "unitId": "ad69116d-dfa0-4cdf-b448-ab25f8523405",
+      "price": 1500000
+    }
+  ]
 }
 ```
 

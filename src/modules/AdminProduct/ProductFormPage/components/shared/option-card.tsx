@@ -72,6 +72,7 @@ export function OptionCard({ row, index, onPatch, onClone, onRemove, isSubmitted
             placeholder="e.g., Standard, Premium..."
             value={row.title}
             disabled={row._saving}
+            aria-invalid={titleError ? true : undefined}
             onChange={(e) => onPatch({ title: e.target.value })}
             className={titleError ? 'border-red-400 focus-visible:ring-red-300' : undefined}
           />
