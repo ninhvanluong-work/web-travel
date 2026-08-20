@@ -24,7 +24,7 @@ interface StepReviewProps {
 
 export default function StepReview({
   productName,
-  adultPrice,
+  adultPrice: _adultPrice,
   currency,
   departureTimes,
   pickupLocations,
@@ -33,7 +33,7 @@ export default function StepReview({
   const { t } = useTranslation('productPage');
 
   const date = useBookingStore.use.date();
-  const guests = useBookingStore.use.guests();
+  const passengers = useBookingStore.use.passengers();
   const departureTime = useBookingStore.use.departureTime();
   const pickupLocation = useBookingStore.use.pickupLocation();
   const pickupType = useBookingStore.use.pickupType();
@@ -48,12 +48,10 @@ export default function StepReview({
   const contactMessenger = useBookingStore.use.contactMessenger();
   const contactMessengerHandle = useBookingStore.use.contactMessengerHandle();
 
-  const effectiveAdultPrice = sessionPricing.adultPrice || adultPrice;
-  const effectiveChildPrice = sessionPricing.childPrice || effectiveAdultPrice * 0.5;
-
-  const adultTotal = guests.adults * effectiveAdultPrice;
-  const childTotal = guests.children * effectiveChildPrice;
-  const grandTotal = adultTotal + childTotal;
+  const grandTotal = sessionPricing.units.reduce((sum, u) => {
+    const count = passengers[u.unitId] ?? 0;
+    return sum + count * u.price;
+  }, 0);
 
   const fmt = (n: number) => (currency === '₫' ? `₫${n.toLocaleString('vi-VN')}` : `$${n.toLocaleString('en-US')}`);
 
@@ -63,10 +61,12 @@ export default function StepReview({
   const selectedOption = options.find((o) => o.id === packageType);
 
   const guestLabel =
-    [
-      guests.adults > 0 ? t('booking.adult', { count: guests.adults }) : '',
-      guests.children > 0 ? t('booking.child', { count: guests.children }) : '',
-    ]
+    sessionPricing.units
+      .map((u) => {
+        const count = passengers[u.unitId] ?? 0;
+        if (count <= 0) return null;
+        return `${count} ${u.name}`;
+      })
       .filter(Boolean)
       .join(', ') || '—';
 
@@ -119,23 +119,20 @@ export default function StepReview({
           <p className="text-[11px] font-bold text-[#0F6E56] uppercase tracking-widest">{t('booking.priceSummary')}</p>
         </div>
 
-        {guests.adults > 0 && (
-          <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
-            <span className="text-[14px] text-[#666]">
-              {t('booking.adult', { count: guests.adults })} &times; {fmt(effectiveAdultPrice)}
-            </span>
-            <span className="text-[14px] font-semibold text-[#111]">{fmt(adultTotal)}</span>
-          </div>
-        )}
+        {sessionPricing.units.map((u) => {
+          const count = passengers[u.unitId] ?? 0;
+          if (count <= 0) return null;
+          const itemTotal = count * u.price;
 
-        {guests.children > 0 && (
-          <div className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
-            <span className="text-[14px] text-[#666]">
-              {t('booking.child', { count: guests.children })} &times; {fmt(effectiveChildPrice)}
-            </span>
-            <span className="text-[14px] font-semibold text-[#111]">{fmt(childTotal)}</span>
-          </div>
-        )}
+          return (
+            <div key={u.unitId} className="flex items-center justify-between px-5 py-3 border-b border-[#F2F2F2]">
+              <span className="text-[14px] text-[#666]">
+                {count} &times; {u.name} ({fmt(u.price)})
+              </span>
+              <span className="text-[14px] font-semibold text-[#111]">{fmt(itemTotal)}</span>
+            </div>
+          );
+        })}
 
         <div className="flex items-center justify-between px-5 py-3 pb-4">
           <span className="text-[16px] font-bold text-[#111]">{t('booking.totalLabel')}</span>

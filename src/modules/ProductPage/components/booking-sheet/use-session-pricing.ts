@@ -3,14 +3,14 @@ import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { useSessionList } from '@/api/session';
-import { useBookingStore } from '@/stores/BookingStore';
+import { type BookingSessionUnit, useBookingStore } from '@/stores/BookingStore';
 
 export function useSessionPricing(productId: string, adultPrice: number) {
   const { t } = useTranslation('productPage');
 
   const date = useBookingStore.use.date();
   const setDate = useBookingStore.use.setDate();
-  const setGuests = useBookingStore.use.setGuests();
+  const setPassengers = useBookingStore.use.setPassengers();
   const setSessionPricing = useBookingStore.use.setSessionPricing();
 
   const dateStr = date ? format(date, 'yyyy-MM-dd') : undefined;
@@ -33,21 +33,12 @@ export function useSessionPricing(productId: string, adultPrice: number) {
   React.useEffect(() => {
     if (!date) {
       setSessionPricing({
-        adultPrice: 0,
-        childPrice: 0,
-        adultNote: null,
-        childNote: null,
-        adultMaxSlots: 0,
-        childMaxSlots: 0,
-        isAdultAvailable: false,
-        isChildAvailable: false,
         isLoadingSession: false,
         sessionError: null,
-        adultUnitId: null,
-        childUnitId: null,
         sessionId: null,
+        units: [],
       });
-      setGuests({ adults: 0, children: 0 });
+      setPassengers({});
     }
   }, [date]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -67,59 +58,41 @@ export function useSessionPricing(productId: string, adultPrice: number) {
       setSessionPricing({
         isLoadingSession: false,
         sessionError: t('booking.noSessionsForDate'),
-        isAdultAvailable: false,
-        isChildAvailable: false,
-        adultMaxSlots: 0,
-        childMaxSlots: 0,
-        adultUnitId: null,
-        childUnitId: null,
         sessionId: null,
+        units: [],
       });
-      setGuests({ adults: 0, children: 0 });
+      setPassengers({});
       return;
     }
 
     const session = items[0];
     const sessionUnits = session?.sessionUnits ?? [];
 
-    // Units ordered by backend: index 0 = adult, index 1 = child
-    const adultUnit = sessionUnits[0] ?? null;
-    const childUnit = sessionUnits[1] ?? null;
-
-    if (!adultUnit) {
+    if (sessionUnits.length === 0) {
       setSessionPricing({
         isLoadingSession: false,
         sessionError: t('booking.noSessionsForDate'),
-        isAdultAvailable: false,
-        isChildAvailable: false,
-        adultMaxSlots: 0,
-        childMaxSlots: 0,
-        adultUnitId: null,
-        childUnitId: null,
         sessionId: null,
+        units: [],
       });
-      setGuests({ adults: 0, children: 0 });
+      setPassengers({});
       return;
     }
 
-    const adultPriceVal = adultUnit.price || adultPrice;
-    const childPriceVal = childUnit ? childUnit.price || adultPriceVal * 0.5 : 0;
+    const units: BookingSessionUnit[] = sessionUnits.map((su) => ({
+      unitId: su.unitId,
+      name: su.unit?.name || 'Person',
+      note: su.unit?.note ?? null,
+      price: su.price > 0 ? su.price : adultPrice,
+    }));
 
     setSessionPricing({
       isLoadingSession: false,
       sessionError: null,
-      adultPrice: adultPriceVal,
-      childPrice: childPriceVal,
-      adultNote: adultUnit.unit?.note ?? null,
-      childNote: childUnit?.unit?.note ?? null,
-      adultMaxSlots: 99,
-      childMaxSlots: 99,
-      isAdultAvailable: true,
-      isChildAvailable: !!childUnit,
-      adultUnitId: adultUnit.unitId,
-      childUnitId: childUnit?.unitId ?? null,
       sessionId: session.id,
+      units,
     });
+    setPassengers({});
   }, [sessionData, isSessionLoading, dateStr, adultPrice]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { date, setDate };

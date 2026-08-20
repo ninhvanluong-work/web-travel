@@ -1,20 +1,18 @@
 import { createSelectorFunctions } from 'auto-zustand-selectors-hook';
 import { create } from 'zustand';
 
+export interface BookingSessionUnit {
+  unitId: string;
+  name: string;
+  note: string | null;
+  price: number;
+}
+
 interface SessionPricing {
-  adultPrice: number;
-  childPrice: number;
-  adultNote: string | null;
-  childNote: string | null;
-  adultMaxSlots: number;
-  childMaxSlots: number;
-  isAdultAvailable: boolean;
-  isChildAvailable: boolean;
   isLoadingSession: boolean;
   sessionError: string | null;
-  adultUnitId: string | null;
-  childUnitId: string | null;
   sessionId: string | null;
+  units: BookingSessionUnit[];
 }
 
 export interface CustomPickupLocation {
@@ -30,7 +28,7 @@ export interface CustomPickupLocation {
 interface BookingState {
   step: 1 | 2 | 3 | 4;
   date: Date | null;
-  guests: { adults: number; children: number };
+  passengers: Record<string, number>;
   departureTime: string | null;
   pickupLocation: string | null;
   packageType: string | null;
@@ -49,7 +47,8 @@ interface BookingState {
 interface BookingActions {
   setStep: (step: 1 | 2 | 3 | 4) => void;
   setDate: (date: Date | null) => void;
-  setGuests: (guests: { adults: number; children: number }) => void;
+  setPassengers: (passengers: Record<string, number>) => void;
+  setPassengerCount: (unitId: string, count: number) => void;
   setDepartureTime: (v: string | null) => void;
   setPickupLocation: (v: string | null) => void;
   setPackageType: (v: string | null) => void;
@@ -67,25 +66,16 @@ interface BookingActions {
 }
 
 const initialSessionPricing: SessionPricing = {
-  adultPrice: 0,
-  childPrice: 0,
-  adultNote: null,
-  childNote: null,
-  adultMaxSlots: 0,
-  childMaxSlots: 0,
-  isAdultAvailable: false,
-  isChildAvailable: false,
   isLoadingSession: false,
   sessionError: null,
-  adultUnitId: null,
-  childUnitId: null,
   sessionId: null,
+  units: [],
 };
 
 const initialState: BookingState = {
   step: 1,
   date: null,
-  guests: { adults: 0, children: 0 },
+  passengers: {},
   departureTime: null,
   pickupLocation: null,
   packageType: null,
@@ -105,7 +95,14 @@ const useBaseBookingStore = create<BookingState & BookingActions>()((set) => ({
   ...initialState,
   setStep: (step) => set({ step }),
   setDate: (date) => set({ date }),
-  setGuests: (guests) => set({ guests }),
+  setPassengers: (passengers) => set({ passengers }),
+  setPassengerCount: (unitId, count) =>
+    set((state) => ({
+      passengers: {
+        ...state.passengers,
+        [unitId]: count,
+      },
+    })),
   setDepartureTime: (departureTime) => set({ departureTime }),
   setPickupLocation: (pickupLocation) => set({ pickupLocation }),
   setPackageType: (packageType) => set({ packageType }),
