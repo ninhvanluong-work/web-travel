@@ -258,6 +258,12 @@
   "suppliers": "Suppliers",
   "videos": "Videos",
   "logout": "Logout",
+  "logoutConfirm": {
+    "title": "Confirm Logout",
+    "description": "Are you sure you want to log out of the Web Travel admin panel?",
+    "cancel": "Cancel",
+    "confirm": "Logout"
+  },
   "addImage": "Add Image",
   "addVideo": "Add Video",
   "close": "Close",

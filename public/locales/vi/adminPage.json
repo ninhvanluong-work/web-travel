@@ -258,6 +258,12 @@
   "suppliers": "Nhà cung cấp",
   "videos": "Video",
   "logout": "Đăng xuất",
+  "logoutConfirm": {
+    "title": "Xác nhận Đăng xuất",
+    "description": "Bạn có chắc chắn muốn đăng xuất khỏi trang quản trị Web Travel không?",
+    "cancel": "Hủy bỏ",
+    "confirm": "Đăng xuất"
+  },
   "addImage": "Thêm hình ảnh",
   "addVideo": "Thêm video",
   "close": "Đóng",

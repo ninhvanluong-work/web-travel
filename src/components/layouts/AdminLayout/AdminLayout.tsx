@@ -23,12 +23,12 @@ const AdminLayout = ({ children }: Props) => {
 
   useEffect(() => {
     if (!mounted) return;
-    if (!isLoggedIn || !isAdmin) {
+    if (!isAdmin) {
       router.replace({ pathname: ROUTE.ADMIN_LOGIN, query: { callbackUrl: router.asPath } });
     }
   }, [mounted, isLoggedIn, isAdmin, router]);
 
-  if (!mounted || !isLoggedIn || !isAdmin) return null;
+  if (!mounted || !isAdmin) return null;
 
   return (
     <div className="flex h-screen bg-[#F1F5F9] dark:bg-gray-950 overflow-hidden">
