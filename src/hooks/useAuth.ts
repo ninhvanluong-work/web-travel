@@ -1,10 +1,13 @@
-/**
- * * Override useSession to have more clean code
- * @returns session with isLoggedIn to check auth
- */
+import { useUserStore } from '@/stores/UserStore';
+
 export const useAuth = () => {
+  const accessToken = useUserStore.use.accessToken();
+  const user = useUserStore.use.user();
+
   return {
-    isLoggedIn: false,
-    user: {},
+    isLoggedIn: !!accessToken,
+    isAdmin: user?.role === 'admin',
+    user,
+    accessToken,
   };
 };

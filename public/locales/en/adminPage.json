@@ -1,4 +1,20 @@
 {
+  "adminLogin": {
+    "backToHome": "Back to home",
+    "title": "Sign In",
+    "subtitle": "Enter your email and password to sign in!",
+    "emailLabel": "Email",
+    "emailPlaceholder": "info@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "keepLoggedIn": "Keep me logged in",
+    "submitButton": "Sign In",
+    "errorInvalid": "Email or password is incorrect",
+    "errorForbidden": "Your account does not have admin access",
+    "errorGeneric": "System error, please try again later",
+    "brandSubtitle": "Web Travel Management System",
+    "brandTagline": "Control Panel Dashboard"
+  },
   "title": "Video Management",
   "subtitle": "Upload and manage tour videos",
   "uploadVideo": "Upload Video",

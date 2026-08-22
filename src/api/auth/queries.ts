@@ -1,6 +1,7 @@
 import { createMutation, createQuery } from 'react-query-kit';
 
 import {
+  adminLoginRequest,
   forgotPassword,
   getListCourse,
   getUserProfile,
@@ -31,6 +32,10 @@ export const useListCourse = createQuery<ICourse[]>({
 
 export const useLoginMutation = createMutation<ILoginResponse, ILoginParams>({
   mutationFn: loginRequest,
+});
+
+export const useAdminLoginMutation = createMutation<ILoginResponse, ILoginParams>({
+  mutationFn: adminLoginRequest,
 });
 
 export const useLogoutMutation = createMutation<boolean>({

@@ -1,4 +1,20 @@
 {
+  "adminLogin": {
+    "backToHome": "Về trang chủ",
+    "title": "Đăng nhập",
+    "subtitle": "Nhập email và mật khẩu để đăng nhập!",
+    "emailLabel": "Email",
+    "emailPlaceholder": "info@example.com",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "Nhập mật khẩu",
+    "keepLoggedIn": "Duy trì đăng nhập",
+    "submitButton": "Đăng nhập",
+    "errorInvalid": "Email hoặc mật khẩu không chính xác",
+    "errorForbidden": "Tài khoản của bạn không có quyền truy cập Admin",
+    "errorGeneric": "Hệ thống gặp sự cố, vui lòng thử lại sau",
+    "brandSubtitle": "Hệ thống Quản trị Web Travel",
+    "brandTagline": "Control Panel Dashboard"
+  },
   "title": "Quản lý Video",
   "subtitle": "Upload và quản lý video tour",
   "uploadVideo": "Upload Video",

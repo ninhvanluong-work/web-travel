@@ -9,6 +9,7 @@ export const ROUTE = {
   VIDEO_DETAIL_PATH: (slug: string) => `/video/${slug}`,
   PRODUCT: '/product/[id]',
   PRODUCT_DETAIL: (id: string) => `/product/${id}`,
+  ADMIN_LOGIN: '/admin/login',
   ADMIN_PRODUCTS: '/admin/products',
   ADMIN_PRODUCTS_CREATE: '/admin/products/create',
   ADMIN_PRODUCTS_EDIT: (id: string) => `/admin/products/${id}/edit`,
