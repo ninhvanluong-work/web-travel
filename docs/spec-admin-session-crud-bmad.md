@@ -199,16 +199,9 @@ Hệ thống kết nối với Backend Swagger Endpoint: `https://web-travel-be.
   "productId": "79e3f3a8-2981-4762-81a6-7d497cf5abf2",
   "fromDate": "2026-08-01",
   "toDate": "2026-08-30",
-  "weekdays": [1, 2, 3, 4, 5, 6, 0], // 0: Sunday, 1: Mon, 2: Tue... [1] nếu chỉ chọn Thứ 2
-  "capacity": 20,
   "status": "active",
-  "conflictResolutions": {
-    "defaultAction": "skip", // "skip" | "overwrite"
-    "overrides": [
-      { "date": "2026-08-02", "action": "overwrite" },
-      { "date": "2026-08-09", "action": "skip" }
-    ]
-  },
+  "duplicateStrategy": "skip", // "skip" | "overwrite"
+  "daysOfWeek": [1, 3, 5], // 1: Mon, 2: Tue, 3: Wed, 4: Thu, 5: Fri, 6: Sat, 7: Sun. KHÔNG gửi key này nếu All Week
   "sessionUnits": [
     {
       "unitId": "ad69116d-dfa0-4cdf-b448-ab25f8523405",
