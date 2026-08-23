@@ -116,6 +116,8 @@ export interface ISessionParams {
 
 // ── Mutation payloads ─────────────────────────────────────────────────────────
 
+export type DuplicateStrategyType = 'skip' | 'overwrite';
+
 export interface SessionUnitPayload {
   unitId: string;
   price: number;
@@ -129,25 +131,14 @@ export interface CreateSessionPayload {
   sessionUnits?: SessionUnitPayload[];
 }
 
-export interface ConflictResolutionItem {
-  date: string; // YYYY-MM-DD
-  action: 'skip' | 'overwrite';
-}
-
-export interface ConflictResolutions {
-  defaultAction: 'skip' | 'overwrite';
-  overrides: ConflictResolutionItem[];
-}
-
 export interface CreateSessionRangePayload {
   productId: string;
   fromDate: string; // YYYY-MM-DD
   toDate: string; // YYYY-MM-DD
-  weekdays?: number[]; // 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
   status?: 'active' | 'inactive';
-  capacity?: number;
   sessionUnits?: SessionUnitPayload[];
-  conflictResolutions?: ConflictResolutions;
+  duplicateStrategy: DuplicateStrategyType;
+  daysOfWeek?: number[]; // [1..7] Mon=1…Sun=7, omit key when All Week
 }
 
 export interface UpdateSessionPayload {

@@ -10,8 +10,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { containerVariants, itemVariants, shakeVariants } from '@/modules/auth-shared/animations';
+import { useAdminStore } from '@/stores/AdminStore';
 import { useAlertStore } from '@/stores/use-alert-store';
-import { useUserStore } from '@/stores/UserStore';
 import { ROUTE } from '@/types';
 
 import { type AdminLoginSchema, adminLoginSchema } from './admin-login-schema';
@@ -19,7 +19,7 @@ import { type AdminLoginSchema, adminLoginSchema } from './admin-login-schema';
 export function AdminLoginForm() {
   const { t } = useTranslation('adminPage');
   const router = useRouter();
-  const setStore = useUserStore.use.setStore();
+  const setAdminStore = useAdminStore.use.setAdminStore();
   const { mutate: adminLogin, isLoading } = useAdminLoginMutation();
 
   const {
@@ -35,7 +35,7 @@ export function AdminLoginForm() {
   const onSubmit = (values: AdminLoginSchema) => {
     adminLogin(values, {
       onSuccess: (data) => {
-        setStore(data);
+        setAdminStore(data);
         const callbackUrl = router.query.callbackUrl as string | undefined;
         const isSafeRedirect = callbackUrl?.startsWith('/') && !callbackUrl.startsWith('//');
         router.push(isSafeRedirect ? callbackUrl! : ROUTE.ADMIN_PRODUCTS);
