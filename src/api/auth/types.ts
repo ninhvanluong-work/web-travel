@@ -40,7 +40,7 @@ export interface IUser {
   lastName?: string;
   company?: string;
   emailVerifiedAt?: string;
-  role?: 'guide' | 'tour_guide' | 'user' | 'normal';
+  role?: 'guide' | 'tour_guide' | 'user' | 'normal' | 'admin';
   tourGuideId?: string;
   avatar?: string | null;
   avatarUrl?: string | null;

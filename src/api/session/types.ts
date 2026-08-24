@@ -116,6 +116,8 @@ export interface ISessionParams {
 
 // ── Mutation payloads ─────────────────────────────────────────────────────────
 
+export type DuplicateStrategyType = 'skip' | 'overwrite';
+
 export interface SessionUnitPayload {
   unitId: string;
   price: number;
@@ -134,8 +136,9 @@ export interface CreateSessionRangePayload {
   fromDate: string; // YYYY-MM-DD
   toDate: string; // YYYY-MM-DD
   status?: 'active' | 'inactive';
-  capacity?: number;
   sessionUnits?: SessionUnitPayload[];
+  duplicateStrategy: DuplicateStrategyType;
+  daysOfWeek?: number[]; // [1..7] Mon=1…Sun=7, omit key when All Week
 }
 
 export interface UpdateSessionPayload {

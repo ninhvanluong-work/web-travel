@@ -2,7 +2,8 @@ import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import Router from 'next/router';
 
-import { useUserStore } from '@/stores';
+import { useAdminStore } from '@/stores/AdminStore';
+import { useUserStore } from '@/stores/UserStore';
 import { ROUTE } from '@/types';
 
 import { refreshTokenRequest } from './auth';
@@ -33,6 +34,27 @@ const rejectSubscribers = (error: unknown) => {
 
 const redirectToSignIn = () => {
   Router.replace({ pathname: ROUTE.SIGN_IN, query: { callbackUrl: Router.asPath } });
+};
+
+const onAdminRefreshToken = async (): Promise<string | null> => {
+  const store = useAdminStore.getState();
+  const refreshToken = store?.adminRefreshToken;
+
+  if (!refreshToken) {
+    store.logoutAdmin();
+    Router.replace(ROUTE.ADMIN_LOGIN);
+    return null;
+  }
+
+  try {
+    const data = await refreshTokenRequest(refreshToken);
+    store.setAdminStore(data);
+    return data.accessToken;
+  } catch (e) {
+    store.logoutAdmin();
+    Router.replace(ROUTE.ADMIN_LOGIN);
+    return null;
+  }
 };
 
 const onRefreshToken = async (): Promise<string | null> => {
@@ -83,7 +105,8 @@ const handleError = async (error: any) => {
 
     isRefreshing = true;
     try {
-      const token = await onRefreshToken();
+      const isAdminRoute = Router.pathname.startsWith('/admin');
+      const token = isAdminRoute ? await onAdminRefreshToken() : await onRefreshToken();
       if (!token) {
         rejectSubscribers(data?.meta || data || error);
         throw data?.meta || data || error;
@@ -111,7 +134,8 @@ request.interceptors.request.use(
       return config;
     }
 
-    const token = useUserStore.getState().accessToken;
+    const isAdminRoute = Router.pathname.startsWith('/admin') || config.url?.startsWith('/admin/');
+    const token = isAdminRoute ? useAdminStore.getState().adminAccessToken : useUserStore.getState().accessToken;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },

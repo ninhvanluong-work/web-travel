@@ -14,6 +14,18 @@ import type {
   IUser,
 } from './types';
 
+export const adminLoginRequest = async (params: ILoginParams): Promise<ILoginResponse> => {
+  const { data: res }: { data: ILoginApiResponse } = await request({
+    url: '/auth/admin/login',
+    method: 'POST',
+    data: params,
+  });
+
+  const { token, refreshToken, user } = res.data;
+
+  return { accessToken: token, refreshToken, user };
+};
+
 export const loginRequest = async (params: ILoginParams): Promise<ILoginResponse> => {
   const { data: res }: { data: ILoginApiResponse } = await request({
     url: '/auth/login',
