@@ -1,9 +1,10 @@
-import { Loader2, User } from 'lucide-react';
+import { CreditCard, Loader2, User } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 
 import { Input } from '@/components/ui/input';
 import { ExperienceImageUpload } from '@/modules/AdminProduct/ProductFormPage/components/shared/experience-image-upload';
 
+import { PaymentInfoSection } from './components/sections/payment-info-section';
 import { SupplierFormHeader } from './components/supplier-form-header';
 import { useSupplierForm } from './hooks/use-supplier-form';
 
@@ -11,7 +12,11 @@ interface SupplierFormPageProps {
   supplierId?: string;
 }
 
-const NAV_SECTIONS = [{ id: 'section-basic', labelKey: 'basicInfo', icon: User }] as const;
+const NAV_SECTIONS_BASE = [{ id: 'section-basic', labelKey: 'basicInfo', icon: User }] as const;
+const NAV_SECTIONS_EDIT = [
+  { id: 'section-basic', labelKey: 'basicInfo', icon: User },
+  { id: 'section-payment', labelKey: 'bankPaymentInfo', icon: CreditCard },
+] as const;
 
 function SectionCard({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
@@ -31,6 +36,7 @@ export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) 
   const { t } = useTranslation('adminPage');
   const { values, setValues, nameError, phoneError, emailError, isEdit, isLoadingSupplier, isPending, onSubmit } =
     useSupplierForm(supplierId);
+  const navSections = isEdit ? NAV_SECTIONS_EDIT : NAV_SECTIONS_BASE;
 
   if (isEdit && isLoadingSupplier) {
     return (
@@ -48,7 +54,7 @@ export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) 
         <div className="flex gap-8 items-start w-full">
           {/* Left scroll-spy nav */}
           <div className="hidden lg:flex flex-col gap-0.5 sticky top-[130px] w-40 shrink-0 pt-4">
-            {NAV_SECTIONS.map(({ id, labelKey, icon: Icon }) => (
+            {navSections.map(({ id, labelKey, icon: Icon }) => (
               <button
                 key={id}
                 type="button"
@@ -65,7 +71,7 @@ export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) 
           <div className="flex-1 min-w-0 py-4 space-y-4">
             <SectionCard id="section-basic" title={t('basicInfo')}>
               <div className="grid grid-cols-2 gap-5">
-                {/* Name */}
+                {/* Name  */}
                 <div className="space-y-1.5">
                   <label className="admin-form-label">
                     {t('supplierName')} <span className="text-red-500">*</span>
@@ -126,6 +132,12 @@ export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) 
                 </div>
               </div>
             </SectionCard>
+
+            {isEdit && supplierId && (
+              <SectionCard id="section-payment" title={t('bankPaymentInfo')}>
+                <PaymentInfoSection supplierId={supplierId} />
+              </SectionCard>
+            )}
           </div>
         </div>
       </div>
