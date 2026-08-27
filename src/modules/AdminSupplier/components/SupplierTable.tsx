@@ -31,8 +31,9 @@ export function SupplierTable({ suppliers, isLoading, isFetching, onDelete }: Su
       <Table>
         <TableHeader>
           <TableRow className="bg-slate-50 dark:bg-white/[0.03] border-b border-gray-200 dark:border-gray-800">
-            <TableHead className={`${thClass} min-w-[220px]`}>{t('supplier')}</TableHead>
-            <TableHead className={`${thClass} min-w-[180px]`}>{t('contactLabel')}</TableHead>
+            <TableHead className={`${thClass} min-w-[200px]`}>{t('supplier')}</TableHead>
+            <TableHead className={`${thClass} min-w-[140px]`}>{t('phoneLabel')}</TableHead>
+            <TableHead className={`${thClass} min-w-[180px]`}>{t('supplierEmailLabel')}</TableHead>
             <TableHead className={`${thClass} whitespace-nowrap`}>{t('createdAt')}</TableHead>
             <TableHead className={`${thClass} whitespace-nowrap`}>{t('updatedAt')}</TableHead>
             <TableHead className={`${thClass} !w-14`} />
@@ -42,7 +43,7 @@ export function SupplierTable({ suppliers, isLoading, isFetching, onDelete }: Su
         <TableBody className="[&_td]:px-5 [&_td]:py-4">
           {isLoading && (
             <TableRow>
-              <td colSpan={5}>
+              <td colSpan={6}>
                 <div className="flex items-center justify-center py-16">
                   <Loader2 size={24} className="animate-spin text-brand-500" />
                 </div>
@@ -51,7 +52,7 @@ export function SupplierTable({ suppliers, isLoading, isFetching, onDelete }: Su
           )}
           {!isLoading && suppliers.length === 0 && (
             <TableRow>
-              <td colSpan={5}>
+              <td colSpan={6}>
                 <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
                   <Icons.user size={40} className="opacity-25" />
                   <p className="text-sm font-medium text-gray-500">{t('noSuppliersYet')}</p>

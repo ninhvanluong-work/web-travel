@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { useDeleteSupplier } from '@/api/supplier/queries';
 import type { ISupplier } from '@/api/supplier/types';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 export function useSupplierListState(refetch: () => void) {
@@ -25,7 +26,7 @@ export function useSupplierListState(refetch: () => void) {
       setDeleteTarget(null);
       refetch();
     },
-    onError: () => addAlert({ type: 'error', title: t('deleteFailed') }),
+    onError: (err: any) => addAlert({ type: 'error', title: getApiErrorMessage(err, t('deleteFailed')) }),
   });
 
   const handleDeleteConfirm = () => {

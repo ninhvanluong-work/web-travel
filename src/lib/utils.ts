@@ -73,3 +73,18 @@ export function closestItem<T>(arr: T[], item: T) {
   }
   return arr[index + 1];
 }
+
+export function getApiErrorMessage(err: any, fallbackMessage: string = 'Operation failed'): string {
+  if (!err) return fallbackMessage;
+  const msg = err.message || err.response?.data?.message || err.data?.message;
+  if (Array.isArray(msg)) {
+    return msg.join(', ');
+  }
+  if (typeof msg === 'string' && msg.trim()) {
+    return msg;
+  }
+  if (typeof err === 'string' && err.trim()) {
+    return err;
+  }
+  return fallbackMessage;
+}

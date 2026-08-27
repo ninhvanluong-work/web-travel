@@ -18,7 +18,7 @@ interface SupplierDrawerFormProps {
   onSubmit: (payload: SupplierFormPayload) => void;
 }
 
-const EMPTY_FORM: SupplierFormPayload = { name: '', contact: '', avatar: '' };
+const EMPTY_FORM: SupplierFormPayload = { name: '', phone: '', email: '', avatar: '' };
 
 export function SupplierDrawerForm({ open, editTarget, isSubmitting, onClose, onSubmit }: SupplierDrawerFormProps) {
   const { t } = useTranslation('adminPage');
@@ -26,6 +26,8 @@ export function SupplierDrawerForm({ open, editTarget, isSubmitting, onClose, on
 
   const [form, setForm] = useState<SupplierFormPayload>(EMPTY_FORM);
   const [nameError, setNameError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   const { data: fetchedSupplier, isLoading: isFetchingSupplier } = useSupplierById({
     variables: { id: editTarget?.id ?? '' },
@@ -36,21 +38,53 @@ export function SupplierDrawerForm({ open, editTarget, isSubmitting, onClose, on
     if (!open) {
       setForm(EMPTY_FORM);
       setNameError('');
+      setPhoneError('');
+      setEmailError('');
       return;
     }
     if (isEdit && fetchedSupplier) {
-      setForm({ name: fetchedSupplier.name, contact: fetchedSupplier.contact, avatar: fetchedSupplier.avatar ?? '' });
+      setForm({
+        name: fetchedSupplier.name,
+        phone: fetchedSupplier.phone ?? '',
+        email: fetchedSupplier.email ?? '',
+        avatar: fetchedSupplier.avatar ?? '',
+      });
     }
   }, [open, isEdit, fetchedSupplier]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    let isValid = true;
+
     if (!form.name.trim() || form.name.trim().length < 2) {
       setNameError(t('supplierNameError'));
-      return;
+      isValid = false;
+    } else {
+      setNameError('');
     }
-    setNameError('');
-    onSubmit({ name: form.name.trim(), contact: form.contact.trim(), avatar: form.avatar?.trim() || undefined });
+
+    if (form.phone?.trim() && !/^[0-9+\s\-().]{7,20}$/.test(form.phone.trim())) {
+      setPhoneError(t('supplierPhoneError'));
+      isValid = false;
+    } else {
+      setPhoneError('');
+    }
+
+    if (form.email?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      setEmailError(t('supplierEmailError'));
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    if (!isValid) return;
+
+    onSubmit({
+      name: form.name.trim(),
+      phone: form.phone?.trim() || undefined,
+      email: form.email?.trim() || undefined,
+      avatar: form.avatar?.trim() || undefined,
+    });
   };
 
   const isLoadingEdit = isEdit && isFetchingSupplier;
@@ -104,14 +138,39 @@ export function SupplierDrawerForm({ open, editTarget, isSubmitting, onClose, on
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('contactLabel')}</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('phoneLabel')}</label>
                 <input
                   type="text"
-                  value={form.contact}
-                  onChange={(e) => setForm((p) => ({ ...p, contact: e.target.value }))}
-                  placeholder={t('contactPlaceholder')}
-                  className="w-full h-11 px-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500"
+                  value={form.phone}
+                  onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+                  placeholder={t('phonePlaceholder')}
+                  className={cn(
+                    'w-full h-11 px-4 rounded-xl border text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500',
+                    phoneError
+                      ? 'border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-500/10'
+                      : 'border-gray-200 bg-white'
+                  )}
                 />
+                {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {t('supplierEmailLabel')}
+                </label>
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                  placeholder={t('supplierEmailPlaceholder')}
+                  className={cn(
+                    'w-full h-11 px-4 rounded-xl border text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500',
+                    emailError
+                      ? 'border-red-400 focus:border-red-400 focus:ring-4 focus:ring-red-500/10'
+                      : 'border-gray-200 bg-white'
+                  )}
+                />
+                {emailError && <p className="text-xs text-red-500">{emailError}</p>}
               </div>
             </div>
 
