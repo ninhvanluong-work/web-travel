@@ -29,7 +29,8 @@ function SectionCard({ id, title, children }: { id: string; title: string; child
 
 export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) {
   const { t } = useTranslation('adminPage');
-  const { values, setValues, nameError, isEdit, isLoadingSupplier, isPending, onSubmit } = useSupplierForm(supplierId);
+  const { values, setValues, nameError, phoneError, emailError, isEdit, isLoadingSupplier, isPending, onSubmit } =
+    useSupplierForm(supplierId);
 
   if (isEdit && isLoadingSupplier) {
     return (
@@ -79,16 +80,31 @@ export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) 
                   {nameError && <p className="text-xs text-red-500">{nameError}</p>}
                 </div>
 
-                {/* Contact */}
+                {/* Phone */}
                 <div className="space-y-1.5">
-                  <label className="admin-form-label">{t('contactLabel')}</label>
+                  <label className="admin-form-label">{t('phoneLabel')}</label>
                   <Input
                     size="sm"
                     fullWidth
-                    placeholder={t('contactPlaceholder')}
-                    value={values.contact}
-                    onChange={(e) => setValues((p) => ({ ...p, contact: e.target.value }))}
+                    placeholder={t('phonePlaceholder')}
+                    value={values.phone}
+                    onChange={(e) => setValues((p) => ({ ...p, phone: e.target.value }))}
                   />
+                  {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
+                </div>
+
+                {/* Email */}
+                <div className="space-y-1.5 col-span-2 sm:col-span-1">
+                  <label className="admin-form-label">{t('supplierEmailLabel')}</label>
+                  <Input
+                    type="email"
+                    size="sm"
+                    fullWidth
+                    placeholder={t('supplierEmailPlaceholder')}
+                    value={values.email}
+                    onChange={(e) => setValues((p) => ({ ...p, email: e.target.value }))}
+                  />
+                  {emailError && <p className="text-xs text-red-500">{emailError}</p>}
                 </div>
 
                 {/* Divider */}

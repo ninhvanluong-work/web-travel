@@ -31,7 +31,12 @@ export default function SupplierListPage() {
   const filtered = useMemo(() => {
     const kw = keyword.trim().toLowerCase();
     const result = kw
-      ? allItems.filter((s) => s.name.toLowerCase().includes(kw) || s.contact.toLowerCase().includes(kw))
+      ? allItems.filter(
+          (s) =>
+            s.name.toLowerCase().includes(kw) ||
+            (s.phone && s.phone.toLowerCase().includes(kw)) ||
+            (s.email && s.email.toLowerCase().includes(kw))
+        )
       : allItems;
     return [...result].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
   }, [allItems, keyword]);

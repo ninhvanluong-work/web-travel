@@ -68,7 +68,7 @@ export function SupplierGrid({ suppliers, isLoading, onEdit, onDelete }: Supplie
                 <p className="font-semibold text-sm text-gray-900 dark:text-white/90 truncate">{supplier.name}</p>
                 {supplier.isVerified && <ShieldCheck size={13} className="text-emerald-500 shrink-0" />}
               </div>
-              <p className="text-[11px] text-gray-400">{supplier.contact || '—'}</p>
+              <p className="text-[11px] text-gray-400 truncate">{supplier.phone || supplier.email || '—'}</p>
             </div>
           </div>
 

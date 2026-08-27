@@ -77,9 +77,14 @@ export function SupplierTableRow({ supplier, onDelete }: SupplierTableRowProps) 
         </div>
       </TableCell>
 
-      {/* Contact */}
+      {/* Phone */}
+      <TableCell className="py-4 text-sm text-gray-600 dark:text-gray-400 truncate max-w-[150px]">
+        {supplier.phone || '—'}
+      </TableCell>
+
+      {/* Email */}
       <TableCell className="py-4 text-sm text-gray-600 dark:text-gray-400 truncate max-w-[200px]">
-        {supplier.contact || '—'}
+        {supplier.email || '—'}
       </TableCell>
 
       {/* Created At */}

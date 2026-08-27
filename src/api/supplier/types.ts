@@ -6,7 +6,8 @@ export interface ApiSupplierItem {
   updatedAt: string;
   deletedAt: string | null;
   name: string;
-  contact: string;
+  phone: string | null;
+  email: string | null;
   avatar: string | null;
   ratingCount: number;
   ratingRate: number;
@@ -52,7 +53,8 @@ export interface ISupplier {
   createdAt: string;
   updatedAt: string;
   name: string;
-  contact: string;
+  phone: string | null;
+  email: string | null;
   avatar: string | null;
   ratingCount: number;
   ratingRate: number;
@@ -84,6 +86,7 @@ export interface ISupplierListParams {
 
 export interface SupplierFormPayload {
   name: string;
-  contact: string;
+  phone?: string;
+  email?: string;
   avatar?: string;
 }
