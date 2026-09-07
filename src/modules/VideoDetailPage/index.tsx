@@ -60,7 +60,7 @@ const VideoDetailPage = () => {
 
   if (videos.length === 0 || isReloadInitializing) {
     return (
-      <div className="flex h-dvh w-full items-center justify-center bg-black">
+      <div className="flex h-dvh max-h-[932px] w-full items-center justify-center bg-black">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 rounded-full border-2 border-white/20 border-t-white/80 animate-spin" />
           <p className="text-white/50 text-xs font-dinpro tracking-wider uppercase">{t('loading')}</p>
@@ -72,7 +72,7 @@ const VideoDetailPage = () => {
   return (
     <div
       ref={containerRef}
-      className="relative h-dvh overflow-hidden bg-black"
+      className="relative h-dvh max-h-[932px] overflow-hidden bg-black"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -91,7 +91,7 @@ const VideoDetailPage = () => {
       </Button>
 
       <div
-        className={`h-dvh snap-y snap-mandatory scrollbar-hide overscroll-none ${
+        className={`h-dvh max-h-[932px] snap-y snap-mandatory scrollbar-hide overscroll-none ${
           gated ? 'overflow-hidden' : 'overflow-y-scroll'
         }`}
         style={{ touchAction: 'pan-y' }}
