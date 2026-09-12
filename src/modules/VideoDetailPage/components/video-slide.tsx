@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
-import React, { forwardRef, memo, useImperativeHandle, useRef, useState } from 'react';
+import React, { forwardRef, memo, useImperativeHandle, useMemo, useRef, useState } from 'react';
 
 import type { IVideo } from '@/api/video';
 import { Icons } from '@/assets/icons';
@@ -47,8 +47,10 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
   const onVisibleRef = useRef(onVisible);
   onVisibleRef.current = onVisible;
 
-  const isNearView = useInView(containerEl, { rootMargin: '150% 0px', threshold: 0 });
-  const isInView = useInView(containerEl, { threshold: 0.6 });
+  const nearViewOptions = useMemo(() => ({ rootMargin: '150% 0px', threshold: 0 }), []);
+  const inViewOptions = useMemo(() => ({ threshold: 0.6 }), []);
+  const isNearView = useInView(containerEl, nearViewOptions);
+  const isInView = useInView(containerEl, inViewOptions);
 
   const isInViewRef = useRef(false);
   isInViewRef.current = isInView;
@@ -98,7 +100,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
     <div
       ref={setContainerEl}
       id={`video-slide-${video.slug}`}
-      className="relative h-dvh w-full snap-start overflow-hidden bg-black flex-shrink-0"
+      className="relative h-dvh max-h-[932px] w-full snap-start overflow-hidden bg-black flex-shrink-0"
     >
       {activated && (
         <BunnyVideoPlayer

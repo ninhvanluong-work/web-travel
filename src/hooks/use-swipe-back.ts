@@ -32,6 +32,7 @@ export function useSwipeBack({
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (disabled) return;
+    if (e.pointerType !== 'touch') return;
     startX.current = e.clientX;
     startY.current = e.clientY;
     startTime.current = Date.now();
@@ -46,6 +47,7 @@ export function useSwipeBack({
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (disabled) return;
+    if (e.pointerType !== 'touch') return;
     const deltaX = e.clientX - startX.current; // positive = swiping right
     const deltaY = Math.abs(e.clientY - startY.current);
 
@@ -68,12 +70,13 @@ export function useSwipeBack({
     }
 
     if (disabled || !dragging.current) return;
+    if (e.pointerType !== 'touch') return;
     dragging.current = false;
 
     const deltaX = e.clientX - startX.current;
     const elapsed = Date.now() - startTime.current;
     const velocity = deltaX / elapsed;
-    const screenWidth = window.innerWidth;
+    const screenWidth = containerRef.current?.clientWidth ?? window.innerWidth;
     const passedThreshold = deltaX / screenWidth >= threshold;
     const fastEnough = velocity >= velocityMin;
 

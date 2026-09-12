@@ -64,7 +64,7 @@ export function TourMetadataSelects() {
                 onValueChange={(v) => field.onChange(v || undefined)}
                 data={supplierOptions}
                 onScrollToBottom={() => {
-                  if (hasNextSupplierPage) fetchNextSupplierPage();
+                  if (hasNextSupplierPage && !isFetchingNextSupplierPage) fetchNextSupplierPage();
                 }}
                 isLoadingMore={isFetchingNextSupplierPage}
                 className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
@@ -88,7 +88,7 @@ export function TourMetadataSelects() {
                 onValueChange={(v) => field.onChange(v ? [v] : [])}
                 data={[{ label: t('none'), value: '' }, ...tourGuideOptions]}
                 onScrollToBottom={() => {
-                  if (hasNextPage) fetchNextPage();
+                  if (hasNextPage && !isFetchingNextPage) fetchNextPage();
                 }}
                 isLoadingMore={isFetchingNextPage}
                 className="w-full bg-slate-50/50 border-slate-200 shadow-none hover:bg-slate-50 transition-colors"
