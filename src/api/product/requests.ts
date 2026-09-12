@@ -1,5 +1,6 @@
 import { type ProductFormValues, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import type { ApiProductBookingData, ApiProductBookingResponse } from './booking-config-types';
 import type {
@@ -138,11 +139,13 @@ function toApiPayload(values: ProductFormValues) {
 }
 
 export async function createProduct(values: ProductFormValues): Promise<ApiProductDetail> {
+  ensureAdminAuth();
   const { data } = await request.post<{ data: ApiProductDetail }>('/product', toApiPayload(values));
   return data.data;
 }
 
 export async function updateProduct(id: string, values: ProductFormValues): Promise<ApiProductDetail> {
+  ensureAdminAuth();
   const { data } = await request.put<{ data: ApiProductDetail }>(`/product/${id}`, toApiPayload(values));
   return data.data;
 }
@@ -151,16 +154,19 @@ export async function patchProductStatus(
   id: string,
   status: 'draft' | 'published' | 'hidden'
 ): Promise<ApiProductDetail> {
+  ensureAdminAuth();
   const { data } = await request.patch<{ data: ApiProductDetail }>(`/product/${id}`, { status });
   return data.data;
 }
 
 export async function updateProductStatus(id: string, status: 'published' | 'hidden'): Promise<ApiProductDetail> {
+  ensureAdminAuth();
   const { data } = await request.post<{ data: ApiProductDetail }>(`/product/${id}/status/${status}`);
   return data.data;
 }
 
 export async function deleteProduct(id: string): Promise<void> {
+  ensureAdminAuth();
   await request.delete(`/product/${id}`);
 }
 

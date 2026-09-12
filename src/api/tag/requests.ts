@@ -1,3 +1,4 @@
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import type { ApiTagCreateResponse, ApiTagItem, ApiTagListResponse } from '../product/types';
 
@@ -31,15 +32,18 @@ export async function searchTagPage(keyword: string, page: number, pageSize = 10
 }
 
 export async function createTag(name: string): Promise<{ id: string; name: string }> {
+  ensureAdminAuth();
   const { data } = await request.post<ApiTagCreateResponse>('/tag', { name });
   return toTagItem(data.data);
 }
 
 export async function updateTag(id: string, name: string): Promise<{ id: string; name: string }> {
+  ensureAdminAuth();
   const { data } = await request.patch<ApiTagCreateResponse>(`/tag/${id}`, { name });
   return toTagItem(data.data);
 }
 
 export async function deleteTag(id: string): Promise<void> {
+  ensureAdminAuth();
   await request.delete(`/tag/${id}`);
 }

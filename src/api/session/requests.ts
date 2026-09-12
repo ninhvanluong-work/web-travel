@@ -1,3 +1,4 @@
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import type {
   ApiSessionDetailResponse,
@@ -57,20 +58,24 @@ export async function getSessionById(id: string): Promise<ISession> {
 }
 
 export async function createSession(payload: CreateSessionPayload): Promise<ISession> {
+  ensureAdminAuth();
   const { data } = await request.post<ApiSessionDetailResponse>('/session', payload);
   return toSession(data.data);
 }
 
 export async function createSessionRange(payload: CreateSessionRangePayload): Promise<ISession[]> {
+  ensureAdminAuth();
   const { data } = await request.post<ApiSessionRangeResponse>('/session/range', payload);
   return data.data.map(toSession);
 }
 
 export async function updateSession(id: string, payload: UpdateSessionPayload): Promise<ISession> {
+  ensureAdminAuth();
   const { data } = await request.put<ApiSessionDetailResponse>(`/session/${id}`, payload);
   return toSession(data.data);
 }
 
 export async function deleteSession(id: string): Promise<void> {
+  ensureAdminAuth();
   await request.delete<ApiSessionDetailResponse>(`/session/${id}`);
 }

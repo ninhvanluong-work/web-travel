@@ -1,3 +1,4 @@
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import type {
   ApiSupplierPaymentDeleteResponse,
@@ -21,15 +22,18 @@ export async function getSupplierPaymentList(params: ISupplierPaymentListParams)
 }
 
 export async function createSupplierPayment(payload: SupplierPaymentPayload): Promise<ISupplierPayment> {
+  ensureAdminAuth();
   const { data } = await request.post<ApiSupplierPaymentSingleResponse>('/supplier-payment', payload);
   return data.data;
 }
 
 export async function updateSupplierPayment(id: string, payload: SupplierPaymentPayload): Promise<ISupplierPayment> {
+  ensureAdminAuth();
   const { data } = await request.put<ApiSupplierPaymentSingleResponse>(`/supplier-payment/${id}`, payload);
   return data.data;
 }
 
 export async function deleteSupplierPayment(id: string): Promise<void> {
+  ensureAdminAuth();
   await request.delete<ApiSupplierPaymentDeleteResponse>(`/supplier-payment/${id}`);
 }

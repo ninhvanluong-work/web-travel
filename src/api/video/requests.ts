@@ -1,3 +1,4 @@
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import type { ApiListResponse } from '../types';
 import type {
@@ -184,6 +185,7 @@ export const getVideoById = async (id: string): Promise<IVideo> => {
 };
 
 export const createVideo = async (payload: CreateVideoPayload): Promise<ApiAdminVideoItem> => {
+  ensureAdminAuth();
   const { data } = await request<ApiAdminVideoResponse>({
     url: '/video',
     method: 'POST',
@@ -193,6 +195,7 @@ export const createVideo = async (payload: CreateVideoPayload): Promise<ApiAdmin
 };
 
 export const updateVideo = async (id: string, payload: UpdateVideoPayload): Promise<ApiAdminVideoItem> => {
+  ensureAdminAuth();
   const { data } = await request<ApiAdminVideoResponse>({
     url: `/video/${id}`,
     method: 'PUT',
