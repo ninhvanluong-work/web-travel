@@ -140,7 +140,7 @@ export default function ProductPage() {
                   {t('whatMakesThisDifferent')}
                 </p>
                 <p
-                  className="text-[15px] leading-[1.55]"
+                  className="text-[15px] leading-[1.7] pb-2 whitespace-pre-line"
                   style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic' }}
                 >
                   {p.uniqueSellingPoint}
