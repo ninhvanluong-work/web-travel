@@ -4,11 +4,13 @@ import { logger } from '@/lib/logger';
 
 function createPoolElement(): HTMLVideoElement {
   const video = document.createElement('video');
-  video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover';
+  video.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none';
   video.playsInline = true;
   video.loop = true;
   video.muted = true;
   video.preload = 'metadata';
+  video.addEventListener('contextmenu', (e) => e.preventDefault());
+  video.addEventListener('dragstart', (e) => e.preventDefault());
   return video;
 }
 
