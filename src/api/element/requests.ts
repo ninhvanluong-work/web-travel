@@ -1,3 +1,4 @@
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import type {
   ApiElementCreateResponse,
@@ -15,6 +16,7 @@ export async function getElements(params?: ElementListParams): Promise<ApiElemen
 }
 
 export async function createElement(payload: ElementCreatePayload): Promise<ApiElementItem> {
+  ensureAdminAuth();
   const { data } = await request.post<ApiElementCreateResponse>('/element', payload);
   return data.data;
 }

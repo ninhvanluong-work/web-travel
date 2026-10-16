@@ -131,7 +131,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
       </div>
 
       {/* Tap zone */}
-      <div className="absolute inset-0 z-10" onClick={handleTap} />
+      <div className="absolute inset-0 z-10" onClick={handleTap} onContextMenu={(e) => e.preventDefault()} />
 
       {forcePause && isInView && (
         <button

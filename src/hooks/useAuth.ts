@@ -9,7 +9,7 @@ export const useAuth = () => {
 
   return {
     isLoggedIn: !!accessToken,
-    isAdmin: !!adminAccessToken && adminUser?.role === 'admin',
+    isAdmin: !!adminAccessToken && (adminUser?.role === 'admin' || adminUser?.role === 'super_admin'),
     user,
     accessToken,
   };
