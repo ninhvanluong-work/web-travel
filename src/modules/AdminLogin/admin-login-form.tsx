@@ -93,6 +93,11 @@ export function AdminLoginForm() {
               <Input
                 {...register('email')}
                 type="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="email"
                 placeholder={t('adminLogin.emailPlaceholder')}
                 fullWidth
                 disabled={isLoading}

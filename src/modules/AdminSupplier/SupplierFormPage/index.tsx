@@ -104,6 +104,11 @@ export default function SupplierFormPage({ supplierId }: SupplierFormPageProps) 
                   <label className="admin-form-label">{t('supplierEmailLabel')}</label>
                   <Input
                     type="email"
+                    inputMode="email"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
+                    autoComplete="off"
                     size="sm"
                     fullWidth
                     placeholder={t('supplierEmailPlaceholder')}
