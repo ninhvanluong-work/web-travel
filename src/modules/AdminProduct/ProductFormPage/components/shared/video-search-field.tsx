@@ -9,7 +9,7 @@ import type { IVideo } from '@/api/video/types';
 import { Button } from '@/components/ui/button';
 import { FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useDebounce } from '@/hooks/use-debounce';
+import { useDebouncedSearchKeyword } from '@/hooks/use-search-keyword';
 import type { ProductFormValues } from '@/lib/validations/product';
 
 import { VideoSearchDropdown } from './video-search-dropdown';
@@ -46,7 +46,7 @@ export function VideoSearchField({
   const [showDropdown, setShowDropdown] = useState(false);
   const [isUploadOpen, setIsUploadOpen] = useState(false);
 
-  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery = useDebouncedSearchKeyword(query, 300);
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteListVideoAdmin({
     variables: { keyword: debouncedQuery || undefined, pageSize: 20 },

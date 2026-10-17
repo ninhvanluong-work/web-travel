@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
-import { useDebounce } from '@/hooks/use-debounce';
+import { useDebouncedSearchKeyword } from '@/hooks/use-search-keyword';
 import type { ProductFormValues } from '@/lib/validations/product';
 
 import { TagSearchDropdown } from './tag-search-dropdown';
@@ -21,7 +21,7 @@ export function TagsSection() {
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const debouncedQuery = useDebounce(query, 300);
+  const debouncedQuery = useDebouncedSearchKeyword(query, 300) ?? '';
   const selectedIds = tags.map((tag) => tag.id);
 
   const addTag = useCallback(

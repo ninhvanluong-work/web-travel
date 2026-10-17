@@ -56,7 +56,7 @@ export default function RatingSheet({ open, onClose, guideId, guideName }: Ratin
     setSubmitting(true);
 
     const payload = {
-      comment,
+      comment: result.data.comment,
       point: rating ?? 0,
       images: mediaItems.filter((it) => it.mediaType === 'image' && it.url).map((it) => it.url!),
       videos: mediaItems.filter((it) => it.mediaType === 'video' && it.url).map((it) => it.url!),

@@ -65,16 +65,23 @@ export const registerSchema = z
 export const loginSchema = z.object({
   email: z
     .string()
+    // Trim + lowercase BEFORE validating: sign-up stores lowercase and the backend compares case-sensitively
+    .trim()
+    .toLowerCase()
     .min(1, 'Email is required')
     .max(255)
-    .email('Please enter a valid email address')
-    .transform((v) => v.trim()),
+    .email('Please enter a valid email address'),
   password: z.string().min(1, 'Password is required'),
   rememberMe: z.boolean().default(false).optional(),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z.string().nonempty(validationMessages.required('Email')).email(validationMessages.invalid('Email')),
+  email: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .nonempty(validationMessages.required('Email'))
+    .email(validationMessages.invalid('Email')),
 });
 
 export const resetPassSchema = z.object({
@@ -112,10 +119,11 @@ export const changePasswordSchema = z.object({
 export const signUpSchema = z.object({
   email: z
     .string()
+    .trim()
+    .toLowerCase()
     .min(1, 'Email is required')
     .max(255)
-    .email('Please enter a valid email address')
-    .transform((v) => v.trim().toLowerCase()),
+    .email('Please enter a valid email address'),
   password: z
     .string()
     .min(1, 'Password is required')

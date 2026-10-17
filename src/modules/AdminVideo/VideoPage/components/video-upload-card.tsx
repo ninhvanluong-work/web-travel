@@ -7,6 +7,7 @@ import { createVideo } from '@/api/video/requests';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TextArea } from '@/components/ui/textarea';
+import { normalizeSingleLine, normalizeText } from '@/lib/text-normalize';
 
 import { UploadDropzone } from './upload-dropzone';
 import { UploadProgress } from './upload-progress';
@@ -42,14 +43,14 @@ export function VideoUploadCard({ onUploaded }: Props) {
     setUploadState({ status: 'processing' });
     try {
       const dbVideo = await createVideo({
-        name: form.name,
+        name: normalizeSingleLine(form.name),
         guid: bunnyVideoId,
         thumbnail: '',
-        description: form.description,
+        description: normalizeText(form.description),
         type: 'hero',
-        tag: form.tag,
+        tag: normalizeSingleLine(form.tag),
       });
-      setUploadState({ status: 'success', videoId: dbVideo.id, videoName: form.name });
+      setUploadState({ status: 'success', videoId: dbVideo.id, videoName: normalizeSingleLine(form.name) });
       onUploaded();
     } catch {
       setUploadState({
@@ -63,7 +64,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
   }
 
   async function startUpload() {
-    if (!form.name.trim()) {
+    if (!normalizeSingleLine(form.name)) {
       setNameError(t('nameRequired'));
       return;
     }
@@ -77,7 +78,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
       const credRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload/video`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: form.name }),
+        body: JSON.stringify({ title: normalizeSingleLine(form.name) }),
       });
       if (!credRes.ok) {
         const errBody = (await credRes.json().catch(() => ({}))) as { message?: string; error?: string };
@@ -97,7 +98,7 @@ export function VideoUploadCard({ onUploaded }: Props) {
           VideoId: bunnyVideoId,
           LibraryId: libraryId,
         },
-        metadata: { filetype: selectedFile.type, title: form.name },
+        metadata: { filetype: selectedFile.type, title: normalizeSingleLine(form.name) },
         onProgress(bytesUploaded, bytesTotal) {
           const progress = Math.round((bytesUploaded / bytesTotal) * 100);
           setUploadState((prev) => ({

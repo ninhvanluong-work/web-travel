@@ -4,6 +4,7 @@ import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { Input } from '@/components/ui/input';
+import { normalizeSearchKeyword } from '@/lib/text-normalize';
 import { cn } from '@/lib/utils';
 import { ROUTE } from '@/types';
 
@@ -20,7 +21,7 @@ const SearchBox = React.forwardRef<HTMLInputElement, SearchBoxProps>(
     const [searchValue, setSearchValue] = React.useState('');
 
     const handleSearch = () => {
-      const query = searchValue.trim();
+      const query = normalizeSearchKeyword(searchValue);
       if (query) {
         router.push(`${ROUTE.SEARCH}?q=${encodeURIComponent(query)}`);
       } else if (router.pathname !== ROUTE.SEARCH) {

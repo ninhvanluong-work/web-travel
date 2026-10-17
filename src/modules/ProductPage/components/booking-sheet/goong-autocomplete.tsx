@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { useDebounce } from '@/hooks/use-debounce';
 import { goongService, type GoongSuggestion } from '@/lib/goong';
+import { normalizeSingleLine } from '@/lib/text-normalize';
 
 export interface GoongSelectData {
   placeId: string;
@@ -75,11 +76,12 @@ export default function GoongAutocomplete({ onSelect, onClear, defaultValue = ''
     setIsManual(true);
     setSuggestions([]);
     setShowNoResult(false);
-    if (query.trim()) {
+    const manualAddress = normalizeSingleLine(query);
+    if (manualAddress) {
       onSelect({
         placeId: 'manual',
         name: t('booking.manualAddressLabel'),
-        address: query.trim(),
+        address: manualAddress,
         lat: null,
         lng: null,
       });
@@ -90,8 +92,15 @@ export default function GoongAutocomplete({ onSelect, onClear, defaultValue = ''
     const val = e.target.value;
     setQuery(val);
     if (isManual) {
-      if (val.trim()) {
-        onSelect({ placeId: 'manual', name: t('booking.manualAddressLabel'), address: val, lat: null, lng: null });
+      const manualAddress = normalizeSingleLine(val);
+      if (manualAddress) {
+        onSelect({
+          placeId: 'manual',
+          name: t('booking.manualAddressLabel'),
+          address: manualAddress,
+          lat: null,
+          lng: null,
+        });
       } else {
         onClear();
       }

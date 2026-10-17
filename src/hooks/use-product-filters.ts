@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { useDebounce } from './use-debounce';
-
 export interface ProductSelectFilters {
   supplierId: string;
   destinationId: string;
@@ -23,15 +21,14 @@ const DEFAULT_SELECTS: ProductSelectFilters = {
 };
 
 export function useProductFilters() {
+  // Committed keyword, already debounced + normalized by <AdminSearchInput />
   const [keyword, setKeyword] = useState('');
   const [selects, setSelects] = useState<ProductSelectFilters>(DEFAULT_SELECTS);
   const [page, setPage] = useState(1);
 
-  const debouncedKeyword = useDebounce(keyword, 300);
-
   useEffect(() => {
     setPage(1);
-  }, [debouncedKeyword, selects]);
+  }, [keyword, selects]);
 
   const updateSelect = useCallback((patch: Partial<ProductSelectFilters>) => {
     setSelects((prev) => ({ ...prev, ...patch }));
@@ -43,9 +40,9 @@ export function useProductFilters() {
     setPage(1);
   }, []);
 
-  const hasActiveFilters = !!debouncedKeyword || Object.values(selects).some(Boolean);
+  const hasActiveFilters = !!keyword || Object.values(selects).some(Boolean);
 
-  const queryFilters: ProductFilters = { keyword: debouncedKeyword, ...selects };
+  const queryFilters: ProductFilters = { keyword, ...selects };
 
   return { keyword, setKeyword, selects, updateSelect, page, setPage, resetFilters, hasActiveFilters, queryFilters };
 }

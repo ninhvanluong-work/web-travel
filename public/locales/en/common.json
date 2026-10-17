@@ -10,5 +10,9 @@
   "invalidEmail": "Invalid email address",
   "tourGuideFab": {
     "label": "Manage Tour Guide Profile"
+  },
+  "searchInput": {
+    "clear": "Clear search",
+    "searching": "Searching…"
   }
 }

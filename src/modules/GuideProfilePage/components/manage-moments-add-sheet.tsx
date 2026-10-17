@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { TextArea } from '@/components/ui/textarea';
+import { normalizeSingleLine, normalizeText } from '@/lib/text-normalize';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 import { ProgressCircle } from './moments-upload-progress-circle';
@@ -93,11 +94,14 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
   async function doSave(savedName: string, savedCaption: string, videoId: string) {
     setPhase('saving');
     setErrorPhase(null);
+    const cleanName = normalizeSingleLine(savedName);
+    const cleanCaption = normalizeText(savedCaption);
     try {
       if (editMoment) {
         const updated = await updateTourGuideMoment(guideId, editMoment.id, {
-          name: savedName,
-          description: savedCaption || undefined,
+          name: cleanName,
+          // Send '' (not undefined) so clearing the caption actually removes it
+          description: cleanCaption,
         });
         const updatedMoment: ITourGuideMoment = toTourGuideMoment(updated);
         queryClient.setQueriesData<ITourGuideMomentsResult>({ queryKey: useTourGuideMoments.getKey() }, (old) => {
@@ -125,10 +129,10 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
           .addAlert({ type: 'success', title: t('manageMomentsSheet.editSuccess'), duration: 3000 });
       } else {
         const created = await createTourGuideMoment(guideId, {
-          name: savedName,
+          name: cleanName,
           guid: videoId,
           thumbnail: '',
-          description: savedCaption || undefined,
+          description: cleanCaption || undefined,
           tourGuideId: guideId,
         });
         const newMoment: ITourGuideMoment = toTourGuideMoment(created);

@@ -3,7 +3,7 @@ import { useTranslation } from 'next-i18next';
 
 import { useProductList } from '@/api/product/queries';
 import { useSupplierList } from '@/api/supplier/queries';
-import { Icons } from '@/assets/icons';
+import { AdminSearchInput } from '@/components/ui/admin-search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import SelectWithSearch from '@/components/ui/select-with-search';
 
@@ -44,19 +44,12 @@ export function BookingFilterToolbar({
     <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-800 space-y-3">
       <div className="flex items-center gap-3 flex-wrap">
         {/* Keyword */}
-        <div className="relative flex-1 min-w-[220px]">
-          <Icons.search
-            size={16}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-          />
-          <input
-            type="text"
-            placeholder={t('bookingSearchPlaceholder')}
-            value={filters.keyword}
-            onChange={(e) => onFilterChange({ keyword: e.target.value })}
-            className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500"
-          />
-        </div>
+        <AdminSearchInput
+          value={filters.keyword}
+          onSearch={(kw) => onFilterChange({ keyword: kw ?? '' })}
+          placeholder={t('bookingSearchPlaceholder')}
+          className="min-w-[220px] max-w-none"
+        />
 
         {/* Status */}
         <Select value={filters.status || 'all'} onValueChange={(v) => onFilterChange({ status: v === 'all' ? '' : v })}>

@@ -2,6 +2,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 
+import { BackToListButton } from '@/components/ui/back-to-list-button';
 import { Button } from '@/components/ui/button';
 import { ROUTE } from '@/types';
 
@@ -35,6 +36,7 @@ export function SupplierFormHeader({ isEdit, isPending, onSave }: SupplierFormHe
 
       <div className="flex items-center gap-2 shrink-0">
         {isPending && <Loader2 size={16} className="animate-spin text-gray-400" />}
+        <BackToListButton label={t('goToList')} href={ROUTE.ADMIN_SUPPLIERS} disabled={isPending} />
         <Button
           variant="primary"
           size="xs"

@@ -48,9 +48,11 @@ export function useProductForm(productId?: string) {
   const { t } = useTranslation('adminPage');
   const isEdit = !!productId;
 
-  const invalidateList = () => {
+  // After saving we stay on the form: drop list caches (refetched when the list mounts) and refetch
+  // the active detail query so the form re-populates with the saved server values.
+  const refreshCachesAfterSave = () => {
     queryClient.removeQueries({ queryKey: ['/product'] });
-    queryClient.removeQueries({ queryKey: ['/product/detail'] });
+    queryClient.invalidateQueries({ queryKey: ['/product/detail'] });
   };
 
   const { data: productData } = useProductById({ variables: { id: productId! }, enabled: isEdit }, undefined);
@@ -150,11 +152,12 @@ export function useProductForm(productId?: string) {
 
   const handleCreateNew = async (data: ProductFormValues) => {
     try {
-      await createMutation.mutateAsync(data);
+      const created = await createMutation.mutateAsync(data);
       draft.clearDraftOnSuccess();
-      invalidateList();
+      refreshCachesAfterSave();
       addAlert({ type: 'success', title: t('tourCreatedSuccess') });
-      router.push(ROUTE.ADMIN_PRODUCTS);
+      // Continue on the edit page of the new tour (sessions etc. need an id); a second save updates
+      router.replace(ROUTE.ADMIN_PRODUCTS_EDIT(created.id));
     } catch (err: any) {
       addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
     }
@@ -167,9 +170,8 @@ export function useProductForm(productId?: string) {
         {
           onSuccess: () => {
             draft.clearDraftOnSuccess();
-            invalidateList();
+            refreshCachesAfterSave();
             addAlert({ type: 'success', title: t('tourUpdatedSuccess') });
-            router.push(ROUTE.ADMIN_PRODUCTS);
           },
         }
       );
@@ -192,9 +194,8 @@ export function useProductForm(productId?: string) {
             {
               onSuccess: () => {
                 draft.clearDraftOnSuccess();
-                invalidateList();
+                refreshCachesAfterSave();
                 addAlert({ type: 'success', title: t('tourPublishedSuccess') });
-                router.push(ROUTE.ADMIN_PRODUCTS);
               },
             }
           ),
@@ -216,9 +217,8 @@ export function useProductForm(productId?: string) {
             {
               onSuccess: () => {
                 draft.clearDraftOnSuccess();
-                invalidateList();
+                refreshCachesAfterSave();
                 addAlert({ type: 'success', title: t('tourHiddenSuccess') });
-                router.push(ROUTE.ADMIN_PRODUCTS);
               },
             }
           ),

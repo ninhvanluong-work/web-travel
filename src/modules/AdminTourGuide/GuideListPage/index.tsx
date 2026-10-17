@@ -1,13 +1,12 @@
-import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { useTourGuideList } from '@/api/tour-guide/queries';
 import { Icons } from '@/assets/icons';
+import { AdminSearchInput } from '@/components/ui/admin-search-input';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/ui/stat-card';
-import { useDebounce } from '@/hooks/use-debounce';
 import { ROUTE } from '@/types';
 
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
@@ -19,13 +18,13 @@ const PAGE_SIZE = 10;
 export default function GuideListPage() {
   const { t } = useTranslation('adminPage');
   const router = useRouter();
+  // Committed keyword, already debounced + normalized by <AdminSearchInput />
   const [keyword, setKeyword] = useState('');
   const [page, setPage] = useState(1);
-  const debouncedKeyword = useDebounce(keyword, 300);
 
   const { data, isLoading, isFetching, refetch } = useTourGuideList({
     variables: {
-      keyword: debouncedKeyword || undefined,
+      keyword: keyword || undefined,
       page,
       pageSize: PAGE_SIZE,
     },
@@ -45,8 +44,8 @@ export default function GuideListPage() {
 
   const { deleteTarget, setDeleteTarget, handleDeleteConfirm, isDeleting } = useGuideListActions(refetch);
 
-  const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(e.target.value);
+  const handleSearch = (kw: string | undefined) => {
+    setKeyword(kw ?? '');
     setPage(1);
   };
 
@@ -100,20 +99,12 @@ export default function GuideListPage() {
       <div className="overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
         {/* Toolbar */}
         <div className="px-5 py-5 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800">
-          <div className="relative flex-1 max-w-sm">
-            <Icons.search
-              size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-            />
-            <input
-              type="text"
-              placeholder={t('searchGuidesPlaceholder')}
-              value={keyword}
-              onChange={handleKeywordChange}
-              className="w-full h-11 pl-11 pr-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500"
-            />
-          </div>
-          {isFetching && !isLoading && <Loader2 size={15} className="animate-spin text-brand-500 shrink-0" />}
+          <AdminSearchInput
+            value={keyword}
+            onSearch={handleSearch}
+            placeholder={t('searchGuidesPlaceholder')}
+            isSearching={isFetching && !isLoading}
+          />
         </div>
 
         <div className="pt-2">

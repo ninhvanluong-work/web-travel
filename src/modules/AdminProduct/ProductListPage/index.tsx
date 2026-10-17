@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import { useDestinationList, useProductList, useSupplierList } from '@/api/product';
 import { Icons } from '@/assets/icons';
+import { AdminSearchInput } from '@/components/ui/admin-search-input';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { StatCard } from '@/components/ui/stat-card';
@@ -109,19 +110,12 @@ export default function ProductListPage() {
       <div className="overflow-hidden bg-white rounded-2xl border border-gray-200 shadow-theme-xs dark:border-gray-800 dark:bg-white/[0.03]">
         {/* Toolbar row */}
         <div className="px-5 py-5 flex items-center justify-between gap-4 border-b border-gray-100 dark:border-gray-800">
-          <div className="relative flex-1 max-w-sm">
-            <Icons.search
-              size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-            />
-            <input
-              type="text"
-              placeholder={t('searchToursPlaceholder')}
-              value={keyword}
-              onChange={(e) => setKeyword(e.target.value)}
-              className="w-full h-11 pl-11 pr-4 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 outline-none focus:border-brand-300 focus:ring-4 focus:ring-brand-500/5 transition dark:bg-gray-900 dark:border-gray-700 dark:text-white/90 dark:placeholder:text-gray-500"
-            />
-          </div>
+          <AdminSearchInput
+            value={keyword}
+            onSearch={(kw) => setKeyword(kw ?? '')}
+            placeholder={t('searchToursPlaceholder')}
+            isSearching={isFetching && !isLoading}
+          />
 
           <div className="flex items-center gap-3">
             <Popover open={filterOpen} onOpenChange={setFilterOpen}>

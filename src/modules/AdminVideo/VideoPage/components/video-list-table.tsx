@@ -1,7 +1,7 @@
-import { Film, Search } from 'lucide-react';
+import { Film } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 
-import { Input } from '@/components/ui/input';
+import { AdminSearchInput } from '@/components/ui/admin-search-input';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 import type { PageSizeOption } from './use-video-list-paged';
@@ -43,16 +43,12 @@ export function VideoListTable({ refreshKey }: Props) {
 
       {/* Search + page size */}
       <div className="px-4 py-3 border-b border-gray-50 flex items-center gap-3">
-        <div className="relative flex-1">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          <Input
-            size="sm"
-            className="pl-8"
-            placeholder={t('searchPlaceholder')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        <AdminSearchInput
+          value={search}
+          onSearch={(kw) => setSearch(kw ?? '')}
+          placeholder={t('searchPlaceholder')}
+          className="max-w-none"
+        />
         <select
           className="text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1.5 outline-none cursor-pointer"
           value={pageSize}

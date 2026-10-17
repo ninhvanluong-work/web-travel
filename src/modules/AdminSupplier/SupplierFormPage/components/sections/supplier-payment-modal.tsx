@@ -185,6 +185,11 @@ export function SupplierPaymentModal({ supplierId, target, open, onClose }: Supp
             <label className="admin-form-label">{t('paymentEmail')}</label>
             <Input
               type="email"
+              inputMode="email"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              autoComplete="off"
               size="sm"
               fullWidth
               placeholder={t('supplierEmailPlaceholder')}

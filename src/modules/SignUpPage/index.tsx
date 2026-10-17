@@ -75,6 +75,11 @@ export default function SignUpPage() {
               <Input
                 {...field('email')}
                 type="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="email"
                 placeholder={t('signUp.emailPlaceholder')}
                 className={inputCls}
                 prefix={

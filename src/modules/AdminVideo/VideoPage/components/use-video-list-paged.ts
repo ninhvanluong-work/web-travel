@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import { useListVideoAdminPaged } from '@/api/video';
 import type { IVideo } from '@/api/video/types';
-import { useDebounce } from '@/hooks/use-debounce';
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50] as const;
 export type PageSizeOption = (typeof PAGE_SIZE_OPTIONS)[number];
@@ -26,14 +25,13 @@ interface Actions {
 }
 
 export function useVideoListPaged(refreshKey: number): State & Actions {
+  // Committed keyword, already debounced + normalized by <AdminSearchInput />
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState<PageSizeOption>(10);
   const [page, setPage] = useState(1);
 
-  const debouncedSearch = useDebounce(search, 300);
-
   const { data, isLoading, refetch } = useListVideoAdminPaged({
-    variables: { keyword: debouncedSearch || undefined, page, pageSize },
+    variables: { keyword: search || undefined, page, pageSize },
   });
 
   useEffect(() => {

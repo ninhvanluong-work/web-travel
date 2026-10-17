@@ -74,6 +74,11 @@ export default function SignInPage() {
               <Input
                 {...register('email')}
                 type="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                autoComplete="email"
                 placeholder={t('signIn.emailPlaceholder')}
                 className="!bg-white rounded-full border-0 placeholder:text-[#939393] shadow-sm text-[#010F1C] [&:-webkit-autofill]:shadow-[inset_0_0_0_9999px_white]"
                 prefix={

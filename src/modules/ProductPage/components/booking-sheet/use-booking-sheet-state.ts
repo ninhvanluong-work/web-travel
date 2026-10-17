@@ -2,9 +2,11 @@ import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { useCreateBooking } from '@/api/booking';
+import { normalizeEmail, normalizeSingleLine } from '@/lib/text-normalize';
 import { useBookingStore } from '@/stores/BookingStore';
 
-const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const isValidEmail = (v: string) => EMAIL_RE.test(normalizeEmail(v));
 
 export function useBookingSheetState(productId: string, adultPrice: number, currency: string) {
   const { t } = useTranslation('productPage');
@@ -67,11 +69,10 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
       !sessionPricing.isLoadingSession &&
       sessionPricing.sessionError === null &&
       sessionPricing.units.length > 0 &&
-      contactName.trim() !== '' &&
+      normalizeSingleLine(contactName) !== '' &&
       contactPhone.trim() !== '' &&
-      contactEmail.trim() !== '' &&
       isValidEmail(contactEmail) &&
-      (!contactMessenger || contactMessengerHandle.trim() !== '');
+      (!contactMessenger || normalizeSingleLine(contactMessengerHandle) !== '');
   } else if (step === 2) {
     let pickupValid = false;
     if (pickupType === 'predefined') pickupValid = pickupLocation !== null;
@@ -85,10 +86,9 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
     if (step === 3) {
       setBookingError(null);
 
+      const messengerHandle = normalizeSingleLine(contactMessengerHandle);
       const messengerApp =
-        contactMessenger && contactMessengerHandle
-          ? [{ name: contactMessenger, username: contactMessengerHandle }]
-          : [];
+        contactMessenger && messengerHandle ? [{ name: contactMessenger, username: messengerHandle }] : [];
 
       const passengersPayload = Object.entries(passengers)
         .filter(([, count]) => count > 0)
@@ -102,8 +102,8 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
           pickupLocationId: pickupType === 'predefined' ? pickupLocation : null,
           departureId: departureTime!,
           passengers: passengersPayload,
-          username: contactName,
-          email: contactEmail,
+          username: normalizeSingleLine(contactName),
+          email: normalizeEmail(contactEmail),
           phone: contactPhone,
           messengerApp,
         },
