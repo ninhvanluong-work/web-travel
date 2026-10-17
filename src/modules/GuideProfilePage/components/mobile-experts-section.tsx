@@ -234,6 +234,8 @@ export function MobileExpertsSection() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
+              // Ignore Enter while an IME is still composing a Vietnamese character
+              if (e.nativeEvent.isComposing) return;
               if (e.key === 'Enter' || e.key === ',') {
                 e.preventDefault();
                 addExpert(query);

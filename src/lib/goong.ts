@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { normalizeSingleLine } from '@/lib/text-normalize';
+
 const GOONG_API_URL = 'https://rsapi.goong.io';
 const API_KEY = process.env.NEXT_PUBLIC_GOONG_API_KEY;
 
@@ -21,8 +23,9 @@ export interface GoongDistanceElement {
 }
 
 export const goongService = {
-  getSuggestions: async (input: string, sessionToken: string): Promise<GoongSuggestion[]> => {
-    if (!input || input.trim().length < 3) return [];
+  getSuggestions: async (rawInput: string, sessionToken: string): Promise<GoongSuggestion[]> => {
+    const input = normalizeSingleLine(rawInput);
+    if (input.length < 3) return [];
     try {
       const response = await axios.get(`${GOONG_API_URL}/place/autocomplete`, {
         params: { api_key: API_KEY, input, sessiontoken: sessionToken },

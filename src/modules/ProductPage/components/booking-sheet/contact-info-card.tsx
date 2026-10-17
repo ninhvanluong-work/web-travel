@@ -4,15 +4,16 @@ import React from 'react';
 
 import { Input } from '@/components/ui/input';
 import { PhoneInput } from '@/components/ui/phone-input';
+import { normalizeSingleLine } from '@/lib/text-normalize';
 import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
 const MESSENGER_APPS = ['WhatsApp', 'Zalo', 'Telegram', 'Line'] as const;
 
-const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeSingleLine(v));
 
 function getEmailError(email: string, t: (key: string) => string): string | null {
-  if (!email.trim()) return t('booking.errorEmailRequired');
+  if (!normalizeSingleLine(email)) return t('booking.errorEmailRequired');
   if (!isValidEmail(email)) return t('booking.errorEmailInvalid');
   return null;
 }
@@ -41,11 +42,11 @@ export function ContactInfoCard() {
   const touch = (field: keyof typeof touched) => setTouched((prev) => ({ ...prev, [field]: true }));
 
   const errors = {
-    name: !contactName.trim() ? t('booking.errorNameRequired') : null,
+    name: !normalizeSingleLine(contactName) ? t('booking.errorNameRequired') : null,
     phone: !contactPhone.trim() ? t('booking.errorPhoneRequired') : null,
     email: getEmailError(contactEmail, t),
     handle:
-      contactMessenger && !contactMessengerHandle.trim()
+      contactMessenger && !normalizeSingleLine(contactMessengerHandle)
         ? t('booking.errorHandleRequired', { app: contactMessenger })
         : null,
   };
@@ -97,6 +98,11 @@ export function ContactInfoCard() {
         <Input
           size="sm"
           type="email"
+          inputMode="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          autoComplete="email"
           value={contactEmail}
           onChange={(e) => setContactEmail(e.target.value)}
           onBlur={() => touch('email')}

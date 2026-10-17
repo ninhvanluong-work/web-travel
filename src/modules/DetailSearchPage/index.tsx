@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { useInfiniteListVideo } from '@/api/video';
 import { SEARCH_SUGGESTIONS } from '@/data/search';
+import { normalizeSearchKeyword } from '@/lib/text-normalize';
 import type { NextPageWithLayout } from '@/types';
 import { ROUTE } from '@/types';
 
@@ -30,7 +31,8 @@ const DetailSearchPage: NextPageWithLayout = () => {
     if (router.isReady) {
       const val = typeof q === 'string' ? q : '';
       setInputValue(val);
-      setQuery(val);
+      // `?q=%20%20` or padded values must not reach the API / create separate cache entries
+      setQuery(normalizeSearchKeyword(val) ?? '');
     }
   }, [router.isReady, q]);
 
@@ -39,7 +41,7 @@ const DetailSearchPage: NextPageWithLayout = () => {
   }, [query]);
 
   const handleSubmit = (value?: string) => {
-    const trimmed = (value ?? inputValue).trim();
+    const trimmed = normalizeSearchKeyword(value ?? inputValue) ?? '';
     setQuery(trimmed);
     setIsFocused(false);
     if (document.activeElement instanceof HTMLElement) {
