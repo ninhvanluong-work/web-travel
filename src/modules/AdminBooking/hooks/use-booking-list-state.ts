@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react';
 
 import type { IBookingListItem } from '@/api/booking/types';
-import { useDebounce } from '@/hooks/use-debounce';
 
 export interface BookingFilters {
+  /** Committed keyword, already debounced + normalized by <AdminSearchInput /> */
   keyword: string;
   status: string;
   supplierId: string;
@@ -28,8 +28,6 @@ export function useBookingListState() {
   const [page, setPageRaw] = useState(1);
   const [detailTarget, setDetailTarget] = useState<IBookingListItem | null>(null);
 
-  const debouncedKeyword = useDebounce(filters.keyword, 300);
-
   const setFilter = (patch: Partial<BookingFilters>) => {
     setFiltersRaw((prev) => ({ ...prev, ...patch }));
     setPageRaw(1);
@@ -42,23 +40,20 @@ export function useBookingListState() {
     setPageRaw(1);
   };
 
-  const hasActiveFilters = useMemo(
-    () => Object.values({ ...filters, keyword: debouncedKeyword }).some((v) => v !== ''),
-    [filters, debouncedKeyword]
-  );
+  const hasActiveFilters = useMemo(() => Object.values(filters).some((v) => v !== ''), [filters]);
 
   const queryFilters = useMemo(
     () => ({
       page,
       pageSize: PAGE_SIZE,
-      keyword: debouncedKeyword || undefined,
+      keyword: filters.keyword || undefined,
       status: filters.status || undefined,
       supplierId: filters.supplierId || undefined,
       productId: filters.productId || undefined,
       fromDate: filters.fromDate || undefined,
       toDate: filters.toDate || undefined,
     }),
-    [page, debouncedKeyword, filters.status, filters.supplierId, filters.productId, filters.fromDate, filters.toDate]
+    [page, filters.keyword, filters.status, filters.supplierId, filters.productId, filters.fromDate, filters.toDate]
   );
 
   return {

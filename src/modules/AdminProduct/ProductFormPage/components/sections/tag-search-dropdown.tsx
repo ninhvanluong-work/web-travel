@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 
 import { useCreateTag, useTagSearchInfinite } from '@/api/tag';
 import { Popover, PopoverAnchor, PopoverContent } from '@/components/ui/popover';
+import { normalizeSingleLine } from '@/lib/text-normalize';
 
 type TagItem = { id: string; name: string };
 
@@ -65,7 +66,7 @@ export function TagSearchDropdown({
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   async function handleCreate() {
-    const name = query.trim();
+    const name = normalizeSingleLine(query);
     if (!name || isCreating) return;
     const newTag = await createTagMutation(name);
     onAddTag(newTag);

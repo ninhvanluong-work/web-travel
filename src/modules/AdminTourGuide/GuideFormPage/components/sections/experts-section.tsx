@@ -137,6 +137,8 @@ export function ExpertsSection() {
                 setShowDropdown(true);
               }}
               onKeyDown={(e) => {
+                // Ignore Enter while an IME is still composing a Vietnamese character
+                if (e.nativeEvent.isComposing) return;
                 if (e.key === 'Enter') {
                   e.preventDefault();
                   addExpert(query);
