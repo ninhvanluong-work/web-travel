@@ -10,5 +10,9 @@
   "invalidEmail": "Email không hợp lệ",
   "tourGuideFab": {
     "label": "Quản lý Tour Guide Profile"
+  },
+  "searchInput": {
+    "clear": "Xoá tìm kiếm",
+    "searching": "Đang tìm…"
   }
 }
