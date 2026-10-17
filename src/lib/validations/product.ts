@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+import { optionalText, requiredText } from './text-fields';
+
+// Plain single-line text with a default of '' (normalized: trim, NFC, collapsed spaces)
+const plainTextOrEmpty = () => requiredText({ min: 0 }).optional().default('');
+
 export const PRODUCT_STATUS = {
   draft: 'draft',
   published: 'published',
@@ -41,48 +46,53 @@ export const READ_BEFORE_KEY_OPTIONS = [
 // ── Itinerary (standalone schema, reused in productSchema) ────────────────
 export const itinerarySchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, 'Day title is required'),
-  featuredName: z.string().optional().nullable(),
+  name: requiredText({ message: 'Day title is required' }),
+  featuredName: optionalText(),
   order: z.coerce.number().int().min(1).default(1),
   description: z.string().optional().nullable(),
 });
 
 export const optionSchema = z.object({
   id: z.string().uuid().optional(),
-  title: z.string().min(1, 'Package name is required'),
+  title: requiredText({ message: 'Package name is required' }),
   isActive: z.boolean().default(true),
   currency: z.string().default('VND'),
   description: z.string().optional().nullable(),
-  include: z.array(z.string()).optional().default([]),
+  // Each line normalized; lines that end up empty are dropped
+  include: z
+    .array(requiredText({ min: 0 }))
+    .transform((lines) => lines.filter(Boolean))
+    .optional()
+    .default([]),
 });
 
 export const unitFormSchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, 'Unit name is required'),
-  note: z.string().optional().default(''),
+  name: requiredText({ message: 'Unit name is required' }),
+  note: plainTextOrEmpty(),
 });
 
 export const departureTimeFormSchema = z.object({
   id: z.string().uuid().optional(),
   time: z.string().min(5, 'Time is required'),
-  label: z.string().optional().default(''),
-  note: z.string().optional().default(''),
+  label: plainTextOrEmpty(),
+  note: plainTextOrEmpty(),
   isActive: z.boolean().default(true),
   order: z.coerce.number().int().min(0).default(0),
 });
 
 export const pickupLocationFormSchema = z.object({
   id: z.string().uuid().optional(),
-  name: z.string().min(1, 'Location name is required'),
-  address: z.string().optional().default(''),
-  mapUrl: z.string().optional().default(''),
+  name: requiredText({ message: 'Location name is required' }),
+  address: plainTextOrEmpty(),
+  mapUrl: plainTextOrEmpty(),
   isPopular: z.boolean().default(false),
 });
 
 // ── Product ──────────────────────────────────────────────────────────────
 export const productSchema = z.object({
-  name: z.string().min(1, 'Product name is required').max(500),
-  slug: z.string().min(1, 'URL path is required'),
+  name: requiredText({ message: 'Product name is required', max: 500 }),
+  slug: requiredText({ message: 'URL path is required' }),
   description: z.string().optional().nullable(),
   destinationId: z.string().uuid('Invalid destination').optional().nullable(),
   supplierId: z.string().uuid('Invalid supplier').optional().nullable(),
@@ -114,7 +124,7 @@ export const productSchema = z.object({
     .array(
       z.object({
         imageUrl: z.string().optional().nullable(),
-        title: z.string().min(1, 'Title required'),
+        title: requiredText({ message: 'Title required' }),
         content: z.string().optional().nullable(),
       })
     )
@@ -125,7 +135,7 @@ export const productSchema = z.object({
     .array(
       z.object({
         key: z.string().min(1),
-        title: z.string().optional().nullable(),
+        title: optionalText(),
         description: z.string().optional().nullable(),
       })
     )
