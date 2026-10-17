@@ -23,6 +23,9 @@ export const ROUTE = {
   ADMIN_SUPPLIERS_CREATE: '/admin/suppliers/create',
   ADMIN_SUPPLIERS_EDIT: (id: string) => `/admin/suppliers/${id}/edit`,
   ADMIN_BOOKINGS: '/admin/bookings',
+  ADMIN_DESTINATIONS: '/admin/destinations',
+  ADMIN_DESTINATIONS_CREATE: '/admin/destinations/create',
+  ADMIN_DESTINATIONS_EDIT: (id: string) => `/admin/destinations/${id}/edit`,
 } as const;
 
 export type ROUTE_KEY = keyof typeof ROUTE;
