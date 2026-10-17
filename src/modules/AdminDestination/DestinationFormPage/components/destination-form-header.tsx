@@ -1,6 +1,7 @@
 import { ArrowLeft, Loader2, SaveIcon } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
 
+import { BackToListButton } from '@/components/ui/back-to-list-button';
 import { Button } from '@/components/ui/button';
 
 import { DESTINATION_FORM_ID, DESTINATION_NS } from '../../constants';
@@ -46,6 +47,7 @@ export function DestinationFormHeader({ isEdit, isPending, isDirty, canSubmit, o
 
       <div className="flex items-center gap-2 shrink-0">
         {isPending ? <Loader2 size={16} className="animate-spin text-gray-400" /> : null}
+        <BackToListButton label={t('goToList')} onClick={onBack} disabled={isPending} />
         <Button
           type="submit"
           form={DESTINATION_FORM_ID}

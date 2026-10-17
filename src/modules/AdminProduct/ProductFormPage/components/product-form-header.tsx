@@ -2,6 +2,7 @@ import { ArrowLeft, CalendarDays, ExternalLink, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 
+import { BackToListButton } from '@/components/ui/back-to-list-button';
 import { Button } from '@/components/ui/button';
 import { ROUTE } from '@/types';
 
@@ -116,6 +117,8 @@ export function ProductFormHeader({
             {t('sessionManage')}
           </Button>
         )}
+
+        <BackToListButton label={t('goToList')} href={ROUTE.ADMIN_PRODUCTS} disabled={isPending} />
 
         <FormActionButtons
           isEdit={isEdit}

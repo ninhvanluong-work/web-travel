@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useCreateDestination, useDestinationById, useUpdateDestination } from '@/api/destination/queries';
+import type { IDestination } from '@/api/destination/types';
 import { destinationFormSchema, type DestinationFormValues } from '@/lib/validations/destination';
 import { DESTINATION_NS, DESTINATION_ROUTES } from '@/modules/AdminDestination/constants';
 import { useAlertStore } from '@/stores/use-alert-store';
@@ -22,8 +23,8 @@ export function getDestinationApiError(err: unknown, fallback: string): string {
 }
 
 /**
- * Refetch every cached list query, including inactive ones (we navigate back to the list right after
- * a mutation), and drop cached details.
+ * Used after delete: refetch every cached list query, including inactive ones (the user navigates
+ * back to the list right after), and drop cached details.
  */
 export function invalidateDestinationQueries(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: ['/destination/list'], refetchType: 'all' });
@@ -57,18 +58,36 @@ export function useDestinationForm(destinationId?: string) {
     form.reset({ name: destination.name, description: destination.description });
   }, [destination, form]);
 
-  const onSuccess = (titleKey: string) => {
-    invalidateDestinationQueries(queryClient);
-    useAlertStore.getState().addAlert({ type: 'success', title: t(titleKey) });
-    router.push(DESTINATION_ROUTES.LIST);
+  // After saving we stay on the form: refresh lists in the background and seed the detail cache
+  // with the server response so the edit page renders it immediately (no refetch / skeleton).
+  const syncCaches = (saved: IDestination) => {
+    queryClient.invalidateQueries({ queryKey: ['/destination/list'], refetchType: 'all' });
+    queryClient.setQueryData(useDestinationById.getKey({ id: saved.id }), saved);
   };
 
   const onError = (err: unknown) => {
     useAlertStore.getState().addAlert({ type: 'error', title: getDestinationApiError(err, t('genericError')) });
   };
 
-  const createMutation = useCreateDestination({ onSuccess: () => onSuccess('destinationCreated'), onError });
-  const updateMutation = useUpdateDestination({ onSuccess: () => onSuccess('destinationUpdated'), onError });
+  const createMutation = useCreateDestination({
+    onSuccess: (created) => {
+      syncCaches(created);
+      useAlertStore.getState().addAlert({ type: 'success', title: t('destinationCreated') });
+      // Move to the edit URL of the new record so a second "Save" updates instead of creating a duplicate
+      router.replace(DESTINATION_ROUTES.EDIT(created.id));
+    },
+    onError,
+  });
+
+  const updateMutation = useUpdateDestination({
+    onSuccess: (updated) => {
+      syncCaches(updated);
+      // Show the normalized server values and clear the dirty state
+      form.reset({ name: updated.name, description: updated.description });
+      useAlertStore.getState().addAlert({ type: 'success', title: t('destinationUpdated') });
+    },
+    onError,
+  });
 
   const onSubmit = useCallback(
     (values: DestinationFormValues) => {

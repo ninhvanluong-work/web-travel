@@ -46,9 +46,10 @@ export function useSupplierForm(supplierId?: string) {
     }
   }, [supplier]);
 
+  // After saving we stay on the form: drop list caches and refetch the active detail query
   const invalidate = () => {
     queryClient.removeQueries({ queryKey: ['/supplier/list'] });
-    queryClient.removeQueries({ queryKey: ['/supplier/detail'] });
+    queryClient.invalidateQueries({ queryKey: ['/supplier/detail'] });
   };
 
   const handleApiError = (err: any) => {
@@ -67,10 +68,11 @@ export function useSupplierForm(supplierId?: string) {
   };
 
   const createMutation = useCreateSupplier({
-    onSuccess: () => {
+    onSuccess: (created) => {
       invalidate();
       addAlert({ type: 'success', title: t('supplierCreated') });
-      router.push(ROUTE.ADMIN_SUPPLIERS);
+      // Continue on the edit page (payment accounts need an id); a second save updates
+      router.replace(ROUTE.ADMIN_SUPPLIERS_EDIT(created.id));
     },
     onError: handleApiError,
   });
@@ -79,7 +81,6 @@ export function useSupplierForm(supplierId?: string) {
     onSuccess: () => {
       invalidate();
       addAlert({ type: 'success', title: t('supplierUpdated') });
-      router.push(ROUTE.ADMIN_SUPPLIERS);
     },
     onError: handleApiError,
   });

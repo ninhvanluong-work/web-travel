@@ -212,16 +212,16 @@ Một component `DestinationFormPage({ destinationId? })` dùng cho cả 2 route
 
 **Hành vi form (`use-destination-form.ts`)**
 
-| Hành động                       | Kết quả mong đợi                                                                                                                          |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Vào trang Create                | Form rỗng, autofocus `name`.                                                                                                              |
-| Vào trang Edit                  | `useDestinationById({ id })` → `form.reset(data)`. Trong lúc tải hiện skeleton trong `SectionCard` (giống skeleton của `DetailsSection`). |
-| Edit với id không tồn tại (404) | Không render form. Hiện khối empty state "Destination not found" + nút **Back to list**.                                                  |
-| Create thành công               | `POST` → invalidate (mục 3.6) → toast "Destination created" → `router.push(ROUTE.ADMIN_DESTINATIONS)` (giống Product).                    |
-| Update thành công               | `PUT` gửi **đủ 2 field** → invalidate → toast "Destination updated" → `router.push(ROUTE.ADMIN_DESTINATIONS)`.                            |
-| API lỗi                         | Toast `err.response.data.message ?? t('genericError')`. Ở lại trang, giữ dữ liệu đã nhập.                                                 |
-| Đang submit                     | `isPending` → nút header disabled + spinner.                                                                                              |
-| Ctrl/Cmd + Enter                | Submit (tiện khi đang gõ trong textarea dài).                                                                                             |
+| Hành động                       | Kết quả mong đợi                                                                                                                                                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Vào trang Create                | Form rỗng, autofocus `name`.                                                                                                                                                                                        |
+| Vào trang Edit                  | `useDestinationById({ id })` → `form.reset(data)`. Trong lúc tải hiện skeleton trong `SectionCard` (giống skeleton của `DetailsSection`).                                                                           |
+| Edit với id không tồn tại (404) | Không render form. Hiện khối empty state "Destination not found" + nút **Back to list**.                                                                                                                            |
+| Create thành công               | `POST` → làm mới list ở nền + ghi dữ liệu trả về vào cache chi tiết → toast "Destination created" → **`router.replace` sang `/admin/destinations/{id}/edit`** (ở lại form; Save lần nữa là update, không tạo trùng) |
+| Update thành công               | `PUT` gửi đủ 2 field → làm mới list ở nền + cập nhật cache chi tiết → `form.reset(dữ liệu BE trả về)` (hết trạng thái chưa lưu) → toast "Destination updated". **Ở lại trang.**                                     |
+| API lỗi                         | Toast `err.response.data.message ?? t('genericError')`. Ở lại trang, giữ dữ liệu đã nhập.                                                                                                                           |
+| Đang submit                     | `isPending` → nút header disabled + spinner.                                                                                                                                                                        |
+| Ctrl/Cmd + Enter                | Submit (tiện khi đang gõ trong textarea dài).                                                                                                                                                                       |
 
 ### 3.4. Xoá
 
@@ -388,3 +388,5 @@ Dùng lại key có sẵn: `cancel`, `edit`, `saveChanges`, `showing`, `prev`, `
 - **Route + Sidebar:** mục 4.2 đã được duyệt và đã làm: thêm `ROUTE.ADMIN_DESTINATIONS*`, nav item `destinations` (sau Products) và key `destinations` trong `adminPage.json`. `DESTINATION_ROUTES` trong `constants.ts` giờ trỏ về `ROUTE`.
 
 Cache: list dùng `invalidateQueries` (refetch ngay query đang hiển thị), detail dùng `removeQueries`.
+
+**Cập nhật 2026-10-17: lưu xong ở lại form.** Header có thêm nút **Danh sách** (cùng cơ chế hỏi khi còn thay đổi chưa lưu như nút ←). Chỉ khi bấm nút này mới quay về list. Đã test thật: tạo → chuyển sang /edit, sửa → ở lại, List → bản ghi mới nằm đầu danh sách, xoá → soft delete.

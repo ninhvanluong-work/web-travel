@@ -31,9 +31,10 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
   const isEdit = !!guideId;
   const { addAlert } = useAlertStore.getState();
 
+  // After saving we stay on the form: drop list caches and refetch the active detail query
   const invalidate = () => {
     queryClient.removeQueries({ queryKey: ['/tour-guide/list'] });
-    queryClient.removeQueries({ queryKey: ['/tour-guide/detail'] });
+    queryClient.invalidateQueries({ queryKey: ['/tour-guide/detail'] });
   };
 
   const { data: guideData } = useTourGuideById({
@@ -82,12 +83,13 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
   });
 
   const createMutation = useCreateTourGuide({
-    onSuccess: () => {
+    onSuccess: (created) => {
       invalidate();
       addAlert({ type: 'success', title: t('createSuccess') });
       form.reset(form.getValues());
+      // Bypass the unsaved-changes guard only for this navigation to the new guide's edit page
       onAfterSave?.();
-      router.push(ROUTE.ADMIN_GUIDES);
+      router.replace(ROUTE.ADMIN_GUIDES_EDIT(created.id));
     },
     onError: (err: any) => {
       addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
@@ -108,9 +110,9 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
           onSuccess: () => {
             invalidate();
             addAlert({ type: 'success', title: t('updateSuccess') });
+            // Stay on the page: clear the dirty state (the refetched detail re-populates the form).
+            // onAfterSave is not called here: it permanently bypasses the leave-page guard.
             form.reset(data);
-            onAfterSave?.();
-            router.push(ROUTE.ADMIN_GUIDES);
           },
         }
       );
