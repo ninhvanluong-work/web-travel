@@ -1,11 +1,24 @@
 import 'animate.css';
 
-import { BookOpen, Building2, Film, LayoutDashboard, Loader2, LogOut, MapPin, Package, Users } from 'lucide-react';
+import {
+  BookOpen,
+  Building2,
+  Film,
+  KeyRound,
+  LayoutDashboard,
+  Loader2,
+  LogOut,
+  MapPin,
+  Package,
+  UserCog,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
+import { ChangePasswordDialog } from '@/components/ui/change-password-dialog';
 import {
   Dialog,
   DialogClose,
@@ -31,6 +44,7 @@ const NAV_ITEMS = [
   { labelKey: 'suppliers', href: ROUTE.ADMIN_SUPPLIERS, icon: Building2 },
   { labelKey: 'videos', href: ROUTE.ADMIN_VIDEOS, icon: Film },
   { labelKey: 'bookings', href: ROUTE.ADMIN_BOOKINGS, icon: BookOpen },
+  { labelKey: 'users', href: ROUTE.ADMIN_USERS, icon: UserCog },
 ];
 
 function Sidebar({ isCollapsed }: SidebarProps) {
@@ -38,6 +52,7 @@ function Sidebar({ isCollapsed }: SidebarProps) {
   const { t } = useTranslation('adminPage');
   const { handleAdminLogout, isLoading } = useAdminLogout();
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   return (
     <aside
@@ -88,7 +103,24 @@ function Sidebar({ isCollapsed }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-gray-200 dark:border-gray-800 p-[16px] overflow-hidden">
+      <div className="border-t border-gray-200 dark:border-gray-800 p-[16px] overflow-hidden space-y-[6px]">
+        <button
+          type="button"
+          onClick={() => setShowChangePassword(true)}
+          className="flex w-full items-center gap-[16px] rounded-xl px-[20px] py-[14px] text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-900 whitespace-nowrap"
+        >
+          <KeyRound className="h-[24px] w-[24px] flex-shrink-0" />
+          <span
+            className={cn(
+              'transition-all duration-300',
+              isCollapsed
+                ? 'hidden group-hover/sidebar:inline-block animate__animated animate__slideInLeft animate__faster'
+                : 'inline-block'
+            )}
+          >
+            {t('common:changePassword.menu')}
+          </span>
+        </button>
         <button
           type="button"
           onClick={() => setShowConfirm(true)}
@@ -143,6 +175,8 @@ function Sidebar({ isCollapsed }: SidebarProps) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <ChangePasswordDialog open={showChangePassword} onClose={() => setShowChangePassword(false)} scope="admin" />
     </aside>
   );
 }
