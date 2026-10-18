@@ -1,5 +1,6 @@
 import { useDisclosure } from '@mantine/hooks';
 import { motion } from 'framer-motion';
+import { KeyRound } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
@@ -15,6 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { ChangePasswordDialog } from '@/components/ui/change-password-dialog';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useLogout } from '@/hooks/useLogout';
 import { useUserStore } from '@/stores/UserStore';
@@ -48,6 +50,8 @@ export default function UserMenu() {
   const { t } = useTranslation('homePage');
   const [open, { toggle, close }] = useDisclosure(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const { t: tCommon } = useTranslation('common');
   const user = useUserStore.use.user();
   const accessToken = useUserStore.use.accessToken();
   const { handleLogout, isLoading } = useLogout();
@@ -124,9 +128,29 @@ export default function UserMenu() {
             {/* Divider */}
             <div className="pt-2" />
 
-            {/* Logout row */}
+            {/* Change password row */}
             <motion.button
               custom={1}
+              variants={stagger}
+              initial="hidden"
+              animate="show"
+              whileTap={{ scale: 0.97 }}
+              onClick={() => {
+                close();
+                setShowChangePassword(true);
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-neutral-50 text-neutral-800 active:bg-neutral-100 transition-colors"
+            >
+              <div className="h-10 w-10 rounded-full bg-neutral-200 flex items-center justify-center shrink-0">
+                <KeyRound size={20} />
+              </div>
+              <span className="text-[15px] font-semibold">{tCommon('changePassword.menu')}</span>
+              <Icons.chevronRight size={18} className="ml-auto text-neutral-300" />
+            </motion.button>
+
+            {/* Logout row */}
+            <motion.button
+              custom={2}
               variants={stagger}
               initial="hidden"
               animate="show"
@@ -168,6 +192,8 @@ export default function UserMenu() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <ChangePasswordDialog open={showChangePassword} onClose={() => setShowChangePassword(false)} scope="client" />
     </>
   );
 }

@@ -16,6 +16,8 @@ export const request = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
+const CHANGE_PASSWORD_URL = '/auth/change-password';
+
 let isRefreshing = false;
 let refreshSubscribers: Array<{
   onSuccess: (token: string) => void;
@@ -85,7 +87,8 @@ const handleError = async (error: any) => {
   const data = error?.response?.data as any;
   const status = error?.response?.status;
 
-  const isAuthEndpoint = originalRequest?.url?.startsWith('/auth/');
+  // change-password is an authenticated call: an expired access token is refreshed like any other API
+  const isAuthEndpoint = originalRequest?.url?.startsWith('/auth/') && originalRequest?.url !== CHANGE_PASSWORD_URL;
   const isUnauthorized = status === 401 || data?.statusCode === 401;
 
   if (isUnauthorized && !originalRequest?._retry && !isAuthEndpoint) {
@@ -127,10 +130,10 @@ request.interceptors.response.use(handleSuccess, handleError);
 request.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const isAuthEndpoint = config.url?.startsWith('/auth/');
-    const isLogout = config.url === '/auth/logout';
+    const needsToken = config.url === '/auth/logout' || config.url === CHANGE_PASSWORD_URL;
 
-    // Do not attach the Authorization header for auth endpoints except logout
-    if (isAuthEndpoint && !isLogout) {
+    // Do not attach the Authorization header for auth endpoints except logout / change-password
+    if (isAuthEndpoint && !needsToken) {
       return config;
     }
 

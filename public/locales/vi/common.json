@@ -14,5 +14,26 @@
   "searchInput": {
     "clear": "Xoá tìm kiếm",
     "searching": "Đang tìm…"
+  },
+  "changePassword": {
+    "menu": "Đổi mật khẩu",
+    "title": "Đổi mật khẩu",
+    "description": "Nhập mật khẩu hiện tại và chọn mật khẩu mới.",
+    "oldLabel": "Mật khẩu hiện tại",
+    "newLabel": "Mật khẩu mới",
+    "confirmLabel": "Xác nhận mật khẩu mới",
+    "hint": "Tối thiểu 6 ký tự.",
+    "otherDevices": "Bạn vẫn đăng nhập trên thiết bị này; các thiết bị khác sẽ bị đăng xuất.",
+    "submit": "Cập nhật mật khẩu",
+    "cancel": "Huỷ",
+    "success": "Đã đổi mật khẩu",
+    "failed": "Không thể đổi mật khẩu. Vui lòng thử lại.",
+    "oldRequired": "Vui lòng nhập mật khẩu hiện tại",
+    "oldIncorrect": "Mật khẩu hiện tại không đúng",
+    "newMin": "Mật khẩu mới phải có ít nhất 6 ký tự",
+    "newMax": "Mật khẩu mới tối đa 100 ký tự",
+    "confirmRequired": "Vui lòng xác nhận mật khẩu mới",
+    "mismatch": "Mật khẩu xác nhận không khớp",
+    "sameAsOld": "Mật khẩu mới phải khác mật khẩu hiện tại"
   }
 }

@@ -14,5 +14,26 @@
   "searchInput": {
     "clear": "Clear search",
     "searching": "Searching…"
+  },
+  "changePassword": {
+    "menu": "Change password",
+    "title": "Change password",
+    "description": "Enter your current password and choose a new one.",
+    "oldLabel": "Current password",
+    "newLabel": "New password",
+    "confirmLabel": "Confirm new password",
+    "hint": "At least 6 characters.",
+    "otherDevices": "You will stay signed in here; other devices will be signed out.",
+    "submit": "Update password",
+    "cancel": "Cancel",
+    "success": "Password changed",
+    "failed": "Could not change the password. Please try again.",
+    "oldRequired": "Please enter your current password",
+    "oldIncorrect": "Current password is incorrect",
+    "newMin": "New password must be at least 6 characters",
+    "newMax": "New password must be at most 100 characters",
+    "confirmRequired": "Please confirm your new password",
+    "mismatch": "Passwords do not match",
+    "sameAsOld": "New password must be different from the current one"
   }
 }
