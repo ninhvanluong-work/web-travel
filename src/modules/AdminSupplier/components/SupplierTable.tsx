@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 
 import type { ISupplier } from '@/api/supplier/types';
 import { Icons } from '@/assets/icons';
+import { AdminClearFiltersButton, AdminTableEmptyRow } from '@/components/ui/admin-table-state';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
@@ -16,9 +17,19 @@ interface SupplierTableProps {
   isLoading?: boolean;
   isFetching?: boolean;
   onDelete: (supplier: ISupplier) => void;
+  /** A search keyword is applied: the empty state says "no match" instead of "no suppliers yet" */
+  hasKeyword?: boolean;
+  onClearKeyword?: () => void;
 }
 
-export function SupplierTable({ suppliers, isLoading, isFetching, onDelete }: SupplierTableProps) {
+export function SupplierTable({
+  suppliers,
+  isLoading,
+  isFetching,
+  onDelete,
+  hasKeyword,
+  onClearKeyword,
+}: SupplierTableProps) {
   const { t } = useTranslation('adminPage');
 
   return (
@@ -51,14 +62,16 @@ export function SupplierTable({ suppliers, isLoading, isFetching, onDelete }: Su
             </TableRow>
           )}
           {!isLoading && suppliers.length === 0 && (
-            <TableRow>
-              <td colSpan={6}>
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
-                  <Icons.user size={40} className="opacity-25" />
-                  <p className="text-sm font-medium text-gray-500">{t('noSuppliersYet')}</p>
-                </div>
-              </td>
-            </TableRow>
+            <AdminTableEmptyRow
+              colSpan={6}
+              icon={Icons.user}
+              title={hasKeyword ? t('noSuppliersFound') : t('noSuppliersYet')}
+              action={
+                hasKeyword && onClearKeyword ? (
+                  <AdminClearFiltersButton label={t('clearSearch')} onClick={onClearKeyword} />
+                ) : null
+              }
+            />
           )}
           {!isLoading &&
             suppliers.length > 0 &&

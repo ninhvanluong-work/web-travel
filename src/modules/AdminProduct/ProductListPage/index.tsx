@@ -171,6 +171,8 @@ export default function ProductListPage() {
             onChangeStatus={handleChangeStatus}
             onDelete={setDeleteTarget}
             onManageSessions={(p) => setSessionProduct({ id: p.id, name: p.name })}
+            hasFilters={hasActiveFilters}
+            onClearFilters={resetFilters}
           />
         </div>
 
@@ -179,7 +181,7 @@ export default function ProductListPage() {
           <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
             {t('showing')}{' '}
             <span className="text-gray-900 dark:text-white">
-              {pageOffset + 1}–{Math.min(pageOffset + items.length, total)}
+              {total === 0 ? 0 : pageOffset + 1}–{Math.min(pageOffset + items.length, total)}
             </span>{' '}
             / <span className="text-gray-900 dark:text-white">{total}</span> {t('toursUnit')}
           </p>

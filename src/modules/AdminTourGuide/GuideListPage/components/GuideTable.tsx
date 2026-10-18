@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 
 import type { ITourGuide } from '@/api/tour-guide/types';
 import { Icons } from '@/assets/icons';
+import { AdminClearFiltersButton, AdminTableEmptyRow, AdminTableLoadingRow } from '@/components/ui/admin-table-state';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import { GuideTableRow } from './GuideTableRow';
@@ -12,12 +13,17 @@ interface GuideTableProps {
   isLoading?: boolean;
   isFetching?: boolean;
   onDelete: (guide: ITourGuide) => void;
+  /** A search keyword is applied: the empty state says "no match" instead of "no guides yet" */
+  hasKeyword?: boolean;
+  onClearKeyword?: () => void;
 }
+
+const COLUMN_COUNT = 6;
 
 const thClass =
   '!text-[11px] !font-semibold !uppercase !tracking-wide !text-gray-500 dark:!text-gray-400 !px-5 !py-3.5 !h-auto';
 
-export function GuideTable({ guides, isLoading, isFetching, onDelete }: GuideTableProps) {
+export function GuideTable({ guides, isLoading, isFetching, onDelete, hasKeyword, onClearKeyword }: GuideTableProps) {
   const { t } = useTranslation('adminPage');
   return (
     <div
@@ -43,18 +49,22 @@ export function GuideTable({ guides, isLoading, isFetching, onDelete }: GuideTab
         </TableHeader>
 
         <TableBody className="[&_td]:px-5 [&_td]:py-4">
-          {guides.length === 0 ? (
-            <TableRow>
-              <td colSpan={6}>
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
-                  <Icons.user size={40} className="opacity-25" />
-                  <p className="text-sm font-medium text-gray-500">{t('noGuidesYet')}</p>
-                </div>
-              </td>
-            </TableRow>
-          ) : (
-            guides.map((guide) => <GuideTableRow key={guide.id} guide={guide} onDelete={onDelete} />)
-          )}
+          {guides.length === 0 && isLoading ? <AdminTableLoadingRow colSpan={COLUMN_COUNT} /> : null}
+          {guides.length === 0 && !isLoading ? (
+            <AdminTableEmptyRow
+              colSpan={COLUMN_COUNT}
+              icon={Icons.user}
+              title={hasKeyword ? t('noGuidesFound') : t('noGuidesYet')}
+              action={
+                hasKeyword && onClearKeyword ? (
+                  <AdminClearFiltersButton label={t('clearSearch')} onClick={onClearKeyword} />
+                ) : null
+              }
+            />
+          ) : null}
+          {guides.map((guide) => (
+            <GuideTableRow key={guide.id} guide={guide} onDelete={onDelete} />
+          ))}
         </TableBody>
       </Table>
     </div>

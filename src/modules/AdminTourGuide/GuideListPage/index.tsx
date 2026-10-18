@@ -108,7 +108,14 @@ export default function GuideListPage() {
         </div>
 
         <div className="pt-2">
-          <GuideTable guides={items} isLoading={isLoading} isFetching={isFetching} onDelete={setDeleteTarget} />
+          <GuideTable
+            guides={items}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            onDelete={setDeleteTarget}
+            hasKeyword={!!keyword}
+            onClearKeyword={() => handleSearch(undefined)}
+          />
         </div>
 
         {/* Pagination - TailAdmin Style */}

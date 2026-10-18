@@ -1,9 +1,11 @@
 import { ChevronsUpDown } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import type { IProduct } from '@/api/product';
 import { Icons } from '@/assets/icons';
+import { AdminClearFiltersButton, AdminTableEmptyRow, AdminTableLoadingRow } from '@/components/ui/admin-table-state';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ROUTE } from '@/types';
@@ -16,7 +18,12 @@ interface ProductTableProps {
   onChangeStatus: (product: IProduct, status: 'published' | 'hidden') => void;
   onDelete: (product: IProduct) => void;
   onManageSessions: (product: IProduct) => void;
+  /** Keyword or advanced filters are applied: the empty state says "no match" instead of "no tours yet" */
+  hasFilters?: boolean;
+  onClearFilters?: () => void;
 }
+
+const COLUMN_COUNT = 9;
 
 type SortKey = 'name' | 'minPrice' | 'createdAt';
 
@@ -44,8 +51,17 @@ function SortableHeader({
   );
 }
 
-export function ProductTable({ products, isLoading, onChangeStatus, onDelete, onManageSessions }: ProductTableProps) {
+export function ProductTable({
+  products,
+  isLoading,
+  onChangeStatus,
+  onDelete,
+  onManageSessions,
+  hasFilters,
+  onClearFilters,
+}: ProductTableProps) {
   const router = useRouter();
+  const { t } = useTranslation('adminPage');
   const [sort, setSort] = useState<{ key: SortKey; dir: 'asc' | 'desc' } | null>(null);
 
   function handleSort(key: SortKey) {
@@ -88,28 +104,39 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete, on
         </TableHeader>
 
         <TableBody className="[&_td]:px-5 [&_td]:py-4">
-          {sorted.length === 0 ? (
-            <TableRow>
-              <td colSpan={8}>
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
-                  <Icons.packageIcon size={40} className="opacity-25" />
-                  <p className="text-sm font-medium text-gray-500">No tours yet</p>
-                  <p className="text-xs text-gray-400">Click the button below to create the first tour</p>
-                  <Button
-                    variant="primary"
-                    size="xs"
-                    rounded="md"
-                    blur={false}
-                    className="mt-1 flex items-center gap-1.5 px-4"
-                    onClick={() => router.push(ROUTE.ADMIN_PRODUCTS_CREATE)}
-                  >
-                    <Icons.plusCircle size={14} />
-                    Add New Tour
-                  </Button>
-                </div>
-              </td>
-            </TableRow>
-          ) : (
+          {sorted.length === 0 && isLoading ? <AdminTableLoadingRow colSpan={COLUMN_COUNT} /> : null}
+          {sorted.length === 0 && !isLoading && hasFilters ? (
+            <AdminTableEmptyRow
+              colSpan={COLUMN_COUNT}
+              icon={Icons.packageIcon}
+              title={t('noToursFound')}
+              action={
+                onClearFilters ? <AdminClearFiltersButton label={t('clearFilters')} onClick={onClearFilters} /> : null
+              }
+            />
+          ) : null}
+          {sorted.length === 0 && !isLoading && !hasFilters ? (
+            <AdminTableEmptyRow
+              colSpan={COLUMN_COUNT}
+              icon={Icons.packageIcon}
+              title={t('noToursYet')}
+              description={t('noToursYetDesc')}
+              action={
+                <Button
+                  variant="primary"
+                  size="xs"
+                  rounded="md"
+                  blur={false}
+                  className="mt-1 flex items-center gap-1.5 px-4"
+                  onClick={() => router.push(ROUTE.ADMIN_PRODUCTS_CREATE)}
+                >
+                  <Icons.plusCircle size={14} />
+                  {t('addTour')}
+                </Button>
+              }
+            />
+          ) : null}
+          {sorted.length > 0 &&
             sorted.map((product) => (
               <ProductTableRow
                 key={product.id}
@@ -118,8 +145,7 @@ export function ProductTable({ products, isLoading, onChangeStatus, onDelete, on
                 onDelete={onDelete}
                 onManageSessions={onManageSessions}
               />
-            ))
-          )}
+            ))}
         </TableBody>
       </Table>
     </div>
