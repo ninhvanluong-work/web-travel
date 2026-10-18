@@ -3,29 +3,14 @@ import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { useCallback, useState } from 'react';
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import { AdminConfirmDialog } from '@/components/ui/admin-confirm-dialog';
 import { Button } from '@/components/ui/button';
 import { FormWrapper } from '@/components/ui/form';
 import { useDestinationForm } from '@/hooks/use-destination-form';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 import { SectionCard } from '../../AdminProduct/ProductFormPage/components/section-card';
-import {
-  DESTINATION_FORM_ID,
-  DESTINATION_NS,
-  DESTINATION_ROUTES,
-  DIALOG_CANCEL_CLASS,
-  DIALOG_DANGER_CLASS,
-} from '../constants';
+import { DESTINATION_FORM_ID, DESTINATION_NS, DESTINATION_ROUTES } from '../constants';
 import { DeleteConfirmDialog } from '../DestinationListPage/components/DeleteConfirmDialog';
 import { useDestinationDeleteAction } from '../DestinationListPage/hooks/use-destination-list-actions';
 import { DestinationFormHeader } from './components/destination-form-header';
@@ -123,7 +108,7 @@ export default function DestinationFormPage({ destinationId }: DestinationFormPa
           </div>
 
           {isEdit && destination ? (
-            <aside className="w-80 shrink-0 hidden lg:block sticky top-[140px]">
+            <aside className="w-[320px] shrink-0 sticky top-[140px]">
               <DestinationInfoCard
                 destination={destination}
                 disabled={isPending || isDeleting}
@@ -141,20 +126,15 @@ export default function DestinationFormPage({ destinationId }: DestinationFormPa
         onCancel={handleDeleteCancel}
       />
 
-      <AlertDialog open={confirmLeave} onOpenChange={setConfirmLeave}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('discardChangesTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('discardChangesMessage')}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel className={DIALOG_CANCEL_CLASS}>{t('keepEditing')}</AlertDialogCancel>
-            <AlertDialogAction onClick={goToList} className={DIALOG_DANGER_CLASS}>
-              {t('discardChanges')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <AdminConfirmDialog
+        open={confirmLeave}
+        title={t('discardChangesTitle')}
+        description={t('discardChangesMessage')}
+        confirmLabel={t('discardChanges')}
+        cancelLabel={t('keepEditing')}
+        onConfirm={goToList}
+        onCancel={() => setConfirmLeave(false)}
+      />
     </div>
   );
 }
