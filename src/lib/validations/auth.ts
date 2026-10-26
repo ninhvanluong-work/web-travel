@@ -103,18 +103,23 @@ export const profileSchema = z.object({
   company: z.string().nonempty(validationMessages.required('Company code')),
 });
 
-export const changePasswordSchema = z.object({
-  oldPassword: z
-    .string()
-    .nonempty(validationMessages.required('Password'))
-    .min(8, validationMessages.gt(8, 'Password'))
-    .refine((v) => REGEX_PASSWORD.test(v), 'Password too week'),
-  newPassword: z
-    .string()
-    .nonempty(validationMessages.required('Password'))
-    .min(8, validationMessages.gt(8, 'Password'))
-    .refine((v) => REGEX_PASSWORD.test(v), 'Password too week'),
-});
+// Messages are `common` i18n keys (FormMessage translates them). Passwords are never trimmed.
+// The new password follows the BE rule only (min 6), same as the admin user forms; the old one is
+// only checked by the BE.
+export const changePasswordSchema = z
+  .object({
+    oldPassword: z.string().min(1, 'changePassword.oldRequired'),
+    newPassword: z.string().min(6, 'changePassword.newMin').max(100, 'changePassword.newMax'),
+    confirmPassword: z.string().min(1, 'changePassword.confirmRequired'),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'changePassword.mismatch',
+    path: ['confirmPassword'],
+  })
+  .refine((data) => !data.oldPassword || data.newPassword !== data.oldPassword, {
+    message: 'changePassword.sameAsOld',
+    path: ['newPassword'],
+  });
 
 export const signUpSchema = z.object({
   email: z

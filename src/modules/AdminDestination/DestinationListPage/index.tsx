@@ -6,6 +6,7 @@ import { useCallback } from 'react';
 import { useDestinationPagedList } from '@/api/destination/queries';
 import type { IDestination } from '@/api/destination/types';
 import { Icons } from '@/assets/icons';
+import { AdminPagination } from '@/components/ui/admin-pagination';
 import { AdminSearchInput } from '@/components/ui/admin-search-input';
 import { Button } from '@/components/ui/button';
 import { StatCard } from '@/components/ui/stat-card';
@@ -13,7 +14,6 @@ import { useDestinationFilters } from '@/hooks/use-destination-filters';
 
 import { DESTINATION_NS, DESTINATION_PAGE_SIZE, DESTINATION_ROUTES } from '../constants';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
-import { DestinationPagination } from './components/destination-pagination';
 import { DestinationTable } from './components/DestinationTable';
 import { useDestinationDeleteAction } from './hooks/use-destination-list-actions';
 
@@ -98,7 +98,8 @@ export default function DestinationListPage() {
           />
         </div>
 
-        <DestinationPagination
+        <AdminPagination
+          labels={{ showing: t('showing'), prev: t('prev'), next: t('next'), unit: t('destinationsUnit') }}
           page={page}
           totalPages={totalPages}
           total={total}

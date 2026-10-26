@@ -8,19 +8,20 @@ import { useForm } from 'react-hook-form';
 
 import { useCreateDestination, useDestinationById, useUpdateDestination } from '@/api/destination/queries';
 import type { IDestination } from '@/api/destination/types';
+import { getApiErrorMessage } from '@/lib/utils';
 import { destinationFormSchema, type DestinationFormValues } from '@/lib/validations/destination';
 import { DESTINATION_NS, DESTINATION_ROUTES } from '@/modules/AdminDestination/constants';
 import { useAlertStore } from '@/stores/use-alert-store';
 
-type ApiError = AxiosError<{ message?: string | string[] }>;
-
 const DEFAULT_VALUES: DestinationFormValues = { name: '', description: '' };
 
+// The axios interceptor rejects with the response body ({ statusCode, message }), not an AxiosError
 export function getDestinationApiError(err: unknown, fallback: string): string {
-  const msg = (err as ApiError)?.response?.data?.message;
-  if (Array.isArray(msg)) return msg.join(', ');
-  return msg || fallback;
+  return getApiErrorMessage(err, fallback);
 }
+
+const getApiStatus = (err: unknown) =>
+  (err as { statusCode?: number } | null)?.statusCode ?? (err as AxiosError | null)?.response?.status;
 
 /**
  * Used after delete: refetch every cached list query, including inactive ones (the user navigates
@@ -40,7 +41,7 @@ export function useDestinationForm(destinationId?: string) {
   const detailQuery = useDestinationById({
     variables: { id: destinationId ?? '' },
     enabled: isEdit,
-    retry: (count, err) => (err as ApiError)?.response?.status !== 404 && count < 2,
+    retry: (count, err) => getApiStatus(err) !== 404 && count < 2,
     refetchOnWindowFocus: false,
   });
 
@@ -100,7 +101,7 @@ export function useDestinationForm(destinationId?: string) {
     [destinationId, createMutation, updateMutation]
   );
 
-  const isNotFound = isEdit && (detailQuery.error as ApiError | null)?.response?.status === 404;
+  const isNotFound = isEdit && getApiStatus(detailQuery.error) === 404;
 
   return {
     form,

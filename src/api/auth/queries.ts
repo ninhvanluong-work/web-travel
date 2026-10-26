@@ -2,6 +2,7 @@ import { createMutation, createQuery } from 'react-query-kit';
 
 import {
   adminLoginRequest,
+  changePassword,
   forgotPassword,
   getListCourse,
   getUserProfile,
@@ -11,6 +12,7 @@ import {
   resetPassword,
 } from './requests';
 import type {
+  IChangePassword,
   ICourse,
   IForgotPassword,
   ILoginParams,
@@ -52,4 +54,8 @@ export const useForgotPasswordMutation = createMutation<ILoginResponse, IForgotP
 
 export const useResetPasswordMutation = createMutation<ILoginResponse, IResetPassword>({
   mutationFn: resetPassword,
+});
+
+export const useChangePasswordMutation = createMutation<ILoginResponse, IChangePassword>({
+  mutationFn: changePassword,
 });

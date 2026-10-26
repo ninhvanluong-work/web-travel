@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next';
 
 import type { IBookingListItem } from '@/api/booking/types';
 import { Icons } from '@/assets/icons';
+import { AdminClearFiltersButton, AdminTableEmptyRow } from '@/components/ui/admin-table-state';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
@@ -16,9 +17,19 @@ interface BookingDataTableProps {
   isLoading?: boolean;
   isFetching?: boolean;
   onViewDetail: (booking: IBookingListItem) => void;
+  /** Search or filters are applied: the empty state says "no match" instead of "no bookings yet" */
+  hasFilters?: boolean;
+  onClearFilters?: () => void;
 }
 
-export function BookingDataTable({ bookings, isLoading, isFetching, onViewDetail }: BookingDataTableProps) {
+export function BookingDataTable({
+  bookings,
+  isLoading,
+  isFetching,
+  onViewDetail,
+  hasFilters,
+  onClearFilters,
+}: BookingDataTableProps) {
   const { t } = useTranslation('adminPage');
 
   return (
@@ -53,14 +64,16 @@ export function BookingDataTable({ bookings, isLoading, isFetching, onViewDetail
             </TableRow>
           )}
           {!isLoading && bookings.length === 0 && (
-            <TableRow>
-              <td colSpan={8}>
-                <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
-                  <Icons.search size={40} className="opacity-25" />
-                  <p className="text-sm font-medium text-gray-500">{t('noBookingsYet')}</p>
-                </div>
-              </td>
-            </TableRow>
+            <AdminTableEmptyRow
+              colSpan={8}
+              icon={Icons.search}
+              title={hasFilters ? t('noBookingsFound') : t('noBookingsYet')}
+              action={
+                hasFilters && onClearFilters ? (
+                  <AdminClearFiltersButton label={t('clearFilters')} onClick={onClearFilters} />
+                ) : null
+              }
+            />
           )}
           {!isLoading &&
             bookings.length > 0 &&

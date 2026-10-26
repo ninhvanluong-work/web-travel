@@ -81,7 +81,17 @@ export default function SupplierListPage() {
         />
 
         <div className="pt-2">
-          <SupplierTable suppliers={items} isLoading={isLoading} isFetching={isFetching} onDelete={setDeleteTarget} />
+          <SupplierTable
+            suppliers={items}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            onDelete={setDeleteTarget}
+            hasKeyword={!!keyword.trim()}
+            onClearKeyword={() => {
+              setKeyword('');
+              setPage(1);
+            }}
+          />
         </div>
 
         <SupplierPagination

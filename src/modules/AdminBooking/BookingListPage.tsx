@@ -62,6 +62,8 @@ export function BookingListPage() {
             isLoading={isLoading}
             isFetching={isFetching}
             onViewDetail={setDetailTarget}
+            hasFilters={hasActiveFilters}
+            onClearFilters={resetFilters}
           />
         </div>
 

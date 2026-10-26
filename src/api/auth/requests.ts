@@ -121,12 +121,14 @@ export const updateProfile = async (body: IProfile): Promise<ILoginResponse> => 
 
   return data;
 };
+/** Changes the current user's password. The BE revokes every other session and returns a fresh token pair. */
 export const changePassword = async (body: IChangePassword): Promise<ILoginResponse> => {
-  const { data } = await request({
-    url: '/authentication/change-password',
+  const { data: res }: { data: ILoginApiResponse } = await request({
+    url: '/auth/change-password',
     method: 'POST',
     data: body,
   });
 
-  return data;
+  const { token, refreshToken, user } = res.data;
+  return { accessToken: token, refreshToken, user };
 };
