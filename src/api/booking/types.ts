@@ -43,6 +43,22 @@ export interface IBookingListItem {
   productId: string;
   supplierId: string;
   supplierName: string;
+  cancelReason?: string | null;
+  cancelledAt?: string | null;
+  /** UUID of the admin who cancelled the booking */
+  cancelledBy?: string | null;
+}
+
+export interface ICancelBookingPayload {
+  id: string;
+  reason: string;
+}
+
+export interface ApiCancelBookingResponse {
+  data: IBookingListItem;
+  code: number;
+  message: string;
+  error: string | null;
 }
 
 export interface IBookingPagination {
