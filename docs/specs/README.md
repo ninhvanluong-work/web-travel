@@ -135,6 +135,7 @@ docs/specs/
 | [form-actions.md](./admin/form-actions.md)                     | Bỏ nút "Đăng tour" ở chế độ tạo mới       | 📝     |
 | [booking-management.md](./admin/booking-management.md)         | Quản lý Booking, Lịch khởi hành & Giá bán | 📝     |
 | [destination-management.md](./admin/destination-management.md) | Quản lý Destination (CRUD `/destination`) | 📝     |
+| [booking-cancel.md](./admin/booking-cancel.md)                 | Admin huỷ booking `pending` kèm lý do     | 📝     |
 
 ---
 
