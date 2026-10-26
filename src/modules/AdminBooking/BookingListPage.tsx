@@ -77,7 +77,11 @@ export function BookingListPage() {
         />
       </div>
 
-      <BookingDetailDrawer booking={detailTarget} onClose={() => setDetailTarget(null)} />
+      <BookingDetailDrawer
+        booking={detailTarget}
+        onClose={() => setDetailTarget(null)}
+        onBookingChange={setDetailTarget}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import {
+  Ban,
   Building2,
   Calendar,
   Check,
@@ -24,6 +25,8 @@ import { Sheet, SheetContent, SheetHeader } from '@/components/ui/sheet';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCopy } from '@/hooks/useCopy';
 
+import { BookingCancelDialog } from './booking-cancel-dialog';
+import { BookingCancelledBy } from './booking-cancelled-by';
 import { BookingPaymentTab } from './BookingPaymentTab';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { PassengerTooltip } from './PassengerTooltip';
@@ -97,11 +100,14 @@ function BookingCodeCopy({ code }: { code: string }) {
 interface BookingDetailDrawerProps {
   booking: IBookingListItem | null;
   onClose: () => void;
+  /** Receives the updated booking after an action (e.g. cancel) so the drawer shows fresh data */
+  onBookingChange: (booking: IBookingListItem) => void;
 }
 
-export function BookingDetailDrawer({ booking, onClose }: BookingDetailDrawerProps) {
+export function BookingDetailDrawer({ booking, onClose, onBookingChange }: BookingDetailDrawerProps) {
   const { t } = useTranslation('adminPage');
   const [activeTab, setActiveTab] = useState('info');
+  const [cancelOpen, setCancelOpen] = useState(false);
 
   return (
     <Sheet open={!!booking} onOpenChange={(open) => !open && onClose()}>
@@ -140,6 +146,29 @@ export function BookingDetailDrawer({ booking, onClose }: BookingDetailDrawerPro
               </TabsList>
 
               <TabsContent value="info" className="space-y-5 mt-5 focus-visible:outline-none">
+                {booking.status === 'cancel' ? (
+                  <Section title={t('admin.booking.cancel.infoTitle')} icon={Ban} iconColorClass="text-rose-500">
+                    <div className="space-y-1 text-xs">
+                      <p className="font-medium text-slate-500 dark:text-slate-400">
+                        {t('admin.booking.cancel.reason')}
+                      </p>
+                      <p className="whitespace-pre-wrap break-words font-semibold text-slate-800 dark:text-slate-100">
+                        {booking.cancelReason || '—'}
+                      </p>
+                    </div>
+                    <FieldRow
+                      label={t('admin.booking.cancel.cancelledAt')}
+                      value={booking.cancelledAt ? dayjs(booking.cancelledAt).format('DD/MM/YYYY HH:mm') : '—'}
+                      icon={Clock}
+                    />
+                    <FieldRow
+                      label={t('admin.booking.cancel.cancelledBy')}
+                      value={<BookingCancelledBy userId={booking.cancelledBy} />}
+                      icon={User}
+                    />
+                  </Section>
+                ) : null}
+
                 {/* Customer Section */}
                 <Section title={t('bookingDetailCustomer')} icon={User} iconColorClass="text-blue-500">
                   <FieldRow label={t('guideName')} value={booking.username} icon={User} />
@@ -203,7 +232,7 @@ export function BookingDetailDrawer({ booking, onClose }: BookingDetailDrawerPro
                   />
 
                   {/* Highlighted Price Banner */}
-                  <div className="mt-4 pt-3.5 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/50 rounded-2xl px-4 py-3.5">
+                  <div className="mt-[16px] pt-3.5 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between bg-emerald-50/80 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-900/50 rounded-2xl px-[16px] py-3.5">
                     <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider">
                       {t('bookingTotalPrice')}
                     </span>
@@ -212,6 +241,21 @@ export function BookingDetailDrawer({ booking, onClose }: BookingDetailDrawerPro
                     </span>
                   </div>
                 </Section>
+
+                {/* Cancel lives apart from everything else to avoid accidental clicks */}
+                {booking.status === 'pending' ? (
+                  <div className="border-t border-slate-200 pt-5 dark:border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => setCancelOpen(true)}
+                      className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-rose-200 bg-white text-sm font-semibold text-rose-600 transition-colors hover:bg-rose-50 dark:border-rose-900/60 dark:bg-transparent dark:text-rose-400 dark:hover:bg-rose-950/30"
+                    >
+                      <Ban size={16} />
+                      {t('admin.booking.cancel.button')}
+                    </button>
+                    <p className="mt-2 text-center text-xs text-slate-400">{t('admin.booking.cancel.buttonHint')}</p>
+                  </div>
+                ) : null}
               </TabsContent>
 
               <TabsContent value="payment" className="mt-5 focus-visible:outline-none">
@@ -221,6 +265,20 @@ export function BookingDetailDrawer({ booking, onClose }: BookingDetailDrawerPro
           </div>
         )}
       </SheetContent>
+
+      <BookingCancelDialog
+        booking={cancelOpen ? booking : null}
+        totalLabel={booking ? formatPrice(booking.totalPrice, booking.currency) : ''}
+        onClose={() => setCancelOpen(false)}
+        onCancelled={(cancelled) => {
+          setCancelOpen(false);
+          onBookingChange(cancelled);
+        }}
+        onGone={() => {
+          setCancelOpen(false);
+          onClose();
+        }}
+      />
     </Sheet>
   );
 }

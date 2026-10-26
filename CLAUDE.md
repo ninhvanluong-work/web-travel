@@ -78,3 +78,44 @@ Before changing any existing logic (video behavior, state management, scroll, In
 - Must touch existing logic to complete the task → list the specific changes first, ask for approval.
 - Never "clean up" or "improve" code that was not part of the request.
 - If existing code looks wrong while reading for context, do not change it — it may be intentional.
+
+## Behavioral Guidelines
+
+Adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills/blob/main/CLAUDE.md). These bias toward caution over speed; for trivial tasks, use judgment. The Critical Rules above take precedence.
+
+### 1. Think Before Coding
+
+- State assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them — don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop, name what is confusing, and ask.
+
+### 2. Simplicity First
+
+- Minimum code that solves the problem. No features beyond what was asked.
+- No abstractions for single-use code, no unrequested "flexibility" or configurability.
+- No error handling for impossible scenarios.
+- If 200 lines could be 50, rewrite it. Ask: "Would a senior engineer call this overcomplicated?"
+
+### 3. Surgical Changes
+
+- Touch only what you must. Don't "improve" adjacent code, comments or formatting.
+- Match the existing style, even if you would do it differently.
+- If you notice unrelated dead code, mention it — don't delete it.
+- Remove imports/variables/functions that YOUR changes made unused; leave pre-existing dead code alone.
+- Every changed line should trace directly to the user's request.
+
+### 4. Goal-Driven Execution
+
+There are no automated tests, so define success as checks that can actually be run:
+
+- `pnpm lint` and `pnpm check-types` pass on the changed files.
+- The behavior is verified in the running app (phone-frame layout, the affected page/flow), including
+  empty, loading and error states where relevant.
+
+For multi-step tasks, state a brief plan with a check per step:
+
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+```

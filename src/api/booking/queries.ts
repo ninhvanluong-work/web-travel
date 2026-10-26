@@ -1,14 +1,20 @@
 import { createMutation, createQuery } from 'react-query-kit';
 
-import { createBooking, getBookingList, getBookingPaymentLogs, getBookingPayments } from './requests';
+import { cancelBooking, createBooking, getBookingList, getBookingPaymentLogs, getBookingPayments } from './requests';
 import type {
   ApiBookingDetail,
+  IBookingListItem,
   IBookingListResult,
   IBookingPayment,
   IBookingPaymentLog,
   IBookingQueryParams,
+  ICancelBookingPayload,
   ICreateBookingPayload,
 } from './types';
+
+export const useCancelBooking = createMutation<IBookingListItem, ICancelBookingPayload>({
+  mutationFn: (payload) => cancelBooking(payload),
+});
 
 export const useCreateBooking = createMutation<ApiBookingDetail, ICreateBookingPayload>({
   mutationFn: (payload) => createBooking(payload),

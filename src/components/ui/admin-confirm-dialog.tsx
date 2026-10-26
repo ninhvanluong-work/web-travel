@@ -32,6 +32,8 @@ interface AdminConfirmDialogProps {
   /** Keeps the dialog open and shows a spinner while the request is running */
   isPending?: boolean;
   tone?: 'danger' | 'primary';
+  /** Disables the confirm button (e.g. until a required reason is typed) */
+  confirmDisabled?: boolean;
   /** Extra content between the description and the buttons (warnings, details) */
   children?: ReactNode;
   onConfirm: () => void;
@@ -47,6 +49,7 @@ export function AdminConfirmDialog({
   cancelLabel,
   isPending = false,
   tone = 'danger',
+  confirmDisabled = false,
   children,
   onConfirm,
   onCancel,
@@ -74,7 +77,7 @@ export function AdminConfirmDialog({
               e.preventDefault();
               onConfirm();
             }}
-            disabled={isPending}
+            disabled={isPending || confirmDisabled}
             className={cn(tone === 'danger' ? DIALOG_DANGER_CLASS : DIALOG_PRIMARY_CLASS)}
           >
             {isPending ? <Loader2 size={14} className="animate-spin" /> : null}
