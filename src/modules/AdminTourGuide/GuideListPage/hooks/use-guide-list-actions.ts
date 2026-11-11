@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useDeleteTourGuide } from '@/api/tour-guide/queries';
 import type { ITourGuide } from '@/api/tour-guide/types';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 export function useGuideListActions(refetch: () => void) {
@@ -16,7 +17,7 @@ export function useGuideListActions(refetch: () => void) {
       setDeleteTarget(null);
       refetch();
     },
-    onError: () => addAlert({ type: 'error', title: t('deleteFailed') }),
+    onError: (err: unknown) => addAlert({ type: 'error', title: getApiErrorMessage(err, t('deleteFailed')) }),
   });
 
   const handleDeleteConfirm = () => {
@@ -24,5 +25,5 @@ export function useGuideListActions(refetch: () => void) {
     deleteMutation.mutate({ id: deleteTarget.id });
   };
 
-  return { deleteTarget, setDeleteTarget, handleDeleteConfirm, isDeleting: deleteMutation.isPending };
+  return { deleteTarget, setDeleteTarget, handleDeleteConfirm, isDeleting: deleteMutation.isLoading };
 }

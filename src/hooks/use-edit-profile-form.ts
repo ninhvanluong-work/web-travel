@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { useTourGuideById, useTourGuideMoments } from '@/api/tour-guide/queries';
 import { updateTourGuide } from '@/api/tour-guide/requests';
 import type { TourGuideFormPayload } from '@/api/tour-guide/types';
+import { getApiErrorMessage } from '@/lib/utils';
 import { type TourGuideFormValues, tourGuideSchema } from '@/lib/validations/tour-guide';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { useUserStore } from '@/stores/UserStore';
@@ -174,10 +175,11 @@ export function useEditProfileForm({ open, guideId, onClose }: UseEditProfileFor
       onClose();
     } catch (err) {
       const apiError = err as { statusCode?: number };
+      // Other errors (403 not your profile, validation…) show the BE message as-is
       const title =
         apiError?.statusCode === 401
           ? t('errorUnauthorized', { ns: 'adminPage' })
-          : t('genericError', { ns: 'adminPage' });
+          : getApiErrorMessage(err, t('genericError', { ns: 'adminPage' }));
       useAlertStore.getState().addAlert({ type: 'error', title, duration: 3000 });
     } finally {
       setSaving(false);

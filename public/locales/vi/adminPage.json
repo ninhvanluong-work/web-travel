@@ -532,5 +532,17 @@
   "admin.booking.cancel.infoTitle": "Thông tin huỷ",
   "admin.booking.cancel.reason": "Lý do",
   "admin.booking.cancel.cancelledAt": "Thời điểm huỷ",
-  "admin.booking.cancel.cancelledBy": "Người huỷ"
+  "admin.booking.cancel.cancelledBy": "Người huỷ",
+  "admin.guide.delete.impactTitle": "Việc xoá này còn ảnh hưởng tới",
+  "admin.guide.delete.linkedAccount": "Tài khoản {{account}} đang gắn với hướng dẫn viên này và sẽ mất hồ sơ.",
+  "admin.guide.delete.moments": "Hướng dẫn viên có {{count}} video moment.",
+  "admin.guide.moments.title": "Moments",
+  "admin.guide.moments.description": "Video moment của hướng dẫn viên. Admin có thể xoá moment không phù hợp; chỉ hướng dẫn viên mới thêm hoặc sửa được.",
+  "admin.guide.moments.empty": "Hướng dẫn viên chưa có moment nào",
+  "admin.guide.moments.delete": "Xoá moment",
+  "admin.guide.moments.deleteTitle": "Xoá moment này?",
+  "admin.guide.moments.deleteMessage": "\"{{name}}\" sẽ bị gỡ khỏi hồ sơ hướng dẫn viên. Không thể hoàn tác.",
+  "admin.guide.moments.deleted": "Đã xoá moment",
+  "admin.guide.moments.deleteFailed": "Không thể xoá moment",
+  "admin.guide.moments.unit": "moment"
 }

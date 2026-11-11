@@ -1,5 +1,6 @@
 import { createInfiniteQuery, createMutation, createQuery } from 'react-query-kit';
 
+import { ensureAdminAuth } from '../admin-auth-guard';
 import {
   createTourGuide,
   createTourGuideMoment,
@@ -67,8 +68,13 @@ export const useCreateTourGuide = createMutation<ApiTourGuideDetail, TourGuideFo
   mutationFn: (payload) => createTourGuide(payload),
 });
 
+// Admin form only. The admin check lives here, not in updateTourGuide, because the client profile
+// page also calls updateTourGuide with the tour guide's own token.
 export const useUpdateTourGuide = createMutation<ApiTourGuideDetail, { id: string; payload: TourGuideFormPayload }>({
-  mutationFn: ({ id, payload }) => updateTourGuide(id, payload),
+  mutationFn: ({ id, payload }) => {
+    ensureAdminAuth();
+    return updateTourGuide(id, payload);
+  },
 });
 
 export const useDeleteTourGuide = createMutation<void, { id: string }>({
@@ -135,6 +141,14 @@ export interface IDeleteMomentVariables {
 
 export const useDeleteTourGuideMoment = createMutation<void, IDeleteMomentVariables>({
   mutationFn: ({ guideId, momentId }) => deleteTourGuideMoment(guideId, momentId),
+});
+
+/** Admin moderation: same endpoint, but requires an admin session (the client sheet uses the guide's token). */
+export const useAdminDeleteTourGuideMoment = createMutation<void, IDeleteMomentVariables>({
+  mutationFn: ({ guideId, momentId }) => {
+    ensureAdminAuth();
+    return deleteTourGuideMoment(guideId, momentId);
+  },
 });
 
 export const useTourGuideReviewsInfinite = createInfiniteQuery<

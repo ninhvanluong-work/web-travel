@@ -11,7 +11,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import AlertBanner from '@/components/ui/AlertBanner';
 import { Button } from '@/components/ui/button';
+
+import { useGuideDeleteImpact } from '../hooks/use-guide-delete-impact';
 
 interface DeleteConfirmDialogProps {
   target: ITourGuide | null;
@@ -22,6 +25,9 @@ interface DeleteConfirmDialogProps {
 
 export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }: DeleteConfirmDialogProps) {
   const { t } = useTranslation('adminPage');
+
+  const { impactMessage, isCheckingImpact } = useGuideDeleteImpact(target);
+
   return (
     <AlertDialog
       open={!!target}
@@ -38,6 +44,9 @@ export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }:
             {t('confirmDeleteMessage', { name: target?.name })}
           </AlertDialogDescription>
         </AlertDialogHeader>
+        {impactMessage ? (
+          <AlertBanner variant="warning" title={t('admin.guide.delete.impactTitle')} message={impactMessage} />
+        ) : null}
         <AlertDialogFooter className="flex flex-row justify-end gap-3 sm:space-x-0 mt-2">
           <AlertDialogCancel
             className="mt-0 h-10 px-5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-800 transition-all font-semibold text-sm active:scale-95 dark:border-gray-800 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 shrink-0"
@@ -47,7 +56,7 @@ export function DeleteConfirmDialog({ target, isDeleting, onConfirm, onCancel }:
             {t('cancel')}
           </AlertDialogCancel>
           <Button
-            disabled={isDeleting}
+            disabled={isDeleting || isCheckingImpact}
             onClick={onConfirm}
             blur={false}
             className="h-10 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 hover:text-white transition-all font-semibold text-sm active:scale-95 active:bg-rose-800 border-0 flex items-center gap-1.5 shrink-0 shadow-sm disabled:opacity-50"

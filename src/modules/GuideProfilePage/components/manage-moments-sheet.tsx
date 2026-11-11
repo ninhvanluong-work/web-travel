@@ -26,6 +26,8 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { unlockVideoPool } from '@/hooks/use-shared-video';
+import { getApiErrorMessage } from '@/lib/utils';
+import { useAlertStore } from '@/stores/use-alert-store';
 
 import { AddMomentSheet } from './manage-moments-add-sheet';
 import { VideoPopup } from './moments-grid-video-popup';
@@ -171,9 +173,27 @@ export default function ManageMomentsSheet({ open, onClose, guideId }: ManageMom
         next.add(id);
         return next;
       });
-      deleteMoment({ guideId, momentId: id }, { onSuccess: onDeleteSuccess });
+      deleteMoment(
+        { guideId, momentId: id },
+        {
+          onSuccess: onDeleteSuccess,
+          // The moment was hidden optimistically: bring it back and say why (e.g. 403 / 404 from the BE)
+          onError: (err: unknown) => {
+            setDeletedIds((prev) => {
+              const next = new Set(prev);
+              next.delete(id);
+              return next;
+            });
+            useAlertStore.getState().addAlert({
+              type: 'error',
+              title: getApiErrorMessage(err, t('manageMomentsSheet.deleteFailed')),
+              duration: 3000,
+            });
+          },
+        }
+      );
     },
-    [guideId, deleteMoment, onDeleteSuccess]
+    [guideId, deleteMoment, onDeleteSuccess, t]
   );
 
   // Infinite scroll sentinel
