@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
-import type { UseFormReturn } from 'react-hook-form';
+import { type UseFormReturn, useFormState } from 'react-hook-form';
 
 import type { ProductFormValues } from '@/lib/validations/product';
 
@@ -18,22 +18,37 @@ export function useProductDraft(productId: string | undefined, form: UseFormRetu
   const [hasDraft, setHasDraft] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Only user edits are worth saving; the interval reads these refs instead of re-subscribing
+  const { isDirty } = useFormState({ control: form.control });
+  const isDirtyRef = useRef(isDirty);
+  isDirtyRef.current = isDirty;
+  // An existing draft must not be overwritten before the user picks Restore or Discard
+  const pendingDraftRef = useRef(false);
+
   useEffect(() => {
     if (productId) return;
     const key = getDraftKey(productId);
     const raw = localStorage.getItem(key);
-    if (raw) setHasDraft(true);
+    if (raw) {
+      pendingDraftRef.current = true;
+      setHasDraft(true);
+    }
   }, [productId]);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
+      if (pendingDraftRef.current || !isDirtyRef.current) return;
       const key = getDraftKey(productId);
       const draft: DraftData = {
         formValues: form.getValues(),
         savedAt: new Date().toISOString(),
       };
-      localStorage.setItem(key, JSON.stringify(draft));
-      setLastSaved(format(new Date(), 'HH:mm'));
+      try {
+        localStorage.setItem(key, JSON.stringify(draft));
+        setLastSaved(format(new Date(), 'HH:mm'));
+      } catch {
+        // Storage full or unavailable: skip this round rather than breaking the form
+      }
     }, 5000);
 
     return () => {
@@ -48,9 +63,12 @@ export function useProductDraft(productId: string | undefined, form: UseFormRetu
     try {
       const draft = JSON.parse(raw) as DraftData;
       form.reset(draft.formValues);
+      pendingDraftRef.current = false;
       setHasDraft(false);
       return true;
     } catch {
+      // Unreadable draft: let autosave take over again
+      pendingDraftRef.current = false;
       return false;
     }
   }
@@ -58,6 +76,7 @@ export function useProductDraft(productId: string | undefined, form: UseFormRetu
   function discardDraft() {
     const key = getDraftKey(productId);
     localStorage.removeItem(key);
+    pendingDraftRef.current = false;
     setHasDraft(false);
   }
 
