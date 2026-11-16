@@ -92,7 +92,7 @@ export function useSupplierPaymentForm(supplierId: string, target: ISupplierPaym
     },
   });
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending = createMutation.isLoading || updateMutation.isLoading;
 
   const handleSubmit = () => {
     if (!validate()) return;

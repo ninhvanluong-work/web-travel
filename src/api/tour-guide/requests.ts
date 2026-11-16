@@ -1,3 +1,4 @@
+import { ensureAdminAuth } from '../admin-auth-guard';
 import { request } from '../axios';
 import { mergeWithLocalStorage } from './mock-adapter';
 import type {
@@ -159,6 +160,7 @@ export async function getTourGuideById(id: string): Promise<ITourGuideProfile> {
 }
 
 export async function createTourGuide(payload: TourGuideFormPayload): Promise<ApiTourGuideDetail> {
+  ensureAdminAuth();
   const { data } = await request.post<ApiTourGuideDetailResponse>('/tour-guide', payload);
   return data.data;
 }
@@ -169,6 +171,7 @@ export async function updateTourGuide(id: string, payload: TourGuideFormPayload)
 }
 
 export async function deleteTourGuide(id: string): Promise<void> {
+  ensureAdminAuth();
   await request.delete(`/tour-guide/${id}`);
 }
 

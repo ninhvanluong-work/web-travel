@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 import { CreateSessionModal } from './create-session-modal';
@@ -56,9 +57,8 @@ export function SessionSection({ productId, units }: Props) {
           useAlertStore.getState().addAlert({ type: 'success', title: t('sessionDeleteSuccess') });
           setDeleteTarget(null);
         },
-        onError: (err: any) => {
-          const msg = err?.response?.data?.message;
-          const text = Array.isArray(msg) ? msg.join(', ') : msg ?? t('genericError');
+        onError: (err: unknown) => {
+          const text = getApiErrorMessage(err, t('genericError'));
           useAlertStore.getState().addAlert({ type: 'error', title: text });
           setDeleteTarget(null);
         },

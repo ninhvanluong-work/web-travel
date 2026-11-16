@@ -21,6 +21,7 @@ import { GuideFormHeader } from './components/guide-form-header';
 import { BasicInfoSection } from './components/sections/basic-info-section';
 import { CareerSection } from './components/sections/career-section';
 import { ExpertsSection } from './components/sections/experts-section';
+import { MomentsSection } from './components/sections/moments-section';
 import { useGuideForm } from './hooks/use-guide-form';
 
 interface GuideFormPageProps {
@@ -151,6 +152,16 @@ export default function GuideFormPage({ guideId }: GuideFormPageProps) {
                   {id === 'section-career' && <CareerSection />}
                 </SectionCard>
               ))}
+              {/* Not a form field: moments are moderated (deleted) independently of saving the form */}
+              {isEdit && guideId ? (
+                <SectionCard
+                  id="section-moments"
+                  label={t('admin.guide.moments.title')}
+                  description={t('admin.guide.moments.description')}
+                >
+                  <MomentsSection guideId={guideId} />
+                </SectionCard>
+              ) : null}
             </div>
           </div>
         </FormWrapper>

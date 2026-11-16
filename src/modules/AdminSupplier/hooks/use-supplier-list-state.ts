@@ -34,5 +34,5 @@ export function useSupplierListState(refetch: () => void) {
     deleteMutation.mutate({ id: deleteTarget.id });
   };
 
-  return { deleteTarget, setDeleteTarget, handleDeleteConfirm, isDeleting: deleteMutation.isPending };
+  return { deleteTarget, setDeleteTarget, handleDeleteConfirm, isDeleting: deleteMutation.isLoading };
 }

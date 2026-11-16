@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 
 import { useCreateTourGuide, useTourGuideById, useUpdateTourGuide } from '@/api/tour-guide/queries';
 import type { TourGuideFormPayload } from '@/api/tour-guide/types';
+import { getApiErrorMessage } from '@/lib/utils';
 import { type TourGuideFormValues, tourGuideSchema } from '@/lib/validations/tour-guide';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { ROUTE } from '@/types';
@@ -82,6 +83,10 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
     careerPath: data.careerPath,
   });
 
+  // The axios interceptor rejects with the BE body ({ statusCode, message }): show its message as-is
+  const onMutationError = (err: unknown) =>
+    addAlert({ type: 'error', title: getApiErrorMessage(err, t('genericError')) });
+
   const createMutation = useCreateTourGuide({
     onSuccess: (created) => {
       invalidate();
@@ -91,16 +96,10 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
       onAfterSave?.();
       router.replace(ROUTE.ADMIN_GUIDES_EDIT(created.id));
     },
-    onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
-    },
+    onError: onMutationError,
   });
 
-  const updateMutation = useUpdateTourGuide({
-    onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
-    },
-  });
+  const updateMutation = useUpdateTourGuide({ onError: onMutationError });
 
   const onSubmit = (data: TourGuideFormValues) => {
     if (isEdit) {
@@ -121,7 +120,7 @@ export function useGuideForm(guideId?: string, onAfterSave?: () => void) {
     }
   };
 
-  const isPending = createMutation.isPending || updateMutation.isPending;
+  const isPending = createMutation.isLoading || updateMutation.isLoading;
 
   return { form, isEdit, guideData, onSubmit, isPending };
 }

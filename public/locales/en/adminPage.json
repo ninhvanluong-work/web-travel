@@ -532,5 +532,17 @@
   "admin.booking.cancel.infoTitle": "Cancellation",
   "admin.booking.cancel.reason": "Reason",
   "admin.booking.cancel.cancelledAt": "Cancelled at",
-  "admin.booking.cancel.cancelledBy": "Cancelled by"
+  "admin.booking.cancel.cancelledBy": "Cancelled by",
+  "admin.guide.delete.impactTitle": "This deletion also affects",
+  "admin.guide.delete.linkedAccount": "The account {{account}} is linked to this tour guide and will lose its profile.",
+  "admin.guide.delete.moments": "{{count}} video moment(s) belong to this tour guide.",
+  "admin.guide.moments.title": "Moments",
+  "admin.guide.moments.description": "The tour guide's video moments. Admins can delete inappropriate ones; only the guide can add or edit.",
+  "admin.guide.moments.empty": "This tour guide has no moments yet",
+  "admin.guide.moments.delete": "Delete moment",
+  "admin.guide.moments.deleteTitle": "Delete this moment?",
+  "admin.guide.moments.deleteMessage": "\"{{name}}\" will be removed from the tour guide's profile. This cannot be undone.",
+  "admin.guide.moments.deleted": "Moment deleted",
+  "admin.guide.moments.deleteFailed": "Could not delete the moment",
+  "admin.guide.moments.unit": "moments"
 }

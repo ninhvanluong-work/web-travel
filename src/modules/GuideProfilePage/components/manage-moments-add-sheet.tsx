@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { Spinner } from '@/components/ui/spinner';
 import { TextArea } from '@/components/ui/textarea';
 import { normalizeSingleLine, normalizeText } from '@/lib/text-normalize';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 import { ProgressCircle } from './moments-upload-progress-circle';
@@ -172,9 +173,10 @@ export function AddMomentSheet({ open, onClose, guideId, editMoment }: AddMoment
       setErrorPhase('saving');
       const apiError = err as { statusCode?: number };
       const isUnauthorized = apiError?.statusCode === 401;
+      // Other errors (403 not your moment, 404, validation…) show the BE message as-is
       const errorTitle = isUnauthorized
         ? t('manageMomentsSheet.errorUnauthorized')
-        : t(editMoment ? 'manageMomentsSheet.editFailed' : 'manageMomentsSheet.saveFailed');
+        : getApiErrorMessage(err, t(editMoment ? 'manageMomentsSheet.editFailed' : 'manageMomentsSheet.saveFailed'));
       useAlertStore.getState().addAlert({ type: 'error', title: errorTitle, duration: 3000 });
     }
   }

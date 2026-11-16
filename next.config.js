@@ -16,9 +16,13 @@ const nextConfig = {
   i18n,
   images: {
     domains: [],
+    // Only hosts that actually serve our images (checked against the DB on 2026-11-11); a wildcard
+    // turns /_next/image into an open proxy. Add a host here when a new image source is introduced.
     remotePatterns: [
-      { protocol: 'https', hostname: '**' },
-      { protocol: 'http', hostname: '**' },
+      { protocol: 'https', hostname: '*.b-cdn.net' }, // Bunny CDN: uploads + video thumbnails
+      { protocol: 'https', hostname: 'player.mediadelivery.net' }, // Bunny Stream thumbnails
+      { protocol: 'https', hostname: 'images.unsplash.com' }, // placeholders in code
+      { protocol: 'https', hostname: 'api.dicebear.com' }, // seeded tour guide avatars
     ],
     // unoptimized: true,
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

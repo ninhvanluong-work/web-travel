@@ -142,7 +142,8 @@
     "editSuccess": "Moment updated successfully!",
     "deleteConfirmTitle": "Delete this moment?",
     "deleteConfirmDesc": "This action cannot be undone.",
-    "deleteConfirm": "Delete"
+    "deleteConfirm": "Delete",
+    "deleteFailed": "Could not delete the moment"
   },
   "expertise": {
     "browseSkills": "Browse standard skills",

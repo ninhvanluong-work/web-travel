@@ -135,7 +135,7 @@ export function useSupplierForm(supplierId?: string) {
     emailError,
     isEdit,
     isLoadingSupplier,
-    isPending: createMutation.isPending || updateMutation.isPending,
+    isPending: createMutation.isLoading || updateMutation.isLoading,
     onSubmit,
   };
 }

@@ -8,6 +8,7 @@ import type { ApiElementItem } from '@/api/element/types';
 import { Icons } from '@/assets/icons';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 interface ElementComboboxProps {
@@ -30,7 +31,7 @@ export function ElementCombobox({
   className,
 }: ElementComboboxProps) {
   const queryClient = useQueryClient();
-  const { mutateAsync: createEl, isPending: isCreating } = useCreateElement();
+  const { mutateAsync: createEl, isLoading: isCreating } = useCreateElement();
   const { t } = useTranslation('adminPage');
 
   const [query, setQuery] = useState('');
@@ -90,8 +91,7 @@ export function ElementCombobox({
       setOpen(false);
       useAlertStore.getState().addAlert({ type: 'success', title: t('createdElementSuccess', { name: newEl.name }) });
     } catch (err: unknown) {
-      const axiosMsg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      const msg = axiosMsg ?? (err instanceof Error ? err.message : t('createElementFailed'));
+      const msg = getApiErrorMessage(err, t('createElementFailed'));
       useAlertStore.getState().addAlert({ type: 'error', title: msg });
     }
   }

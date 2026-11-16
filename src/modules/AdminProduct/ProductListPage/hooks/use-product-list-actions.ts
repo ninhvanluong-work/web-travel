@@ -1,16 +1,10 @@
-import type { AxiosError } from 'axios';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import type { IProduct } from '@/api/product';
 import { useDeleteProduct, useUpdateProductStatus } from '@/api/product';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
-
-type ApiError = AxiosError<{ message?: string }>;
-
-function getApiErrorMessage(err: unknown, fallback: string): string {
-  return (err as ApiError)?.response?.data?.message || fallback;
-}
 
 export function useProductListActions(refetch: () => void) {
   const { t } = useTranslation('adminPage');
