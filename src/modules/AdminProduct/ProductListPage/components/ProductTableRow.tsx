@@ -24,6 +24,10 @@ const STATUS_CONFIG: Record<ProductStatus, { labelKey: string; className: string
   hidden: { labelKey: 'statusHidden', className: 'bg-slate-50 text-slate-600 ring-slate-200' },
 };
 
+// The BE has no DELETE /product/{id} yet (404 "Cannot DELETE"), so the item would always fail.
+// Use "Hide" to take a tour off the site; flip this once the endpoint exists.
+const PRODUCT_DELETE_ENABLED = false;
+
 const STATUS_OPTIONS: { value: 'published' | 'hidden'; labelKey: string }[] = [
   { value: 'published', labelKey: 'actionPublish' },
   { value: 'hidden', labelKey: 'actionHide' },
@@ -187,16 +191,20 @@ export function ProductTableRow({ product, onChangeStatus, onDelete, onManageSes
               </DropdownMenuItem>
             ))}
 
-            <DropdownMenuSeparator />
+            {PRODUCT_DELETE_ENABLED ? (
+              <>
+                <DropdownMenuSeparator />
 
-            {/* Delete */}
-            <DropdownMenuItem
-              className="text-red-600 focus:text-red-600 focus:bg-red-50"
-              onSelect={() => onDelete(product)}
-            >
-              <Trash2 size={14} className="mr-2" />
-              {t('deleteTour')}
-            </DropdownMenuItem>
+                {/* Delete */}
+                <DropdownMenuItem
+                  className="text-red-600 focus:text-red-600 focus:bg-red-50"
+                  onSelect={() => onDelete(product)}
+                >
+                  <Trash2 size={14} className="mr-2" />
+                  {t('deleteTour')}
+                </DropdownMenuItem>
+              </>
+            ) : null}
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
