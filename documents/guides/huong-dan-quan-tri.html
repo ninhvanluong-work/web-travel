@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hướng dẫn sử dụng · Trang quản trị</title>
+<link rel="stylesheet" href="guide.css" />
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <small>Hướng dẫn sử dụng · dành cho quản trị viên</small>
+    <h1>Quản lý tour, lịch, đơn đặt và người dùng</h1>
+    <p>Mỗi phần là một công việc thường ngày. Chỗ cần bấm được khoanh màu đỏ. Bấm vào hình để xem to hơn. Thông tin khách hàng trong hình đã được làm mờ.</p>
+    <div class="legend">
+      <span><i></i> Chỗ cần bấm</span>
+      <span>➜ Màn hình tiếp theo</span>
+    </div>
+  </div>
+</header>
+<nav class="menu"><div class="wrap" id="menu"></div></nav>
+<main id="main"></main>
+<div class="lb" id="lb"><img alt="" /></div>
+<footer>Hình chụp từ trang quản trị thật · thông tin khách hàng đã được làm mờ · cập nhật 16/11/2026</footer>
+
+<script>
+window.GUIDE = {
+  frame: 'desktop',
+  width: 560,
+  journeys: [
+    {
+      title: 'Đăng nhập & di chuyển',
+      goal: 'Đăng nhập bằng tài khoản quản trị. Thanh menu bên trái dẫn tới mọi mục quản lý.',
+      steps: [
+        { title: 'Đăng nhập', img: 'img/admin/01-login.jpg', do: 'Nhập email, mật khẩu và bấm **Đăng nhập**.', result: 'Vào trang Danh sách Tour.' },
+        { title: 'Menu bên trái', img: 'img/admin/02-products.jpg', do: 'Chọn mục cần làm: **Sản phẩm**, **Điểm đến**, **Hướng dẫn viên**, **Nhà cung cấp**, **Video**, **Booking**, **Người dùng**. Cuối menu có **Đổi mật khẩu** và **Đăng xuất**.', result: 'Mở màn hình tương ứng.' },
+      ],
+      notes: [
+        { text: '**Lưu ý:** một tài khoản chỉ nên đăng nhập ở một nơi. Đăng nhập cùng tài khoản trên máy khác sẽ làm phiên đang mở bị đăng xuất.' },
+      ],
+    },
+    {
+      title: 'Quản lý tour',
+      goal: 'Tạo tour mới, chỉnh sửa, ẩn/hiện tour và mở lịch khởi hành.',
+      steps: [
+        { title: 'Thêm tour', img: 'img/admin/02-products.jpg', do: 'Bấm **Thêm Tour mới** để tạo tour.', result: 'Mở trang nhập thông tin tour.' },
+        { title: 'Thao tác với 1 tour', img: 'img/admin/04-products-menu.jpg', do: 'Bấm **⋯** ở cuối dòng: **Chỉnh sửa**, **Xuất bản** (cho khách thấy) hoặc **Ẩn** (gỡ khỏi trang khách).', result: 'Trạng thái tour cập nhật ngay.' },
+        { title: 'Sửa & lưu tour', img: 'img/admin/05-product-form.jpg', do: 'Cập nhật các mục (video, tags, tổng quan, lịch trình, gói, điểm đón, giờ khởi hành, giá theo người…). Bấm **Save Changes**.', result: 'Lưu xong vẫn ở lại trang để sửa tiếp. Bấm **Danh sách** để quay lại.' },
+      ],
+      notes: [
+        { type: 'tip', text: '**Tạo tour mới có bản nháp tự động:** nếu lỡ đóng trang, lần sau mở lại sẽ có thông báo hỏi khôi phục.' },
+        { text: '**Không có nút xoá tour.** Muốn gỡ tour khỏi trang khách, dùng **Ẩn**.' },
+      ],
+    },
+    {
+      title: 'Lịch khởi hành & giá',
+      goal: 'Khách chỉ đặt được những ngày có lịch và có giá. Thiết lập ở mục Lịch & Giá của từng tour.',
+      steps: [
+        { title: 'Mở Lịch & Giá', img: 'img/admin/03-products-schedule.jpg', do: 'Ở danh sách tour, bấm **biểu tượng lịch** trên dòng tour (hoặc nút **Quản lý Lịch & Giá** trong trang sửa tour).', result: 'Bảng lịch mở ra ở bên phải.' },
+        { title: 'Tạo lịch', img: 'img/admin/06-schedule-sheet.jpg', do: 'Bấm **Tạo 1 ngày** cho một ngày, hoặc **Tạo dải ngày** cho nhiều ngày (chọn khoảng ngày, các thứ trong tuần, số chỗ và **giá cho từng loại khách**).', result: 'Lịch mới xuất hiện trong bảng.' },
+      ],
+      notes: [
+        { text: '**Quan trọng:** dòng có nhãn “Chưa có giá” nghĩa là khách có thể thấy giá 0đ. Luôn nhập giá khi tạo lịch; bấm biểu tượng bút trên dòng để sửa.' },
+      ],
+    },
+    {
+      title: 'Danh mục khác',
+      goal: 'Các màn danh mục dùng chung một cách làm: tìm kiếm → thêm mới hoặc chỉnh sửa → lưu.',
+      steps: [
+        { title: 'Điểm đến', img: 'img/admin/07-destinations.jpg', do: 'Bấm **Thêm điểm đến**, nhập tên và mô tả, rồi lưu.', result: 'Điểm đến dùng được khi tạo tour.' },
+        { title: 'Hướng dẫn viên', img: 'img/admin/08-guides.jpg', do: 'Bấm **Thêm Hướng dẫn viên** hoặc bấm vào tên để sửa. Trong trang sửa có mục **Moments** để xem và xoá video không phù hợp.', result: 'Hồ sơ cập nhật ngay trên trang khách.' },
+        { title: 'Nhà cung cấp', img: 'img/admin/09-suppliers.jpg', do: 'Bấm **Thêm Nhà cung cấp**. Sau khi lưu, trang sửa có mục **Thanh toán & Tài khoản Ngân hàng** để thêm tài khoản.', result: 'Nhà cung cấp dùng được khi tạo tour.' },
+        { title: 'Video', img: 'img/admin/10-videos.jpg', do: 'Nhập tên video, rồi **kéo thả file** vào ô khoanh đỏ (hoặc bấm để chọn file .mp4).', result: 'Video tải lên và xuất hiện trong danh sách bên phải.' },
+      ],
+      notes: [
+        { type: 'tip', text: '**Tìm nhanh:** gõ vào ô tìm kiếm, kết quả tự lọc sau giây lát. Không có kết quả sẽ có nút **Xoá tìm kiếm**.' },
+      ],
+    },
+    {
+      title: 'Đơn đặt tour (Booking)',
+      goal: 'Xem đơn khách đặt, theo dõi thanh toán và huỷ đơn khi cần.',
+      steps: [
+        { title: 'Danh sách đơn', img: 'img/admin/11-bookings.jpg', do: 'Lọc theo trạng thái, ngày, nhà cung cấp, tour. Bấm **biểu tượng con mắt** ở cuối dòng để xem chi tiết.', result: 'Chi tiết đơn mở ở bên phải.' },
+        { title: 'Chi tiết đơn', img: 'img/admin/12-booking-drawer.jpg', do: 'Tab **Thông tin Booking** và **Thanh toán & Lịch sử**. Đơn đang “Chờ xử lý” có nút **Huỷ booking** ở cuối.', result: 'Mở hộp xác nhận huỷ.' },
+        { title: 'Xác nhận huỷ', img: 'img/admin/13-booking-cancel-dialog.jpg', do: 'Nhập **lý do huỷ** (bắt buộc), kiểm tra lại thông tin rồi bấm **Huỷ booking**. Đổi ý thì bấm **Giữ lại booking**.', result: 'Đơn chuyển sang “Đã huỷ”, lý do được lưu lại.' },
+      ],
+      notes: [
+        { text: '**Huỷ đơn không thể hoàn tác.** Nếu có cảnh báo “đơn đang có giao dịch thanh toán chờ xử lý”, cần kiểm tra để hoàn tiền thủ công khi khách đã trả.' },
+      ],
+    },
+    {
+      title: 'Người dùng & mật khẩu',
+      goal: 'Tạo tài khoản, phân quyền và hỗ trợ người dùng quên mật khẩu.',
+      steps: [
+        { title: 'Danh sách người dùng', img: 'img/admin/14-users.jpg', do: 'Lọc theo vai trò, tìm theo tên/email. Bấm **Thêm người dùng** để tạo tài khoản mới.', result: 'Mở trang tạo người dùng.' },
+        { title: 'Đặt lại mật khẩu', img: 'img/admin/15-user-form.jpg', do: 'Trong trang sửa người dùng, bấm **Đặt lại mật khẩu** để đặt mật khẩu mới cho họ (có nút tạo mật khẩu ngẫu nhiên).', result: 'Gửi mật khẩu mới cho người dùng qua kênh an toàn.' },
+        { title: 'Đổi mật khẩu của bạn', img: 'img/admin/16-change-password.jpg', do: 'Bấm **Đổi mật khẩu** ở cuối menu trái, nhập mật khẩu hiện tại và mật khẩu mới.', result: 'Các máy khác đang đăng nhập tài khoản này sẽ bị đăng xuất.' },
+      ],
+      notes: [
+        { text: '**Phân quyền:** Quản trị viên chỉ tạo được Khách hàng và Hướng dẫn viên. Chỉ Quản trị cấp cao mới tạo được Quản trị viên.' },
+      ],
+    },
+  ],
+};
+</script>
+<script src="guide.js"></script>
+</body>
+</html>
