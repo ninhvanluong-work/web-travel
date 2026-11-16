@@ -23,4 +23,7 @@ Các bước trong `test-cases.md` chỉ tham chiếu mã `TD-xx`. Mật khẩu,
 | TD-17 | Link video chia sẻ | `/vi/video/du-lich-mien-bac-sapa-f955` | Mở trực tiếp để kiểm tra reload gate |
 | TD-18 | Lý do huỷ booking | `ZZ QA test 2026-11-16 - huy booking test` | |
 | TD-19 | User thường để kiểm tra phân quyền gán vai trò | `25ecb6bc-7fc4-4f20-bf8d-9a69de071f4b` (tài khoản test cũ `zz.test.usermgmt…`) | Chỉ mở form, không lưu |
+| TD-21 | Tài khoản PayPal sandbox (người mua) | `ACC-PAYPAL` | Chỉ dùng trong popup PayPal sandbox, cho tour USD |
+| TD-22 | Tour **USD** có session sắp tới | "Tour Hà Giang - Mã Pí Lèng" `b26cd710-2919-473e-866e-f12f0df2a1d7` (USD, có video `du-lich-mien-bac-ha-giang-d412`); đã thêm loại khách Adult / Children và 60 session 17/11/2026 → 15/01/2027, Adult $45 / Children $30 | Trước đó tour không có loại khách và mọi lịch đã qua. Thêm bằng `ACC-ADMIN` (API sửa tour + tạo lịch hàng loạt) |
+| TD-23 | Tour **VND** có nhiều session sắp tới | "Tour du lịch miền bắc" `26880442-15a9-4725-82b2-fc530d3f0e62`; 60 session 17/11/2026 → 15/01/2027; Adult 600.000 ₫ / Children 400.000 ₫ | Thay TD-02 khi chạy lại S2/S3 (TD-02 chỉ có 1 session) |
 | TD-20 | Tham số trang kết quả VNPay giả lập | `?status=failed&txnRef=D789XH6V3RK5&bookingId=<id booking TD>` và `?status=success&txnRef=FAKE123&…&amount=1000000` | Mở URL trực tiếp, không qua VNPay |

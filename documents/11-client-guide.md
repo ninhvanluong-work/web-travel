@@ -82,7 +82,9 @@ Nút nổi **TourGuideFAB** (HDV đã đăng nhập, mọi trang trừ hồ sơ 
 | `/product/<id>` | Khối hướng dẫn viên | `/guide/<id>` |
 | Booking bước 1–2 | Tiếp tục → | Bước tiếp |
 | Booking bước 3 | Xác nhận đặt tour → | Bước 4 (booking đã được tạo) |
-| Booking bước 4 | Thanh toán qua VNPAY | Cổng VNPay → `/payment/vnpay/return` |
+| Booking bước 4 (tour VND) | Thanh toán qua VNPAY | Cổng VNPay → `/payment/vnpay/return` |
+| Booking bước 4 (tour USD) | Nút PayPal (popup cho chọn tài khoản PayPal hoặc thẻ) | Popup PayPal → màn "Thành công" ngay trong bước 4 |
+| Booking bước 4 | Thanh toán bằng thẻ | Chưa có chức năng (bấm không có phản hồi) |
 | `/guide/<id>` (người xem) | Đánh giá tôi | Sheet đánh giá (chưa đăng nhập → BE trả 401 khi gửi) |
 | Mọi trang | Hết phiên (refresh token thất bại) | `/sign-in?callbackUrl=<trang cũ>` |
 
@@ -93,7 +95,7 @@ Nút nổi **TourGuideFAB** (HDV đã đăng nhập, mọi trang trừ hồ sơ 
 | Tìm kiếm | Lưới 2 cột, cuộn để tải thêm; chạm loa để bật tiếng **1 video** | Chỉ tìm khi bấm Enter (không tự tìm khi gõ) |
 | Feed video | Vuốt dọc chuyển video; tim (like); loa; card tour | Mở link trực tiếp/reload → phải bấm Play mới cuộn được (cố ý) |
 | Chi tiết tour | Xem ảnh/video, lịch trình, đánh giá; **Đặt ngay** | Tour không có session tương lai → bước 1 báo "không có lịch" |
-| Đặt tour | B1 ngày + số khách + liên hệ → B2 giờ, điểm đón, gói → B3 đồng ý điều khoản → **Xác nhận** (tạo booking thật) → B4 thanh toán | Bước 3 **tạo booking thật** trên DB; không thanh toán thật |
+| Đặt tour | B1 ngày + số khách + liên hệ → B2 giờ, điểm đón, gói → B3 đồng ý điều khoản → **Xác nhận** (tạo booking thật) → B4 thanh toán | Bước 3 **tạo booking thật** trên DB. B4: tour VND chỉ có VNPAY, tour USD chỉ có PayPal; VNPay sandbox chỉ chạy trên Vercel, PayPal chạy cả localhost |
 | Đăng nhập/Đăng ký | Email tự chuyển chữ thường; mật khẩu đăng ký cần hoa+thường+số | Đăng ký HDV: tick "là hướng dẫn viên" |
 | Hồ sơ HDV (chủ) | Chỉnh sửa hồ sơ (tự lưu nháp), Quản lý moments (upload ≤50MB mp4/webm/mov), QR, Chia sẻ, Đăng xuất | Tour hướng dẫn (driver.js) hiện lần đầu |
 | Hồ sơ HDV (khách) | Đánh giá tôi (sao + tiêu chí + ảnh/video ≤5 file ×10MB), QR, Chia sẻ | Nút "Đặt tour với …" chưa có chức năng |
@@ -106,6 +108,7 @@ Nút nổi **TourGuideFAB** (HDV đã đăng nhập, mọi trang trừ hồ sơ 
 | Luồng khám phá | "Test: trang chủ → tìm 'Sapa' → bấm video đầu → bấm card tour → Đặt ngay. Chụp mỗi bước, báo lỗi console." |
 | Đặt tour (không tạo booking) | "Đăng nhập `zz.client`, vào tour `<id>`, đi tới bước 3 rồi **dừng, không bấm Xác nhận**. Chụp từng bước." |
 | Đặt tour (có tạo booking) | "Như trên nhưng bấm Xác nhận đặt tour, ghi lại mã booking, chụp bước 4. Không thanh toán." |
+| Thanh toán sandbox | "Đăng nhập `zz.client`, đặt 1 tour **VND** → trả bằng VNPay (`CARD-VNPAY`); đặt 1 tour **USD** → trả bằng PayPal (`ACC-PAYPAL`). Kiểm DB booking `paid`, ghi lại mã booking." |
 | Hồ sơ HDV | "Đăng nhập `zz.guide`, mở hồ sơ của mình, chụp action bar, mở Chỉnh sửa hồ sơ và Quản lý moments." |
 | Feed video | "Mở `/video/<slug>` trực tiếp, chụp màn hình reload gate, bấm Play, vuốt sang video kế, chụp lại." |
 | Lỗi & layout | "Mở `<trang>`, liệt kê lỗi console, request 4xx/5xx, phần tử tràn khung 430px." |

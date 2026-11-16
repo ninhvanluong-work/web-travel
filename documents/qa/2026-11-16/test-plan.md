@@ -7,7 +7,8 @@ Kiểm thử đầu-cuối (end-to-end) trang khách (client), hướng dẫn vi
 | Trong phạm vi | Ngoài phạm vi |
 | --- | --- |
 | S1 Khám phá (tìm kiếm, lưới video, feed video, reload gate, mở tour) | Kiểm thử tải / hiệu năng |
-| S2 Đặt tour 4 bước (validate, không có lịch, quay lại/tiếp tục, điều khoản) | Thanh toán PayPal (tour VND không dùng PayPal) |
+| S2 Đặt tour 4 bước (validate, không có lịch, quay lại/tiếp tục, điều khoản) | — |
+| S3b Thanh toán PayPal sandbox cho tour USD (S3-07 → S3-12, chạy bổ sung trên localhost) | |
 | S3 Thanh toán VNPay sandbox + trang kết quả | Gửi email thật (quên mật khẩu chỉ test validate) |
 | S4 Tài khoản (đăng ký, đăng nhập, đổi mật khẩu, đăng xuất, quên mật khẩu) | Upload video/moment (tạo dữ liệu Bunny thật) |
 | S5 Hồ sơ hướng dẫn viên (chủ hồ sơ / người xem) | Gửi đánh giá HDV (tạo review thật trên hồ sơ người khác) |
@@ -32,16 +33,17 @@ Kiểm thử đầu-cuối (end-to-end) trang khách (client), hướng dẫn vi
 | `ACC-GUIDE` | hướng dẫn viên | S5, S8-06 |
 | `ACC-ADMIN` | admin | S6, S7, S8 |
 | `ACC-SUPER` | super admin | **Không dùng** (không case nào cần quyền super admin) |
-| `CARD-VNPAY` | thẻ NCB sandbox | S3 (không dùng được — cổng VNPay báo lỗi trước bước nhập thẻ) |
+| `CARD-VNPAY` | thẻ NCB sandbox — chỉ cho tour **VND** | S3-01 → S3-03 (không dùng được — cổng VNPay báo lỗi trước bước nhập thẻ) |
+| `ACC-PAYPAL` | tài khoản người mua PayPal sandbox — chỉ cho tour **USD** | S3-08 → S3-11 (2 lần thanh toán thành công) |
 
 ## 5. Bộ test (test set)
-53 case, 9 suite — chi tiết trong [test-cases.md](./test-cases.md); dữ liệu trong [test-data.md](./test-data.md).
+59 case, 9 suite (53 case lượt chính + 6 case PayPal chạy bổ sung) — chi tiết trong [test-cases.md](./test-cases.md); dữ liệu trong [test-data.md](./test-data.md).
 
 | Suite | Số case | Ưu tiên chính |
 | --- | --- | --- |
 | S1 Khám phá | 8 | P1–P2 |
 | S2 Đặt tour | 6 | P1 |
-| S3 Thanh toán | 6 | P1 |
+| S3 Thanh toán (VNPay 6 + PayPal 6) | 12 | P1 |
 | S4 Tài khoản | 9 | P1–P2 |
 | S5 Hướng dẫn viên | 5 | P2 |
 | S6 Admin CRUD | 6 | P2 |

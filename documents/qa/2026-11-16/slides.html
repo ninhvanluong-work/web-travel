@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Test case & bằng chứng · 2026-11-16</title>
+<style>
+  :root { --g:#0f6e56; --r:#d93025; --y:#e8a400; --n:#8a8f98; --bg:#f5f6f4; --ink:#1d2321; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #1d2321; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: var(--ink); }
+  .slide { display: none; position: absolute; inset: 16px; background: var(--bg); border-radius: 18px; padding: 28px 36px; overflow: auto; }
+  .slide.on { display: block; }
+  .cover h1 { font-size: 44px; margin: 6px 0; color: var(--g); }
+  .kicker { text-transform: uppercase; letter-spacing: .12em; color: var(--n); margin: 0; font-weight: 600; }
+  .sub { color: #555; font-size: 18px; }
+  .hint { color: var(--n); margin-top: 18px; }
+  .kpis { display: flex; gap: 14px; margin: 18px 0; }
+  .kpis div { background: #fff; border-radius: 14px; padding: 14px 22px; border-top: 5px solid var(--g); min-width: 130px; }
+  .kpis div.f { border-color: var(--r); } .kpis div.b { border-color: var(--y); } .kpis div.n { border-color: var(--n); }
+  .kpis b { font-size: 34px; display: block; } .kpis span { color: #555; }
+  table.sum { border-collapse: collapse; background: #fff; border-radius: 12px; overflow: hidden; }
+  table.sum th, table.sum td { padding: 7px 14px; border-bottom: 1px solid #eee; text-align: left; font-size: 15px; }
+  table.sum th { background: #e9efec; }
+  .divider { display: none; text-align: center; padding-top: 22vh; }
+  .divider.on { display: block; }
+  .divider h2 { font-size: 40px; color: var(--g); margin: 0 auto 12px; max-width: 900px; }
+  .divider p { max-width: 900px; margin: 8px auto; color: #444; font-size: 17px; }
+  .case header { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #e3e6e3; padding-bottom: 12px; margin-bottom: 14px; }
+  .case header h2 { margin: 0; font-size: 26px; flex: 1; }
+  .id { background: var(--ink); color: #fff; border-radius: 8px; padding: 4px 10px; font-weight: 700; font-family: ui-monospace, monospace; }
+  .pill { border-radius: 999px; padding: 5px 14px; font-weight: 700; color: #fff; }
+  .pill.pass { background: var(--g); } .pill.fail { background: var(--r); } .pill.blocked { background: var(--y); } .pill.notrun { background: var(--n); }
+  .prio { color: var(--n); font-weight: 700; }
+  .case.fail { box-shadow: inset 6px 0 0 var(--r); } .case.pass { box-shadow: inset 6px 0 0 var(--g); } .case.blocked { box-shadow: inset 6px 0 0 var(--y); }
+  .grid { display: grid; grid-template-columns: minmax(320px, 1fr) 1.4fr; gap: 26px; }
+  .grid.noimg { grid-template-columns: 1fr; max-width: 900px; }
+  .text h4 { margin: 14px 0 4px; text-transform: uppercase; font-size: 12px; letter-spacing: .1em; color: var(--n); }
+  .text p, .text li { font-size: 16px; line-height: 1.5; margin: 0; }
+  .text ol { margin: 0; padding-left: 22px; }
+  .case.fail .actual { color: var(--r); font-weight: 600; }
+  code { background: #e9ecea; padding: 1px 5px; border-radius: 5px; font-size: .9em; }
+  .shots { display: flex; flex-wrap: wrap; gap: 14px; align-content: flex-start; }
+  .shots figure { flex: 0 1 calc(33.3% - 10px); min-width: 0; margin: 0; background: #fff; border-radius: 12px; padding: 8px; box-shadow: 0 2px 10px rgba(0,0,0,.08); }
+  .shots img { display: block; margin: 0 auto; max-height: 58vh; max-width: 100%; border-radius: 8px; cursor: zoom-in; }
+  .shots figcaption { font-size: 12px; color: var(--n); text-align: center; margin-top: 4px; font-family: ui-monospace, monospace; }
+  nav { position: fixed; bottom: 22px; right: 30px; display: flex; gap: 8px; align-items: center; z-index: 5; }
+  nav button { border: 0; border-radius: 10px; padding: 8px 14px; background: var(--ink); color: #fff; font-weight: 600; cursor: pointer; }
+  nav button.on { background: var(--r); }
+  nav span { background: #fff; border-radius: 10px; padding: 8px 12px; font-weight: 600; }
+  .lb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 9; align-items: center; justify-content: center; cursor: zoom-out; }
+  .lb.on { display: flex; } .lb img { max-width: 96vw; max-height: 96vh; border-radius: 8px; }
+</style>
+</head>
+<body>
+<section class="slide cover">
+  <p class="kicker">web-travel · Kiểm thử</p>
+  <h1>Test case & bằng chứng</h1>
+  <p class="sub">Lượt 2026-11-16 · 59 tình huống · mỗi trang là 1 tình huống, kèm ảnh màn hình thật</p>
+  <div class="kpis">
+    <div><b>42</b><span>✅ Đạt</span></div><div class="f"><b>14</b><span>❌ Lỗi</span></div>
+    <div class="b"><b>2</b><span>⛔ Bị chặn</span></div><div class="n"><b>1</b><span>⏭ Chưa chạy</span></div>
+  </div>
+  <table class="sum"><tr><th>Phần</th><th>Số case</th><th>Đạt</th><th>Lỗi</th><th>Chặn / chưa chạy</th></tr>
+  <tr><td>S1 · Khám phá (client, 430×932, chưa đăng nhập)</td><td>8</td><td>7</td><td>1</td><td>0</td></tr><tr><td>S2 · Đặt tour (đăng nhập <code>ACC-CLIENT</code>)</td><td>6</td><td>4</td><td>2</td><td>0</td></tr><tr><td>S3 · Thanh toán VNPay</td><td>6</td><td>1</td><td>3</td><td>2</td></tr><tr><td>S3b · Thanh toán PayPal (tour USD) — chạy bổ sung 16/11 ~21:40, <code>http://localhost:3000/vi</code> (nhánh <code>dev</code>)</td><td>6</td><td>5</td><td>1</td><td>0</td></tr><tr><td>S4 · Tài khoản</td><td>9</td><td>6</td><td>3</td><td>0</td></tr><tr><td>S5 · Hướng dẫn viên</td><td>5</td><td>4</td><td>0</td><td>1</td></tr><tr><td>S6 · Admin CRUD (<code>ACC-ADMIN</code>, 1440×810)</td><td>6</td><td>6</td><td>0</td><td>0</td></tr><tr><td>S7 · Admin booking</td><td>4</td><td>2</td><td>2</td><td>0</td></tr><tr><td>S8 · Phân quyền</td><td>6</td><td>6</td><td>0</td><td>0</td></tr><tr><td>S9 · Chất lượng giao diện</td><td>3</td><td>1</td><td>2</td><td>0</td></tr></table>
+  <p class="hint">← / → để chuyển trang · bấm ảnh để phóng to · nút "Chỉ xem lỗi" ở góc dưới</p>
+</section>
+<section class="slide divider"><h2>S1 · Khám phá (client, 430×932, chưa đăng nhập)</h2><p class="sub">8 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-01</span><h2>Tìm bằng chip gợi ý</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Ở trang chủ <code>/vi</code> · dữ liệu TD-08</p>
+      <h4>Các bước</h4><ol><li>Chạm ô <b>Tìm kiếm...</b></li><li>Bấm chip <b>Sapa</b></li></ol>
+      <h4>Mong đợi</h4><p>Sang <code>/search?q=Sapa</code>, lưới 2 cột video</p>
+      <h4>Thực tế</h4><p class="actual">Đúng, 6 video đầu, không tràn khung</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-01-1.jpg" alt="S1-01"><figcaption>S1-01-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-01-2.jpg" alt="S1-01"><figcaption>S1-01-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-01-3.jpg" alt="S1-01"><figcaption>S1-01-3.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S1-02</span><h2>Tìm từ khoá không có kết quả</h2><span class="pill fail">Lỗi</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Ở <code>/search</code> · dữ liệu TD-09</p>
+      <h4>Các bước</h4><ol><li>Gõ TD-09 vào ô <b>Tìm kiếm video...</b></li><li>Enter</li></ol>
+      <h4>Mong đợi</h4><p>Hiện trạng thái "không tìm thấy"</p>
+      <h4>Thực tế</h4><p class="actual">Vẫn hiện 6 video không liên quan (tìm kiếm ngữ nghĩa luôn trả kết quả gần nhất)</p>
+      <h4>Ghi chú</h4><p>D-09</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-02-1.jpg" alt="S1-02"><figcaption>S1-02-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-02-2.jpg" alt="S1-02"><figcaption>S1-02-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-03</span><h2>Chỉ 1 video có tiếng</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Có kết quả S1-01 · dữ liệu TD-08</p>
+      <h4>Các bước</h4><ol><li>Bấm loa video 1</li><li>Bấm loa video 2</li></ol>
+      <h4>Mong đợi</h4><p>Video 2 có tiếng, video 1 tắt tiếng</p>
+      <h4>Thực tế</h4><p class="actual">Đúng (chỉ video 2 <code>muted=false</code>)</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-03-1.jpg" alt="S1-03"><figcaption>S1-03-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-04</span><h2>Cuộn tải thêm</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Có kết quả S1-01 · dữ liệu TD-08</p>
+      <h4>Các bước</h4><p>1. Cuộn xuống cuối lưới 4 lần</p>
+      <h4>Mong đợi</h4><p>Tải thêm trang (cursor <code>distanceScore</code>)</p>
+      <h4>Thực tế</h4><p class="actual">6 → 18 video, 3 request trang tiếp</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-04-1.jpg" alt="S1-04"><figcaption>S1-04-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-05</span><h2>Mở video từ lưới</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Ở <code>/search?q=Sapa</code> · dữ liệu TD-08</p>
+      <h4>Các bước</h4><p>1. Bấm video <b>Du lịch Miền Bắc - Sapa</b></p>
+      <h4>Mong đợi</h4><p>Sang <code>/video/&lt;slug&gt;?autoplay=true</code>, video tự phát có tiếng</p>
+      <h4>Thực tế</h4><p class="actual">Đúng, đang phát, có tiếng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-05-1.jpg" alt="S1-05"><figcaption>S1-05-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-05-2.jpg" alt="S1-05"><figcaption>S1-05-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-06</span><h2>Vuốt sang video kế</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đang ở feed (S1-05)</p>
+      <h4>Các bước</h4><p>1. Vuốt/cuộn lên 1 màn</p>
+      <h4>Mong đợi</h4><p>Video kế phát, video cũ dừng, URL đổi</p>
+      <h4>Thực tế</h4><p class="actual">Đúng (<code>/video/du-lich-tay-bac-lzls</code>)</p>
+      <h4>Ghi chú</h4><p>Console có 2 lỗi 404 tải trước <code>.ts</code> (D-10)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-06-1.jpg" alt="S1-06"><figcaption>S1-06-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-07</span><h2>Mở tour từ card video</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đang ở feed</p>
+      <h4>Các bước</h4><p>1. Bấm card thông tin tour ở đáy video</p>
+      <h4>Mong đợi</h4><p>Sang <code>/product/&lt;id&gt;</code></p>
+      <h4>Thực tế</h4><p class="actual">Đúng (<code>/product/0475868b…</code>)</p>
+      <h4>Ghi chú</h4><p>Trang tour không có ảnh hiện "1 / 0"; giá "USD350,000" (D-11)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-07-1.jpg" alt="S1-07"><figcaption>S1-07-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-07-2.jpg" alt="S1-07"><figcaption>S1-07-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S1-08</span><h2>Reload gate khi mở link chia sẻ</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Tab mới, không qua lưới · dữ liệu TD-17</p>
+      <h4>Các bước</h4><ol><li>Mở trực tiếp TD-17</li><li>Thử cuộn</li><li>Bấm nút <b>Play</b> lớn</li><li>Cuộn</li></ol>
+      <h4>Mong đợi</h4><p>Bước 2 không cuộn được, video dừng; sau Play: có tiếng, cuộn được</p>
+      <h4>Thực tế</h4><p class="actual">Đúng: khoá cuộn (<code>overflow:hidden</code>), sau Play có tiếng và sang video kế</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-08-1.jpg" alt="S1-08"><figcaption>S1-08-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-08-2.jpg" alt="S1-08"><figcaption>S1-08-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S2 · Đặt tour (đăng nhập <code>ACC-CLIENT</code>)</h2><p class="sub">6 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S2-01</span><h2>Đặt tour đầy đủ (tạo booking thật)</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập TD-04; tour TD-02 · dữ liệu TD-01, TD-02</p>
+      <h4>Các bước</h4><ol><li>Mở tour TD-02, bấm <b>Đặt ngay</b></li><li>Giữ ngày 16/11/2026, thêm 1 Adult + 1 Child</li><li>Nhập TD-01, chọn <b>Zalo</b> và nhập tài khoản</li><li><b>Tiếp tục →</b></li><li>Chọn 08:00, City Center Meeting Point, Standard Tour Option</li><li><b>Tiếp tục →</b></li><li>Tick đồng ý điều khoản</li><li><b>Xác nhận đặt tour →</b></li></ol>
+      <h4>Mong đợi</h4><p>Tạo booking <code>pending</code>, tổng 1.000.000 ₫, sang bước 4 Thanh toán</p>
+      <h4>Thực tế</h4><p class="actual"><code>POST /booking</code> 201, mã <b>BKMWJC44UC17ABC2</b>, DB: pending, 1.000.000 VND, đúng session/giờ/điểm đón/gói/khách/Zalo</p>
+      <h4>Ghi chú</h4><p>Nhãn stepper và ngày tiếng Anh (D-08)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-01-1.jpg" alt="S2-01"><figcaption>S2-01-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-2.jpg" alt="S2-01"><figcaption>S2-01-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-3.jpg" alt="S2-01"><figcaption>S2-01-3.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-4.jpg" alt="S2-01"><figcaption>S2-01-4.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-5.jpg" alt="S2-01"><figcaption>S2-01-5.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-6.jpg" alt="S2-01"><figcaption>S2-01-6.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-7.jpg" alt="S2-01"><figcaption>S2-01-7.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-8.jpg" alt="S2-01"><figcaption>S2-01-8.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-9.jpg" alt="S2-01"><figcaption>S2-01-9.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-01-10.jpg" alt="S2-01"><figcaption>S2-01-10.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S2-02</span><h2>Thiếu thông tin liên hệ</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 1</p>
+      <h4>Các bước</h4><p>1. Thêm 1 Adult, để trống họ tên/SĐT/email</p>
+      <h4>Mong đợi</h4><p>Không cho sang bước 2</p>
+      <h4>Thực tế</h4><p class="actual">Nút <b>Tiếp tục →</b> bị khoá</p>
+      <h4>Ghi chú</h4><p>Không có thông báo nói thiếu trường nào (chỉ khoá nút)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-02-1.jpg" alt="S2-02"><figcaption>S2-02-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S2-03</span><h2>Email / SĐT sai định dạng</h2><span class="pill fail">Lỗi</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 1, đã có khách · dữ liệu TD-10, TD-11</p>
+      <h4>Các bước</h4><ol><li>Nhập email TD-10</li><li>Sửa email đúng, nhập SĐT TD-11</li></ol>
+      <h4>Mong đợi</h4><p>Báo lỗi và khoá nút với cả email sai và SĐT sai</p>
+      <h4>Thực tế</h4><p class="actual">Email sai: "Địa chỉ email không hợp lệ" + khoá nút ✅. SĐT <code>+84 12</code>: <b>không báo lỗi, nút Tiếp tục mở</b></p>
+      <h4>Ghi chú</h4><p>D-04</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-03-1.jpg" alt="S2-03"><figcaption>S2-03-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-03-2.jpg" alt="S2-03"><figcaption>S2-03-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S2-04</span><h2>Ngày không có lịch</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 1 · dữ liệu TD-12</p>
+      <h4>Các bước</h4><p>1. Bấm ô ngày, chọn 17</p>
+      <h4>Mong đợi</h4><p>Báo không có lịch, không cho tiếp</p>
+      <h4>Thực tế</h4><p class="actual">"Không có lượt khởi hành cho ngày này. Vui lòng chọn ngày khác.", nút khoá</p>
+      <h4>Ghi chú</h4><p>Đổi ngày → số khách về 0</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-04-0.jpg" alt="S2-04"><figcaption>S2-04-0.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-04-1.jpg" alt="S2-04"><figcaption>S2-04-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-04-2.jpg" alt="S2-04"><figcaption>S2-04-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S2-05</span><h2>Quay lại / tiếp tục giữ dữ liệu</h2><span class="pill fail">Lỗi</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đang ở bước 2 · dữ liệu TD-01</p>
+      <h4>Các bước</h4><p>1. Bấm <b>←</b> về bước 1</p>
+      <h4>Mong đợi</h4><p>Giữ ngày, khách, liên hệ</p>
+      <h4>Thực tế</h4><p class="actual">Liên hệ + Zalo giữ nguyên; <b>số khách về 0, tổng ₫0</b>, phải chọn lại</p>
+      <h4>Ghi chú</h4><p>D-05 (đã biết M23)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-05-1.jpg" alt="S2-05"><figcaption>S2-05-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-05-2.jpg" alt="S2-05"><figcaption>S2-05-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S2-06</span><h2>Bắt buộc đồng ý điều khoản</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 3</p>
+      <h4>Các bước</h4><ol><li>Không tick điều khoản</li><li>Tick điều khoản</li></ol>
+      <h4>Mong đợi</h4><p>Nút <b>Xác nhận đặt tour</b> khoá khi chưa tick</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-06-1.jpg" alt="S2-06"><figcaption>S2-06-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S2-06-2.jpg" alt="S2-06"><figcaption>S2-06-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S3 · Thanh toán VNPay</h2><p class="sub">6 tình huống</p></section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S3-01</span><h2>Mở cổng VNPay sandbox</h2><span class="pill fail">Lỗi</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Booking S2-01 ở bước 4 · dữ liệu TD-03</p>
+      <h4>Các bước</h4><p>1. Bấm <b>Thanh toán qua VNPAY</b></p>
+      <h4>Mong đợi</h4><p>Mở trang chọn ngân hàng/nhập thẻ VNPay sandbox</p>
+      <h4>Thực tế</h4><p class="actual">BE tạo URL (201) nhưng VNPay chuyển ngay tới <code>Error.html?code=71</code> <b>"Website này chưa được phê duyệt"</b>. Thử lại 1 lần không gửi Referer: cùng lỗi</p>
+      <h4>Ghi chú</h4><p>D-01</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-01-1.jpg" alt="S3-01"><figcaption>S3-01-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S3-01-2.jpg" alt="S3-01"><figcaption>S3-01-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case blocked" data-status="blocked">
+  <header><span class="id">S3-02</span><h2>Thanh toán thành công → booking <code>paid</code></h2><span class="pill blocked">Bị chặn</span><span class="prio">P1</span></header>
+  <div class="grid noimg">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>S3-01 qua được · dữ liệu TD-03</p>
+      <h4>Các bước</h4><ol><li>Chọn NCB, nhập <code>CARD-VNPAY</code>, OTP</li><li>Về trang kết quả</li><li>Kiểm DB</li></ol>
+      <h4>Mong đợi</h4><p>Trang thành công; DB <code>paid</code>, payment <code>succeed</code></p>
+      <h4>Thực tế</h4><p class="actual">Không chạy được</p>
+      <h4>Ghi chú</h4><p>Bị chặn bởi D-01</p>
+    </div>
+    
+  </div>
+</section>
+<section class="slide case blocked" data-status="blocked">
+  <header><span class="id">S3-03</span><h2>Huỷ trên trang VNPay</h2><span class="pill blocked">Bị chặn</span><span class="prio">P1</span></header>
+  <div class="grid noimg">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>S3-01 qua được</p>
+      <h4>Các bước</h4><p>1. Bấm Huỷ trên VNPay</p>
+      <h4>Mong đợi</h4><p>Trang thất bại + <b>Thử lại</b></p>
+      <h4>Thực tế</h4><p class="actual">Không chạy được</p>
+      <h4>Ghi chú</h4><p>Bị chặn bởi D-01</p>
+    </div>
+    
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S3-04</span><h2>Trang kết quả thất bại + Thử lại</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Có booking S2-01 · dữ liệu TD-20</p>
+      <h4>Các bước</h4><ol><li>Mở <code>/vi/payment/vnpay/return?status=failed…</code></li><li>Bấm <b>Thử lại</b></li></ol>
+      <h4>Mong đợi</h4><p>Hiện "Thanh toán không thành công", Thử lại về trang đặt tour</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      <h4>Ghi chú</h4><p>Hiện "Mã đặt chỗ" là UUID, không phải mã booking</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-03-1.jpg" alt="S3-04"><figcaption>S3-03-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S3-05</span><h2>Trang kết quả không tin tham số URL</h2><span class="pill fail">Lỗi</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Booking vẫn <code>pending</code> · dữ liệu TD-20</p>
+      <h4>Các bước</h4><p>1. Mở URL <code>status=success&amp;txnRef=FAKE123…</code></p>
+      <h4>Mong đợi</h4><p>Không hiện thành công khi BE chưa xác nhận</p>
+      <h4>Thực tế</h4><p class="actual">Hiện "Thanh Toán Thành Công!" + "Email xác nhận đã được gửi" dù DB vẫn <code>pending</code></p>
+      <h4>Ghi chú</h4><p>D-02 (đã biết M7)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-04-1.jpg" alt="S3-05"><figcaption>S3-04-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S3-06</span><h2>Nút "Thanh toán bằng thẻ"</h2><span class="pill fail">Lỗi</span><span class="prio">P3</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4</p>
+      <h4>Các bước</h4><p>1. Bấm <b>Thanh toán bằng thẻ</b></p>
+      <h4>Mong đợi</h4><p>Mở thanh toán thẻ hoặc không hiển thị nút</p>
+      <h4>Thực tế</h4><p class="actual">Không có phản hồi gì</p>
+      <h4>Ghi chú</h4><p>D-12 (đã biết M25)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-01-10.jpg" alt="S3-06"><figcaption>S2-01-10.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S3b · Thanh toán PayPal (tour USD) — chạy bổ sung 16/11 ~21:40, <code>http://localhost:3000/vi</code> (nhánh <code>dev</code>)</h2><p>Điều kiện chung: tour TD-22 (đã thêm loại khách + 60 lịch); đăng nhập TD-04; booking đi tới bước 4 (1. Chọn ngày 2. <b>+</b> Adult 3. Nhập liên hệ <code>ZZ QA PayPal…</code> 4. <b>Tiếp tục →</b> 5. 08:00, City Center Meeting Point, Standard Tour Option 6. <b>Tiếp tục →</b> 7. Tick đồng ý 8. <b>Xác nhận đặt tour →</b>). Popup PayPal chạy được cả localhost lẫn Vercel.</p><p class="sub">6 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S3-07</span><h2>Đúng cổng theo loại tiền</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4 của 1 booking VND và 1 booking USD · dữ liệu TD-22, TD-23</p>
+      <h4>Các bước</h4><ol><li>Xem bước 4 tour VND</li><li>Xem bước 4 tour USD</li></ol>
+      <h4>Mong đợi</h4><p>VND: chỉ có <b>Thanh toán qua VNPAY</b>, tổng hiện ₫. USD: chỉ có nút <b>PayPal</b>, tổng hiện $</p>
+      <h4>Thực tế</h4><p class="actual">VND: "Thanh toán qua VNPAY", ₫1.200.000. USD: nút vàng "PayPal", $90. Không bên nào có cổng của bên kia</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-07-1.jpg" alt="S3-07"><figcaption>S3-07-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S3-07-2.jpg" alt="S3-07"><figcaption>S3-07-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S3-08</span><h2>Thanh toán PayPal thành công (đăng nhập tài khoản PayPal)</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4 tour USD, 2 Adult · dữ liệu TD-21</p>
+      <h4>Các bước</h4><ol><li>Bấm nút <b>PayPal</b></li><li>Popup: nhập email <code>ACC-PAYPAL</code> → <b>Next</b> → mật khẩu → <b>Log In</b></li><li>Kiểm số tiền, chọn phương thức ở <b>Pay with</b></li><li>Bấm <b>Pay</b></li><li>Kiểm DB</li></ol>
+      <h4>Mong đợi</h4><p>Popup đóng, bước 4 hiện màn <b>Thành công</b>; DB: booking <code>paid</code>, payment PayPal <code>succeed</code>, số tiền khớp tổng</p>
+      <h4>Thực tế</h4><p class="actual">Popup hiện $90.00 = tổng bước 4; sau <b>Pay</b> popup đóng, hiện "Thanh Toán Thành Công!". DB: <code>BKMWJDGLLBB7DD70</code> <code>paid</code>, payment paypal <code>succeed</code> 90 USD</p>
+      <h4>Ghi chú</h4><p>Lúc bấm <b>Pay</b>, phương thức đang chọn là <b>Visa ••5240</b> (ảnh 2) — bấm "PayPal balance" không đổi được lựa chọn, nên <b>trả bằng số dư PayPal chưa được kiểm</b>. Nút trên popup tên <b>Pay</b> (bản cũ: <b>Complete Purchase</b>)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-08-1.jpg" alt="S3-08"><figcaption>S3-08-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S3-08-2.jpg" alt="S3-08"><figcaption>S3-08-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S3-08-3.jpg" alt="S3-08"><figcaption>S3-08-3.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S3-09</span><h2>Thanh toán PayPal bằng thẻ đã lưu</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4 tour USD, 1 Adult · dữ liệu TD-21</p>
+      <h4>Các bước</h4><ol><li>Như S3-08 bước 1–2</li><li>Bấm <b>Pay with</b> → chọn <b>Visa Debit ••5240</b></li><li><b>Pay</b></li><li>Kiểm DB</li></ol>
+      <h4>Mong đợi</h4><p>Như S3-08</p>
+      <h4>Thực tế</h4><p class="actual">Popup $45.00 trả bằng Visa; màn thành công; DB: <code>BKMWJDLI29B239BC</code> <code>paid</code>, payment <code>succeed</code> 45 USD</p>
+      <h4>Ghi chú</h4><p>Thẻ sandbox gắn sẵn trong <code>ACC-PAYPAL</code></p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-09-1.jpg" alt="S3-09"><figcaption>S3-09-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S3-09-2.jpg" alt="S3-09"><figcaption>S3-09-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S3-10</span><h2>Trả bằng thẻ không cần tài khoản PayPal</h2><span class="pill pass">Đạt</span><span class="prio">P3</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4 tour USD</p>
+      <h4>Các bước</h4><ol><li>Bấm nút <b>PayPal</b></li><li>Ở màn đầu bấm <b>Pay with Debit or Credit Card</b></li></ol>
+      <h4>Mong đợi</h4><p>Có đường trả bằng thẻ không cần tài khoản</p>
+      <h4>Thực tế</h4><p class="actual">Mở "Check out as a guest": nhập email → <b>Continue to Payment</b> → form thẻ</p>
+      <h4>Ghi chú</h4><p>Chỉ kiểm tới đây, không nhập thẻ</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-10-1.jpg" alt="S3-10"><figcaption>S3-10-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S3-11</span><h2>Huỷ trong popup PayPal</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4 tour USD · dữ liệu TD-21</p>
+      <h4>Các bước</h4><ol><li>Bấm nút <b>PayPal</b></li><li>Bấm <b>Cancel and return to Web Travel</b></li></ol>
+      <h4>Mong đợi</h4><p>Popup đóng, ở lại bước 4, báo đã huỷ; booking vẫn <code>pending</code>; bấm PayPal lại được</p>
+      <h4>Thực tế</h4><p class="actual">Đúng: popup đóng, hiện thông báo, thanh toán lại được (S3-08). Thông báo lặp chữ "Giao dịch đã bị hủy." 2 lần</p>
+      <h4>Ghi chú</h4><p>D-13 (thấp). Lần huỷ để lại 1 payment <code>pending</code> trong DB</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-11-1.jpg" alt="S3-11"><figcaption>S3-11-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S3-11-2.jpg" alt="S3-11"><figcaption>S3-11-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S3-12</span><h2>Nút "Thanh toán bằng thẻ" ở tour USD</h2><span class="pill fail">Lỗi</span><span class="prio">P3</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bước 4 tour USD</p>
+      <h4>Các bước</h4><p>1. Bấm <b>Thanh toán bằng thẻ</b></p>
+      <h4>Mong đợi</h4><p>Mở thanh toán thẻ hoặc không hiển thị nút</p>
+      <h4>Thực tế</h4><p class="actual">Không có phản hồi (không đổi trang, không popup)</p>
+      <h4>Ghi chú</h4><p>D-12. Khách USD trả thẻ được qua PayPal (S3-09/S3-10)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S3-12-1.jpg" alt="S3-12"><figcaption>S3-12-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S4 · Tài khoản</h2><p class="sub">9 tình huống</p></section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S4-01</span><h2>Đăng nhập để trống</h2><span class="pill fail">Lỗi</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi/sign-in</code></p>
+      <h4>Các bước</h4><p>1. Bấm <b>Đăng nhập</b> khi trống</p>
+      <h4>Mong đợi</h4><p>Báo bắt buộc bằng tiếng Việt</p>
+      <h4>Thực tế</h4><p class="actual">Báo lỗi đúng chỗ nhưng tiếng Anh: "Email is required", "Password is required"</p>
+      <h4>Ghi chú</h4><p>D-07 (M45)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-01-1.jpg" alt="S4-01"><figcaption>S4-01-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S4-02</span><h2>Sai mật khẩu</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi/sign-in</code> · dữ liệu TD-04 + mật khẩu sai</p>
+      <h4>Các bước</h4><ol><li>Nhập email, mật khẩu sai</li><li><b>Đăng nhập</b></li></ol>
+      <h4>Mong đợi</h4><p>Thông báo sai thông tin, ở lại trang</p>
+      <h4>Thực tế</h4><p class="actual">"Email hoặc mật khẩu không đúng."</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-02-1.jpg" alt="S4-02"><figcaption>S4-02-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-02-2.jpg" alt="S4-02"><figcaption>S4-02-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S4-03</span><h2>Đăng nhập đúng, email chữ hoa</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi/sign-in</code> · dữ liệu TD-04 (gõ <code>ZZ.Client@Example.com</code>)</p>
+      <h4>Các bước</h4><ol><li>Nhập đúng mật khẩu</li><li><b>Đăng nhập</b></li></ol>
+      <h4>Mong đợi</h4><p>Đăng nhập được, về <code>/vi</code></p>
+      <h4>Thực tế</h4><p class="actual">Đúng; email lưu dạng chữ thường</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-03-1.jpg" alt="S4-03"><figcaption>S4-03-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S4-04</span><h2>Menu tài khoản</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đã đăng nhập · dữ liệu TD-04</p>
+      <h4>Các bước</h4><p>1. Bấm avatar (User menu)</p>
+      <h4>Mong đợi</h4><p>Sheet có email, <b>Đổi mật khẩu</b>, <b>Đăng xuất</b></p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      <h4>Ghi chú</h4><p>Avatar hiện "?"</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-04-1.jpg" alt="S4-04"><figcaption>S4-04-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-04-2.jpg" alt="S4-04"><figcaption>S4-04-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S4-05</span><h2>Đổi mật khẩu rồi đổi lại</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đã đăng nhập · dữ liệu TD-04, TD-14</p>
+      <h4>Các bước</h4><ol><li><b>Đổi mật khẩu</b></li><li>Xác nhận không khớp</li><li>Mật khẩu hiện tại sai</li><li>Nhập đúng → <b>Cập nhật mật khẩu</b></li><li>(sau S4-06) đăng nhập bằng mật khẩu mới, đổi lại mật khẩu gốc</li></ol>
+      <h4>Mong đợi</h4><p>Lỗi rõ ở bước 2–3; bước 4 thành công, vẫn đăng nhập</p>
+      <h4>Thực tế</h4><p class="actual">"Mật khẩu xác nhận không khớp", "Mật khẩu hiện tại không đúng", "Đã đổi mật khẩu"; đã đổi lại mật khẩu gốc</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-05-1.jpg" alt="S4-05"><figcaption>S4-05-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-05-2.jpg" alt="S4-05"><figcaption>S4-05-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-05-3.jpg" alt="S4-05"><figcaption>S4-05-3.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S4-06</span><h2>Đăng xuất</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đã đăng nhập · dữ liệu TD-04</p>
+      <h4>Các bước</h4><ol><li>Menu → <b>Đăng xuất</b></li><li>Xác nhận <b>Đăng xuất</b></li><li>Đăng nhập bằng mật khẩu cũ</li></ol>
+      <h4>Mong đợi</h4><p>Hỏi xác nhận, xoá token, về <code>/sign-in</code>; mật khẩu cũ bị từ chối</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-06-1.jpg" alt="S4-06"><figcaption>S4-06-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-06-2.jpg" alt="S4-06"><figcaption>S4-06-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S4-07</span><h2>Đăng ký: mật khẩu yếu, email trùng</h2><span class="pill fail">Lỗi</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi/sign-up</code> · dữ liệu TD-13</p>
+      <h4>Các bước</h4><ol><li>Mật khẩu <code>abc</code></li><li>Mật khẩu <code>abcdefgh</code></li><li>Email trùng</li></ol>
+      <h4>Mong đợi</h4><p>Thông báo tiếng Việt</p>
+      <h4>Thực tế</h4><p class="actual">Bắt lỗi đúng nhưng tiếng Anh: "Password must be at least 6 characters", "Password must contain…", BE: "email already register, please try to login!"</p>
+      <h4>Ghi chú</h4><p>D-07</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-07-1.jpg" alt="S4-07"><figcaption>S4-07-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-07-2.jpg" alt="S4-07"><figcaption>S4-07-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S4-08</span><h2>Đăng ký tài khoản mới</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi/sign-up</code> · dữ liệu TD-13</p>
+      <h4>Các bước</h4><ol><li>Nhập email mới + mật khẩu hợp lệ</li><li><b>Đăng ký</b></li></ol>
+      <h4>Mong đợi</h4><p>Sang <code>/sign-in</code> + thông báo thành công; DB có user <code>normal</code></p>
+      <h4>Thực tế</h4><p class="actual">"Đăng ký thành công"; DB: <code>zz.qa+1794838113156@example.com</code>, role normal</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-08-1.jpg" alt="S4-08"><figcaption>S4-08-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S4-08-2.jpg" alt="S4-08"><figcaption>S4-08-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S4-09</span><h2>Quên mật khẩu: email sai</h2><span class="pill fail">Lỗi</span><span class="prio">P3</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi/forgot-password</code> · dữ liệu TD-10</p>
+      <h4>Các bước</h4><ol><li>Nhập email sai</li><li><b>Gửi link đặt lại</b></li></ol>
+      <h4>Mong đợi</h4><p>Báo lỗi tiếng Việt</p>
+      <h4>Thực tế</h4><p class="actual">"This is not a valid Email" (tiếng Anh)</p>
+      <h4>Ghi chú</h4><p>D-07. Không gửi email thật</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S4-09-1.jpg" alt="S4-09"><figcaption>S4-09-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S5 · Hướng dẫn viên</h2><p class="sub">5 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S5-01</span><h2>HDV đăng nhập → hồ sơ của mình</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Chưa đăng nhập · dữ liệu TD-05</p>
+      <h4>Các bước</h4><p>1. Đăng nhập TD-05</p>
+      <h4>Mong đợi</h4><p>Về <code>/guide/&lt;id của mình&gt;</code>, thấy <b>Chỉnh sửa hồ sơ</b>, <b>Quản lý</b>, Đăng xuất</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S5-01-1.jpg" alt="S5-01"><figcaption>S5-01-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S5-02</span><h2>Mở Chỉnh sửa hồ sơ</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>S5-01</p>
+      <h4>Các bước</h4><p>1. <b>Chỉnh sửa hồ sơ</b></p>
+      <h4>Mong đợi</h4><p>Sheet có các tab Lý lịch/Kỹ năng/Sự nghiệp</p>
+      <h4>Thực tế</h4><p class="actual">Đúng (đóng, không lưu)</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S5-02-1.jpg" alt="S5-02"><figcaption>S5-02-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S5-02-2.jpg" alt="S5-02"><figcaption>S5-02-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S5-03</span><h2>Mở Quản lý moments</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>S5-01</p>
+      <h4>Các bước</h4><p>1. <b>Quản lý</b> ở mục Khoảnh khắc</p>
+      <h4>Mong đợi</h4><p>Sheet + <b>Thêm khoảnh khắc</b></p>
+      <h4>Thực tế</h4><p class="actual">Đúng, trạng thái trống có hướng dẫn</p>
+      <h4>Ghi chú</h4><p>Không upload</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S5-03-1.jpg" alt="S5-03"><figcaption>S5-03-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S5-03-2.jpg" alt="S5-03"><figcaption>S5-03-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S5-04</span><h2>Xem hồ sơ HDV khác</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập TD-05 · dữ liệu TD-16</p>
+      <h4>Các bước</h4><ol><li>Mở hồ sơ TD-16</li><li><b>Đánh giá tôi</b></li></ol>
+      <h4>Mong đợi</h4><p>Không có nút sửa/quản lý; có <b>Đánh giá tôi</b>, nút nổi về hồ sơ mình</p>
+      <h4>Thực tế</h4><p class="actual">Đúng; sheet đánh giá mở (không gửi)</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S5-04-1.jpg" alt="S5-04"><figcaption>S5-04-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S5-04-2.jpg" alt="S5-04"><figcaption>S5-04-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case notrun" data-status="notrun">
+  <header><span class="id">S5-05</span><h2>Tutorial lần đầu</h2><span class="pill notrun">Chưa chạy</span><span class="prio">P3</span></header>
+  <div class="grid noimg">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>HDV chưa xem tutorial · dữ liệu TD-05</p>
+      <h4>Các bước</h4><p>1. Đăng nhập lần đầu</p>
+      <h4>Mong đợi</h4><p>driver.js hướng dẫn hiện</p>
+      <h4>Thực tế</h4><p class="actual">Không chạy: <code>tour_guide.onboarding = true</code> từ 13:41 (đã xem trước lần chạy)</p>
+      <h4>Ghi chú</h4><p>Cần tài khoản HDV mới</p>
+    </div>
+    
+  </div>
+</section>
+<section class="slide divider"><h2>S6 · Admin CRUD (<code>ACC-ADMIN</code>, 1440×810)</h2><p class="sub">6 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S6-01</span><h2>Điểm đến: tìm có / không kết quả + xoá tìm</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập admin · dữ liệu TD-09</p>
+      <h4>Các bước</h4><ol><li>Gõ TD-09</li><li><b>Xoá tìm kiếm</b></li><li>Gõ "Hà Nội"</li></ol>
+      <h4>Mong đợi</h4><p>"Không tìm thấy điểm đến"; xoá → đủ danh sách; "Hà Nội" ra 1 dòng</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S6-01-1.jpg" alt="S6-01"><figcaption>S6-01-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S6-02</span><h2>Tạo điểm đến (validate + lưu, ở lại form)</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Destinations · dữ liệu TD-15</p>
+      <h4>Các bước</h4><ol><li><b>Thêm điểm đến</b></li><li><b>Tạo điểm đến</b> khi trống</li><li>Tên <code>Z</code></li><li>Tên + mô tả hợp lệ → <b>Tạo điểm đến</b></li></ol>
+      <h4>Mong đợi</h4><p>Lỗi "2–100 ký tự"; tạo xong chuyển sang trang sửa</p>
+      <h4>Thực tế</h4><p class="actual">Đúng; <code>POST</code> 201, sang <code>/destinations/f7f604c1…/edit</code></p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S6-02-1.jpg" alt="S6-02"><figcaption>S6-02-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-02-2.jpg" alt="S6-02"><figcaption>S6-02-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S6-03</span><h2>Sửa điểm đến, ở lại form</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>S6-02 · dữ liệu TD-15</p>
+      <h4>Các bước</h4><ol><li>Sửa mô tả</li><li><b>Lưu thay đổi</b></li></ol>
+      <h4>Mong đợi</h4><p>Ở lại form, DB cập nhật</p>
+      <h4>Thực tế</h4><p class="actual">Đúng; DB mô tả = <code>ZZ QA mo ta da sua</code></p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S6-03-1.jpg" alt="S6-03"><figcaption>S6-03-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S6-04</span><h2>Rời form khi chưa lưu</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>S6-03</p>
+      <h4>Các bước</h4><ol><li>Sửa mô tả</li><li><b>Danh sách</b></li><li><b>Bỏ thay đổi</b></li></ol>
+      <h4>Mong đợi</h4><p>Hỏi "Bỏ các thay đổi chưa lưu?"; về danh sách có bản ghi mới</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S6-04-1.jpg" alt="S6-04"><figcaption>S6-04-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-04-2.jpg" alt="S6-04"><figcaption>S6-04-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S6-05</span><h2>Tìm không có kết quả + xoá tìm (5 màn)</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập admin · dữ liệu TD-09</p>
+      <h4>Các bước</h4><ol><li>Products, Tour Guides, Suppliers, Users, Videos:</li><li>Gõ TD-09</li><li>Bấm nút xoá tìm</li></ol>
+      <h4>Mong đợi</h4><p>Trạng thái trống tiếng Việt; xoá → đủ danh sách</p>
+      <h4>Thực tế</h4><p class="actual">Đúng cả 5 màn</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S6-05-guides.jpg" alt="S6-05"><figcaption>S6-05-guides.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-05-products.jpg" alt="S6-05"><figcaption>S6-05-products.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-05-suppliers.jpg" alt="S6-05"><figcaption>S6-05-suppliers.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-05-users.jpg" alt="S6-05"><figcaption>S6-05-users.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-05-videos.jpg" alt="S6-05"><figcaption>S6-05-videos.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S6-06</span><h2>Products: menu dòng, Lịch &amp; Giá</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập admin · dữ liệu TD-02</p>
+      <h4>Các bước</h4><ol><li>Tìm "Nhed"</li><li>Mở menu ⋯</li><li>Mở form sửa → <b>Quản lý Lịch &amp; Giá</b></li></ol>
+      <h4>Mong đợi</h4><p>Không có Xoá; mở được sheet Lịch &amp; Giá</p>
+      <h4>Thực tế</h4><p class="actual">Menu: Chỉnh sửa, Ẩn (không Xoá ✅). Sheet mở từ form ✅</p>
+      <h4>Ghi chú</h4><p>Menu dòng không có "Quản lý Lịch &amp; Giá" như tài liệu 12 mô tả; nút header tiếng Anh (D-08)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S6-06-1.jpg" alt="S6-06"><figcaption>S6-06-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-06-2.jpg" alt="S6-06"><figcaption>S6-06-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-06-3.jpg" alt="S6-06"><figcaption>S6-06-3.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-06-4.jpg" alt="S6-06"><figcaption>S6-06-4.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S7 · Admin booking</h2><p class="sub">4 tình huống</p></section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S7-01</span><h2>Tìm booking ZZ QA, xem 2 tab</h2><span class="pill fail">Lỗi</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Booking S2-01 · dữ liệu TD-01</p>
+      <h4>Các bước</h4><ol><li>Bookings → gõ "ZZ QA"</li><li>Bấm 👁 <b>Chi tiết Booking</b></li><li>Tab <b>Thanh toán &amp; Lịch sử</b></li></ol>
+      <h4>Mong đợi</h4><p>Đúng dữ liệu, nhãn đúng</p>
+      <h4>Thực tế</h4><p class="actual">Dữ liệu đúng; tab thanh toán có VNPAY "Đang chờ". <b>Nhãn tên khách ghi "Tên hướng dẫn viên"</b></p>
+      <h4>Ghi chú</h4><p>D-06</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S7-01-1.jpg" alt="S7-01"><figcaption>S7-01-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S7-01-2.jpg" alt="S7-01"><figcaption>S7-01-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S7-01-3.jpg" alt="S7-01"><figcaption>S7-01-3.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S7-01-4.jpg" alt="S7-01"><figcaption>S7-01-4.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S7-02</span><h2>Bookings: không có kết quả</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bookings · dữ liệu TD-09</p>
+      <h4>Các bước</h4><ol><li>Gõ TD-09</li><li><b>Xoá bộ lọc</b></li></ol>
+      <h4>Mong đợi</h4><p>Trạng thái trống, xoá về danh sách</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S7-02-1.jpg" alt="S7-02"><figcaption>S7-02-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S7-03</span><h2>Huỷ booking pending có lý do</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Drawer booking S2-01 · dữ liệu TD-18</p>
+      <h4>Các bước</h4><ol><li><b>Huỷ booking</b></li><li>Để trống lý do</li><li>Nhập TD-18 → <b>Huỷ booking</b></li></ol>
+      <h4>Mong đợi</h4><p>Nút khoá khi trống lý do; cảnh báo payment pending; huỷ xong drawer hiện thông tin huỷ; DB <code>cancel</code></p>
+      <h4>Thực tế</h4><p class="actual">Đúng; DB <code>status=cancel</code></p>
+      <h4>Ghi chú</h4><p>Payment VNPay của booking vẫn <code>pending</code> (đã có cảnh báo trong dialog; xem I2 trong review)</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S7-03-1.jpg" alt="S7-03"><figcaption>S7-03-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S7-03-2.jpg" alt="S7-03"><figcaption>S7-03-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S7-03-3.jpg" alt="S7-03"><figcaption>S7-03-3.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S7-04</span><h2>Thẻ thống kê booking</h2><span class="pill fail">Lỗi</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Bookings</p>
+      <h4>Các bước</h4><p>1. Xem 4 thẻ KPI, đối chiếu DB</p>
+      <h4>Mong đợi</h4><p>Tổng tiền đúng theo tiền tệ</p>
+      <h4>Thực tế</h4><p class="actual">Cộng lẫn VND và USD, hiển thị ký hiệu "$" (vd "Tổng tiền: $8,641,244")</p>
+      <h4>Ghi chú</h4><p>D-03</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S8-01-2.jpg" alt="S7-04"><figcaption>S8-01-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S8 · Phân quyền</h2><p class="sub">6 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S8-01</span><h2>Chưa đăng nhập mở trang admin</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Xoá phiên · dữ liệu TD-06</p>
+      <h4>Các bước</h4><ol><li>Mở <code>/vi/admin/bookings</code></li><li>Đăng nhập TD-06</li></ol>
+      <h4>Mong đợi</h4><p>Chuyển <code>/admin/login?callbackUrl=…</code>, đăng nhập xong quay về Bookings</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S8-01-1.jpg" alt="S8-01"><figcaption>S8-01-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S8-01-2.jpg" alt="S8-01"><figcaption>S8-01-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S8-02</span><h2>Khách đã đăng nhập mở admin</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập TD-04</p>
+      <h4>Các bước</h4><p>1. Mở <code>/vi/admin/products</code></p>
+      <h4>Mong đợi</h4><p>Bị chuyển tới đăng nhập admin</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S8-02-1.jpg" alt="S8-02"><figcaption>S8-02-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S8-03</span><h2>Tài khoản khách đăng nhập admin</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/admin/login</code> · dữ liệu TD-04</p>
+      <h4>Các bước</h4><ol><li>Nhập tài khoản khách</li><li><b>Đăng nhập</b></li></ol>
+      <h4>Mong đợi</h4><p>Từ chối</p>
+      <h4>Thực tế</h4><p class="actual">"Email hoặc mật khẩu không chính xác"</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S8-03-1.jpg" alt="S8-03"><figcaption>S8-03-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S8-04</span><h2>Admin xem super admin</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập TD-06 · dữ liệu <code>ACC-SUPER</code> (chỉ xem)</p>
+      <h4>Các bước</h4><ol><li>Users → tìm super admin</li><li>Mở form</li></ol>
+      <h4>Mong đợi</h4><p>Chỉ xem, không lưu/không đổi vai trò</p>
+      <h4>Thực tế</h4><p class="actual">Banner "Bạn chỉ xem được tài khoản này…", form <code>fieldset disabled</code>, không có nút Lưu</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S8-04-1.jpg" alt="S8-04"><figcaption>S8-04-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S8-04-2.jpg" alt="S8-04"><figcaption>S8-04-2.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S8-05</span><h2>Admin gán vai trò</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập TD-06 · dữ liệu TD-19</p>
+      <h4>Các bước</h4><ol><li>Mở form user thường</li><li>Mở ô <b>Vai trò</b></li></ol>
+      <h4>Mong đợi</h4><p>Không chọn được Quản trị viên / Quản trị cấp cao</p>
+      <h4>Thực tế</h4><p class="actual">2 lựa chọn này bị disabled</p>
+      <h4>Ghi chú</h4><p>Không lưu</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S8-05-1.jpg" alt="S8-05"><figcaption>S8-05-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S8-06</span><h2>Nút sửa chỉ ở hồ sơ của mình</h2><span class="pill pass">Đạt</span><span class="prio">P1</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>Đăng nhập TD-05 · dữ liệu TD-16</p>
+      <h4>Các bước</h4><p>Như S5-01 và S5-04</p>
+      <h4>Mong đợi</h4><p>Chỉ hồ sơ mình có Chỉnh sửa/Quản lý</p>
+      <h4>Thực tế</h4><p class="actual">Đúng</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S5-01-1.jpg" alt="S8-06"><figcaption>S5-01-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S5-04-1.jpg" alt="S8-06"><figcaption>S5-04-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide divider"><h2>S9 · Chất lượng giao diện</h2><p class="sub">3 tình huống</p></section>
+<section class="slide case pass" data-status="pass">
+  <header><span class="id">S9-01</span><h2>Không tràn khung 430px</h2><span class="pill pass">Đạt</span><span class="prio">P2</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p>430×932</p>
+      <h4>Các bước</h4><p>Mở 9 trang: <code>/</code>, search, product, booking, guide, sign-in, sign-up, forgot, 404</p>
+      <h4>Mong đợi</h4><p><code>scrollWidth = 430</code></p>
+      <h4>Thực tế</h4><p class="actual">Đúng cả 9 trang</p>
+      
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S9-03-1.jpg" alt="S9-01"><figcaption>S9-03-1.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S9-02</span><h2>Toàn bộ chữ tiếng Việt, không key thô</h2><span class="pill fail">Lỗi</span><span class="prio">P3</span></header>
+  <div class="grid ">
+    <div class="text">
+      <h4>Điều kiện trước</h4><p><code>/vi</code></p>
+      <h4>Các bước</h4><p>Đọc chữ hiển thị trên các trang đã test</p>
+      <h4>Mong đợi</h4><p>Không có key i18n thô, không chữ tiếng Anh cứng</p>
+      <h4>Thực tế</h4><p class="actual">Không có key thô ✅. Còn chữ tiếng Anh: stepper "Info/Options/Review/Payment", ngày "Mon, Nov 16, 2026", "Chat App", "… More" ở feed, trang 404, nút admin "Save Changes / Hide Product"</p>
+      <h4>Ghi chú</h4><p>D-08</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S2-01-2.jpg" alt="S9-02"><figcaption>S2-01-2.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S1-08-1.jpg" alt="S9-02"><figcaption>S1-08-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S9-03-1.jpg" alt="S9-02"><figcaption>S9-03-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S6-06-3.jpg" alt="S9-02"><figcaption>S6-06-3.jpg</figcaption></figure></div>
+  </div>
+</section>
+<section class="slide case fail" data-status="fail">
+  <header><span class="id">S9-03</span><h2>Lỗi console</h2><span class="pill fail">Lỗi</span><span class="prio">P3</span></header>
+  <div class="grid ">
+    <div class="text">
+      
+      <h4>Các bước</h4><p>Theo dõi console mọi bước</p>
+      <h4>Mong đợi</h4><p>Không có lỗi mới</p>
+      <h4>Thực tế</h4><p class="actual">404 tải trước <code>video1.ts</code>/<code>video2.ts</code> (Bunny) ở feed; admin: "<code>DialogContent</code> requires a <code>DialogTitle</code>" khi mở drawer booking</p>
+      <h4>Ghi chú</h4><p>D-10</p>
+    </div>
+    <div class="shots"><figure><img loading="lazy" src="evidence/S1-06-1.jpg" alt="S9-03"><figcaption>S1-06-1.jpg</figcaption></figure><figure><img loading="lazy" src="evidence/S7-01-3.jpg" alt="S9-03"><figcaption>S7-01-3.jpg</figcaption></figure></div>
+  </div>
+</section>
+<nav><button id="fail">Chỉ xem lỗi</button><button id="prev">←</button><span id="pos"></span><button id="next">→</button></nav>
+<div class="lb" id="lb"><img alt="" /></div>
+<script>
+  var all = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var onlyFail = false, i = 0;
+  function list() { return onlyFail ? all.filter(function (s) { return s.classList.contains('cover') || s.dataset.status === 'fail'; }) : all; }
+  function show(n) {
+    var l = list(); i = Math.max(0, Math.min(n, l.length - 1));
+    all.forEach(function (s) { s.classList.remove('on'); }); l[i].classList.add('on'); l[i].scrollTop = 0;
+    document.getElementById('pos').textContent = (i + 1) + ' / ' + l.length;
+  }
+  document.getElementById('prev').onclick = function () { show(i - 1); };
+  document.getElementById('next').onclick = function () { show(i + 1); };
+  document.getElementById('fail').onclick = function () { onlyFail = !onlyFail; this.classList.toggle('on', onlyFail); show(0); };
+  document.addEventListener('keydown', function (e) {
+    if (document.getElementById('lb').classList.contains('on')) { if (e.key === 'Escape') document.getElementById('lb').classList.remove('on'); return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') show(i + 1);
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') show(i - 1);
+    if (e.key === 'Home') show(0);
+  });
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest('.shots img'); var lb = document.getElementById('lb');
+    if (img) { lb.querySelector('img').src = img.src; lb.classList.add('on'); return; }
+    if (e.target.closest('.lb')) lb.classList.remove('on');
+  });
+  show(0);
+</script>
+</body>
+</html>

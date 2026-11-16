@@ -39,6 +39,19 @@ Cột: ID | Suite | Tiêu đề | Ưu tiên | Điều kiện trước | Dữ li�
 | S3-05 | S3 | Trang kết quả không tin tham số URL | P1 | Booking vẫn `pending` | TD-20 | 1. Mở URL `status=success&txnRef=FAKE123…` | Không hiện thành công khi BE chưa xác nhận | Hiện "Thanh Toán Thành Công!" + "Email xác nhận đã được gửi" dù DB vẫn `pending` | ❌ | S3-04-1.jpg | D-02 (đã biết M7) |
 | S3-06 | S3 | Nút "Thanh toán bằng thẻ" | P3 | Bước 4 | — | 1. Bấm **Thanh toán bằng thẻ** | Mở thanh toán thẻ hoặc không hiển thị nút | Không có phản hồi gì | ❌ | S2-01-10.jpg | D-12 (đã biết M25) |
 
+## S3b · Thanh toán PayPal (tour USD) — chạy bổ sung 16/11 ~21:40, `http://localhost:3000/vi` (nhánh `dev`)
+
+Điều kiện chung: tour TD-22 (đã thêm loại khách + 60 lịch); đăng nhập TD-04; booking đi tới bước 4 (1. Chọn ngày 2. **+** Adult 3. Nhập liên hệ `ZZ QA PayPal…` 4. **Tiếp tục →** 5. 08:00, City Center Meeting Point, Standard Tour Option 6. **Tiếp tục →** 7. Tick đồng ý 8. **Xác nhận đặt tour →**). Popup PayPal chạy được cả localhost lẫn Vercel.
+
+| ID | Suite | Tiêu đề | Ưu tiên | Điều kiện trước | Dữ liệu | Các bước | Mong đợi | Thực tế | Trạng thái | Bằng chứng | Ghi chú |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| S3-07 | S3 | Đúng cổng theo loại tiền | P1 | Bước 4 của 1 booking VND và 1 booking USD | TD-22, TD-23 | 1. Xem bước 4 tour VND 2. Xem bước 4 tour USD | VND: chỉ có **Thanh toán qua VNPAY**, tổng hiện ₫. USD: chỉ có nút **PayPal**, tổng hiện $ | VND: "Thanh toán qua VNPAY", ₫1.200.000. USD: nút vàng "PayPal", $90. Không bên nào có cổng của bên kia | ✅ | S3-07-1/2.jpg | |
+| S3-08 | S3 | Thanh toán PayPal thành công (đăng nhập tài khoản PayPal) | P1 | Bước 4 tour USD, 2 Adult | TD-21 | 1. Bấm nút **PayPal** 2. Popup: nhập email `ACC-PAYPAL` → **Next** → mật khẩu → **Log In** 3. Kiểm số tiền, chọn phương thức ở **Pay with** 4. Bấm **Pay** 5. Kiểm DB | Popup đóng, bước 4 hiện màn **Thành công**; DB: booking `paid`, payment PayPal `succeed`, số tiền khớp tổng | Popup hiện $90.00 = tổng bước 4; sau **Pay** popup đóng, hiện "Thanh Toán Thành Công!". DB: `BKMWJDGLLBB7DD70` `paid`, payment paypal `succeed` 90 USD | ✅ | S3-08-1/2/3.jpg | Lúc bấm **Pay**, phương thức đang chọn là **Visa ••5240** (ảnh 2) — bấm "PayPal balance" không đổi được lựa chọn, nên **trả bằng số dư PayPal chưa được kiểm**. Nút trên popup tên **Pay** (bản cũ: **Complete Purchase**) |
+| S3-09 | S3 | Thanh toán PayPal bằng thẻ đã lưu | P2 | Bước 4 tour USD, 1 Adult | TD-21 | 1. Như S3-08 bước 1–2 2. Bấm **Pay with** → chọn **Visa Debit ••5240** 3. **Pay** 4. Kiểm DB | Như S3-08 | Popup $45.00 trả bằng Visa; màn thành công; DB: `BKMWJDLI29B239BC` `paid`, payment `succeed` 45 USD | ✅ | S3-09-1/2.jpg | Thẻ sandbox gắn sẵn trong `ACC-PAYPAL` |
+| S3-10 | S3 | Trả bằng thẻ không cần tài khoản PayPal | P3 | Bước 4 tour USD | — | 1. Bấm nút **PayPal** 2. Ở màn đầu bấm **Pay with Debit or Credit Card** | Có đường trả bằng thẻ không cần tài khoản | Mở "Check out as a guest": nhập email → **Continue to Payment** → form thẻ | ✅ | S3-10-1.jpg | Chỉ kiểm tới đây, không nhập thẻ |
+| S3-11 | S3 | Huỷ trong popup PayPal | P1 | Bước 4 tour USD | TD-21 | 1. Bấm nút **PayPal** 2. Bấm **Cancel and return to Web Travel** | Popup đóng, ở lại bước 4, báo đã huỷ; booking vẫn `pending`; bấm PayPal lại được | Đúng: popup đóng, hiện thông báo, thanh toán lại được (S3-08). Thông báo lặp chữ "Giao dịch đã bị hủy." 2 lần | ✅ | S3-11-1/2.jpg | D-13 (thấp). Lần huỷ để lại 1 payment `pending` trong DB |
+| S3-12 | S3 | Nút "Thanh toán bằng thẻ" ở tour USD | P3 | Bước 4 tour USD | — | 1. Bấm **Thanh toán bằng thẻ** | Mở thanh toán thẻ hoặc không hiển thị nút | Không có phản hồi (không đổi trang, không popup) | ❌ | S3-12-1.jpg | D-12. Khách USD trả thẻ được qua PayPal (S3-09/S3-10) |
+
 ## S4 · Tài khoản
 
 | ID | Suite | Tiêu đề | Ưu tiên | Điều kiện trước | Dữ liệu | Các bước | Mong đợi | Thực tế | Trạng thái | Bằng chứng | Ghi chú |

@@ -21,6 +21,7 @@ Compact, verified context for AI agents and new devs. **Read this file, then onl
 | [guides/huong-dan-khach-hang.html](./guides/huong-dan-khach-hang.html) | (VI, non-technical) Illustrated end-user guide with screenshots — client app |
 | [guides/huong-dan-quan-tri.html](./guides/huong-dan-quan-tri.html) | (VI, non-technical) Illustrated admin guide with screenshots (PII blurred) |
 | [qa/2026-11-16/report.html](./qa/2026-11-16/report.html) | (VI) QA run by agent `qa-tester`: report, test plan/data/cases, evidence |
+| [qa/2026-11-16/slides.html](./qa/2026-11-16/slides.html) | (VI) One slide per test case with evidence screenshots; rebuild with `node documents/qa/build-slides.js documents/qa/<date>` |
 
 ## Task → read map
 

@@ -43,7 +43,7 @@ Mẹo: nói rõ **tài khoản** (xem `documents/test-accounts.local.md`), **d�
 | Bị đá ra trang login giữa chừng | Do có nơi khác đăng nhập cùng tài khoản (curl/Swagger/MCP API) → đăng nhập lại |
 | Chữ hiện font Arial | Font đã tự host; nếu còn lỗi xem terminal dev |
 | Video/ảnh Bunny tải chậm | Mạng tới CDN chậm, không phải lỗi code; chờ lâu hơn hoặc chụp lại |
-| Thanh toán PayPal/VNPay | Không thanh toán thật; chỉ test tới bước mở cổng thanh toán |
+| Thanh toán PayPal/VNPay | Chỉ dùng **sandbox**. VNPay cần bản Vercel (trang trả về không về localhost); PayPal là popup nên chạy được cả localhost. Tour **VND → VNPay** (`CARD-VNPAY`), tour **USD → PayPal** (`ACC-PAYPAL`); chỉ thanh toán khi bạn cho phép rõ, tối đa 2 lần thành công mỗi lượt. Nút "Thanh toán bằng thẻ" chưa có chức năng |
 | MCP không kết nối (`CONNECT_TIMEOUT`) | `/mcp` → reconnect; vẫn lỗi thì mở phiên mới |
 
 ## 6. Checklist test 1 màn hình (gợi ý cho Claude)

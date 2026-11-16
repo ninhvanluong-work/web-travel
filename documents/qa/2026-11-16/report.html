@@ -47,16 +47,16 @@
 <header><div class="wrap">
   <small>Báo cáo kiểm thử · 16/11/2026 · web-travel-theta.vercel.app</small>
   <h1>Kết quả kiểm thử ứng dụng web-travel</h1>
-  <div class="verdict">🔴 <b>Chưa thể phát hành phần thanh toán.</b> Khách đặt tour được, nhưng cổng VNPay từ chối thanh toán ngay từ đầu. Các phần khác phần lớn hoạt động tốt.</div>
+  <div class="verdict">🟡 <b>Tour giá USD: thanh toán PayPal chạy tốt. Tour giá VND: chưa phát hành được</b> vì cổng VNPay từ chối thanh toán ngay từ đầu. Các phần khác phần lớn hoạt động tốt.</div>
 </div></header>
 
 <div class="wrap">
   <div class="kpis">
-    <div class="kpi"><b>53</b><span>Tổng số tình huống</span></div>
-    <div class="kpi ok"><b>37</b><span>✅ Đạt</span></div>
-    <div class="kpi bad"><b>13</b><span>❌ Lỗi</span></div>
+    <div class="kpi"><b>59</b><span>Tổng số tình huống</span></div>
+    <div class="kpi ok"><b>42</b><span>✅ Đạt</span></div>
+    <div class="kpi bad"><b>14</b><span>❌ Lỗi</span></div>
     <div class="kpi blk"><b>2</b><span>⛔ Bị chặn</span></div>
-    <div class="kpi nr"><b>74%</b><span>Tỉ lệ đạt</span></div>
+    <div class="kpi nr"><b>75%</b><span>Tỉ lệ đạt</span></div>
   </div>
 
   <h2>Kết quả theo từng phần</h2>
@@ -68,6 +68,11 @@
     <span class="chip p">Mở trang tour</span><span class="arrow">➜</span><span class="chip f">Nhập thông tin (SĐT sai vẫn qua)</span><span class="arrow">➜</span>
     <span class="chip f">Quay lại bước 1 (mất số khách)</span><span class="arrow">➜</span><span class="chip p">Xác nhận đặt tour</span><span class="arrow">➜</span>
     <span class="chip f">Thanh toán VNPay (bị từ chối)</span><span class="arrow">➜</span><span class="chip b">Đơn "Đã thanh toán"</span>
+  </div>
+  <div class="flow"><strong>Khách đặt tour giá USD</strong>
+    <span class="chip p">Xác nhận đặt tour</span><span class="arrow">➜</span><span class="chip p">Bấm PayPal</span><span class="arrow">➜</span>
+    <span class="chip p">Đăng nhập PayPal</span><span class="arrow">➜</span><span class="chip p">Chọn thẻ đã lưu</span><span class="arrow">➜</span>
+    <span class="chip p">Pay</span><span class="arrow">➜</span><span class="chip p">Đơn "Đã thanh toán"</span>
   </div>
   <div class="flow"><strong>Tài khoản</strong>
     <span class="chip f">Đăng ký (thông báo tiếng Anh)</span><span class="arrow">➜</span><span class="chip p">Đăng nhập</span><span class="arrow">➜</span>
@@ -88,24 +93,30 @@
     <tr><td>Giao dịch VNPay</td><td>TxnRef D789XH6V3RK5</td><td>Chờ xử lý</td><td>BE chuyển "thất bại" / xoá mềm</td></tr>
     <tr><td>Người dùng</td><td>zz.qa+1794838113156@example.com</td><td>Hoạt động</td><td>Xoá</td></tr>
     <tr><td>Điểm đến</td><td>ZZ QA Destination 20261116</td><td>Hoạt động</td><td>Xoá ở Quản trị → Điểm đến</td></tr>
+    <tr><td>Đơn đặt tour (PayPal)</td><td>BKMWJDGLLBB7DD70 · "ZZ QA PayPal" · $90</td><td>Đã thanh toán (tiền thử)</td><td>Không bắt buộc</td></tr>
+    <tr><td>Đơn đặt tour (PayPal thẻ)</td><td>BKMWJDLI29B239BC · "ZZ QA PayPal Visa" · $45</td><td>Đã thanh toán (tiền thử)</td><td>Không bắt buộc</td></tr>
+    <tr><td>Giao dịch PayPal đã huỷ</td><td>của đơn BKMWJDGLLBB7DD70</td><td>Chờ xử lý</td><td>BE chuyển "thất bại"</td></tr>
+    <tr><td>Đơn đặt tour (ảnh hướng dẫn)</td><td>BKMWJCZR5MD7926D · "ZZ QA Hướng dẫn" · 1.200.000đ</td><td>Chờ thanh toán</td><td>Huỷ ở Quản trị → Booking</td></tr>
+    <tr><td>Lịch khởi hành</td><td>60 lịch cho "Tour du lịch miền bắc" (VND) và 60 lịch + loại khách cho "Tour Hà Giang - Mã Pí Lèng" (USD)</td><td>Đang mở bán tới 15/01/2027</td><td>Giữ lại để test tiếp</td></tr>
   </table>
 
   <h2>Việc cần làm tiếp</h2>
   <table>
     <tr><th>#</th><th>Việc</th><th>Ai</th></tr>
     <tr><td>1</td><td>Kích hoạt tài khoản VNPay sandbox để thanh toán được, rồi kiểm thử lại phần thanh toán</td><td>BE / người quản lý VNPay</td></tr>
-    <tr><td>2</td><td>Thêm lịch khởi hành có giá cho tour dùng để test</td><td>Quản trị</td></tr>
+    <tr><td>2</td><td>Dùng 2 tour mẫu đã có lịch tới 15/01/2027: “Tour du lịch miền bắc” (VND) và “Tour Hà Giang - Mã Pí Lèng” (USD)</td><td>QA</td></tr>
+    <tr><td>2b</td><td>Chạy lại 6 tình huống PayPal (S3-07 → S3-12) trên bản Vercel sau khi deploy</td><td>QA</td></tr>
     <tr><td>3</td><td>Sửa lỗi D-02, D-03, D-04, D-05; sau đó các chữ tiếng Anh / nhãn sai</td><td>FE</td></tr>
     <tr><td>4</td><td>Dọn dữ liệu test ở bảng trên</td><td>Quản trị / BE</td></tr>
   </table>
-  <p class="meta">Chi tiết từng tình huống: <a href="test-cases.md">test-cases.md</a> · Dữ liệu test: <a href="test-data.md">test-data.md</a> · Kế hoạch: <a href="test-plan.md">test-plan.md</a> · Bản đầy đủ: <a href="report.md">report.md</a></p>
+  <p class="meta"><b>Xem từng tình huống kèm ảnh: <a href="slides.html">slides.html</a></b> · Chi tiết từng tình huống: <a href="test-cases.md">test-cases.md</a> · Dữ liệu test: <a href="test-data.md">test-data.md</a> · Kế hoạch: <a href="test-plan.md">test-plan.md</a> · Bản đầy đủ: <a href="report.md">report.md</a></p>
 </div>
 <div class="lb" id="lb"><img alt="" /></div>
 <footer>Ảnh bằng chứng trong thư mục evidence/ · thông tin cá nhân đã được làm mờ</footer>
 
 <script>
   var SUITES = [
-    ['S1 Tìm tour bằng video', 8, 7, 1, 0, 0], ['S2 Đặt tour', 6, 4, 2, 0, 0], ['S3 Thanh toán', 6, 1, 3, 2, 0],
+    ['S1 Tìm tour bằng video', 8, 7, 1, 0, 0], ['S2 Đặt tour', 6, 4, 2, 0, 0], ['S3 Thanh toán VNPay (tour VND)', 6, 1, 3, 2, 0], ['S3b PayPal (tour USD)', 6, 5, 1, 0, 0],
     ['S4 Tài khoản', 9, 6, 3, 0, 0], ['S5 Hướng dẫn viên', 5, 4, 0, 0, 1], ['S6 Quản trị – danh mục', 6, 6, 0, 0, 0],
     ['S7 Quản trị – đơn đặt', 4, 2, 2, 0, 0], ['S8 Đúng người đúng việc', 6, 6, 0, 0, 0], ['S9 Giao diện', 3, 1, 2, 0, 0],
   ];
@@ -121,7 +132,8 @@
     ['low', 'Thấp', 'D-09', 'Tìm kiếm không bao giờ "không thấy"', 'Từ khoá vô nghĩa vẫn ra video gần giống.', 'S1-02-2.jpg', 'BE / PO', ''],
     ['low', 'Thấp', 'D-10', 'Lỗi trong console', 'Thiếu đoạn video video1.ts/video2.ts; hộp chi tiết đơn thiếu tiêu đề.', 'S9-03-1.jpg', 'FE', ''],
     ['low', 'Thấp', 'D-11', 'Tour không có ảnh hiển thị lạ', 'Hiện "1 / 0", giá "USD350,000".', 'S1-07-1.jpg', 'FE / dữ liệu', ''],
-    ['low', 'Thấp', 'D-12', 'Nút "Thanh toán bằng thẻ" không làm gì', 'Bấm không có phản hồi.', '', 'FE', ''],
+    ['low', 'Thấp', 'D-12', 'Nút "Thanh toán bằng thẻ" không làm gì', 'Bấm không có phản hồi (cả tour VND và USD). Khách USD vẫn trả thẻ được qua PayPal.', 'S3-12-1.jpg', 'FE', ''],
+    ['low', 'Thấp', 'D-13', 'Huỷ PayPal: thông báo lặp chữ', 'Huỷ trong cửa sổ PayPal → thông báo hiện "Giao dịch đã bị hủy." 2 lần.', 'S3-11-2.jpg', 'FE', 'AlertBanner dùng cùng chuỗi booking.paymentCancelled cho title và message (step-payment.tsx).'],
   ];
   var s = document.getElementById('suites');
   SUITES.forEach(function (x) {
