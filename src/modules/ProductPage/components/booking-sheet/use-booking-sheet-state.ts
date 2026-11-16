@@ -3,6 +3,7 @@ import React from 'react';
 
 import { useCreateBooking } from '@/api/booking';
 import { normalizeEmail, normalizeSingleLine } from '@/lib/text-normalize';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -114,7 +115,8 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
             setStep(4);
           },
           onError: (err: unknown) => {
-            const msg = err instanceof Error ? err.message : t('booking.errorGeneric');
+            // The axios interceptor rejects with the BE body ({ statusCode, message }), not an Error
+            const msg = getApiErrorMessage(err, t('booking.errorGeneric'));
             setBookingError(msg);
           },
         }

@@ -11,6 +11,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PriceInput } from '@/components/ui/price-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useAlertStore } from '@/stores/use-alert-store';
 
 interface Props {
@@ -62,9 +63,8 @@ export function CreateSessionModal({ open, productId, units, onClose }: Props) {
           useAlertStore.getState().addAlert({ type: 'success', title: t('sessionCreateSuccess') });
           handleClose();
         },
-        onError: (err: any) => {
-          const msg = err?.response?.data?.message;
-          const text = Array.isArray(msg) ? msg.join(', ') : msg ?? t('genericError');
+        onError: (err: unknown) => {
+          const text = getApiErrorMessage(err, t('genericError'));
           if (text.toLowerCase().includes('exist') || text.toLowerCase().includes('duplicate')) {
             setError(t('sessionDuplicateDate', { date: travelDate }));
           } else {

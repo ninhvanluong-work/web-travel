@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useCreateProduct, useProductById, useUpdateProduct, useUpdateProductStatus } from '@/api/product';
+import { getApiErrorMessage } from '@/lib/utils';
 import { type ProductFormValues, productSchema, READ_BEFORE_KEY_OPTIONS } from '@/lib/validations/product';
 import { useAlertStore } from '@/stores/use-alert-store';
 import { ROUTE } from '@/types';
@@ -139,14 +140,14 @@ export function useProductForm(productId?: string) {
   const createMutation = useCreateProduct();
 
   const updateMutation = useUpdateProduct({
-    onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
+    onError: (err: unknown) => {
+      addAlert({ type: 'error', title: getApiErrorMessage(err, t('genericError')) });
     },
   });
 
   const updateStatusMutation = useUpdateProductStatus({
-    onError: (err: any) => {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('updateStatusFailed') });
+    onError: (err: unknown) => {
+      addAlert({ type: 'error', title: getApiErrorMessage(err, t('updateStatusFailed')) });
     },
   });
 
@@ -158,8 +159,8 @@ export function useProductForm(productId?: string) {
       addAlert({ type: 'success', title: t('tourCreatedSuccess') });
       // Continue on the edit page of the new tour (sessions etc. need an id); a second save updates
       router.replace(ROUTE.ADMIN_PRODUCTS_EDIT(created.id));
-    } catch (err: any) {
-      addAlert({ type: 'error', title: err?.response?.data?.message ?? t('genericError') });
+    } catch (err: unknown) {
+      addAlert({ type: 'error', title: getApiErrorMessage(err, t('genericError')) });
     }
   };
 
@@ -226,7 +227,7 @@ export function useProductForm(productId?: string) {
     );
   }, onValidationError);
 
-  const isPending = createMutation.isPending || updateMutation.isPending || updateStatusMutation.isPending;
+  const isPending = createMutation.isLoading || updateMutation.isLoading || updateStatusMutation.isLoading;
 
   return { form, isEdit, productData, onSubmit, onPublish, handlePublish, handleHide, isPending, draft };
 }

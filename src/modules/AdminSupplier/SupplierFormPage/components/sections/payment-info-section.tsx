@@ -101,8 +101,8 @@ export function PaymentInfoSection({ supplierId }: PaymentInfoSectionProps) {
               <BankCardItem
                 key={payment.id}
                 payment={payment}
-                isSettingDefault={setDefaultMutation.isPending}
-                isDeleting={deleteMutation.isPending && deleteTarget?.id === payment.id}
+                isSettingDefault={setDefaultMutation.isLoading}
+                isDeleting={deleteMutation.isLoading && deleteTarget?.id === payment.id}
                 onSetDefault={() => handleSetDefault(payment)}
                 onEdit={() => handleOpenEdit(payment)}
                 onDelete={() => setDeleteTarget(payment)}
@@ -135,7 +135,7 @@ export function PaymentInfoSection({ supplierId }: PaymentInfoSectionProps) {
       <AlertDialog
         open={!!deleteTarget}
         onOpenChange={(open) => {
-          if (!open && !deleteMutation.isPending) setDeleteTarget(null);
+          if (!open && !deleteMutation.isLoading) setDeleteTarget(null);
         }}
       >
         <AlertDialogContent className="rounded-2xl border-slate-100 shadow-2xl max-w-md dark:border-gray-800/80">
@@ -151,17 +151,17 @@ export function PaymentInfoSection({ supplierId }: PaymentInfoSectionProps) {
             <AlertDialogCancel
               className="mt-0 h-10 px-5 rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-800 transition-all font-semibold text-sm active:scale-95 dark:border-gray-800 dark:bg-transparent dark:text-gray-300 dark:hover:bg-gray-800 shrink-0"
               onClick={() => setDeleteTarget(null)}
-              disabled={deleteMutation.isPending}
+              disabled={deleteMutation.isLoading}
             >
               {t('cancel')}
             </AlertDialogCancel>
             <Button
               blur={false}
-              disabled={deleteMutation.isPending}
+              disabled={deleteMutation.isLoading}
               onClick={() => deleteTarget && deleteMutation.mutate({ id: deleteTarget.id })}
               className="h-10 px-5 rounded-xl bg-rose-600 hover:bg-rose-700 hover:text-white transition-all font-semibold text-sm active:scale-95 active:bg-rose-800 border-0 flex items-center gap-1.5 shrink-0 shadow-sm disabled:opacity-50"
             >
-              {deleteMutation.isPending ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
+              {deleteMutation.isLoading ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
               {t('delete')}
             </Button>
           </AlertDialogFooter>

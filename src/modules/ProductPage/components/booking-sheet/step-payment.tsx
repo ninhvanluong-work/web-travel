@@ -5,6 +5,7 @@ import React from 'react';
 
 import { useCapturePaypalOrder, useCreatePaypalOrder, useCreateVnpayPaymentUrl, usePaypalConfig } from '@/api/payment';
 import AlertBanner from '@/components/ui/AlertBanner';
+import { getApiErrorMessage } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
 import { StepPaymentHeader } from './step-payment-header';
@@ -83,8 +84,8 @@ export default function StepPayment({
     setErrorMessage(null);
     try {
       return await callCreateOrder({ bookingId });
-    } catch {
-      setErrorMessage(t('booking.paymentCreateOrderError'));
+    } catch (err) {
+      setErrorMessage(getApiErrorMessage(err, t('booking.paymentCreateOrderError')));
       throw new Error('create-order failed');
     }
   };
@@ -100,8 +101,8 @@ export default function StepPayment({
       const { paymentUrl } = await callCreateVnpayUrl({ bookingId });
       sessionStorage.setItem(VNPAY_RETURN_ORIGIN_KEY, window.location.href);
       window.location.href = paymentUrl;
-    } catch {
-      setErrorMessage(t('booking.paymentCreateOrderError'));
+    } catch (err) {
+      setErrorMessage(getApiErrorMessage(err, t('booking.paymentCreateOrderError')));
     }
   };
 
@@ -115,8 +116,8 @@ export default function StepPayment({
       } else {
         setErrorMessage(t('booking.paymentNotCompleted'));
       }
-    } catch {
-      setErrorMessage(t('booking.paymentCaptureError'));
+    } catch (err) {
+      setErrorMessage(getApiErrorMessage(err, t('booking.paymentCaptureError')));
     }
   };
 

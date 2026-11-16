@@ -42,7 +42,7 @@ export function TagSearchDropdown({
     enabled: open,
   });
 
-  const { mutateAsync: createTagMutation, isPending: isCreating } = useCreateTag();
+  const { mutateAsync: createTagMutation, isLoading: isCreating } = useCreateTag();
 
   const searchResults = (searchData?.pages ?? []).flatMap((p) => p.items);
   const filtered = searchResults.filter((tag) => !selectedIds.includes(tag.id));
