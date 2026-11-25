@@ -1,4 +1,5 @@
 import { BookmarkIcon, EyeIcon, EyeOffIcon, RocketIcon, SaveIcon } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 
 import { Button } from '@/components/ui/button';
 
@@ -23,6 +24,8 @@ export function FormActionButtons({
   onHide,
   disabled,
 }: FormActionButtonsProps) {
+  const { t } = useTranslation('adminPage');
+
   if (!isEdit) {
     return (
       <Button
@@ -36,7 +39,7 @@ export function FormActionButtons({
         disabled={disabled}
       >
         <BookmarkIcon size={14} />
-        Save Draft
+        {t('productActions.saveDraft')}
       </Button>
     );
   }
@@ -54,7 +57,7 @@ export function FormActionButtons({
         disabled={disabled}
       >
         <SaveIcon size={14} />
-        Save Changes
+        {t('saveChanges')}
       </Button>
 
       {currentStatus === 'published' && (
@@ -69,7 +72,7 @@ export function FormActionButtons({
           disabled={disabled}
         >
           <EyeOffIcon size={14} />
-          Hide Product
+          {t('productActions.hide')}
         </Button>
       )}
 
@@ -85,7 +88,7 @@ export function FormActionButtons({
           disabled={disabled}
         >
           <EyeIcon size={14} />
-          Publish Again
+          {t('productActions.publishAgain')}
         </Button>
       )}
 
@@ -101,7 +104,7 @@ export function FormActionButtons({
           disabled={disabled}
         >
           <RocketIcon size={14} />
-          Publish
+          {t('productActions.publish')}
         </Button>
       )}
     </>

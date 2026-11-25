@@ -72,5 +72,12 @@
     "errorExpired": "This link has expired. Please request a new one.",
     "errorGeneric": "Could not reset password. Please try again.",
     "requestAgain": "Request a new link"
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email address",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Password must be at least 6 characters",
+    "passwordWeak": "Password must contain at least 1 uppercase, 1 lowercase, and 1 number or special character"
   }
 }

@@ -50,6 +50,7 @@
   "nightUnit_other": "{{count}} nights",
   "personUnit": "person",
   "booking": {
+    "steps": { "info": "Info", "options": "Options", "review": "Review", "payment": "Payment" },
     "whoIsJoining": "Who's joining?",
     "setTravelDateAndGroupSize": "Set your travel date and group size",
     "travelDate": "Travel Date",
@@ -120,6 +121,7 @@
     "messengerHandlePlaceholder": "Your {{app}} number or username",
     "errorNameRequired": "Full name is required",
     "errorPhoneRequired": "Phone number is required",
+    "errorPhoneInvalid": "Please enter a valid phone number",
     "errorEmailRequired": "Email address is required",
     "errorEmailInvalid": "Please enter a valid email address",
     "errorHandleRequired": "Please enter your {{app}} username",

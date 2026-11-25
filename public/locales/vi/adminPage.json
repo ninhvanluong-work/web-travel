@@ -473,6 +473,8 @@
   "noBookingsYet": "Chưa có booking nào",
   "bookingDetailTitle": "Chi tiết Booking",
   "bookingDetailCustomer": "Khách hàng",
+  "bookingCustomerName": "Tên khách hàng",
+  "bookingTourName": "Tên tour",
   "bookingDetailTour": "Tour",
   "bookingDetailTravel": "Thông tin khởi hành",
   "bookingDetailPhone": "Số điện thoại",
@@ -544,5 +546,11 @@
   "admin.guide.moments.deleteMessage": "\"{{name}}\" sẽ bị gỡ khỏi hồ sơ hướng dẫn viên. Không thể hoàn tác.",
   "admin.guide.moments.deleted": "Đã xoá moment",
   "admin.guide.moments.deleteFailed": "Không thể xoá moment",
-  "admin.guide.moments.unit": "moment"
+  "admin.guide.moments.unit": "moment",
+  "productActions": {
+    "saveDraft": "Lưu nháp",
+    "hide": "Ẩn tour",
+    "publishAgain": "Hiển thị lại",
+    "publish": "Đăng tour"
+  }
 }

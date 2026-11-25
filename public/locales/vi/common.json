@@ -35,5 +35,12 @@
     "confirmRequired": "Vui lòng xác nhận mật khẩu mới",
     "mismatch": "Mật khẩu xác nhận không khớp",
     "sameAsOld": "Mật khẩu mới phải khác mật khẩu hiện tại"
+  },
+  "notFound": {
+    "label": "Lỗi 404",
+    "title": "Không tìm thấy trang",
+    "description": "Xin lỗi, trang bạn tìm không tồn tại hoặc đã được chuyển đi.",
+    "goBack": "Quay lại",
+    "goHome": "Về trang chủ"
   }
 }

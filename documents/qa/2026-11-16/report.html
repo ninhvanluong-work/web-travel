@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Báo cáo kiểm thử · 16/11/2026</title>
+<style>
+  :root { --bg:#f6f1e8; --card:#fffdf8; --ink:#1d2733; --muted:#6c6457; --line:#e4d9c6; --brand:#133c65;
+    --green:#2f9e6e; --yellow:#e0a100; --red:#d93a2b; --grey:#9a9283; font-family:'Segoe UI',system-ui,sans-serif; }
+  * { box-sizing:border-box } body { margin:0; background:var(--bg); color:var(--ink); line-height:1.55 }
+  header { background:var(--brand); color:#fff; padding:36px 24px }
+  .wrap { max-width:1180px; margin:0 auto; padding:0 24px }
+  header .wrap { padding:0 } h1 { margin:6px 0 8px; font-size:clamp(28px,4vw,42px) }
+  header small { letter-spacing:.14em; text-transform:uppercase; opacity:.75; font-size:13px }
+  .verdict { margin-top:18px; background:rgba(217,58,43,.18); border:2px solid #ff8a7d; border-radius:14px; padding:14px 18px; font-size:18px }
+  h2 { color:var(--brand); margin:40px 0 14px; font-size:26px }
+  .kpis { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:-28px }
+  .kpi { background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:16px 18px; box-shadow:0 8px 24px rgba(0,0,0,.06) }
+  .kpi b { display:block; font-size:34px; line-height:1.1 } .kpi span { color:var(--muted); font-size:14px }
+  .ok b{color:var(--green)} .bad b{color:var(--red)} .blk b{color:var(--yellow)} .nr b{color:var(--grey)}
+  .suites { display:grid; grid-template-columns:repeat(3,1fr); gap:14px }
+  .suite { background:var(--card); border:1.5px solid var(--line); border-radius:16px; padding:16px; border-top:8px solid var(--green) }
+  .suite.y { border-top-color:var(--yellow) } .suite.r { border-top-color:var(--red) }
+  .suite h3 { margin:0 0 8px; font-size:17px } .bar { display:flex; height:12px; border-radius:6px; overflow:hidden; background:#eee }
+  .bar i { display:block } .bar .p{background:var(--green)} .bar .f{background:var(--red)} .bar .b{background:var(--yellow)} .bar .n{background:var(--grey)}
+  .suite p { margin:8px 0 0; font-size:14px; color:var(--muted) }
+  .flow { display:flex; flex-wrap:wrap; align-items:center; gap:6px; background:var(--card); border:1.5px solid var(--line); border-radius:14px; padding:14px; margin-bottom:10px }
+  .flow strong { width:100%; margin-bottom:4px } .chip { padding:6px 12px; border-radius:999px; font-size:14px; font-weight:600; border:2px solid }
+  .chip.p { border-color:var(--green); color:var(--green); background:#e9f6ef } .chip.f { border-color:var(--red); color:#fff; background:var(--red) }
+  .chip.b { border-color:var(--yellow); color:#8a6200; background:#fff6d6 } .arrow { color:var(--muted) }
+  .defects { display:grid; grid-template-columns:repeat(2,1fr); gap:16px }
+  .defect { background:var(--card); border:1.5px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column }
+  .defect img { width:100%; max-height:300px; object-fit:cover; object-position:top; cursor:zoom-in; border-bottom:1px solid var(--line) }
+  .defect .body { padding:14px 16px } .tag { display:inline-block; font-size:12px; font-weight:700; padding:3px 10px; border-radius:999px; color:#fff; margin-right:6px }
+  .crit{background:var(--red)} .high{background:#e8603c} .med{background:var(--yellow)} .low{background:var(--grey)}
+  .defect h3 { margin:8px 0 6px; font-size:17px } .defect p { margin:4px 0; font-size:15px }
+  .meta { color:var(--muted); font-size:13.5px } details { margin-top:6px; font-size:13.5px; color:var(--muted) }
+  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:14px; overflow:hidden; font-size:15px }
+  th,td { padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top } th { background:#efe6d6 }
+  .lb { position:fixed; inset:0; background:rgba(15,20,28,.88); display:none; align-items:center; justify-content:center; padding:24px; cursor:zoom-out }
+  .lb.on { display:flex } .lb img { max-width:100%; max-height:100%; border-radius:10px }
+  footer { text-align:center; color:var(--muted); font-size:14px; padding:30px }
+  @media (max-width:800px) { .kpis{grid-template-columns:repeat(2,1fr)} .suites,.defects{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <small>Báo cáo kiểm thử · 16/11/2026 · web-travel-theta.vercel.app</small>
+  <h1>Kết quả kiểm thử ứng dụng web-travel</h1>
+  <div class="verdict">🟡 <b>Tour giá USD: thanh toán PayPal chạy tốt. Tour giá VND: chưa phát hành được</b> vì cổng VNPay từ chối thanh toán ngay từ đầu. Các phần khác phần lớn hoạt động tốt.</div>
+</div></header>
+
+<div class="wrap">
+  <div class="kpis">
+    <div class="kpi"><b>59</b><span>Tổng số tình huống</span></div>
+    <div class="kpi ok"><b>42</b><span>✅ Đạt</span></div>
+    <div class="kpi bad"><b>14</b><span>❌ Lỗi</span></div>
+    <div class="kpi blk"><b>2</b><span>⛔ Bị chặn</span></div>
+    <div class="kpi nr"><b>75%</b><span>Tỉ lệ đạt</span></div>
+  </div>
+
+  <h2>Kết quả theo từng phần</h2>
+  <div class="suites" id="suites"></div>
+
+  <h2>Hành trình người dùng (bước đỏ = lỗi, vàng = bị chặn)</h2>
+  <div class="flow"><strong>Khách tìm và đặt tour</strong>
+    <span class="chip p">Tìm tour</span><span class="arrow">➜</span><span class="chip p">Xem video</span><span class="arrow">➜</span>
+    <span class="chip p">Mở trang tour</span><span class="arrow">➜</span><span class="chip f">Nhập thông tin (SĐT sai vẫn qua)</span><span class="arrow">➜</span>
+    <span class="chip f">Quay lại bước 1 (mất số khách)</span><span class="arrow">➜</span><span class="chip p">Xác nhận đặt tour</span><span class="arrow">➜</span>
+    <span class="chip f">Thanh toán VNPay (bị từ chối)</span><span class="arrow">➜</span><span class="chip b">Đơn "Đã thanh toán"</span>
+  </div>
+  <div class="flow"><strong>Khách đặt tour giá USD</strong>
+    <span class="chip p">Xác nhận đặt tour</span><span class="arrow">➜</span><span class="chip p">Bấm PayPal</span><span class="arrow">➜</span>
+    <span class="chip p">Đăng nhập PayPal</span><span class="arrow">➜</span><span class="chip p">Chọn thẻ đã lưu</span><span class="arrow">➜</span>
+    <span class="chip p">Pay</span><span class="arrow">➜</span><span class="chip p">Đơn "Đã thanh toán"</span>
+  </div>
+  <div class="flow"><strong>Tài khoản</strong>
+    <span class="chip f">Đăng ký (thông báo tiếng Anh)</span><span class="arrow">➜</span><span class="chip p">Đăng nhập</span><span class="arrow">➜</span>
+    <span class="chip p">Đổi mật khẩu</span><span class="arrow">➜</span><span class="chip p">Đăng xuất</span>
+  </div>
+  <div class="flow"><strong>Quản trị</strong>
+    <span class="chip p">Đăng nhập</span><span class="arrow">➜</span><span class="chip p">Thêm / sửa điểm đến</span><span class="arrow">➜</span>
+    <span class="chip f">Xem đơn đặt (nhãn sai, tổng tiền sai đơn vị)</span><span class="arrow">➜</span><span class="chip p">Huỷ đơn có lý do</span><span class="arrow">➜</span><span class="chip p">Phân quyền đúng</span>
+  </div>
+
+  <h2>Các lỗi tìm thấy</h2>
+  <div class="defects" id="defects"></div>
+
+  <h2>Dữ liệu test đã tạo (cần dọn)</h2>
+  <table>
+    <tr><th>Bản ghi</th><th>Định danh</th><th>Trạng thái</th><th>Việc cần làm</th></tr>
+    <tr><td>Đơn đặt tour</td><td>BKMWJC44UC17ABC2 · "ZZ QA Khach Test" · 1.000.000đ</td><td>Đã huỷ</td><td>Không bắt buộc</td></tr>
+    <tr><td>Giao dịch VNPay</td><td>TxnRef D789XH6V3RK5</td><td>Chờ xử lý</td><td>BE chuyển "thất bại" / xoá mềm</td></tr>
+    <tr><td>Người dùng</td><td>zz.qa+1794838113156@example.com</td><td>Hoạt động</td><td>Xoá</td></tr>
+    <tr><td>Điểm đến</td><td>ZZ QA Destination 20261116</td><td>Hoạt động</td><td>Xoá ở Quản trị → Điểm đến</td></tr>
+    <tr><td>Đơn đặt tour (PayPal)</td><td>BKMWJDGLLBB7DD70 · "ZZ QA PayPal" · $90</td><td>Đã thanh toán (tiền thử)</td><td>Không bắt buộc</td></tr>
+    <tr><td>Đơn đặt tour (PayPal thẻ)</td><td>BKMWJDLI29B239BC · "ZZ QA PayPal Visa" · $45</td><td>Đã thanh toán (tiền thử)</td><td>Không bắt buộc</td></tr>
+    <tr><td>Giao dịch PayPal đã huỷ</td><td>của đơn BKMWJDGLLBB7DD70</td><td>Chờ xử lý</td><td>BE chuyển "thất bại"</td></tr>
+    <tr><td>Đơn đặt tour (ảnh hướng dẫn)</td><td>BKMWJCZR5MD7926D · "ZZ QA Hướng dẫn" · 1.200.000đ</td><td>Chờ thanh toán</td><td>Huỷ ở Quản trị → Booking</td></tr>
+    <tr><td>Lịch khởi hành</td><td>60 lịch cho "Tour du lịch miền bắc" (VND) và 60 lịch + loại khách cho "Tour Hà Giang - Mã Pí Lèng" (USD)</td><td>Đang mở bán tới 15/01/2027</td><td>Giữ lại để test tiếp</td></tr>
+  </table>
+
+  <h2>Việc cần làm tiếp</h2>
+  <table>
+    <tr><th>#</th><th>Việc</th><th>Ai</th></tr>
+    <tr><td>1</td><td>Kích hoạt tài khoản VNPay sandbox để thanh toán được, rồi kiểm thử lại phần thanh toán</td><td>BE / người quản lý VNPay</td></tr>
+    <tr><td>2</td><td>Dùng 2 tour mẫu đã có lịch tới 15/01/2027: “Tour du lịch miền bắc” (VND) và “Tour Hà Giang - Mã Pí Lèng” (USD)</td><td>QA</td></tr>
+    <tr><td>2b</td><td>Chạy lại 6 tình huống PayPal (S3-07 → S3-12) trên bản Vercel sau khi deploy</td><td>QA</td></tr>
+    <tr><td>3</td><td>Sửa lỗi D-02, D-03, D-04, D-05; sau đó các chữ tiếng Anh / nhãn sai</td><td>FE</td></tr>
+    <tr><td>4</td><td>Dọn dữ liệu test ở bảng trên</td><td>Quản trị / BE</td></tr>
+  </table>
+  <p class="meta"><b>Xem từng tình huống kèm ảnh: <a href="slides.html">slides.html</a></b> · Chi tiết từng tình huống: <a href="test-cases.md">test-cases.md</a> · Dữ liệu test: <a href="test-data.md">test-data.md</a> · Kế hoạch: <a href="test-plan.md">test-plan.md</a> · Bản đầy đủ: <a href="report.md">report.md</a></p>
+</div>
+<div class="lb" id="lb"><img alt="" /></div>
+<footer>Ảnh bằng chứng trong thư mục evidence/ · thông tin cá nhân đã được làm mờ</footer>
+
+<script>
+  var SUITES = [
+    ['S1 Tìm tour bằng video', 8, 7, 1, 0, 0], ['S2 Đặt tour', 6, 4, 2, 0, 0], ['S3 Thanh toán VNPay (tour VND)', 6, 1, 3, 2, 0], ['S3b PayPal (tour USD)', 6, 5, 1, 0, 0],
+    ['S4 Tài khoản', 9, 6, 3, 0, 0], ['S5 Hướng dẫn viên', 5, 4, 0, 0, 1], ['S6 Quản trị – danh mục', 6, 6, 0, 0, 0],
+    ['S7 Quản trị – đơn đặt', 4, 2, 2, 0, 0], ['S8 Đúng người đúng việc', 6, 6, 0, 0, 0], ['S9 Giao diện', 3, 1, 2, 0, 0],
+  ];
+  var DEFECTS = [
+    ['crit', 'Nghiêm trọng', 'D-01', 'Thanh toán VNPay bị từ chối', 'Bấm "Thanh toán qua VNPAY" → cổng VNPay báo "Website này chưa được phê duyệt", không tới được trang nhập thẻ.', 'S3-01-2.jpg', 'BE / cấu hình VNPay', 'Mã merchant sandbox RNC9AYTP nhiều khả năng chưa được kích hoạt (Error.html?code=71).'],
+    ['high', 'Cao', 'D-02', 'Trang kết quả tin vào đường link', 'Sửa đường link là hiện "Thanh toán thành công" dù đơn vẫn chờ xử lý.', 'S3-04-1.jpg', 'FE (+ BE)', 'Trang /payment/vnpay/return đọc status từ query, không hỏi trạng thái thật.'],
+    ['med', 'Trung bình', 'D-03', 'Thống kê tiền ở Booking sai đơn vị', 'Cộng chung VND và USD, hiển thị ký hiệu $.', 'S8-01-2.jpg', 'FE / BE', 'Thẻ KPI dùng stats.totalPrice không theo currency.'],
+    ['med', 'Trung bình', 'D-04', 'Số điện thoại sai vẫn đặt được', 'Nhập "+84 12" vẫn bấm Tiếp tục được.', 'S2-03-2.jpg', 'FE', ''],
+    ['med', 'Trung bình', 'D-05', 'Quay lại thì mất số khách', 'Từ bước 2 quay về bước 1, số khách về 0.', 'S2-05-2.jpg', 'FE', ''],
+    ['low', 'Thấp', 'D-06', 'Nhãn sai trong chi tiết đơn', 'Tên khách bị ghi là "Tên hướng dẫn viên".', 'S7-01-3.jpg', 'FE', ''],
+    ['low', 'Thấp', 'D-07', 'Thông báo lỗi bằng tiếng Anh', 'Đăng nhập / Đăng ký / Quên mật khẩu báo lỗi tiếng Anh.', 'S4-01-1.jpg', 'FE (+ BE)', ''],
+    ['low', 'Thấp', 'D-08', 'Chữ tiếng Anh trên giao diện Việt', 'Thanh bước Info/Options…, ngày tháng, "… More", trang 404, nút Save Changes.', '', 'FE', ''],
+    ['low', 'Thấp', 'D-09', 'Tìm kiếm không bao giờ "không thấy"', 'Từ khoá vô nghĩa vẫn ra video gần giống.', 'S1-02-2.jpg', 'BE / PO', ''],
+    ['low', 'Thấp', 'D-10', 'Lỗi trong console', 'Thiếu đoạn video video1.ts/video2.ts; hộp chi tiết đơn thiếu tiêu đề.', 'S9-03-1.jpg', 'FE', ''],
+    ['low', 'Thấp', 'D-11', 'Tour không có ảnh hiển thị lạ', 'Hiện "1 / 0", giá "USD350,000".', 'S1-07-1.jpg', 'FE / dữ liệu', ''],
+    ['low', 'Thấp', 'D-12', 'Nút "Thanh toán bằng thẻ" không làm gì', 'Bấm không có phản hồi (cả tour VND và USD). Khách USD vẫn trả thẻ được qua PayPal.', 'S3-12-1.jpg', 'FE', ''],
+    ['low', 'Thấp', 'D-13', 'Huỷ PayPal: thông báo lặp chữ', 'Huỷ trong cửa sổ PayPal → thông báo hiện "Giao dịch đã bị hủy." 2 lần.', 'S3-11-2.jpg', 'FE', 'AlertBanner dùng cùng chuỗi booking.paymentCancelled cho title và message (step-payment.tsx).'],
+  ];
+  var s = document.getElementById('suites');
+  SUITES.forEach(function (x) {
+    var t = x[1], cls = x[3] && x[0].indexOf('Thanh toán') > -1 ? 'r' : x[3] ? 'y' : '';
+    var w = function (n) { return (n / t * 100) + '%'; };
+    s.insertAdjacentHTML('beforeend', '<div class="suite ' + cls + '"><h3>' + x[0] + '</h3><div class="bar"><i class="p" style="width:' + w(x[2]) + '"></i><i class="f" style="width:' + w(x[3]) + '"></i><i class="b" style="width:' + w(x[4]) + '"></i><i class="n" style="width:' + w(x[5]) + '"></i></div><p>✅ ' + x[2] + ' · ❌ ' + x[3] + ' · ⛔ ' + x[4] + ' · ⏭ ' + x[5] + ' / ' + t + '</p></div>');
+  });
+  var d = document.getElementById('defects');
+  DEFECTS.forEach(function (x) {
+    d.insertAdjacentHTML('beforeend', '<article class="defect">' + (x[5] ? '<img loading="lazy" src="evidence/' + x[5] + '" alt="' + x[3] + '">' : '') +
+      '<div class="body"><span class="tag ' + x[0] + '">' + x[1] + '</span><span class="meta">' + x[2] + ' · Ai sửa: ' + x[6] + '</span><h3>' + x[3] + '</h3><p>' + x[4] + '</p>' +
+      (x[7] ? '<details><summary>Chi tiết kỹ thuật</summary>' + x[7] + '</details>' : '') + '</div></article>');
+  });
+  var lb = document.getElementById('lb');
+  document.addEventListener('click', function (e) {
+    var img = e.target.closest('.defect img'); if (img) { lb.querySelector('img').src = img.src; lb.classList.add('on'); return; }
+    if (e.target.closest('.lb')) lb.classList.remove('on');
+  });
+</script>
+</body>
+</html>

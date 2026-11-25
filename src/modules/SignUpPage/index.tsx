@@ -99,7 +99,7 @@ export default function SignUpPage() {
                   exit={{ opacity: 0 }}
                   className={errorCls}
                 >
-                  {errors.email.message}
+                  {t(errors.email.message ?? '')}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -129,7 +129,7 @@ export default function SignUpPage() {
                   exit={{ opacity: 0 }}
                   className={errorCls}
                 >
-                  {errors.password.message}
+                  {t(errors.password.message ?? '')}
                 </motion.p>
               )}
             </AnimatePresence>

@@ -165,7 +165,7 @@ const VideoSlideComponent = forwardRef<VideoSlideHandle, Props>(function VideoSl
           <h2 className="text-white font-dinpro font-bold text-[18px] leading-[1.3] drop-shadow-md">{video.title}</h2>
           <p className="text-white/70 font-dinpro font-normal text-[13px] mt-[6px] leading-none drop-shadow-sm line-clamp-1">
             {displayDesc}
-            <span className="font-bold text-white ml-1 text-[13px] font-dinpro">... More</span>
+            <span className="font-bold text-white ml-1 text-[13px] font-dinpro">{t('more')}</span>
           </p>
         </div>
       </div>

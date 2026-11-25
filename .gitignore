@@ -52,3 +52,5 @@ next-env.d.ts
 _bmad-output/
 bmad/
 _bmad/
+# Test credentials for AI/manual testing (never commit)
+documents/*.local.md

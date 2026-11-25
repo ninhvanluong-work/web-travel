@@ -473,6 +473,8 @@
   "noBookingsYet": "No bookings yet",
   "bookingDetailTitle": "Booking Detail",
   "bookingDetailCustomer": "Customer",
+  "bookingCustomerName": "Customer name",
+  "bookingTourName": "Tour name",
   "bookingDetailTour": "Tour",
   "bookingDetailTravel": "Travel Info",
   "bookingDetailPhone": "Phone",
@@ -544,5 +546,11 @@
   "admin.guide.moments.deleteMessage": "\"{{name}}\" will be removed from the tour guide's profile. This cannot be undone.",
   "admin.guide.moments.deleted": "Moment deleted",
   "admin.guide.moments.deleteFailed": "Could not delete the moment",
-  "admin.guide.moments.unit": "moments"
+  "admin.guide.moments.unit": "moments",
+  "productActions": {
+    "saveDraft": "Save draft",
+    "hide": "Hide tour",
+    "publishAgain": "Publish again",
+    "publish": "Publish"
+  }
 }

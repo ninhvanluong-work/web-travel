@@ -62,38 +62,32 @@ export const registerSchema = z
     path: ['confirmPassword'],
   });
 
+// loginSchema, forgotPasswordSchema, resetPassSchema and signUpSchema use `authPage` i18n keys as messages
+// (validation.*); the auth pages translate them with t().
 export const loginSchema = z.object({
   email: z
     .string()
     // Trim + lowercase BEFORE validating: sign-up stores lowercase and the backend compares case-sensitively
     .trim()
     .toLowerCase()
-    .min(1, 'Email is required')
+    .min(1, 'validation.emailRequired')
     .max(255)
-    .email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
+    .email('validation.emailInvalid'),
+  password: z.string().min(1, 'validation.passwordRequired'),
   rememberMe: z.boolean().default(false).optional(),
 });
 
 export const forgotPasswordSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .nonempty(validationMessages.required('Email'))
-    .email(validationMessages.invalid('Email')),
+  email: z.string().trim().toLowerCase().nonempty('validation.emailRequired').email('validation.emailInvalid'),
 });
 
 export const resetPassSchema = z.object({
   newPassword: z
     .string()
-    .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters')
+    .min(1, 'validation.passwordRequired')
+    .min(6, 'validation.passwordMin')
     .max(100)
-    .refine(
-      (v) => REGEX_PASSWORD.test(v),
-      'Password must contain at least 1 uppercase, 1 lowercase, and 1 number or special character'
-    ),
+    .refine((v) => REGEX_PASSWORD.test(v), 'validation.passwordWeak'),
 });
 
 export const profileSchema = z.object({
@@ -122,22 +116,13 @@ export const changePasswordSchema = z
   });
 
 export const signUpSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .min(1, 'Email is required')
-    .max(255)
-    .email('Please enter a valid email address'),
+  email: z.string().trim().toLowerCase().min(1, 'validation.emailRequired').max(255).email('validation.emailInvalid'),
   password: z
     .string()
-    .min(1, 'Password is required')
-    .min(6, 'Password must be at least 6 characters')
+    .min(1, 'validation.passwordRequired')
+    .min(6, 'validation.passwordMin')
     .max(100)
-    .refine(
-      (v) => REGEX_PASSWORD.test(v),
-      'Password must contain at least 1 uppercase, 1 lowercase, and 1 number or special character'
-    ),
+    .refine((v) => REGEX_PASSWORD.test(v), 'validation.passwordWeak'),
   isTourGuide: z.boolean().default(false),
 });
 

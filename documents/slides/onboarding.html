@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>web-travel · Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=JetBrains+Mono:wght@400;600&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f4ede1;
+    --paper-2: #ebe2d2;
+    --ink: #10233b;
+    --navy: #133c65;
+    --coral: #e8603c;
+    --sage: #3f7d6b;
+    --muted: #6b6457;
+    --line: #cdbfa6;
+    --display: 'Bricolage Grotesque', 'Georgia', serif;
+    --body: 'Be Vietnam Pro', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--ink); overflow: hidden; }
+  body { font-family: var(--body); color: var(--ink); }
+
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    padding: 4vh 4vw; opacity: 0; pointer-events: none; transform: translateY(14px);
+    transition: opacity .45s ease, transform .45s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: auto; transform: none; }
+
+  /* boarding-pass card */
+  .card {
+    position: relative; width: min(1180px, 100%); height: min(680px, 100%);
+    background:
+      radial-gradient(circle at 12% 8%, rgba(232,96,60,.07), transparent 38%),
+      repeating-linear-gradient(0deg, rgba(16,35,59,.025) 0 1px, transparent 1px 28px),
+      var(--paper);
+    border-radius: 22px; box-shadow: 0 30px 80px rgba(0,0,0,.45);
+    display: grid; grid-template-columns: 1fr 210px; overflow: hidden;
+  }
+  .main { padding: 46px 52px 40px; display: flex; flex-direction: column; min-width: 0; }
+  .stub {
+    position: relative; border-left: 2px dashed var(--line); padding: 46px 24px;
+    background: var(--paper-2); display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .stub::before, .stub::after {
+    content: ''; position: absolute; left: -15px; width: 28px; height: 28px; border-radius: 50%; background: var(--ink);
+  }
+  .stub::before { top: -14px; } .stub::after { bottom: -14px; }
+  .stub .k { font: 600 10px var(--mono); letter-spacing: .14em; color: var(--muted); text-transform: uppercase; }
+  .stub .v { font: 800 30px/1 var(--display); color: var(--navy); margin-top: 4px; }
+  .stub .v.small { font-size: 15px; font-weight: 600; line-height: 1.3; }
+  .barcode {
+    height: 64px; background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 4px, var(--ink) 4px 5px, transparent 5px 9px, var(--ink) 9px 12px, transparent 12px 14px);
+    opacity: .85; border-radius: 2px;
+  }
+
+  .eyebrow { font: 600 12px var(--mono); letter-spacing: .18em; text-transform: uppercase; color: var(--coral); }
+  h1 { font: 800 clamp(44px, 6.4vw, 92px)/.92 var(--display); letter-spacing: -.03em; color: var(--navy); }
+  h2 { font: 800 clamp(30px, 3.6vw, 48px)/1 var(--display); letter-spacing: -.02em; color: var(--navy); margin: 10px 0 22px; }
+  p, li { font-size: 17px; line-height: 1.55; }
+  .lead { font-size: 20px; color: var(--muted); max-width: 46ch; margin-top: 18px; }
+  code, .mono { font-family: var(--mono); font-size: .86em; background: rgba(19,60,101,.08); padding: 1px 6px; border-radius: 5px; color: var(--navy); }
+
+  .cols { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 18px; flex: 1; min-height: 0; }
+  .box { background: rgba(255,255,255,.55); border: 1.5px solid var(--line); border-radius: 14px; padding: 18px 20px; overflow: hidden; }
+  .box h3 { font: 600 13px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--sage); margin-bottom: 10px; }
+  .box ul { list-style: none; }
+  .box li { padding: 5px 0 5px 18px; position: relative; font-size: 15.5px; }
+  .box li::before { content: '›'; position: absolute; left: 2px; color: var(--coral); font-weight: 700; }
+  .warn { border-color: var(--coral); background: rgba(232,96,60,.07); }
+  .warn h3 { color: var(--coral); }
+
+  .route { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 6px 0 22px; }
+  .stop { font: 600 14px var(--mono); padding: 10px 14px; border: 1.5px solid var(--navy); border-radius: 999px; background: #fff; color: var(--navy); }
+  .stop.hot { background: var(--navy); color: var(--paper); }
+  .arrow { color: var(--coral); font: 800 20px var(--display); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th { text-align: left; font: 600 11px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); padding: 8px 10px; border-bottom: 2px solid var(--navy); }
+  td { padding: 9px 10px; border-bottom: 1px dashed var(--line); vertical-align: top; }
+  td:first-child { font-weight: 600; color: var(--navy); white-space: nowrap; }
+
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .step { position: relative; padding: 18px; border-radius: 14px; background: #fff; border: 1.5px solid var(--line); }
+  .step b { display: block; font: 800 40px/1 var(--display); color: var(--coral); }
+  .step span { display: block; font-weight: 600; color: var(--navy); margin: 6px 0; }
+  .step small { color: var(--muted); font-size: 13.5px; line-height: 1.45; display: block; }
+
+  .big-num { font: 800 120px/.8 var(--display); color: var(--coral); }
+
+  /* chrome */
+  .hud { position: fixed; left: 0; right: 0; bottom: 0; height: 4px; background: rgba(255,255,255,.08); }
+  .hud i { display: block; height: 100%; background: var(--coral); transition: width .4s ease; }
+  .counter { position: fixed; right: 22px; bottom: 16px; font: 600 12px var(--mono); color: rgba(244,237,225,.6); letter-spacing: .12em; }
+  .hint { position: fixed; left: 22px; bottom: 16px; font: 12px var(--mono); color: rgba(244,237,225,.45); }
+  .nav { position: fixed; top: 50%; transform: translateY(-50%); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(244,237,225,.25); background: transparent; color: var(--paper); font-size: 20px; cursor: pointer; }
+  .nav:hover { background: rgba(244,237,225,.1); }
+  .prev { left: 14px; } .next { right: 14px; }
+
+  .slide.active .reveal > * { animation: up .6s both; }
+  .slide.active .reveal > *:nth-child(2) { animation-delay: .07s; }
+  .slide.active .reveal > *:nth-child(3) { animation-delay: .14s; }
+  .slide.active .reveal > *:nth-child(4) { animation-delay: .21s; }
+  @keyframes up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 860px) {
+    .card { grid-template-columns: 1fr; height: auto; max-height: 100%; overflow: auto; }
+    .stub { display: none; } .main { padding: 28px; }
+    .cols, .steps { grid-template-columns: 1fr; }
+  }
+  @media print {
+    html, body { overflow: visible; background: #fff; }
+    .slide { position: relative; opacity: 1; transform: none; page-break-after: always; height: 100vh; }
+    .hud, .counter, .hint, .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal" style="justify-content:center">
+        <div class="eyebrow">Onboarding · dev &amp; AI agents</div>
+        <h1>web-travel<br />từ video<br />đến chuyến đi.</h1>
+        <p class="lead">Ứng dụng du lịch dạng video dọc cho điện thoại: xem video tour → mở tour → đặt chỗ → thanh toán. Kèm hồ sơ hướng dẫn viên và trang quản trị.</p>
+      </div>
+      <aside class="stub"><div><div class="k">Chuyến</div><div class="v">WT-2026</div></div><div><div class="k">Cổng</div><div class="v small">documents/<br />README.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">01 · Sản phẩm</div>
+        <h2>Một chuỗi dữ liệu duy nhất</h2>
+        <div class="route">
+          <span class="stop">Video</span><span class="arrow">→</span>
+          <span class="stop hot">Product (tour)</span><span class="arrow">→</span>
+          <span class="stop">Option</span><span class="arrow">→</span>
+          <span class="stop">Session + giá</span><span class="arrow">→</span>
+          <span class="stop hot">Booking</span><span class="arrow">→</span>
+          <span class="stop">Payment</span>
+        </div>
+        <div class="cols" style="--n:3">
+          <div class="box"><h3>Khách</h3><ul><li>Trang chủ video nền + tìm kiếm</li><li>Lưới video &amp; feed dọc kiểu TikTok</li><li>Chi tiết tour, đặt 4 bước</li></ul></div>
+          <div class="box"><h3>Hướng dẫn viên</h3><ul><li>Hồ sơ, moments (video)</li><li>Đánh giá từ khách</li><li>Tour hướng dẫn driver.js</li></ul></div>
+          <div class="box"><h3>Admin</h3><ul><li>Tour + lịch &amp; giá</li><li>Điểm đến, HDV, NCC, video</li><li>Booking (huỷ), người dùng</li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">01-overview.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">02 · Công nghệ</div>
+        <h2>Stack &amp; phiên bản cần nhớ</h2>
+        <table>
+          <tr><th>Mảng</th><th>Công nghệ</th><th>Lưu ý</th></tr>
+          <tr><td>Framework</td><td>Next.js 13 <b>Pages Router</b>, React 18, TS 5</td><td>Không phải App Router</td></tr>
+          <tr><td>Server state</td><td>TanStack Query <b>v4</b> + react-query-kit</td><td>Dùng <code>isLoading</code>, không có <code>isPending</code></td></tr>
+          <tr><td>Client state</td><td>Zustand</td><td><code>useStore.use.field()</code></td></tr>
+          <tr><td>Form</td><td>react-hook-form + zod</td><td>schema ở <code>src/lib/validations</code></td></tr>
+          <tr><td>UI</td><td>Tailwind 3 + shadcn/Radix</td><td>breakpoint &amp; spacing bị override</td></tr>
+          <tr><td>Video</td><td>hls.js + Bunny Stream, tus upload</td><td>pool 5 thẻ <code>&lt;video&gt;</code></td></tr>
+          <tr><td>i18n</td><td>next-i18next (en, vi)</td><td>mọi chữ hiển thị qua <code>t()</code></td></tr>
+          <tr><td>Khác</td><td>Goong map, PayPal, VNPay, TinyMCE, Sentry</td><td>font Outfit tự host</td></tr>
+        </table>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">02-tech-stack.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">03 · Kiến trúc</div>
+        <h2>Đường đi của một màn hình</h2>
+        <div class="route">
+          <span class="stop">src/pages/*</span><span class="arrow">→</span>
+          <span class="stop hot">src/modules/&lt;Feature&gt;</span><span class="arrow">→</span>
+          <span class="stop">src/hooks</span><span class="arrow">→</span>
+          <span class="stop">src/api/&lt;domain&gt;/queries</span><span class="arrow">→</span>
+          <span class="stop">requests</span><span class="arrow">→</span>
+          <span class="stop hot">axios.ts</span><span class="arrow">→</span>
+          <span class="stop">BE</span>
+        </div>
+        <div class="cols">
+          <div class="box"><h3>Layout</h3><ul><li><code>MainLayout</code>: khung điện thoại 430×932</li><li>Admin: <code>getLayout</code> → <code>AdminLayout</code></li><li>Trang tự cuộn bên trong khung, không cuộn window</li></ul></div>
+          <div class="box"><h3>API layer</h3><ul><li>Mỗi domain: <code>types · requests · queries · index</code></li><li>BE trả <code>{ data, code, message, error }</code></li><li>Lỗi: <code>{ statusCode, message }</code></li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">03-architecture.md<br />04-source-map.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">04 · Đăng nhập &amp; token</div>
+        <h2>Hai phiên độc lập</h2>
+        <div class="cols">
+          <div class="box"><h3>Khách · user-store</h3><ul><li><code>useUserStore</code>, đăng nhập <code>/auth/login</code></li><li>Hết hạn → refresh → thất bại thì về <code>/sign-in</code></li></ul></div>
+          <div class="box"><h3>Admin · admin-store</h3><ul><li><code>useAdminStore</code>, đăng nhập <code>/auth/admin/login</code></li><li>Token chọn theo route <code>/admin*</code></li><li>Ghi dữ liệu: gọi <code>ensureAdminAuth()</code> trước</li></ul></div>
+          <div class="box warn" style="grid-column: span 2"><h3>Lưu ý</h3><ul><li>axios reject bằng <b>body lỗi của BE</b> → đọc bằng <code>getApiErrorMessage(err, t('fallback'))</code>, hiện nguyên văn message</li><li>Đăng nhập cùng tài khoản ở nơi khác (curl, Swagger, MCP) sẽ đá phiên trên trình duyệt</li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">03 §Auth</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">05 · React Query v4</div>
+        <h2>Ba quy tắc tránh dữ liệu cũ</h2>
+        <div class="cols" style="--n:3">
+          <div class="box"><h3>1 · Mặc định</h3><ul><li><code>refetchOnMount: false</code></li><li><code>retry: false</code></li><li>Quay lại danh sách không tự tải lại</li></ul></div>
+          <div class="box"><h3>2 · Sau khi lưu</h3><ul><li><code>invalidateQueries({ queryKey, refetchType: 'all' })</code></li><li>hoặc <code>refetchOnMount: true</code> cho list</li><li>Key so theo phần tử mảng</li></ul></div>
+          <div class="box"><h3>3 · Trạng thái</h3><ul><li>Mutation: <code>isLoading</code></li><li>List: <code>keepPreviousData</code></li><li>Spinner tìm kiếm: <code>isFetching &amp;&amp; !isLoading</code></li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">03 §React Query<br />08 §RQ</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">06 · Video feed</div>
+        <h2>Hành vi cố ý — không tự ý sửa</h2>
+        <div class="cols">
+          <div class="box"><h3>/search</h3><ul><li>Video MP4 xem trước, chỉ 1 video có tiếng (<code>activeAudioId</code>)</li><li>Sentinel tải thêm ở phần tử thứ n−3</li><li>Bấm video → <code>unlockVideoPool()</code> → feed</li></ul></div>
+          <div class="box"><h3>/video/[slug]</h3><ul><li>Snap dọc, IO ngưỡng 0.6, URL đổi bằng <code>router.replace</code> shallow</li><li>Pool 5 <code>&lt;video&gt;</code>, rootMargin 150%</li><li><b>Reload gate</b>: tải lại trang → phải bấm Play</li><li>Vuốt phải để quay lại</li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">05 §Video<br />docs/video-detail-load-mechanism.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">07 · Đặt tour</div>
+        <h2>/product/[id]/booking · 4 bước</h2>
+        <div class="steps">
+          <div class="step"><b>1</b><span>Thông tin</span><small>Ngày → session → số khách theo unit, liên hệ. <code>GET /session</code></small></div>
+          <div class="step"><b>2</b><span>Tuỳ chọn</span><small>Giờ khởi hành, điểm đón (có sẵn hoặc Goong), gói tour</small></div>
+          <div class="step"><b>3</b><span>Xác nhận</span><small>Đồng ý điều khoản → <code>POST /booking</code> (BE tự tính giá)</small></div>
+          <div class="step"><b>4</b><span>Thanh toán</span><small>VND → VNPay (redirect). Khác → PayPal</small></div>
+        </div>
+        <div class="box warn" style="margin-top:18px"><h3>Còn tồn</h3><ul><li>Điểm đón tuỳ chỉnh chưa gửi lên BE · nút "Card" chưa có chức năng</li></ul></div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">05 §Booking<br />07 payment</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">08 · Admin</div>
+        <h2>Một khuôn mẫu cho mọi màn CRUD</h2>
+        <div class="cols" style="--n:3">
+          <div class="box"><h3>Danh sách</h3><ul><li><code>AdminSearchInput</code></li><li><code>AdminPagination</code></li><li><code>admin-table-state</code> (trống / đang tải)</li><li>KPI <code>StatCard</code></li></ul></div>
+          <div class="box"><h3>Form</h3><ul><li>Lưu xong <b>ở lại form</b></li><li>Tạo mới → chuyển sang trang sửa</li><li><code>BackToListButton</code>, hỏi khi rời trang chưa lưu</li></ul></div>
+          <div class="box"><h3>Xác nhận</h3><ul><li><code>AdminConfirmDialog</code> (danger / primary)</li><li>Phân quyền user: <code>permissions.ts</code></li><li>Không ai gán được super_admin</li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">06-admin-screens.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">09 · Bẫy Tailwind</div>
+        <h2>Class quen thuộc, kết quả khác</h2>
+        <table>
+          <tr><th>Bạn viết</th><th>Thực tế trong dự án</th><th>Nên dùng</th></tr>
+          <tr><td><code>lg:flex</code>, <code>md:grid-cols-2</code></td><td>Breakpoint = 10000px → không bao giờ áp dụng</td><td>Class không tiền tố, hoặc <code>xs:</code>/<code>sm:</code></td></tr>
+          <tr><td><code>p-4</code>, <code>w-8</code>, <code>w-80</code></td><td>4px, 8px, 80px (spacing bị override)</td><td><code>p-[16px]</code>, <code>w-[320px]</code></td></tr>
+          <tr><td><code>gap-12</code></td><td>8px (không phải 48px)</td><td><code>gap-[48px]</code></td></tr>
+          <tr><td>font Google</td><td>Có thể tải lỗi → về Arial</td><td>Giữ <code>next/font/local</code></td></tr>
+        </table>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">08-conventions-gotchas.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">10 · Backend &amp; dữ liệu</div>
+        <h2>Kiểm chứng trước khi đoán</h2>
+        <div class="cols">
+          <div class="box"><h3>Backend</h3><ul><li><code>web-travel-be.fly.dev</code> · Swagger <code>/docs-json</code></li><li>Decorator: <code>@Public @Admin @TourGuide @SuperAdmin</code></li><li>Thử an toàn: body sai / UUID giả → 400/404</li></ul></div>
+          <div class="box"><h3>MCP</h3><ul><li><code>_postgres</code>: SQL chỉ đọc (skill <code>web-travel-db</code>)</li><li><code>_web-travel-api</code>: chỉ GET</li><li><code>playwright</code>: test trình duyệt</li></ul></div>
+          <div class="box warn" style="grid-column: span 2"><h3>DB &amp; API là dữ liệu thật</h3><ul><li>Dữ liệu test đặt tiền tố <code>ZZ</code>, báo lại, hỏi trước khi xoá · không in mật khẩu / token</li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">07-backend-integration.md</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal">
+        <div class="eyebrow">11 · Quy tắc làm việc</div>
+        <h2>Trước khi sửa một dòng code</h2>
+        <div class="cols">
+          <div class="box"><h3>Luôn</h3><ul><li>Hỏi trước khi đổi logic có sẵn</li><li>Tái dùng <code>src/components/ui</code></li><li>i18n en + vi · comment tiếng Anh</li><li>Hiện nguyên văn lỗi BE</li></ul></div>
+          <div class="box"><h3>Xong việc</h3><ul><li><code>eslint</code> + <code>prettier</code> + <code>pnpm check-types</code></li><li>Chạy thử màn hình (trống / đang tải / lỗi)</li><li>Nhắc chạy <code>lint-changed.bat</code></li><li>Chỉ commit khi được yêu cầu</li></ul></div>
+        </div>
+      </div>
+      <aside class="stub"><div><div class="k">Đọc thêm</div><div class="v small">08 · 09</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="slide">
+    <div class="card">
+      <div class="main reveal" style="justify-content:center">
+        <div class="eyebrow">Điểm đến tiếp theo</div>
+        <div class="big-num">documents/</div>
+        <p class="lead">Mở <code>README.md</code> trước, rồi chỉ đọc file đúng việc: client 05, admin 06, API 07, quy tắc 08. Code là nguồn sự thật — thấy lệch thì cập nhật tài liệu.</p>
+      </div>
+      <aside class="stub"><div><div class="k">Trạng thái</div><div class="v">Ready</div></div><div><div class="k">Cập nhật</div><div class="v small">2026-11-16</div></div><div class="barcode"></div></aside>
+    </div>
+  </section>
+
+</div>
+
+<button class="nav prev" aria-label="Slide trước">‹</button>
+<button class="nav next" aria-label="Slide sau">›</button>
+<div class="hint">← → · Space · Home/End</div>
+<div class="counter" id="counter"></div>
+<div class="hud"><i id="bar"></i></div>
+
+<script>
+  (function () {
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var bar = document.getElementById('bar');
+    var counter = document.getElementById('counter');
+    var i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+
+    function show(n) {
+      i = Math.max(0, Math.min(slides.length - 1, n));
+      slides.forEach(function (s, k) { s.classList.toggle('active', k === i); });
+      bar.style.width = ((i + 1) / slides.length) * 100 + '%';
+      counter.textContent = String(i + 1).padStart(2, '0') + ' / ' + String(slides.length).padStart(2, '0');
+      history.replaceState(null, '', '#' + (i + 1));
+    }
+
+    document.addEventListener('keydown', function (e) {
+      if (['ArrowRight', 'PageDown', ' '].indexOf(e.key) > -1) { e.preventDefault(); show(i + 1); }
+      if (['ArrowLeft', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); show(i - 1); }
+      if (e.key === 'Home') show(0);
+      if (e.key === 'End') show(slides.length - 1);
+    });
+    document.querySelector('.prev').addEventListener('click', function () { show(i - 1); });
+    document.querySelector('.next').addEventListener('click', function () { show(i + 1); });
+
+    var x0 = null;
+    document.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    document.addEventListener('touchend', function (e) {
+      if (x0 === null) return;
+      var dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1));
+      x0 = null;
+    });
+
+    show(i);
+  })();
+</script>
+</body>
+</html>

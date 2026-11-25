@@ -3,3 +3,5 @@ node_modules
 .next
 build
 _bmad
+# AI docs: keep tables compact (padding wastes tokens)
+documents

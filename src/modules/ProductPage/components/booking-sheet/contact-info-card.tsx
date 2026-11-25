@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'next-i18next';
 import React from 'react';
+import { isPossiblePhoneNumber } from 'react-phone-number-input';
 
 import { Input } from '@/components/ui/input';
 import { PhoneInput } from '@/components/ui/phone-input';
@@ -15,6 +16,12 @@ const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizeS
 function getEmailError(email: string, t: (key: string) => string): string | null {
   if (!normalizeSingleLine(email)) return t('booking.errorEmailRequired');
   if (!isValidEmail(email)) return t('booking.errorEmailInvalid');
+  return null;
+}
+
+function getPhoneError(phone: string, t: (key: string) => string): string | null {
+  if (!phone.trim()) return t('booking.errorPhoneRequired');
+  if (!isPossiblePhoneNumber(phone)) return t('booking.errorPhoneInvalid');
   return null;
 }
 
@@ -43,7 +50,7 @@ export function ContactInfoCard() {
 
   const errors = {
     name: !normalizeSingleLine(contactName) ? t('booking.errorNameRequired') : null,
-    phone: !contactPhone.trim() ? t('booking.errorPhoneRequired') : null,
+    phone: getPhoneError(contactPhone, t),
     email: getEmailError(contactEmail, t),
     handle:
       contactMessenger && !normalizeSingleLine(contactMessengerHandle)
