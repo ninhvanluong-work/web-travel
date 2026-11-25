@@ -1,16 +1,18 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check } from 'lucide-react';
+import { useTranslation } from 'next-i18next';
 import React from 'react';
 
 import { cn } from '@/lib/utils';
 
-const STEPS = ['Info', 'Options', 'Review', 'Payment'] as const;
+const STEPS = ['info', 'options', 'review', 'payment'] as const;
 
 interface BookingStepperProps {
   currentStep: number;
 }
 
 export default function BookingStepper({ currentStep }: BookingStepperProps) {
+  const { t } = useTranslation('productPage');
   return (
     <div className="flex items-start px-4 py-4 bg-white border-b border-black/[0.07]">
       {STEPS.map((label, i) => {
@@ -60,7 +62,7 @@ export default function BookingStepper({ currentStep }: BookingStepperProps) {
                   isActive || isCompleted ? 'text-[#0F6E56]' : 'text-[#BBB]'
                 )}
               >
-                {label}
+                {t(`booking.steps.${label}`)}
               </span>
             </div>
 

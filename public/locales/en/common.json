@@ -35,5 +35,12 @@
     "confirmRequired": "Please confirm your new password",
     "mismatch": "Passwords do not match",
     "sameAsOld": "New password must be different from the current one"
+  },
+  "notFound": {
+    "label": "404 error",
+    "title": "We can’t find that page",
+    "description": "Sorry, the page you are looking for doesn’t exist or has been moved.",
+    "goBack": "Go back",
+    "goHome": "Take me home"
   }
 }

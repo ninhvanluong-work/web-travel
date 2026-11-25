@@ -1,20 +1,20 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 import { ROUTE } from '@/types';
 
 export default function Custom404() {
   const router = useRouter();
+  const { t } = useTranslation('common');
   return (
     <section>
       <div className="container mx-auto flex min-h-[50vh] items-center justify-center px-6 py-12">
         <div>
-          <p className="text-main text-sm font-medium">404 error</p>
-          <h1 className="mt-3 text-2xl font-semibold md:text-3xl">We can’t find that page</h1>
-          <p className="mt-4 text-gray-500 dark:text-gray-400">
-            Sorry, the page you are looking for doesn&apos;t exist or has been moved.
-          </p>
+          <p className="text-main text-sm font-medium">{t('notFound.label')}</p>
+          <h1 className="mt-3 text-2xl font-semibold md:text-3xl">{t('notFound.title')}</h1>
+          <p className="mt-4 text-gray-500 dark:text-gray-400">{t('notFound.description')}</p>
 
           <div className="mt-6 flex items-center gap-x-3">
             <button
@@ -32,14 +32,14 @@ export default function Custom404() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
               </svg>
 
-              <span>Go back</span>
+              <span>{t('notFound.goBack')}</span>
             </button>
 
             <Link
               href={ROUTE.HOME}
               className="bg-main w-1/2 shrink-0  rounded-lg px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 sm:w-auto"
             >
-              Take me home
+              {t('notFound.goHome')}
             </Link>
           </div>
         </div>

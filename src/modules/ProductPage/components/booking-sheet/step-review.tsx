@@ -1,4 +1,3 @@
-import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'next-i18next';
@@ -12,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { useBookingStore } from '@/stores/BookingStore';
 
 import { DetailRow } from './detail-row';
+import { formatBookingDate } from './format-booking-date';
 
 interface StepReviewProps {
   productName: string;
@@ -30,7 +30,7 @@ export default function StepReview({
   pickupLocations,
   options,
 }: StepReviewProps) {
-  const { t } = useTranslation('productPage');
+  const { t, i18n } = useTranslation('productPage');
 
   const date = useBookingStore.use.date();
   const passengers = useBookingStore.use.passengers();
@@ -85,7 +85,7 @@ export default function StepReview({
           </p>
         </div>
         <DetailRow label={t('booking.tourLabel')} value={productName} />
-        <DetailRow label={t('booking.dateLabel')} value={date ? format(date, 'EEE, MMM d, yyyy') : '—'} />
+        <DetailRow label={t('booking.dateLabel')} value={date ? formatBookingDate(date, i18n.language) : '—'} />
         <DetailRow label={t('booking.guestsLabel')} value={guestLabel} />
         <DetailRow
           label={t('booking.departureLabel')}

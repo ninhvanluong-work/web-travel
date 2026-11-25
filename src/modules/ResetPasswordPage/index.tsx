@@ -117,7 +117,7 @@ export default function ResetPasswordPage() {
                     exit={{ opacity: 0 }}
                     className="text-body4 text-red-500 mt-1.5 ml-4"
                   >
-                    {errors.newPassword.message}
+                    {t(errors.newPassword.message ?? '')}
                   </motion.p>
                 )}
               </AnimatePresence>

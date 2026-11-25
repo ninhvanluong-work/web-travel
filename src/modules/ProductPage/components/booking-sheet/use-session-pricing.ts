@@ -86,13 +86,16 @@ export function useSessionPricing(productId: string, adultPrice: number) {
       price: su.price > 0 ? su.price : adultPrice,
     }));
 
+    // Coming back to step 1 remounts this hook with the cached session: keep the guest counts
+    // unless the session itself changed (another date may have different units/prices).
+    const prevSessionId = useBookingStore.getState().sessionPricing.sessionId;
     setSessionPricing({
       isLoadingSession: false,
       sessionError: null,
       sessionId: session.id,
       units,
     });
-    setPassengers({});
+    if (prevSessionId !== session.id) setPassengers({});
   }, [sessionData, isSessionLoading, dateStr, adultPrice]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return { date, setDate };

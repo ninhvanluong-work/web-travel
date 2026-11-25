@@ -98,7 +98,7 @@ export default function SignInPage() {
                   exit={{ opacity: 0 }}
                   className="text-body4 text-red-500 mt-1.5 ml-4"
                 >
-                  {errors.email.message}
+                  {t(errors.email.message ?? '')}
                 </motion.p>
               )}
             </AnimatePresence>
@@ -128,7 +128,7 @@ export default function SignInPage() {
                   exit={{ opacity: 0 }}
                   className="text-body4 text-red-500 mt-1.5 ml-4"
                 >
-                  {errors.password.message}
+                  {t(errors.password.message ?? '')}
                 </motion.p>
               )}
             </AnimatePresence>

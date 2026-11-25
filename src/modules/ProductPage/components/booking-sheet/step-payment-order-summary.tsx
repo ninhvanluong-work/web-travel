@@ -1,5 +1,6 @@
-import { format } from 'date-fns';
 import { useTranslation } from 'next-i18next';
+
+import { formatBookingDate } from './format-booking-date';
 
 interface StepPaymentOrderSummaryProps {
   productName: string;
@@ -14,7 +15,7 @@ export function StepPaymentOrderSummary({
   guestLabel,
   totalFormatted,
 }: StepPaymentOrderSummaryProps) {
-  const { t } = useTranslation('productPage');
+  const { t, i18n } = useTranslation('productPage');
 
   return (
     <div className="bg-white border border-[#E5E5E5] rounded-[16px] overflow-hidden shadow-sm">
@@ -30,7 +31,7 @@ export function StepPaymentOrderSummary({
       <div className="flex items-center justify-between px-5 py-3">
         <span className="text-[14px] font-medium text-[#555] w-[70px] flex-shrink-0">{t('booking.dateLabel')}</span>
         <span className="text-[14px] font-semibold text-[#111] text-right">
-          {date ? format(date, 'EEE, MMM d, yyyy') : '—'}
+          {date ? formatBookingDate(date, i18n.language) : '—'}
         </span>
       </div>
       <div className="flex items-center justify-between px-5 py-3">

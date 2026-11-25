@@ -171,7 +171,7 @@ export function BookingDetailDrawer({ booking, onClose, onBookingChange }: Booki
 
                 {/* Customer Section */}
                 <Section title={t('bookingDetailCustomer')} icon={User} iconColorClass="text-blue-500">
-                  <FieldRow label={t('guideName')} value={booking.username} icon={User} />
+                  <FieldRow label={t('bookingCustomerName')} value={booking.username} icon={User} />
                   <FieldRow label="Email" value={booking.email} icon={Mail} />
                   <FieldRow
                     label={t('bookingDetailPhone')}
@@ -205,7 +205,7 @@ export function BookingDetailDrawer({ booking, onClose, onBookingChange }: Booki
 
                 {/* Tour Section */}
                 <Section title={t('bookingDetailTour')} icon={Compass} iconColorClass="text-emerald-500">
-                  <FieldRow label={t('tourNameLabel')} value={booking.productName} icon={Compass} />
+                  <FieldRow label={t('bookingTourName')} value={booking.productName} icon={Compass} />
                   <FieldRow label={t('bookingOption')} value={booking.optionName} icon={Package} />
                   <FieldRow label={t('bookingSupplier')} value={booking.supplierName} icon={Building2} />
                 </Section>

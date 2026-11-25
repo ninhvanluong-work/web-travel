@@ -1,5 +1,6 @@
 import { useTranslation } from 'next-i18next';
 import React from 'react';
+import { isPossiblePhoneNumber } from 'react-phone-number-input';
 
 import { useCreateBooking } from '@/api/booking';
 import { normalizeEmail, normalizeSingleLine } from '@/lib/text-normalize';
@@ -71,7 +72,7 @@ export function useBookingSheetState(productId: string, adultPrice: number, curr
       sessionPricing.sessionError === null &&
       sessionPricing.units.length > 0 &&
       normalizeSingleLine(contactName) !== '' &&
-      contactPhone.trim() !== '' &&
+      isPossiblePhoneNumber(contactPhone) &&
       isValidEmail(contactEmail) &&
       (!contactMessenger || normalizeSingleLine(contactMessengerHandle) !== '');
   } else if (step === 2) {
