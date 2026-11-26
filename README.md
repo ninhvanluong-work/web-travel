@@ -1,34 +1,111 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# web-travel
 
-## Getting Started
+Ứng dụng xem video du lịch và đặt tour, giao diện mobile-first (khung điện thoại tối đa 430×932px), xây bằng Next.js 13 (Pages Router) + TypeScript.
 
-First, run the development server:
+## Yêu cầu
+
+| Công cụ | Phiên bản                                  |
+| ------- | ------------------------------------------ |
+| Node.js | **20 LTS** (khuyến nghị 20.11.x), tối thiểu 18 |
+| pnpm    | **9.1.0** (khai báo trong `packageManager`)  |
+
+> Không dùng Node 16: `@sentry/nextjs` yêu cầu Node >= 18. Môi trường dev hiện tại chạy Node 20.11.1.
+>
+> Dự án chỉ dùng **pnpm**. Không chạy `npm install` hay `yarn` — sẽ tạo lockfile khác và lệch phiên bản thư viện so với `pnpm-lock.yaml`.
+
+### Cài Node.js
+
+Dùng trình quản lý phiên bản để dễ chuyển đổi:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Windows: nvm-windows (https://github.com/coreybutler/nvm-windows)
+nvm install 20.11.1
+nvm use 20.11.1
+
+# macOS / Linux: nvm (https://github.com/nvm-sh/nvm)
+nvm install 20
+nvm use 20
+
+node -v   # v20.x.x
+```
+
+### Cài pnpm
+
+Cách khuyến nghị là bật Corepack (có sẵn trong Node), nó sẽ tự dùng đúng `pnpm@9.1.0` theo `package.json`:
+
+```bash
+corepack enable
+corepack prepare pnpm@9.1.0 --activate
+pnpm -v   # 9.1.0
+```
+
+Hoặc cài trực tiếp:
+
+```bash
+npm install -g pnpm@9.1.0
+```
+
+## Chạy dự án
+
+### 1. Cài dependencies
+
+```bash
+pnpm install
+```
+
+Lệnh này tự chạy `postinstall` (copy TinyMCE vào `public/`) và `prepare` (cài git hooks husky).
+
+### 2. Cấu hình biến môi trường
+
+Sao chép file mẫu rồi điền giá trị (hỏi team để lấy key):
+
+```bash
+cp .env.example .env.local
+```
+
+| Biến                             | Mô tả                                 |
+| -------------------------------- | ------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`            | URL của app, local là `http://localhost:3000` |
+| `NEXT_PUBLIC_API_URL`            | Base URL của backend API (**bắt buộc**) |
+| `NEXT_PUBLIC_BUNNY_TUS_ENDPOINT` | Endpoint upload video Bunny (TUS)     |
+| `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN` | Sentry (có thể bỏ trống khi dev) |
+| `NEXT_PUBLIC_GOONG_API_KEY`, `NEXT_PUBLIC_GOONG_MAPTILES_KEY` | Goong Maps |
+| `NEXT_PUBLIC_GOOGLE_MAPS_JS_KEY`, `GOOGLE_MAPS_SERVER_API_KEY` | Google Maps |
+
+### 3. Chạy dev server
+
+```bash
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000](http://localhost:3000). Lệnh `dev` xoá `.next/` và `out/` trước khi chạy.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Build và chạy production
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```bash
+pnpm build
+pnpm start   # chạy ở port 8080
+```
 
-## Learn More
+Mở [http://localhost:8080](http://localhost:8080).
 
-To learn more about Next.js, take a look at the following resources:
+## Các lệnh khác
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm lint          # Kiểm tra ESLint
+pnpm lint:fix      # Tự sửa lỗi ESLint
+pnpm check-types   # Kiểm tra TypeScript (tsc --noEmit)
+pnpm format:write  # Format code bằng Prettier
+pnpm format:check  # Kiểm tra format
+pnpm analyze       # Build kèm phân tích bundle
+pnpm clean         # Xoá .next/ và out/
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Trên Windows, sau khi sửa code có thể chạy `lint-changed.bat` để tự format + fix ESLint cho các file đã thay đổi.
 
-## Deploy on Vercel
+## Xử lý sự cố
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **`pnpm: command not found`** → chạy lại `corepack enable` hoặc cài pnpm global.
+- **Lỗi engine / cú pháp khi cài hoặc chạy** → kiểm tra `node -v`, phải là 18 trở lên (khuyến nghị 20).
+- **Gọi API lỗi / trang trống** → kiểm tra `NEXT_PUBLIC_API_URL` trong `.env.local`, rồi chạy lại `pnpm dev` (biến `NEXT_PUBLIC_*` chỉ được nạp khi khởi động).
+- **Lỗi lạ sau khi đổi branch** → xoá cache và cài lại: `pnpm clean`, xoá `node_modules`, rồi `pnpm install`.
